@@ -11,13 +11,13 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models.signals import post_save
 from django.utils.translation import ugettext_lazy as _
-from base_groups.models import BaseGroup, GroupMember, add_creator_to_group
+from base_groups.models import BaseGroup, VisibleGroup, GroupMember #, add_creator_to_group
 
 class CommunityManager(models.Manager):
     def listing(self):
         return self.get_query_set().filter(parent__isnull=True, is_active=True)
         
-class Community(BaseGroup):
+class Community(VisibleGroup):
     objects = CommunityManager()
     
     def get_absolute_url(self):
@@ -39,18 +39,18 @@ class Community(BaseGroup):
     class Meta:
         verbose_name_plural = "communities"
 # use same add_creator_to_group from base_groups
-post_save.connect(add_creator_to_group, sender=Community)
+#post_save.connect(add_creator_to_group, sender=Community)
 
 class NationalRepList(Community):
     visibility = models.CharField(_('visibility'), max_length=1,
-                                  choices=BaseGroup.VISIBILITY_CHOICES,
+                                  choices=VisibleGroup.VISIBILITY_CHOICES,
                                   default='M', editable=False)
     invite_only = models.BooleanField(_('invite only'), default=True,
                                       editable=False)
     
 class ExecList(Community):
     visibility = models.CharField(_('visibility'), max_length=1,
-                                  choices=BaseGroup.VISIBILITY_CHOICES,
+                                  choices=VisibleGroup.VISIBILITY_CHOICES,
                                   default='M', editable=False)
     invite_only = models.BooleanField(_('invite only'), default=True,
                                       editable=False)

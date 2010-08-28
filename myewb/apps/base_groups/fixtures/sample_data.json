@@ -10,13 +10,10 @@
         "pk": 1, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Burnaby, BC", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-01-01 00:00:00", 
-            "invite_only": false, 
-            "visibility": "E", 
             "model": "Network", 
             "slug": "sfu", 
             "name": "Simon Fraser University"
@@ -26,13 +23,10 @@
         "pk": 2, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Vancouver, BC", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-01-01 00:00:00", 
-            "invite_only": false, 
-            "visibility": "E", 
             "model": "Network", 
             "slug": "ubc", 
             "name": "University of British Columbia"
@@ -42,13 +36,10 @@
         "pk": 3, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Victoria, BC", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-01-01 00:00:00", 
-            "invite_only": false, 
-            "visibility": "E", 
             "model": "Network", 
             "slug": "uvic", 
             "name": "University of Victoria"
@@ -58,13 +49,10 @@
         "pk": 4, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Vancouver, BC", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-01-01 00:00:00", 
-            "invite_only": false, 
-            "visibility": "E", 
             "model": "Network", 
             "slug": "vancouver", 
             "name": "Vancouver, BC"
@@ -74,13 +62,10 @@
         "pk": 5, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Calgary, AB", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-01-01 00:00:00", 
-            "invite_only": false, 
-            "visibility": "E", 
             "model": "Network", 
             "slug": "calgary", 
             "name": "Calgary, AB"
@@ -90,13 +75,10 @@
         "pk": 6, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Edmonton, AB", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 19:01:58", 
-            "invite_only": false, 
-            "visibility": "E", 
             "model": "Network", 
             "slug": "edmonton", 
             "name": "Edmonton, AB"
@@ -106,13 +88,10 @@
         "pk": 7, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Edmonton, AB", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 19:05:04", 
-            "invite_only": false, 
-            "visibility": "E", 
             "model": "Network", 
             "slug": "ualberta", 
             "name": "University of Alberta"
@@ -122,13 +101,10 @@
         "pk": 8, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": 3, 
             "description": "Calgary, AB", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 19:06:06", 
-            "invite_only": false, 
-            "visibility": "E", 
             "model": "Network", 
             "slug": "ucalgary", 
             "name": "University of Calgary"
@@ -138,13 +114,10 @@
         "pk": 9, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Saskatoon, SK", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 19:06:50", 
-            "invite_only": false, 
-            "visibility": "E", 
             "model": "Network", 
             "slug": "saskatoon", 
             "name": "Saskatoon, SK"
@@ -154,13 +127,10 @@
         "pk": 10, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Regina, SK", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 19:07:35", 
-            "invite_only": false, 
-            "visibility": "E", 
             "model": "Network", 
             "slug": "uregina", 
             "name": "University of Regina"
@@ -170,13 +140,10 @@
         "pk": 11, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Saskatoon, SK", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 19:08:15", 
-            "invite_only": false, 
-            "visibility": "E", 
             "model": "Network", 
             "slug": "usask", 
             "name": "University of Saskatchewan"
@@ -186,13 +153,10 @@
         "pk": 12, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Winnipeg, MB", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 19:08:42", 
-            "invite_only": false, 
-            "visibility": "E", 
             "model": "Network", 
             "slug": "umanitoba", 
             "name": "University of Manitoba"
@@ -202,13 +166,10 @@
         "pk": 13, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Winnipeg, MB", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 19:09:18", 
-            "invite_only": false, 
-            "visibility": "E", 
             "model": "Network", 
             "slug": "winnipeg", 
             "name": "Winnipeg, MB"
@@ -218,13 +179,10 @@
         "pk": 14, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Ottawa, ON", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 19:09:41", 
-            "invite_only": false, 
-            "visibility": "E", 
             "model": "Network", 
             "slug": "carleton", 
             "name": "Carleton University"
@@ -234,13 +192,10 @@
         "pk": 15, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Kitchener, ON", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 19:10:27", 
-            "invite_only": false, 
-            "visibility": "E", 
             "model": "Network", 
             "slug": "grandriver", 
             "name": "Kitchener, ON"
@@ -250,13 +205,10 @@
         "pk": 16, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Hamilton, ON", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 19:10:54", 
-            "invite_only": false, 
-            "visibility": "E", 
             "model": "Network", 
             "slug": "mcmaster", 
             "name": "McMaster University"
@@ -266,13 +218,10 @@
         "pk": 17, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Ottawa, ON", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 19:11:30", 
-            "invite_only": false, 
-            "visibility": "E", 
             "model": "Network", 
             "slug": "ottawa", 
             "name": "Ottawa, ON"
@@ -282,13 +231,10 @@
         "pk": 18, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Kingston, ON", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 19:11:55", 
-            "invite_only": false, 
-            "visibility": "E", 
             "model": "Network", 
             "slug": "queensu", 
             "name": "Queen's University"
@@ -298,13 +244,10 @@
         "pk": 19, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Toronto, ON", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 19:12:45", 
-            "invite_only": false, 
-            "visibility": "E", 
             "model": "Network", 
             "slug": "ryerson", 
             "name": "Ryerson University"
@@ -314,13 +257,10 @@
         "pk": 20, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Toronto, ON", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 19:13:15", 
-            "invite_only": false, 
-            "visibility": "E", 
             "model": "Network", 
             "slug": "toronto", 
             "name": "Toronto, ON"
@@ -330,13 +270,10 @@
         "pk": 21, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Guelph, ON", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 19:13:36", 
-            "invite_only": false, 
-            "visibility": "E", 
             "model": "Network", 
             "slug": "uoguelph", 
             "name": "University of Guelph"
@@ -346,13 +283,10 @@
         "pk": 22, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Oshawa, ON", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 19:14:08", 
-            "invite_only": false, 
-            "visibility": "E", 
             "model": "Network", 
             "slug": "uoit", 
             "name": "University of Ontario Institute of Technology"
@@ -362,13 +296,10 @@
         "pk": 23, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Ottawa, ON", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 19:14:50", 
-            "invite_only": false, 
-            "visibility": "E", 
             "model": "Network", 
             "slug": "uottawa", 
             "name": "University of Ottawa"
@@ -378,13 +309,10 @@
         "pk": 24, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Toronto, ON", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 19:15:21", 
-            "invite_only": false, 
-            "visibility": "E", 
             "model": "Network", 
             "slug": "utoronto", 
             "name": "University of Toronto"
@@ -394,13 +322,10 @@
         "pk": 25, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Waterloo, ON", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 19:15:46", 
-            "invite_only": false, 
-            "visibility": "E", 
             "model": "Network", 
             "slug": "uwaterloo", 
             "name": "University of Waterloo"
@@ -410,13 +335,10 @@
         "pk": 26, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "London, ON", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 19:16:05", 
-            "invite_only": false, 
-            "visibility": "E", 
             "model": "Network", 
             "slug": "uwo", 
             "name": "University of Western Ontario"
@@ -426,13 +348,10 @@
         "pk": 27, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Windsor, ON", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 19:16:35", 
-            "invite_only": false, 
-            "visibility": "E", 
             "model": "Network", 
             "slug": "uwindsor", 
             "name": "University of Windsor"
@@ -442,13 +361,10 @@
         "pk": 28, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Toronto, ON", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 19:17:01", 
-            "invite_only": false, 
-            "visibility": "E", 
             "model": "Network", 
             "slug": "yorku", 
             "name": "York University"
@@ -458,13 +374,10 @@
         "pk": 29, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Montreal, QC", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 19:17:21", 
-            "invite_only": false, 
-            "visibility": "E", 
             "model": "Network", 
             "slug": "concordia", 
             "name": "Concordia University"
@@ -474,13 +387,10 @@
         "pk": 30, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Montreal, QC", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 19:18:03", 
-            "invite_only": false, 
-            "visibility": "E", 
             "model": "Network", 
             "slug": "mcgill", 
             "name": "McGill University"
@@ -490,13 +400,10 @@
         "pk": 31, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Montr\u00e9al, QC", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 19:18:28", 
-            "invite_only": false, 
-            "visibility": "E", 
             "model": "Network", 
             "slug": "polymtl", 
             "name": "\u00c9cole Polytechnique Montr\u00e9al"
@@ -506,13 +413,10 @@
         "pk": 32, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Montreal, QC", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 19:19:03", 
-            "invite_only": false, 
-            "visibility": "E", 
             "model": "Network", 
             "slug": "montreal", 
             "name": "Montreal, QC"
@@ -522,13 +426,10 @@
         "pk": 33, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Sherbrooke, QC", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 19:19:27", 
-            "invite_only": false, 
-            "visibility": "E", 
             "model": "Network", 
             "slug": "usherbrooke", 
             "name": "Universit\u00e9 de Sherbrooke"
@@ -538,13 +439,10 @@
         "pk": 34, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Qu\u00e9bec, QC", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 19:19:56", 
-            "invite_only": false, 
-            "visibility": "E", 
             "model": "Network", 
             "slug": "ulaval", 
             "name": "Universit\u00e9 Laval"
@@ -554,13 +452,10 @@
         "pk": 35, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Fredericton, NB", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 19:20:32", 
-            "invite_only": false, 
-            "visibility": "E", 
             "model": "Network", 
             "slug": "unb", 
             "name": "University of New Brunswick"
@@ -570,13 +465,10 @@
         "pk": 36, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Halifax, NS", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 19:21:05", 
-            "invite_only": false, 
-            "visibility": "E", 
             "model": "Network", 
             "slug": "dal", 
             "name": "Dalhousie University"
@@ -586,13 +478,10 @@
         "pk": 37, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "St. John's, NL", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 19:21:29", 
-            "invite_only": false, 
-            "visibility": "E", 
             "model": "Network", 
             "slug": "mun", 
             "name": "Memorial University of Newfoundland"
@@ -602,13 +491,10 @@
         "pk": 38, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "A mailing list for people working to increase the availability of fair trade at their campuses. 1-2 representatives per chapter, please!", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 19:53:08", 
-            "invite_only": false, 
-            "visibility": "E", 
             "model": "Community", 
             "slug": "fairtradecampus", 
             "name": "Fair Trade Campuses Team"
@@ -618,13 +504,10 @@
         "pk": 39, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Job opportunities related to human development, including announcement about EWB overseas positions.  ", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 19:56:45", 
-            "invite_only": false, 
-            "visibility": "E", 
             "model": "Community", 
             "slug": "jobs", 
             "name": "Job and Overseas Volunteering Opportunities"
@@ -634,13 +517,10 @@
         "pk": 40, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Volunteers that are interested in volunteering at the National Office ", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 19:57:15", 
-            "invite_only": false, 
-            "visibility": "E", 
             "model": "Community", 
             "slug": "volunteer", 
             "name": "National Office Volunteers"
@@ -650,13 +530,10 @@
         "pk": 41, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "A list of national translation volunteers", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 19:57:39", 
-            "invite_only": false, 
-            "visibility": "E", 
             "model": "Community", 
             "slug": "traduction", 
             "name": "traduction"
@@ -666,13 +543,10 @@
         "pk": 42, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "A group for updates and ideas on the discussion around our organizational values.  ", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 19:58:08", 
-            "invite_only": false, 
-            "visibility": "E", 
             "model": "Community", 
             "slug": "values2009", 
             "name": "Values Discussion 2009"
@@ -682,13 +556,10 @@
         "pk": 43, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Youth Engagement National Reps & Members interested in youth engagement", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 19:58:33", 
-            "invite_only": false, 
-            "visibility": "E", 
             "model": "Community", 
             "slug": "youthengagement", 
             "name": "Youth Engagement National Reps"
@@ -698,13 +569,10 @@
         "pk": 44, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "A group of graphics and creative designers who contribute to various EWB local, national, and international campaigns.  ", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 19:59:13", 
-            "invite_only": false, 
-            "visibility": "E", 
             "model": "Community", 
             "slug": "design", 
             "name": "Creative Design Community"
@@ -714,13 +582,10 @@
         "pk": 45, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Professional chapters' executive mailing list (all chapters).", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 19:59:43", 
-            "invite_only": true, 
-            "visibility": "M", 
             "model": "Community", 
             "slug": "prochaptersexec", 
             "name": "Professional Chapter Exec"
@@ -730,13 +595,10 @@
         "pk": 46, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Student Chapter Presidents' mailing list.", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 20:01:04", 
-            "invite_only": true, 
-            "visibility": "M", 
             "model": "Community", 
             "slug": "presidents", 
             "name": "Student Chapter Presidents"
@@ -746,13 +608,10 @@
         "pk": 47, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Finance National Reps' mailing list. ", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 20:01:29", 
-            "invite_only": true, 
-            "visibility": "M", 
             "model": "Community", 
             "slug": "finance", 
             "name": "Finance National Reps"
@@ -762,13 +621,10 @@
         "pk": 48, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Member Learning National Reps' mailing list.", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 20:01:50", 
-            "invite_only": false, 
-            "visibility": "M", 
             "model": "Community", 
             "slug": "memberlearning", 
             "name": "Member Learning National Reps"
@@ -778,13 +634,10 @@
         "pk": 49, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Learning Partnerships National Reps' mailing list. ", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 20:02:13", 
-            "invite_only": false, 
-            "visibility": "M", 
             "model": "Community", 
             "slug": "learningpartnerships", 
             "name": "Learning Partnerships National Reps"
@@ -794,13 +647,10 @@
         "pk": 50, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "School Outreach National Reps' mailing list.  ", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 20:02:35", 
-            "invite_only": false, 
-            "visibility": "M", 
             "model": "Community", 
             "slug": "schooloutreach", 
             "name": "School Outreach National Reps"
@@ -810,13 +660,10 @@
         "pk": 51, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Curriculum Enhancement National Reps' mailing list.  ", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 20:02:59", 
-            "invite_only": false, 
-            "visibility": "M", 
             "model": "Community", 
             "slug": "curriculumenhancement", 
             "name": "Curriculum Enhancement National Reps"
@@ -826,13 +673,10 @@
         "pk": 52, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Public Outreach National Reps' mailing list.  ", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 20:03:29", 
-            "invite_only": false, 
-            "visibility": "M", 
             "model": "Community", 
             "slug": "publicoutreach", 
             "name": "Public Outreach National Reps"
@@ -842,13 +686,10 @@
         "pk": 53, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Webmaster Contacts' mailing list.  ", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 20:03:56", 
-            "invite_only": false, 
-            "visibility": "M", 
             "model": "Community", 
             "slug": "webmaster", 
             "name": "Webmaster Contacts"
@@ -858,13 +699,10 @@
         "pk": 54, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Communications Contacts' mailing list.  ", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 20:04:16", 
-            "invite_only": false, 
-            "visibility": "M", 
             "model": "Community", 
             "slug": "communications", 
             "name": "Communications Contacts"
@@ -874,13 +712,10 @@
         "pk": 55, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Professional Chapter Presidents' mailing list", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 20:04:36", 
-            "invite_only": false, 
-            "visibility": "M", 
             "model": "Community", 
             "slug": "prochapterpres", 
             "name": "Professional Chapter Presidents"
@@ -890,13 +725,10 @@
         "pk": 56, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Workplace Outreach National Reps' list  ", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 20:04:59", 
-            "invite_only": false, 
-            "visibility": "M", 
             "model": "Community", 
             "slug": "workplaceoutreach", 
             "name": "Workplace Outreach National Reps"
@@ -906,13 +738,10 @@
         "pk": 57, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Fundraising National Reps' mailing list.", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 20:05:31", 
-            "invite_only": false, 
-            "visibility": "M", 
             "model": "Community", 
             "slug": "fundraising", 
             "name": "Fundraising National Reps"
@@ -922,13 +751,10 @@
         "pk": 58, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "Student chapters' executive mailing list (all chapters).", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 19:59:43", 
-            "invite_only": true, 
-            "visibility": "M", 
             "model": "Community", 
             "slug": "unichaptersexec", 
             "name": "Student Chapter Exec"
@@ -938,13 +764,10 @@
         "pk": 59, 
         "model": "base_groups.basegroup", 
         "fields": {
-            "whiteboard": null, 
             "description": "All chapters executive mailing list (student and pro).", 
             "parent": null, 
             "creator": 2, 
             "created": "2009-11-14 19:59:43", 
-            "invite_only": true, 
-            "visibility": "M", 
             "model": "Community", 
             "slug": "exec", 
             "name": "Chapter Executives"
@@ -958,8 +781,6 @@
             "parent": 1, 
             "creator": 2, 
             "created": "2009-01-01 00:00:00", 
-            "visibility": "M", 
-            "invite_only": true, 
             "model": "Community", 
             "slug": "sfu-exec", 
             "name": "Simon Fraser University Executive"
@@ -973,8 +794,6 @@
             "parent": 2, 
             "creator": 2, 
             "created": "2009-01-01 00:00:00", 
-            "visibility": "M", 
-            "invite_only": true, 
             "model": "Community", 
             "slug": "ubc-exec", 
             "name": "University of British Columbia Executive"
@@ -988,8 +807,6 @@
             "parent": 3, 
             "creator": 2, 
             "created": "2009-01-01 00:00:00", 
-            "visibility": "M", 
-            "invite_only": true, 
             "model": "Community", 
             "slug": "uvic-exec", 
             "name": "University of Victoria Executive"
@@ -1003,8 +820,6 @@
             "parent": 4, 
             "creator": 2, 
             "created": "2009-01-01 00:00:00", 
-            "visibility": "M", 
-            "invite_only": true, 
             "model": "Community", 
             "slug": "vancouver-exec", 
             "name": "Vancouver, BC Executive"
@@ -1018,8 +833,6 @@
             "parent": 5, 
             "creator": 2, 
             "created": "2009-01-01 00:00:00", 
-            "visibility": "M", 
-            "invite_only": true, 
             "model": "Community", 
             "slug": "calgary-exec", 
             "name": "Calgary, AB Executive"
@@ -1033,8 +846,6 @@
             "parent": 6, 
             "creator": 2, 
             "created": "2009-01-01 00:00:00", 
-            "visibility": "M", 
-            "invite_only": true, 
             "model": "Community", 
             "slug": "edmonton-exec", 
             "name": "Edmonton, AB Executive"
@@ -1048,8 +859,6 @@
             "parent": 7, 
             "creator": 2, 
             "created": "2009-01-01 00:00:00", 
-            "visibility": "M", 
-            "invite_only": true, 
             "model": "Community", 
             "slug": "ualberta-exec", 
             "name": "University of Alberta Executive"
@@ -1063,8 +872,6 @@
             "parent": 8, 
             "creator": 2, 
             "created": "2009-01-01 00:00:00", 
-            "visibility": "M", 
-            "invite_only": true, 
             "model": "Community", 
             "slug": "ucalgary-exec", 
             "name": "University of Calgary Executive"
@@ -1078,8 +885,6 @@
             "parent": 9, 
             "creator": 2, 
             "created": "2009-01-01 00:00:00", 
-            "visibility": "M", 
-            "invite_only": true, 
             "model": "Community", 
             "slug": "saskatoon-exec", 
             "name": "Saskatoon, SK Executive"
@@ -1093,8 +898,6 @@
             "parent": 10, 
             "creator": 2, 
             "created": "2009-01-01 00:00:00", 
-            "visibility": "M", 
-            "invite_only": true, 
             "model": "Community", 
             "slug": "uregina-exec", 
             "name": "University of Regina Executive"
@@ -1108,8 +911,6 @@
             "parent": 11, 
             "creator": 2, 
             "created": "2009-01-01 00:00:00", 
-            "visibility": "M", 
-            "invite_only": true, 
             "model": "Community", 
             "slug": "usask-exec", 
             "name": "University of Saskatchewan Executive"
@@ -1123,8 +924,6 @@
             "parent": 12, 
             "creator": 2, 
             "created": "2009-01-01 00:00:00", 
-            "visibility": "M", 
-            "invite_only": true, 
             "model": "Community", 
             "slug": "umanitoba-exec", 
             "name": "University of Manitoba Executive"
@@ -1138,8 +937,6 @@
             "parent": 13, 
             "creator": 2, 
             "created": "2009-01-01 00:00:00", 
-            "visibility": "M", 
-            "invite_only": true, 
             "model": "Community", 
             "slug": "winnipeg-exec", 
             "name": "Winnipeg, MB Executive"
@@ -1153,8 +950,6 @@
             "parent": 14, 
             "creator": 2, 
             "created": "2009-01-01 00:00:00", 
-            "visibility": "M", 
-            "invite_only": true, 
             "model": "Community", 
             "slug": "carleton-exec", 
             "name": "Carleton University Executive"
@@ -1168,8 +963,6 @@
             "parent": 15, 
             "creator": 2, 
             "created": "2009-01-01 00:00:00", 
-            "visibility": "M", 
-            "invite_only": true, 
             "model": "Community", 
             "slug": "grandriver-exec", 
             "name": "Kitchener, ON Executive"
@@ -1183,8 +976,6 @@
             "parent": 16, 
             "creator": 2, 
             "created": "2009-01-01 00:00:00", 
-            "visibility": "M", 
-            "invite_only": true, 
             "model": "Community", 
             "slug": "mcmaster-exec", 
             "name": "McMaster University Executive"
@@ -1198,8 +989,6 @@
             "parent": 17, 
             "creator": 2, 
             "created": "2009-01-01 00:00:00", 
-            "visibility": "M", 
-            "invite_only": true, 
             "model": "Community", 
             "slug": "ottawa-exec", 
             "name": "Ottawa, ON Executive"
@@ -1213,8 +1002,6 @@
             "parent": 18, 
             "creator": 2, 
             "created": "2009-01-01 00:00:00", 
-            "visibility": "M", 
-            "invite_only": true, 
             "model": "Community", 
             "slug": "queensu-exec", 
             "name": "Queen's University Executive"
@@ -1228,8 +1015,6 @@
             "parent": 19, 
             "creator": 2, 
             "created": "2009-01-01 00:00:00", 
-            "visibility": "M", 
-            "invite_only": true, 
             "model": "Community", 
             "slug": "ryerson-exec", 
             "name": "Ryerson University Executive"
@@ -1243,8 +1028,6 @@
             "parent": 20, 
             "creator": 2, 
             "created": "2009-01-01 00:00:00", 
-            "visibility": "M", 
-            "invite_only": true, 
             "model": "Community", 
             "slug": "toronto-exec", 
             "name": "Toronto, ON Executive"
@@ -1258,8 +1041,6 @@
             "parent": 21, 
             "creator": 2, 
             "created": "2009-01-01 00:00:00", 
-            "visibility": "M", 
-            "invite_only": true, 
             "model": "Community", 
             "slug": "uoguelph-exec", 
             "name": "University of Guelph Executive"
@@ -1273,8 +1054,6 @@
             "parent": 22, 
             "creator": 2, 
             "created": "2009-01-01 00:00:00", 
-            "visibility": "M", 
-            "invite_only": true, 
             "model": "Community", 
             "slug": "uoit-exec", 
             "name": "University of Ontario Institute of Technology Executive"
@@ -1288,8 +1067,6 @@
             "parent": 23, 
             "creator": 2, 
             "created": "2009-01-01 00:00:00", 
-            "visibility": "M", 
-            "invite_only": true, 
             "model": "Community", 
             "slug": "uottawa-exec", 
             "name": "University of Ottawa Executive"
@@ -1303,8 +1080,6 @@
             "parent": 24, 
             "creator": 2, 
             "created": "2009-01-01 00:00:00", 
-            "visibility": "M", 
-            "invite_only": true, 
             "model": "Community", 
             "slug": "utoronto-exec", 
             "name": "University of Toronto Executive"
@@ -1318,8 +1093,6 @@
             "parent": 25, 
             "creator": 2, 
             "created": "2009-01-01 00:00:00", 
-            "visibility": "M", 
-            "invite_only": true, 
             "model": "Community", 
             "slug": "uwaterloo-exec", 
             "name": "University of Waterloo Executive"
@@ -1333,8 +1106,6 @@
             "parent": 26, 
             "creator": 2, 
             "created": "2009-01-01 00:00:00", 
-            "visibility": "M", 
-            "invite_only": true, 
             "model": "Community", 
             "slug": "uwo-exec", 
             "name": "University of Western Ontario Executive"
@@ -1348,8 +1119,6 @@
             "parent": 27, 
             "creator": 2, 
             "created": "2009-01-01 00:00:00", 
-            "visibility": "M", 
-            "invite_only": true, 
             "model": "Community", 
             "slug": "uwindsor-exec", 
             "name": "University of Windsor Executive"
@@ -1363,8 +1132,6 @@
             "parent": 28, 
             "creator": 2, 
             "created": "2009-01-01 00:00:00", 
-            "visibility": "M", 
-            "invite_only": true, 
             "model": "Community", 
             "slug": "yorku-exec", 
             "name": "York University Executive"
@@ -1378,8 +1145,6 @@
             "parent": 29, 
             "creator": 2, 
             "created": "2009-01-01 00:00:00", 
-            "visibility": "M", 
-            "invite_only": true, 
             "model": "Community", 
             "slug": "concordia-exec", 
             "name": "Concordia University Executive"
@@ -1393,8 +1158,6 @@
             "parent": 30, 
             "creator": 2, 
             "created": "2009-01-01 00:00:00", 
-            "visibility": "M", 
-            "invite_only": true, 
             "model": "Community", 
             "slug": "mcgill-exec", 
             "name": "McGill University Executive"
@@ -1408,8 +1171,6 @@
             "parent": 31, 
             "creator": 2, 
             "created": "2009-01-01 00:00:00", 
-            "visibility": "M", 
-            "invite_only": true, 
             "model": "Community", 
             "slug": "polymtl-exec", 
             "name": "\u00c9cole Polytechnique Montr\u00e9al Executive"
@@ -1423,8 +1184,6 @@
             "parent": 32, 
             "creator": 2, 
             "created": "2009-01-01 00:00:00", 
-            "visibility": "M", 
-            "invite_only": true, 
             "model": "Community", 
             "slug": "montreal-exec", 
             "name": "Montreal, QC Executive"
@@ -1438,8 +1197,6 @@
             "parent": 33, 
             "creator": 2, 
             "created": "2009-01-01 00:00:00", 
-            "visibility": "M", 
-            "invite_only": true, 
             "model": "Community", 
             "slug": "usherbrooke-exec", 
             "name": "Universit\u00e9 de Sherbrooke Executive"
@@ -1453,8 +1210,6 @@
             "parent": 34, 
             "creator": 2, 
             "created": "2009-01-01 00:00:00", 
-            "visibility": "M", 
-            "invite_only": true, 
             "model": "Community", 
             "slug": "ulaval-exec", 
             "name": "Universit\u00e9 Laval Executive"
@@ -1468,8 +1223,6 @@
             "parent": 35, 
             "creator": 2, 
             "created": "2009-01-01 00:00:00", 
-            "visibility": "M", 
-            "invite_only": true, 
             "model": "Community", 
             "slug": "unb-exec", 
             "name": "University of New Brunswick Executive"
@@ -1483,8 +1236,6 @@
             "parent": 36, 
             "creator": 2, 
             "created": "2009-01-01 00:00:00", 
-            "visibility": "M", 
-            "invite_only": true, 
             "model": "Community", 
             "slug": "dal-exec", 
             "name": "Dalhousie University Executive"
@@ -1498,8 +1249,6 @@
             "parent": 37, 
             "creator": 2, 
             "created": "2009-01-01 00:00:00", 
-            "visibility": "M", 
-            "invite_only": true, 
             "model": "Community", 
             "slug": "mun-exec", 
             "name": "Memorial University of Newfoundland Executive"
@@ -1513,8 +1262,6 @@
             "parent": null, 
             "creator": 2, 
             "created": "2009-01-01 00:00:00", 
-            "visibility": "M", 
-            "invite_only": true, 
             "model": "Network", 
             "slug": "natloffice", 
             "name": "National Office"
@@ -1528,8 +1275,6 @@
             "parent": null, 
             "creator": 2, 
             "created": "2009-01-01 00:00:00", 
-            "visibility": "M", 
-            "invite_only": true, 
             "model": "LogisticalGroup", 
             "slug": "silent_signup_api", 
             "name": "silent_signup_api"
@@ -1543,8 +1288,6 @@
             "parent": null, 
             "creator": 2, 
             "created": "2009-01-01 00:00:00", 
-            "visibility": "E", 
-            "invite_only": false, 
             "model": "BaseGroup", 
             "slug": "ewb", 
             "name": "ewb"
@@ -1924,5 +1667,893 @@
             "group": 37, 
             "longitude": null
         }
-    }
+    },
+    {
+        "pk": 1, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "E" 
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "E" 
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "E" 
+        }
+    }, 
+    {
+        "pk": 4, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "E" 
+        }
+    }, 
+    {
+        "pk": 5, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "E" 
+        }
+    }, 
+    {
+        "pk": 6, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "E" 
+        }
+    }, 
+    {
+        "pk": 7, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "E" 
+        }
+    }, 
+    {
+        "pk": 8, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": 3, 
+            "invite_only": false, 
+            "visibility": "E" 
+        }
+    }, 
+    {
+        "pk": 9, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "E" 
+        }
+    }, 
+    {
+        "pk": 10, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "E" 
+        }
+    }, 
+    {
+        "pk": 11, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "E" 
+        }
+    }, 
+    {
+        "pk": 12, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "E" 
+        }
+    }, 
+    {
+        "pk": 13, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "E" 
+        }
+    }, 
+    {
+        "pk": 14, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "E" 
+        }
+    }, 
+    {
+        "pk": 15, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "E" 
+        }
+    }, 
+    {
+        "pk": 16, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "E" 
+        }
+    }, 
+    {
+        "pk": 17, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "E" 
+        }
+    }, 
+    {
+        "pk": 18, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "E" 
+        }
+    }, 
+    {
+        "pk": 19, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "E" 
+        }
+    }, 
+    {
+        "pk": 20, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "E" 
+        }
+    }, 
+    {
+        "pk": 21, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "E" 
+        }
+    }, 
+    {
+        "pk": 22, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "E" 
+        }
+    }, 
+    {
+        "pk": 23, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "E" 
+        }
+    }, 
+    {
+        "pk": 24, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "E" 
+        }
+    }, 
+    {
+        "pk": 25, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "E" 
+        }
+    }, 
+    {
+        "pk": 26, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "E" 
+        }
+    }, 
+    {
+        "pk": 27, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "E" 
+        }
+    }, 
+    {
+        "pk": 28, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "E" 
+        }
+    }, 
+    {
+        "pk": 29, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "E" 
+        }
+    }, 
+    {
+        "pk": 30, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "E" 
+        }
+    }, 
+    {
+        "pk": 31, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "E" 
+        }
+    }, 
+    {
+        "pk": 32, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "E" 
+        }
+    }, 
+    {
+        "pk": 33, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "E" 
+        }
+    }, 
+    {
+        "pk": 34, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "E" 
+        }
+    }, 
+    {
+        "pk": 35, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "E" 
+        }
+    }, 
+    {
+        "pk": 36, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "E" 
+        }
+    }, 
+    {
+        "pk": 37, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "E" 
+        }
+    }, 
+    {
+        "pk": 38, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "E" 
+        }
+    }, 
+    {
+        "pk": 39, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "E" 
+        }
+    }, 
+    {
+        "pk": 40, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "E" 
+        }
+    }, 
+    {
+        "pk": 41, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "E" 
+        }
+    }, 
+    {
+        "pk": 42, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "E" 
+        }
+    }, 
+    {
+        "pk": 43, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "E" 
+        }
+    }, 
+    {
+        "pk": 44, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "E" 
+        }
+    }, 
+    {
+        "pk": 45, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": true, 
+            "visibility": "M" 
+        }
+    }, 
+    {
+        "pk": 46, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": true, 
+            "visibility": "M" 
+        }
+    }, 
+    {
+        "pk": 47, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": true, 
+            "visibility": "M" 
+        }
+    }, 
+    {
+        "pk": 48, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "M" 
+        }
+    }, 
+    {
+        "pk": 49, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "M" 
+        }
+    }, 
+    {
+        "pk": 50, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "M" 
+        }
+    }, 
+    {
+        "pk": 51, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "M" 
+        }
+    }, 
+    {
+        "pk": 52, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "M" 
+        }
+    }, 
+    {
+        "pk": 53, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "M" 
+        }
+    }, 
+    {
+        "pk": 54, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "M" 
+        }
+    }, 
+    {
+        "pk": 55, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "M" 
+        }
+    }, 
+    {
+        "pk": 56, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "M" 
+        }
+    }, 
+    {
+        "pk": 57, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": false, 
+            "visibility": "M" 
+        }
+    },
+    {
+        "pk": 58, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": true, 
+            "visibility": "M" 
+        }
+    }, 
+    {
+        "pk": 59, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "whiteboard": null, 
+            "invite_only": true, 
+            "visibility": "M" 
+        }
+    }, 
+    {
+        "pk": 60, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "parent": 1, 
+            "visibility": "M", 
+            "invite_only": true 
+        }
+    }, 
+    {
+        "pk": 61, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "parent": 2, 
+            "visibility": "M", 
+            "invite_only": true 
+        }
+    }, 
+    {
+        "pk": 62, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "parent": 3, 
+            "visibility": "M", 
+            "invite_only": true 
+        }
+    }, 
+    {
+        "pk": 63, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "parent": 4, 
+            "visibility": "M", 
+            "invite_only": true 
+        }
+    }, 
+    {
+        "pk": 64, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "parent": 5, 
+            "visibility": "M", 
+            "invite_only": true 
+        }
+    }, 
+    {
+        "pk": 65, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "parent": 6, 
+            "visibility": "M", 
+            "invite_only": true 
+        }
+    }, 
+    {
+        "pk": 66, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "parent": 7, 
+            "visibility": "M", 
+            "invite_only": true 
+        }
+    }, 
+    {
+        "pk": 67, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "parent": 8, 
+            "visibility": "M", 
+            "invite_only": true 
+        }
+    }, 
+    {
+        "pk": 68, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "parent": 9, 
+            "visibility": "M", 
+            "invite_only": true 
+        }
+    }, 
+    {
+        "pk": 69, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "parent": 10, 
+            "visibility": "M", 
+            "invite_only": true 
+        }
+    }, 
+    {
+        "pk": 70, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "parent": 11, 
+            "visibility": "M", 
+            "invite_only": true 
+        }
+    }, 
+    {
+        "pk": 71, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "parent": 12, 
+            "visibility": "M", 
+            "invite_only": true 
+        }
+    }, 
+    {
+        "pk": 72, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "parent": 13, 
+            "visibility": "M", 
+            "invite_only": true 
+        }
+    }, 
+    {
+        "pk": 73, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "parent": 14, 
+            "visibility": "M", 
+            "invite_only": true 
+        }
+    }, 
+    {
+        "pk": 74, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "parent": 15, 
+            "visibility": "M", 
+            "invite_only": true 
+        }
+    }, 
+    {
+        "pk": 75, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "parent": 16, 
+            "visibility": "M", 
+            "invite_only": true 
+        }
+    }, 
+    {
+        "pk": 76, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "parent": 17, 
+            "visibility": "M", 
+            "invite_only": true 
+        }
+    }, 
+    {
+        "pk": 77, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "parent": 18, 
+            "visibility": "M", 
+            "invite_only": true 
+        }
+    }, 
+    {
+        "pk": 78, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "parent": 19, 
+            "visibility": "M", 
+            "invite_only": true 
+        }
+    }, 
+    {
+        "pk": 79, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "parent": 20, 
+            "visibility": "M", 
+            "invite_only": true 
+        }
+    }, 
+    {
+        "pk": 80, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "parent": 21, 
+            "visibility": "M", 
+            "invite_only": true 
+        }
+    }, 
+    {
+        "pk": 81, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "parent": 22, 
+            "visibility": "M", 
+            "invite_only": true 
+        }
+    }, 
+    {
+        "pk": 82, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "parent": 23, 
+            "visibility": "M", 
+            "invite_only": true 
+        }
+    }, 
+    {
+        "pk": 83, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "parent": 24, 
+            "visibility": "M", 
+            "invite_only": true 
+        }
+    }, 
+    {
+        "pk": 84, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "parent": 25, 
+            "visibility": "M", 
+            "invite_only": true 
+        }
+    }, 
+    {
+        "pk": 85, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "parent": 26, 
+            "visibility": "M", 
+            "invite_only": true 
+        }
+    }, 
+    {
+        "pk": 86, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "parent": 27, 
+            "visibility": "M", 
+            "invite_only": true 
+        }
+    }, 
+    {
+        "pk": 87, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "parent": 28, 
+            "visibility": "M", 
+            "invite_only": true 
+        }
+    }, 
+    {
+        "pk": 88, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "parent": 29, 
+            "visibility": "M", 
+            "invite_only": true 
+        }
+    }, 
+    {
+        "pk": 89, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "parent": 30, 
+            "visibility": "M", 
+            "invite_only": true 
+        }
+    }, 
+    {
+        "pk": 90, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "parent": 31, 
+            "visibility": "M", 
+            "invite_only": true 
+        }
+    }, 
+    {
+        "pk": 91, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "parent": 32, 
+            "visibility": "M", 
+            "invite_only": true 
+        }
+    }, 
+    {
+        "pk": 92, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "parent": 33, 
+            "visibility": "M", 
+            "invite_only": true 
+        }
+    }, 
+    {
+        "pk": 93, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "parent": 34, 
+            "visibility": "M", 
+            "invite_only": true 
+        }
+    }, 
+    {
+        "pk": 94, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "parent": 35, 
+            "visibility": "M", 
+            "invite_only": true 
+        }
+    }, 
+    {
+        "pk": 95, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "parent": 36, 
+            "visibility": "M", 
+            "invite_only": true 
+        }
+    }, 
+    {
+        "pk": 96, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "parent": 37, 
+            "visibility": "M", 
+            "invite_only": true 
+        }
+    }, 
+    {
+        "pk": 97, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "visibility": "M", 
+            "invite_only": true 
+        }
+    }, 
+    {
+        "pk": 98, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "visibility": "M", 
+            "invite_only": true 
+        }
+    }, 
+    {
+        "pk": 99, 
+        "model": "base_groups.visiblegroup", 
+        "fields": {
+            "visibility": "E", 
+            "invite_only": false 
+        }
+    } 
 ]

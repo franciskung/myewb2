@@ -11,7 +11,7 @@ Created on 2009-07-30
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
-from base_groups.models import BaseGroup
+from base_groups.models import BaseGroup, VisibleGroup
 from base_groups.forms import BaseGroupForm, GroupMemberForm
 from base_groups.helpers import get_valid_parents
 from communities.models import Community
@@ -39,7 +39,7 @@ class CommunityForm(BaseGroupForm):
                                      widget=forms.HiddenInput)
     visibility = forms.ChoiceField(required=False,
                                    widget=forms.HiddenInput,
-                                   choices=BaseGroup.VISIBILITY_CHOICES)
+                                   choices=VisibleGroup.VISIBILITY_CHOICES)
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)

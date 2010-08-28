@@ -238,7 +238,7 @@ class MemberProfile(Profile):
         self.save()
         
     def chapters(self):
-        net_members = self.user.member_groups.filter(group__network__chapter_info__isnull=False)
+        net_members = self.user.member_groups.filter(group__visiblegroup__network__chapter_info__isnull=False)
         chapters = []
         for nm in net_members:
             chapters.append(nm.group)

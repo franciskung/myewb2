@@ -18,7 +18,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils.datastructures import SortedDict
 import pycountry
 
-from base_groups.models import BaseGroup
+from base_groups.models.groupmodels import BaseGroup, VisibleGroup, LogisticalGroup
 from base_groups.helpers import group_search_filter, get_counts, get_recent_counts, enforce_visibility 
 from base_groups.forms import GroupLocationForm, GroupAddEmailForm, GroupBulkImportForm
 from base_groups.decorators import group_admin_required, visibility_required

@@ -14,10 +14,10 @@ from django.utils.translation import ugettext_lazy as _
 from django.db import models
 from django.db.models.signals import post_save
 
-from base_groups.models import BaseGroup, GroupMember, GroupLocation, add_creator_to_group
+from base_groups.models import BaseGroup, VisibleGroup, GroupMember, GroupLocation #, add_creator_to_group
 from networks import emailforwards
 
-class Network(BaseGroup):
+class Network(VisibleGroup):
     
     TYPE_CHOICES = (
 	    ('N', _('National')),
@@ -114,4 +114,4 @@ def add_users_to_default_networks(sender, instance=None, created=False, **kwargs
             pass
 post_save.connect(add_users_to_default_networks, sender=User)
 # use same add_creator_to_group from base_groups
-post_save.connect(add_creator_to_group, sender=Network)
+#post_save.connect(add_creator_to_group, sender=Network)
