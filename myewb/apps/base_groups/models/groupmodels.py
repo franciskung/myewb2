@@ -34,6 +34,17 @@ if "notification" in settings.INSTALLED_APPS:
 else:
     notification = None
 
+class BaseGroupManager(models.Manager):
+    def active(self):
+        return self.filter(is_active=True)
+    
+    def get_for_user(self, user, admin=False):
+        if admin:
+            return self.active().filter(members__user=user,
+                                      members__is_admin=True)
+        else:
+            return self.active().filter(member_users=user)
+
 class BaseGroup(Group):
     """Base group (from which networks, communities, projects, etc. derive).
     
@@ -59,6 +70,7 @@ class BaseGroup(Group):
                                     default=True,
                                     editable=False)
     
+    objects = BaseGroupManager()
     class Meta:
         app_label = 'base_groups'
 
@@ -248,6 +260,7 @@ A hidden, private group that does not show up in any listing except for admins.
 Used for logistical purposes, etc.
 """
 class LogisticalGroup(BaseGroup):
+    objects = BaseGroupManager()
     class Meta:
         app_label = 'base_groups'
 
@@ -257,7 +270,8 @@ class LogisticalGroup(BaseGroup):
         self.invite_only = True
         self.parent = None
         return super(LogisticalGroup, self).save(force_insert, force_update)
-    
+
+
 """
 A group that users can see, join, etc.  (The opposite of LogisticalGroup)
 """
@@ -274,6 +288,7 @@ class VisibleGroup(BaseGroup):
     
     whiteboard = models.ForeignKey('whiteboard.Whiteboard', related_name="group", verbose_name=_('whiteboard'), null=True)
 
+    objects = BaseGroupManager()
     class Meta:
         app_label = 'base_groups'
 
@@ -318,12 +333,11 @@ class VisibleGroup(BaseGroup):
 
     def get_visible_children(self, user):
         if not user.is_authenticated():
-            return self.children.filter(visibility='E', is_active=True)
+            return VisibleGroup.objects.active().filter(parent=self, visibility='E')
         elif user.has_module_perms("base_groups") | self.user_is_admin(user):
-            return self.children.filter(is_active=True)
+            return VisibleGroup.objects.active().filter(parent=self)
         else:
-            children = self.children.filter(visibility='E') | self.children.filter(member_users=user)
+            children = VisibleGroup.objects.active().filter(parent=self, visibility='E') | VisibleGroup.objects.get_for_user(user).filter(parent=self)
             if self.user_is_member(user):
-                children = children | self.children.filter(visibility='P')
-            return children.filter(is_active=True).distinct()
-            #return children
+                children = children | VisibleGroup.objects.active().filter(parent=self, visibility='P')
+            return children.distinct()

@@ -82,8 +82,11 @@ class visibility_required(object):
         def newf(request, *args, **kwargs):
             user = request.user
             group_slug = kwargs.get('group_slug', None) or (len(args) > 0 and args[0])
+            model = kwargs.get('model', None) or (len(args) > 1 and args[1])
+            if not model:
+                model = BaseGroup
 
-            group = get_object_or_404(BaseGroup, slug=group_slug)
+            group = get_object_or_404(model, slug=group_slug)
             if group_slug == 'ewb' or group.is_visible(user):
                 return f(request, *args, **kwargs)
             else:

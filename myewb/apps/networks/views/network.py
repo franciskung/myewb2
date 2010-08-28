@@ -127,8 +127,7 @@ def ajax_search(request, network_type):
     
     if search_term:
         # TODO: implement public/private visibility
-        networks = Network.objects.all()
-        networks = networks.filter(is_active=True)
+        networks = Network.objects.active()
         networks = networks.filter(name__icontains=search_term)
         networks = networks.filter(network_type__iexact=network_type)
         networks = networks.order_by("name")
@@ -218,9 +217,7 @@ def update_magic_lists(request, group_slug, username, form_class):
                         # parent__isnull=False ensures it's a chapter list (not a global list)
                         # member_users=other_user membership check
                         # and the exclusion ensures it's a different chapter's list
-                        otherexec = ExecList.objects.filter(parent__isnull=False,
-                                                            member_users=other_user,
-                                                            is_active=True)
+                        otherexec = ExecList.objects.get_for_user(other_user).filter(parent__isnull=False)
                         otherexec = otherexec.exclude(parent=group)
                         
                         if otherexec.count() > 0:
@@ -228,9 +225,7 @@ def update_magic_lists(request, group_slug, username, form_class):
                             # are in fact on multiple exec lists.  so allow this
                             # to proceed if they are already a member of this list
                             # (ie it's not a new membership)...
-                            myexec = ExecList.objects.filter(parent=group,
-                                                             is_active=True,
-                                                             member_users=other_user)
+                            myexec = ExecList.objects.get_for_user(other_user).filter(parent=group)
                             if myexec.count() == 0:
                                 # if they are on a different chapter's list,
                                 # don't let them be added here!!!
@@ -270,12 +265,12 @@ def update_magic_lists(request, group_slug, username, form_class):
                 # code is only run if they have been downgraded from this
                 # chapter's exec (not being added to a different chapter's regular list)
                 elif member and member.is_admin:
-                    execlists = ExecList.objects.filter(member_users=other_user, is_active=True)
+                    execlists = ExecList.objects.get_for_user(other_user)
                     for list in execlists:
                         list.remove_member(other_user)
 
                 # build list of Natl Rep objects that user should be in
-                currentlists = NationalRepList.objects.filter(member_users=other_user, is_active=True)
+                currentlists = NationalRepList.objects.get_for_user(other_user)
                 newlists = []
                 
                 if form.cleaned_data['is_admin'] == True:

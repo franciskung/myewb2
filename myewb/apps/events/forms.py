@@ -2,9 +2,7 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 from lxml.html.clean import clean_html, autolink_html
 
-from base_groups.models import BaseGroup
-from communities.models import Community
-from networks.models import Network
+from base_groups.models import VisibleGroup
 from events.models import Event
 
 class EventForm(forms.ModelForm):
@@ -40,20 +38,13 @@ class GroupEventForm(EventForm):
 
         if user:
             if user.has_module_perms("basegroups"):
-                networks = Network.objects.filter(is_active=True)
-                communities = Community.objects.filter(is_active=True)
+                grp = VisibleGroup.objects.active()
             else:
-                networks = Network.objects.filter(members__user=user,
-                                                  members__is_admin=True,
-                                                  is_active=True)
-                communities = Community.objects.filter(members__user=user,
-                                                       members__is_admin=True,
-                                                       is_active=True)
+                grp = VisibleGroup.objects.get_for_useR(user, admin=True)
+                
             groups = []
-            for n in networks:
-                groups.append(("n%d" % n.pk, n.name))
-            for c in communities:
-                groups.append(("c%d" % c.pk, c.name))
+            for g in grp:
+                groups.append(("n%d" % g.pk, g.name))
             self.fields['group'].choices.extend(groups)
             
 class EventEmailForm(forms.Form):

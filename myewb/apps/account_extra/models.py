@@ -8,7 +8,7 @@ from account_extra import signals
 from networks.models import Network
 from communities.models import Community
 from base_groups.helpers import get_counts, get_recent_counts
-from base_groups.models import VisibleGroup
+from base_groups.models import BaseGroup, VisibleGroup
 
 import settings
 
@@ -96,16 +96,16 @@ def softdelete(self, *args, **kwargs):
 User.softdelete = softdelete
 
 def get_networks(self):
-    return Network.objects.filter(member_users=self, is_active=True).order_by('name')
+    return Network.objects.get_for_user(self).order_by('name')
 User.get_networks = get_networks
 
 def get_groups(self):
-    grps = VisibleGroup.objects.filter(member_users=self, is_active=True)
+    grps = VisibleGroup.objects.get_for_user(self)
     return get_recent_counts(grps, BaseGroup).order_by('-recent_topic_count')
 User.get_groups = get_groups
 
 def get_communities(self):
-    return Community.objects.filter(member_users=self, is_active=True).order_by('name')
+    return Community.objects.get_for_user(self).order_by('name')
 User.get_communities = get_communities
 
 # override user password management so that I can integrate with Google Apps

@@ -576,7 +576,7 @@ def profile(request, username, template_name="profiles/profile.html", extra_cont
         # friends & admins have visibility.
         has_visibility = is_friend or request.user.has_module_perms("profiles")
         if not has_visibility:      #but so does your chapter's exec
-            mygrps = Network.objects.filter(members__user=request.user, members__is_admin=True, is_active=True).order_by('name')
+            mygrps = Network.objects.get_for_user(request.user, admin=True).order_by('name')
             if len(list(set(mygrps) & set(other_user.get_networks()))) > 0:
                 has_visibility = True
         
@@ -611,9 +611,7 @@ def pay_membership(request, username):
     
     # Show payment form if you are upgrading yourself
     if request.user == other_user:
-        chapters = Network.objects.filter(chapter_info__isnull=False,
-                                          member_users=request.user,
-                                          is_active=True)
+        chapters = Network.objects.get_for_user(request.user).filter(chapter_info__isnull=False)
         form = MembershipForm(chapters=chapters)
         form.helper.action = reverse('profile_pay_membership2', kwargs={'username': username})
     
@@ -642,9 +640,7 @@ def pay_membership2(request, username):
     # Show payment form if you are upgrading yourself
     if request.user == other_user:
         if request.method == 'POST':
-            chapters = Network.objects.filter(chapter_info__isnull=False,
-                                              member_users=request.user,
-                                              is_active=True)
+            chapters = Network.objects.get_for_user(request.user).filter(chapter_info__isnull=False)
             f = MembershipForm(request.POST, chapters=chapters)
             
             if f.is_valid():

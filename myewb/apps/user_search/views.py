@@ -43,7 +43,7 @@ def user_search(request):
             #qry = qry & Q(memberprofile__grandfathered=False)
             
             # restrict results to friends or people in your chapter, too
-            mygrps = VisibleGroup.objects.filter(member_users=request.user, is_active=True)
+            mygrps = VisibleGroup.objects.get_for_user(request.user)
             qry = qry & (Q(member_groups__group__in=mygrps) | Q(friends=request.user) | Q(_unused_=request.user))
 
         # build the final query

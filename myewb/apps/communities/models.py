@@ -11,14 +11,13 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models.signals import post_save
 from django.utils.translation import ugettext_lazy as _
-from base_groups.models import BaseGroup, VisibleGroup, GroupMember #, add_creator_to_group
+from base_groups.models import BaseGroupManager, VisibleGroup, GroupMember #, add_creator_to_group
 
-class CommunityManager(models.Manager):
+class CommunityManager(BaseGroupManager):
     def listing(self):
-        return self.get_query_set().filter(parent__isnull=True, is_active=True)
+        return self.active().filter(parent__isnull=True)
         
 class Community(VisibleGroup):
-    objects = CommunityManager()
     
     def get_absolute_url(self):
         return reverse('community_detail', kwargs={'group_slug': self.slug})
@@ -36,6 +35,7 @@ class Community(VisibleGroup):
         self.model = "Community"
         return super(Community, self).save(force_insert, force_update)
         
+    objects = BaseGroupManager()
     class Meta:
         verbose_name_plural = "communities"
 # use same add_creator_to_group from base_groups
@@ -47,6 +47,8 @@ class NationalRepList(Community):
                                   default='M', editable=False)
     invite_only = models.BooleanField(_('invite only'), default=True,
                                       editable=False)
+
+    objects = BaseGroupManager()
     
 class ExecList(Community):
     visibility = models.CharField(_('visibility'), max_length=1,
@@ -54,3 +56,5 @@ class ExecList(Community):
                                   default='M', editable=False)
     invite_only = models.BooleanField(_('invite only'), default=True,
                                       editable=False)
+
+    objects = BaseGroupManager()

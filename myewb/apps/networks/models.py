@@ -14,8 +14,12 @@ from django.utils.translation import ugettext_lazy as _
 from django.db import models
 from django.db.models.signals import post_save
 
-from base_groups.models import BaseGroup, VisibleGroup, GroupMember, GroupLocation #, add_creator_to_group
+from base_groups.models import BaseGroup, BaseGroupManager, VisibleGroup, GroupMember, GroupLocation #, add_creator_to_group
 from networks import emailforwards
+
+class NetworkManager(BaseGroupManager):
+    def chapters(self):
+        return self.active().filter(chapter_info__isnull=False)
 
 class Network(VisibleGroup):
     
@@ -27,6 +31,8 @@ class Network(VisibleGroup):
     )
     network_type = models.CharField(_('network type'), max_length=1, null=True, blank=True, choices=TYPE_CHOICES)
     
+    objects = NetworkManager()
+
     def get_absolute_url(self):
         return reverse('network_detail', kwargs={'group_slug': self.slug})
         

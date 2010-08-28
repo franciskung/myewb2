@@ -56,7 +56,7 @@ class EditNetworkMemberForm(EditGroupMemberForm):
             
         # build list of defaults (NR groups you're already in)
         defaults = []
-        mylists = NationalRepList.objects.filter(member_users=self.instance.user, is_active=True)
+        mylists = NationalRepList.objects.get_for_useR(self.instance.user)
         for list in mylists:
             defaults.append(list.slug)
             
