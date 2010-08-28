@@ -20,7 +20,7 @@ from messages.forms import ComposeForm as OriginalComposeForm
 from lxml.html.clean import clean_html, autolink_html
 
 from friends.models import Friendship
-from base_groups.models import BaseGroup, GroupMember
+from base_groups.models import VisibleGroup, GroupMember
 
 class ComposeForm(OriginalComposeForm):
     """
@@ -57,7 +57,7 @@ class ComposeForm(OriginalComposeForm):
             for r in recipients:
                 if not Friendship.objects.are_friends(self.sender, r):
                     # should be in BaseGroup manager, not here and also account_extra.models (ie, User.get_groups())
-                    grps = BaseGroup.objects.filter(member_users=self.sender, is_active=True).exclude(model="LogisticalGroup")
+                    grps = VisibleGroup.objects.filter(member_users=self.sender, is_active=True)
                     
                     # should probably also be in a BaseGroup manager somewhere...!
                     gm = GroupMember.objects.filter(user=r, group__in=grps).count()

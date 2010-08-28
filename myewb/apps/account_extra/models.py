@@ -8,7 +8,7 @@ from account_extra import signals
 from networks.models import Network
 from communities.models import Community
 from base_groups.helpers import get_counts, get_recent_counts
-from base_groups.models import BaseGroup
+from base_groups.models import VisibleGroup
 
 import settings
 
@@ -100,8 +100,7 @@ def get_networks(self):
 User.get_networks = get_networks
 
 def get_groups(self):
-    # un-hardcode the LogisticalGroup bit.  shoudl probably subclass BaseGroup to VisibleGroup first.
-    grps = BaseGroup.objects.filter(member_users=self, is_active=True).exclude(model="LogisticalGroup")
+    grps = VisibleGroup.objects.filter(member_users=self, is_active=True)
     return get_recent_counts(grps, BaseGroup).order_by('-recent_topic_count')
 User.get_groups = get_groups
 
