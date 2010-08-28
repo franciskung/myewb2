@@ -59,6 +59,10 @@ class GroupMemberManager(models.Manager):
     def bulk(self):
         return self.get_query_set().filter(user__is_bulk=True)
 
+EMAIL_CHOICES = (('d', "group default"),
+                 ('a', "announcements only"),
+                 ('e', "everything as email"),
+                 ('z', "no mail"))
 class GroupMember(BaseGroupMember):
     """
     Non-abstract representation of BaseGroupMember. Base class is required
@@ -71,6 +75,8 @@ class GroupMember(BaseGroupMember):
     # away = models.BooleanField(_('away'), default=False)
     # away_message = models.CharField(_('away_message'), max_length=500)
     # away_since = models.DateTimeField(_('away since'), default=datetime.now)
+    
+    email_preferences = models.CharField(max_length=1, choices=EMAIL_CHOICES, default='d')
 
     objects = GroupMemberManager()
 

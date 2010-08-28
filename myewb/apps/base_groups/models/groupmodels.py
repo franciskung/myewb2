@@ -281,6 +281,10 @@ class VisibleGroup(BaseGroup):
     )
     visibility = models.CharField(_('visibility'), max_length=1, choices=VISIBILITY_CHOICES, default='E')
     
+    EMAIL_TYPE = (('a', "Announcement list"),
+                  ('d', "Discussion list"))
+    list_type = models.CharField(max_length=1, choices=EMAIL_TYPE, default='d')
+    
     whiteboard = models.ForeignKey('whiteboard.Whiteboard', related_name="group", verbose_name=_('whiteboard'), null=True)
 
     objects = BaseGroupManager()
