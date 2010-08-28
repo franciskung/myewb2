@@ -1,11 +1,11 @@
 """myEWB base groups models declarations
 
 This file is part of myEWB
-Copyright 2009 Engineers Without Borders (Canada) Organisation and/or volunteer contributors
+Copyright 2009 Engineers Without Borders Canada
 Some code derived from Pinax, copyright 2008-2009 James Tauber and Pinax Team, licensed under the MIT License
 
-Last modified on 2009-07-29
-@author Joshua Gorner, Benjamin Best
+Last modified on 2010-08-28
+@author Joshua Gorner, Benjamin Best, Francis Kung
 """
 
 import datetime
@@ -25,7 +25,6 @@ from emailconfirmation.models import EmailAddress
 from siteutils.helpers import get_email_user
 from manager_extras.models import ExtraUserManager
 from groups.base import Group
-#from whiteboard.models import Whiteboard
 from messages.models import Message
 from base_groups.models.membermodels import GroupMember
 
@@ -216,8 +215,6 @@ class BaseGroup(Group):
         super(BaseGroup, self).save(force_insert=force_insert, force_update=force_update)
         post_save.send(sender=BaseGroup, instance=self, created=created)
 
-#def add_creator_to_group(sender, instance, created, **kwargs):
-        # this is only a problem when loading sample data...
         if created and self.creator:
             gm = GroupMember.objects.filter(user=self.creator,
                                             group=self)
@@ -228,7 +225,6 @@ class BaseGroup(Group):
                         is_admin=True,
                         admin_title='%s Creator' % self.name,
                         admin_order = 1)
-#post_save.connect(add_creator_to_group, sender=BaseGroup)
 
     def delete(self):
         for m in self.member_users.all():
@@ -236,7 +232,6 @@ class BaseGroup(Group):
 
         self.is_active = False
         self.save()
-        #super(BaseGroup, self).delete()
 
     def get_url_kwargs(self):
         return {'group_slug': self.slug}
