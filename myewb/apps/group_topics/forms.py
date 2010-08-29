@@ -27,13 +27,16 @@ class GroupTopicForm(forms.ModelForm):
         model = GroupTopic
         fields = ('title', 'body', 'tags', 'send_as_email')
         
+    # note, the group passed in should be a VisibleGroup for sending permissions
+    # to work properly!  If you pass in a BaseGroup, it'll always default to 
+    # announcement-only style emailing!
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
         group = kwargs.pop('group', None)
         super(GroupTopicForm, self).__init__(*args, **kwargs)
 
         # build list of potential "from" addresses
-        if user and group and group.user_is_admin(user) and group.slug != "ewb":
+        if group.can_email(user):
             emaillist = user.get_profile().email_addresses()
             emails = []
             for email in emaillist:

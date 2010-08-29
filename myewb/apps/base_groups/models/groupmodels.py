@@ -103,6 +103,10 @@ class BaseGroup(Group):
     # subclasses should override this...
     def can_bulk_add(self, user):
         return False
+        
+    # subclasses should override this as well...
+    def can_email(self, user):
+        return self.user_is_admin(user)
 
     def get_absolute_url(self):
         return reverse('group_detail', kwargs={'group_slug': self.slug})
@@ -262,6 +266,9 @@ class LogisticalGroup(BaseGroup):
     class Meta:
         app_label = 'base_groups'
 
+    def can_email(self, user):
+        return False
+        
     def save(self, force_insert=False, force_update=False):
         self.model = "LogisticalGroup"
         self.visibility = 'M'
@@ -294,6 +301,15 @@ class VisibleGroup(BaseGroup):
     class Meta:
         app_label = 'base_groups'
 
+    def can_email(self, user):
+        if self.list_type == 'd':
+            return self.user_is_member(user)
+        elif self.list_type == 'a':
+            return self.user_is_admin(user)
+        else:
+            # shouldn't happen... but just in case.
+            return False
+        
     def is_visible(self, user):
         visible = False
         
