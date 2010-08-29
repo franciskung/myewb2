@@ -1674,7 +1674,8 @@
         "fields": {
             "whiteboard": null, 
             "invite_only": false, 
-            "visibility": "E" 
+            "visibility": "E",
+            "list_type": "a"
         }
     }, 
     {
@@ -1683,7 +1684,8 @@
         "fields": {
             "whiteboard": null, 
             "invite_only": false, 
-            "visibility": "E" 
+            "visibility": "E",
+            "list_type": "a"
         }
     }, 
     {
@@ -1692,7 +1694,8 @@
         "fields": {
             "whiteboard": null, 
             "invite_only": false, 
-            "visibility": "E" 
+            "visibility": "E",
+            "list_type": "a"
         }
     }, 
     {
@@ -1701,7 +1704,8 @@
         "fields": {
             "whiteboard": null, 
             "invite_only": false, 
-            "visibility": "E" 
+            "visibility": "E",
+            "list_type": "a"
         }
     }, 
     {
@@ -1710,7 +1714,8 @@
         "fields": {
             "whiteboard": null, 
             "invite_only": false, 
-            "visibility": "E" 
+            "visibility": "E",
+            "list_type": "a"
         }
     }, 
     {
@@ -1719,7 +1724,8 @@
         "fields": {
             "whiteboard": null, 
             "invite_only": false, 
-            "visibility": "E" 
+            "visibility": "E",
+            "list_type": "a"
         }
     }, 
     {
@@ -1728,7 +1734,8 @@
         "fields": {
             "whiteboard": null, 
             "invite_only": false, 
-            "visibility": "E" 
+            "visibility": "E",
+            "list_type": "a"
         }
     }, 
     {
@@ -1737,7 +1744,8 @@
         "fields": {
             "whiteboard": 3, 
             "invite_only": false, 
-            "visibility": "E" 
+            "visibility": "E",
+            "list_type": "a"
         }
     }, 
     {
@@ -1746,7 +1754,8 @@
         "fields": {
             "whiteboard": null, 
             "invite_only": false, 
-            "visibility": "E" 
+            "visibility": "E",
+            "list_type": "a"
         }
     }, 
     {
@@ -1755,7 +1764,8 @@
         "fields": {
             "whiteboard": null, 
             "invite_only": false, 
-            "visibility": "E" 
+            "visibility": "E",
+            "list_type": "a"
         }
     }, 
     {
@@ -1764,7 +1774,8 @@
         "fields": {
             "whiteboard": null, 
             "invite_only": false, 
-            "visibility": "E" 
+            "visibility": "E",
+            "list_type": "a"
         }
     }, 
     {
@@ -1773,7 +1784,8 @@
         "fields": {
             "whiteboard": null, 
             "invite_only": false, 
-            "visibility": "E" 
+            "visibility": "E",
+            "list_type": "a"
         }
     }, 
     {
@@ -1782,7 +1794,8 @@
         "fields": {
             "whiteboard": null, 
             "invite_only": false, 
-            "visibility": "E" 
+            "visibility": "E",
+            "list_type": "a"
         }
     }, 
     {
@@ -1791,7 +1804,8 @@
         "fields": {
             "whiteboard": null, 
             "invite_only": false, 
-            "visibility": "E" 
+            "visibility": "E",
+            "list_type": "a"
         }
     }, 
     {
@@ -1800,7 +1814,8 @@
         "fields": {
             "whiteboard": null, 
             "invite_only": false, 
-            "visibility": "E" 
+            "visibility": "E",
+            "list_type": "a"
         }
     }, 
     {
@@ -1809,7 +1824,8 @@
         "fields": {
             "whiteboard": null, 
             "invite_only": false, 
-            "visibility": "E" 
+            "visibility": "E",
+            "list_type": "a"
         }
     }, 
     {
@@ -1818,7 +1834,8 @@
         "fields": {
             "whiteboard": null, 
             "invite_only": false, 
-            "visibility": "E" 
+            "visibility": "E",
+            "list_type": "a"
         }
     }, 
     {
@@ -1827,7 +1844,8 @@
         "fields": {
             "whiteboard": null, 
             "invite_only": false, 
-            "visibility": "E" 
+            "visibility": "E",
+            "list_type": "a"
         }
     }, 
     {
@@ -1836,7 +1854,8 @@
         "fields": {
             "whiteboard": null, 
             "invite_only": false, 
-            "visibility": "E" 
+            "visibility": "E",
+            "list_type": "a"
         }
     }, 
     {
@@ -1845,7 +1864,8 @@
         "fields": {
             "whiteboard": null, 
             "invite_only": false, 
-            "visibility": "E" 
+            "visibility": "E",
+            "list_type": "a"
         }
     }, 
     {
@@ -1854,7 +1874,8 @@
         "fields": {
             "whiteboard": null, 
             "invite_only": false, 
-            "visibility": "E" 
+            "visibility": "E",
+            "list_type": "a"
         }
     }, 
     {
@@ -1863,7 +1884,8 @@
         "fields": {
             "whiteboard": null, 
             "invite_only": false, 
-            "visibility": "E" 
+            "visibility": "E",
+            "list_type": "a"
         }
     }, 
     {
@@ -1872,7 +1894,8 @@
         "fields": {
             "whiteboard": null, 
             "invite_only": false, 
-            "visibility": "E" 
+            "visibility": "E",
+            "list_type": "a"
         }
     }, 
     {
@@ -1881,7 +1904,8 @@
         "fields": {
             "whiteboard": null, 
             "invite_only": false, 
-            "visibility": "E" 
+            "visibility": "E",
+            "list_type": "a"
         }
     }, 
     {
@@ -1890,7 +1914,8 @@
         "fields": {
             "whiteboard": null, 
             "invite_only": false, 
-            "visibility": "E" 
+            "visibility": "E",
+            "list_type": "a"
         }
     }, 
     {
@@ -1899,7 +1924,8 @@
         "fields": {
             "whiteboard": null, 
             "invite_only": false, 
-            "visibility": "E" 
+            "visibility": "E",
+            "list_type": "a"
         }
     }, 
     {
@@ -1908,7 +1934,8 @@
         "fields": {
             "whiteboard": null, 
             "invite_only": false, 
-            "visibility": "E" 
+            "visibility": "E",
+            "list_type": "a"
         }
     }, 
     {
@@ -1917,7 +1944,8 @@
         "fields": {
             "whiteboard": null, 
             "invite_only": false, 
-            "visibility": "E" 
+            "visibility": "E",
+            "list_type": "a"
         }
     }, 
     {
@@ -1926,7 +1954,8 @@
         "fields": {
             "whiteboard": null, 
             "invite_only": false, 
-            "visibility": "E" 
+            "visibility": "E",
+            "list_type": "a"
         }
     }, 
     {
@@ -1935,7 +1964,8 @@
         "fields": {
             "whiteboard": null, 
             "invite_only": false, 
-            "visibility": "E" 
+            "visibility": "E",
+            "list_type": "a"
         }
     }, 
     {
@@ -1944,7 +1974,8 @@
         "fields": {
             "whiteboard": null, 
             "invite_only": false, 
-            "visibility": "E" 
+            "visibility": "E",
+            "list_type": "a"
         }
     }, 
     {
@@ -1953,7 +1984,8 @@
         "fields": {
             "whiteboard": null, 
             "invite_only": false, 
-            "visibility": "E" 
+            "visibility": "E",
+            "list_type": "a"
         }
     }, 
     {
@@ -1962,7 +1994,8 @@
         "fields": {
             "whiteboard": null, 
             "invite_only": false, 
-            "visibility": "E" 
+            "visibility": "E",
+            "list_type": "a"
         }
     }, 
     {
@@ -1971,7 +2004,8 @@
         "fields": {
             "whiteboard": null, 
             "invite_only": false, 
-            "visibility": "E" 
+            "visibility": "E",
+            "list_type": "a"
         }
     }, 
     {
@@ -1980,7 +2014,8 @@
         "fields": {
             "whiteboard": null, 
             "invite_only": false, 
-            "visibility": "E" 
+            "visibility": "E",
+            "list_type": "a"
         }
     }, 
     {
@@ -1989,7 +2024,8 @@
         "fields": {
             "whiteboard": null, 
             "invite_only": false, 
-            "visibility": "E" 
+            "visibility": "E",
+            "list_type": "a"
         }
     }, 
     {
@@ -1998,7 +2034,8 @@
         "fields": {
             "whiteboard": null, 
             "invite_only": false, 
-            "visibility": "E" 
+            "visibility": "E",
+            "list_type": "a"
         }
     }, 
     {

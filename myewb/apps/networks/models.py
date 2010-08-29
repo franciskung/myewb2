@@ -44,6 +44,9 @@ class Network(VisibleGroup):
             self.from_name = "EWB " + self.name
         if not self.from_email:
             self.from_email = "%s@ewb.ca" % self.slug
+            
+        # and networks are always announcement-only
+        self.list_type = 'a'
         
         return super(Network, self).save(force_insert, force_update)
         
