@@ -34,6 +34,28 @@
         </tr> 
   
         <tr>
+            <th>{% trans "Group type" %}</th>
+            <td>
+                {% for x, y in group.LIST_TYPES %}
+                    {% ifequal group.list_type x %}
+                        {{ y }}.
+                    {% endifequal %}
+                {% endfor %}
+                <br/>
+                This group is visible to
+                {% for x, y in group.VISIBILITY_CHOICES %}
+                    {% ifequal group.visibility x %}
+                        {{ y }}.
+                    {% endifequal %}
+                {% endfor %}
+                <br/>
+                {% if group.invite_only %}
+                    Membership to this group is invite-only.
+                {% endif %}
+            </td>
+        </tr>
+  
+        <tr>
             <th>{% trans "Date created" %}</th>
             <td>{{ group.created|date }}</td>
         </tr>

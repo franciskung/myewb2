@@ -110,6 +110,9 @@ class BaseGroup(Group):
     def get_member_emails(self):
         members_with_emails = self.members.all().select_related(depth=1)
         return [member.user.email for member in members_with_emails if member.user.email]
+        
+    def num_members(self):
+        return self.members.all().count()
 
     def add_member(self, user):
         """
@@ -281,9 +284,9 @@ class VisibleGroup(BaseGroup):
     )
     visibility = models.CharField(_('visibility'), max_length=1, choices=VISIBILITY_CHOICES, default='E')
     
-    EMAIL_TYPE = (('a', "Announcement list"),
-                  ('d', "Discussion list"))
-    list_type = models.CharField(max_length=1, choices=EMAIL_TYPE, default='d')
+    LIST_TYPES = (('d', "Discussion group: any member can send emails to the group"),
+                  ('a', "Announcement list: only admins can send emails to the group"))
+    list_type = models.CharField(max_length=1, choices=LIST_TYPES, default='d')
     
     whiteboard = models.ForeignKey('whiteboard.Whiteboard', related_name="group", verbose_name=_('whiteboard'), null=True)
 

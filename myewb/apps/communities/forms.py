@@ -33,6 +33,11 @@ class CommunityForm(BaseGroupForm):
                                           widget=forms.RadioSelect,
                                           initial='P')
                                           
+    list_type = forms.ChoiceField(label='List type',
+                                  choices=VisibleGroup.LIST_TYPES,
+                                  widget=forms.RadioSelect,
+                                  initial='d')
+                                          
     # hide these - we'll change the values later depending on the 
     # "group_permissions" field anyway
     invite_only = forms.BooleanField(required=False,
@@ -102,5 +107,5 @@ class CommunityForm(BaseGroupForm):
     class Meta:
         model = Community
         fields = ('name', 'slug', 'description', 'parent', 'invite_only', 'visibility',
-                  'welcome_email')
+                  'welcome_email', 'list_type')
 

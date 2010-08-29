@@ -290,7 +290,7 @@
                 </div>
             {% endfor %}
             
-            <p><a href="{% groupurl members_index group %}">{% trans "Full list" %}</a></p>
+            <p><a href="{% groupurl members_index group %}">{% trans "Full list" %}</a> ({{ group.num_members }} total)</p>
         </div>
     {% endif %}
 {% endblock %}
