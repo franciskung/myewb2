@@ -13,7 +13,8 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
 
-from socialmap.calculate import calculate
+from socialmap.calculate import calculate, SOCIALMAP_BENCHMARK
+
 
 class RelationshipManager(models.Manager):
     def get(self, user1, user2, auto_update=True):
@@ -38,7 +39,7 @@ class RelationshipManager(models.Manager):
             #   (shouldn't happen if we run a nightly cron or an on-login updater,
             #    but just in case...)
             oneday = datetime.now() - timedelta(days=1)
-            if not obj[0].last_updated or obj[0].last_updated < oneday:
+            if SOCIALMAP_BENCHMARK or not obj[0].last_updated or obj[0].last_updated < oneday:
                 obj[0].update()
             
         # throw warning if multiple records found??
@@ -52,12 +53,19 @@ class RelationshipManager(models.Manager):
                                         is_bulk=False)
                                         
         relationships = {}
+        if SOCIALMAP_BENCHMARK:
+            print datetime.now()
         for u in all_users:
             if u == user1:
                 continue
                 
             r = self.get(user1, u, auto_update)
+            if SOCIALMAP_BENCHMARK:
+                print datetime.now(), r.score, r.user1.email, r.user2.email
             relationships[r] = r.score
+        
+        if SOCIALMAP_BENCHMARK:
+            print datetime.now()
             
         # is there a more efficient sort?
         # http://stackoverflow.com/questions/613183/python-sort-a-dictionary-by-value

@@ -4,6 +4,8 @@ from friends.models import Friendship
 
 from base_groups.models import GroupMemberRecord
 
+SOCIALMAP_BENCHMARK = False
+
 def calculate(r):
     if r.updating == True:
         return
@@ -14,11 +16,21 @@ def calculate(r):
     
     user1 = r.user1
     user2 = r.user2
-    
+
+    if SOCIALMAP_BENCHMARK:
+        print datetime.now()    
     r.groups, c_groups = calculate_groups(user1, user2)
+    if SOCIALMAP_BENCHMARK:
+        print datetime.now(), "groups done"
     r.events, c_events = calculate_events(user1, user2)
+    if SOCIALMAP_BENCHMARK:
+        print datetime.now(), "events done"
     r.friendships, c_friends = calculate_friendships(user1, user2)
+    if SOCIALMAP_BENCHMARK:
+        print datetime.now(), "friends done"
     r.other, c_other = calculate_other(user1, user2)
+    if SOCIALMAP_BENCHMARK:
+        print datetime.now(), "other done"
     
     r.cumulative = c_groups + c_events + c_friends + c_other
     r.score = r.groups + r.events + r.friendships + r.other
@@ -40,6 +52,8 @@ def calculate_groups(user1, user2):
         if g in user1_groups:
             score = score + 25
             cumulative = cumulative + 25
+    if SOCIALMAP_BENCHMARK:
+        print datetime.now(), " common current groups"
             
     # TODO: decay for inactive groups
     
@@ -58,6 +72,8 @@ def calculate_groups(user1, user2):
                 del(open_groups[r.group])
     for g in open_groups:
         user1_past_groups.append((g, open_groups[g], datetime.now()))
+    if SOCIALMAP_BENCHMARK:
+        print datetime.now(), " build user1 past groups"
 
     gmr = GroupMemberRecord.objects.filter(user=user2)
     user2_past_groups = []
@@ -72,6 +88,8 @@ def calculate_groups(user1, user2):
                 del(open_groups[r.group])
     for g in open_groups:
         user2_past_groups.append((g, open_groups[g], datetime.now()))
+    if SOCIALMAP_BENCHMARK:
+        print datetime.now(), " build user2 pas groups"
 
     for group, start, end in user1_past_groups:
         for group2, start2, end2 in user2_past_groups:
@@ -80,6 +98,8 @@ def calculate_groups(user1, user2):
                 score = score + 10
                 cumulative = cumulative + 25
                 break
+    if SOCIALMAP_BENCHMARK:
+        print datetime.now(), " match past groups"
                 
     # TODO: boost active and flagged groups
     
@@ -88,6 +108,8 @@ def calculate_groups(user1, user2):
     if user1.get_profile().get_chapter() == user2.get_profile().get_chapter():
         score = score + 50
         cumulative = cumulative + 50
+    if SOCIALMAP_BENCHMARK:
+        print datetime.now(), " chapter match"
                     
     return score, cumulative
 
