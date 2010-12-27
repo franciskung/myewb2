@@ -234,6 +234,7 @@ INSTALLED_APPS = (
     'mailchimp',
     'finance',
     'confcomm',
+    'socialmap',
 
     # our own third-party libs
     'contrib.django_evolution',
