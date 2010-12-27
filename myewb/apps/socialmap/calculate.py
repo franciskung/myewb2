@@ -1,5 +1,7 @@
 from datetime import timedelta, datetime
 
+from friends.models import Friendship
+
 from base_groups.models import GroupMemberRecord
 from socialmap.models import Relationship
 
@@ -88,13 +90,39 @@ def calculate_groups(user1, user2):
         score = score + 50
         cumulative = cumulative + 50
                     
-    return (score, cumulative)
+    return score, cumulative
 
 def calculate_events(user1, user2):
+    # TODO: pull in past conference, retreat info
+    # TODO: pull in event rsvp's when those are implemented
     return 0
 
 def calculate_friendships(user1, user2):
-    return 0
+    score = 0
+    cumulative = 0
+    
+    # quick friend check
+    if Friendship.objects.are_friends(user1, user2):
+        score = score + 50
+        cumulative = cumulative + 50
+        
+    # TODO: do facebook friend matching
+    
+    # look for common friends
+    friends1 = set()
+    for f in Friendship.objects.friends_for_user(user1):
+        friends1.add(f['friend'])
+        
+    friends2 = set()
+    for f in Friendship.objects.friends_for_user(user2):
+        friends1.add(f['friend'])
+        
+    # TODO: make the weighting based on friendship scores?
+    mutual_friends = friends1 & friends2
+    score = score + (len(mutual_friends) * 10)
+    cumulative = cumulative + (len(mutual_friends) * 10)
+            
+    return score, cumulative
 
 def calculate_other(user1, user2):
     return 0
