@@ -50,12 +50,12 @@ def calculate_groups(user1, user2):
     user1_groups = user1.get_groups()
     for g in user2.get_groups():
         if g in user1_groups:
+            # TODO: decay for inactive groups
             score = score + 25
             cumulative = cumulative + 25
     if SOCIALMAP_BENCHMARK:
         print datetime.now(), " common current groups"
             
-    # TODO: decay for inactive groups
     
     # find all common past groups
     # TODO: refactor to GroupMemberRecrod, to make easier to manage...
@@ -103,7 +103,7 @@ def calculate_groups(user1, user2):
                 
     # TODO: boost active and flagged groups
     
-    # TODO: adjust basd on grou psize
+    # TODO: adjust based on group size
     
     if user1.get_profile().get_chapter() == user2.get_profile().get_chapter():
         score = score + 50
