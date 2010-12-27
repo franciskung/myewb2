@@ -35,7 +35,7 @@ class RelationshipManager(models.Manager):
             #   (shouldn't happen if we run a nightly cron or an on-login updater,
             #    but just in case...)
             oneday = datetime.now() - timedelta(days=1)
-            if (not obj[0].last_updated or obj[0].last_updated < oneday)
+            if not obj[0].last_updated or obj[0].last_updated < oneday:
                 obj[0].update()
             
         # throw warning if multiple records found??
@@ -43,8 +43,8 @@ class RelationshipManager(models.Manager):
     
 
 class Relationship(models.Model):
-    user1 = models.ForeignKey(User, db_index=True)
-    user2 = models.ForeignKey(User, db_index=True)
+    user1 = models.ForeignKey(User, db_index=True, related_name='relationships')
+    user2 = models.ForeignKey(User, db_index=True, related_name='relationships2')
     
     score = models.IntegerField(default=0)
     
@@ -54,7 +54,7 @@ class Relationship(models.Model):
     friendships = models.IntegerField(default=0)
     other = models.IntegerField(default=0)
     
-    updating = models.BooleanField(null=True, blank=True, editable=False)
+    updating = models.NullBooleanField(blank=True, editable=False)
     last_updated = models.DateTimeField(auto_now=True)
 
     objects = RelationshipManager()
