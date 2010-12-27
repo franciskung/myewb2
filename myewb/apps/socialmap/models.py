@@ -6,11 +6,14 @@ Copyright 2010 Engineers Without Borders Canada
 @author: Francis Kung
 """
 
+import operator
 from datetime import timedelta, datetime
 
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
+
+from socialmap.calculate import calculate
 
 class RelationshipManager(models.Manager):
     def get(self, user1, user2, auto_update=True):
@@ -28,7 +31,7 @@ class RelationshipManager(models.Manager):
             r = Relationship(user1=user1, user2=user2)
             r.update()
             r.save()
-            obj[0] = r
+            obj = [r]
         
         if auto_update and not obj[0].updating:
             # if stale, recalculate the score
@@ -40,6 +43,29 @@ class RelationshipManager(models.Manager):
             
         # throw warning if multiple records found??
         return obj[0]
+        
+    def get_for_user(self, user1, auto_update=True):
+        # get all users who have logged in recently (ie recent activity)
+        month_ago = datetime.now() - timedelta(days=31)
+        all_users = User.objects.filter(last_login__gt=month_ago,
+                                        is_active=True,
+                                        is_bulk=False)
+                                        
+        relationships = {}
+        for u in all_users:
+            if u == user1:
+                continue
+                
+            r = self.get(user1, u, auto_update)
+            relationships[r] = r.score
+            
+        # is there a more efficient sort?
+        # http://stackoverflow.com/questions/613183/python-sort-a-dictionary-by-value
+        sorted_relationships = []
+        for r in sorted(relationships, key=relationships.get, reverse=True):
+            sorted_relationships.append(r)
+            
+        return sorted_relationships            
     
 
 class Relationship(models.Model):

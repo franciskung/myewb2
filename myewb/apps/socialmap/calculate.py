@@ -3,7 +3,6 @@ from datetime import timedelta, datetime
 from friends.models import Friendship
 
 from base_groups.models import GroupMemberRecord
-from socialmap.models import Relationship
 
 def calculate(r):
     if r.updating == True:
@@ -95,7 +94,7 @@ def calculate_groups(user1, user2):
 def calculate_events(user1, user2):
     # TODO: pull in past conference, retreat info
     # TODO: pull in event rsvp's when those are implemented
-    return 0
+    return 0, 0
 
 def calculate_friendships(user1, user2):
     score = 0
@@ -125,5 +124,5 @@ def calculate_friendships(user1, user2):
     return score, cumulative
 
 def calculate_other(user1, user2):
-    return 0
+    return 0, 0
 
