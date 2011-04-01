@@ -12,6 +12,7 @@ Copyright 2009 Engineers Without Borders (Canada) Organisation and/or volunteer 
 {% load group_topics_tags %}
 {% load base_groups_tags %}
 {% load pagination_tags %}
+{% load fake_ads %}
 
 {% block head_title %}{% blocktrans with other_user.visible_name as username %}Profile for {{ username }}{% endblocktrans %}{% endblock %}
 
@@ -388,7 +389,11 @@ Copyright 2009 Engineers Without Borders (Canada) Organisation and/or volunteer 
     <div class="toolbarcontent" style="padding: 2px;">
         <div style='background: #f2f2f2; padding: 5px; font-weight: bold;'>Sponsored</div>
         <br/>
-        fake ad here
+        {% fake_ad %}
+        <hr/>
+        {% fake_ad %}
+        <hr/>
+        {% fake_ad %}
     </div>
         
 {% endblock %}

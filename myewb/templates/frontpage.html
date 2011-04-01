@@ -11,6 +11,7 @@
 {% load champ_tags %}
 {% load perspectives %}
 {% load networks_tags %}
+{% load fake_ads %}
 
 {% block extra_head %}
     {{ block.super }}
@@ -379,7 +380,11 @@ $(document).ready(function() {
     <div class="toolbarcontent" style="padding: 2px; overflow: none;">
         <div style='background: #f2f2f2; padding: 5px; font-weight: bold;'>Sponsored</div>
         <br/>
-        fake ad here
+        {% fake_ad %}
+        <hr/>
+        {% fake_ad %}
+        <hr/>
+        {% fake_ad %}
     </div>
     
 {% endblock %}      
