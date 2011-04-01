@@ -17,34 +17,27 @@
     {% if responses %}
 		{% paginate %}
 		<br style='clear: both;'/>
-		
-    	<div class="postheader bkgd" style="position: relative;"> <!-- header row -->
-		    Replies
-    	</div>
     {% endif %}
 
     {% for response in responses %}
+	    <div style='background: #edeff4; padding: 5px; margin-right: 20px;'>
+	        <a href="{% url profile_detail response.user.username %}">
+	            <img src="{% avatar_url response.user 30 %}" title="{{response.user.visible_name}}" alt="{{topic.creator.visible_name}}" style='float: left; height: 30px; width: 30px; padding: 5px;'/>
+	        </a>
 
-        <div class="postsubheader bkgd-light" id="reply-{{ response.id }}"> <!-- stat row -->
-            <table width="100%" style="margin:0; padding: 0;">
-            <tr>
-				<td>By <a href="{% url profile_detail response.user.username %}">{{ response.user.visible_name }}</a> {% mktime response.date_submitted %}</td>
-            </tr>
-            </table>
-        </div>
+            <a href="{% url profile_detail response.user.username %}" style='font-weight: bold;'>{{ response.user.visible_name }}</a>
 
-        <div class="postcontent" style="width: 98%;"> <!-- main row -->
-    		<a href="{% url profile_detail response.user.username %}">
-    		    <img src="{% avatar_url response.user 60 %}" class="posthumbnail" title="{{response.user.visible_name}}" style="max-width:70px; max-height:70px;" alt="{{response.user.visible_name}}"/>
-    		</a>
+            <div style='color: #a0a0a0;'>
+                {% mktime response.date_submitted %}
+			</div>
 
-        <div class="textbody">
-            {{ response.comment|safe }}
-        </div>
+            <div class="textbody" style='margin-left: 40px;'>
+                {{ response.comment|safe }}
+            </div>
 
             <br style="clear:both; height: 1px; line-height: 1px;" />
 
-            <table width="100%" style="margin:0; padding: 0; margin-top: 6px;"> <!-- tags and drill-in link table -->
+            <table width="100%" style="margin:0; padding: 0; margin-top: 6px; margin-left: 40px;"> <!-- tags and drill-in link table -->
             <tr>
                 <td valign="top" style="padding-left: 15px; font-size: 10px;">
                     {% get_attachments_for response as "attachments" %}
@@ -77,50 +70,8 @@
             </tr>
             </table>
         </div>
+        <br/>
 
-
-    
-        {% comment %}
-        <li class="{% cycle even,odd %} thread-{{ response.depth }} clearfix">
-            <div class="meta">
-                <div class="avatar">{% avatar response.user 40 %}</div>
-                <div class="details"><a href="{% url profile_detail response.user.username %}">{{ response.user     }}</a></div>
-                {{ response.date_submitted|date }}
-            </div>
-            <div class="bulk">
-                <div class="body">{{ response.comment|safe }}</div>
-                {% get_attachments_for response as "attachments" %}
-                {% if attachments.count %}
-                    <div class="attachments">
-                        <div class="attachmentsTitle">Attachments</div>
-                        <ul>
-                        {% for att in attachments %}
-                            <li class="attachmentItem">
-                                {% icon_for_filename att.filename %}<a href="{% get_STATIC_URL %}{{ att.attachment_file.name }}">{{ att.filename }}</a>
-                                {% image_preview att.attachment_file.name att.filename topic.pk %} 
-                                {% filesize_for_filename att.attachment_file.name %} 
-                            </li>
-                        {% endfor %}
-                        </ul>
-                    </div>
-                {% endif %}
-                {% ifequal user response.user %}
-                <form method="POST" action="{% url tc_comment_delete response.id %}">
-                    <input type="submit" value="{% trans "Delete Post" %}" />
-                    <input type="hidden" name="next" value="{{ request.path }}" />
-                </form>
-                {% endifequal %}
-                <a href="javascript:toggle_comment_form({{ response.id }})">{% trans "Reply to This Post" %}</a>
-                <form class="hidden" method="POST" action="{% get_comment_url object response %}" id="comment_form_{{ response.id }}">
-                    <table><tr><td><textarea id="id_comment_{{response.id}}" class="tinymce" rows="10" cols="40" name="comment"></textarea></td></tr>
-                    <tr><td>Tags: <input id="id_tags" type="text" class="textinput" name="tags" maxlength="255" /></td></tr></table>
-                    <tr><td><input type="submit" value="{% trans "Post Response" %}" /></td></tr></table>
-                    <input type="hidden" name="next" value="{{ request.path }}" />
-                </form>
-            </div>
-        </li>
-        
-        {% endcomment %}
     {% endfor %}
 </div>
 

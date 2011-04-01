@@ -25,73 +25,46 @@
 
 {% block body %}
 
-<div class="post">
-	{% cache CACHE_TIMEOUT "postbody" topic.id current_timezone LANGUAGE_CODE request.page %}
-	<div class="postheader bkgd" style="position: relative;"> <!-- header row -->
-		
-        {% get_attachments_for topic as "attachments" %}
-        {% if attachments.count %}
-		<a href="{{ topic.get_absolute_url }}"><img src="{{ STATIC_URL }}images/post_icons/paperclip.gif" class="posts-icon-paperclip" border="0"/></a>
-		{% endif %}
+<div>
+	<a href="{% url profile_detail topic.creator.username %}">
+	    <img src="{% avatar_url topic.creator 50 %}" title="{{topic.creator.visible_name}}" alt="{{topic.creator.visible_name}}" style='float: left; height: 50px; width: 50px; padding: 10px;'/>
+	</a>
 
-		<div class="topic-numberofreplies">
-			{% if topic.num_whiteboard_edits %}
-    			<a href="{{ topic.get_absolute_url }}#post-whiteboard" class="posts-icon-whiteboard" border="0"><img src="{{ STATIC_URL }}images/post_icons/whiteboard.gif" border="0"/></a>
-    		{% endif %}
-		</div>
-		
-		{% if topic.send_as_email %}
-			<a href="{{ topic.get_absolute_url }}"><img src="{{ STATIC_URL }}images/post_icons/envelope.gif"
-			style="float: left; margin-right: 5px; margin-top: 0; padding: 0;" border="0" title="this post was sent as an email"/></a>
-		{% endif %} 
-		
-		<a href="{{ topic.get_absolute_url }}" class="postheaderlink">{{ topic.title }}</a>
+    <div style='margin-left: 75px; padding-top: 10px;'>       
+                <!-- AddThis Button BEGIN -->
+                <div class="addthis_toolbox addthis_default_style " style="float: right; width: 115px;">
+                <a class="addthis_button_preferred_1"></a>
+                <a class="addthis_button_preferred_2"></a>
+                <a class="addthis_button_preferred_3"></a>
+                <a class="addthis_button_preferred_4"></a>
+                <a class="addthis_button_compact"></a>
+                </div>
+                <script type="text/javascript">var addthis_config = {"data_track_clickback":true};</script>
+                <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=ewbcanada"></script>
+                <!-- AddThis Button END -->
 
-	</div>
 
-	<div class="postsubheader bkgd-light"> <!-- stat row -->
-		<table width="100%" style="margin:0; padding: 0;">
-			<tr>
-				<td>By <a href="{% url profile_detail topic.creator.username %}">{{ topic.creator.visible_name }}</a> {% mktime topic.created %}</td>
-				<td align="right" width="50%">
-					{% ifnotequal topic.group.slug "ewb" %}
-				    	<a href="{% groupurl topic_list topic.group %}">{{ topic.group }}</a>
-				    {% endifnotequal %}
-				</td>
-			</tr>
-		</table>
-	</div>
+        <a href="{% url profile_detail topic.creator %}" style='font-weight: bold;'>{{ topic.creator.visible_name }}</a><br/><br/>
 
-	<div class="postcontent"> <!-- main row -->
-	
-		<!-- AddThis Button BEGIN -->
-		<div class="addthis_toolbox addthis_default_style " style="float: right; width: 115px;">
-		<a class="addthis_button_preferred_1"></a>
-		<a class="addthis_button_preferred_2"></a>
-		<a class="addthis_button_preferred_3"></a>
-		<a class="addthis_button_preferred_4"></a>
-		<a class="addthis_button_compact"></a>
-		</div>
-		<script type="text/javascript">var addthis_config = {"data_track_clickback":true};</script>
-		<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=ewbcanada"></script>
-		<!-- AddThis Button END -->
-
-		<a href="{% url profile_detail topic.creator.username %}">
-		    {# {% avatar topic.creator 40 %} #}
-		    <img src="{% avatar_url topic.creator 60 %}" class="posthumbnail" style="max-width:70px; max-height:70px; clear: right;"  title="{{topic.creator}}" alt="{{topic.creator}}"/>
-		</a>
-
-        <div class="textbody">
-
-            {{ topic.body|safe }}
-        
-        </div>
-        
+        <div style="border-left: 2px solid #d0d0d0; padding: 5px;">        
+            <a href="{{ topic.get_absolute_url }}" style='font-weight: bold;'>{{ topic.title }}</a><br/>
+            <div style='color: #a0a0a0;'>
+                {% mktime topic.created %}
+				{% ifnotequal topic.group.slug "ewb" %}
+				    - <a href="{% groupurl topic_list topic.group %}" style='color: #a0a0a0; text-decoration: none;'>{{ topic.group }}</a>
+				{% endifnotequal %}
+			</div>
+            
+            <div class="textbody">
+                {{ topic.body|safe }}
+            </div>
+            
 		<br style="clear:both; height: 1px; line-height: 1px;" />
 	
 		<table width="100%" style="margin:0; padding: 0; margin-top: 6px;"> <!-- tags and drill-in link table -->
     		<tr>
 		    <td valign="top" style="font-size: 10px;">
+                {% get_attachments_for topic as "attachments" %}
                 {% if attachments.count %}
                     <div class="post-attachments">
                         <span class="attach-label lighter">attached files:</span>
@@ -109,8 +82,6 @@
                 {% endif %}
 		    </td>
 		    
-		    {% endcache %}
-
 			<td align="right" valign="top" width="300" style="font-size: 10px; padding-right: 10px;">
 				{# TODO: toggle watchlists, hot list, etc, etc #}
                 {% if grpadmin %}
@@ -171,7 +142,6 @@
 			</td>
     		</tr>
 
-			{% cache CACHE_TIMEOUT "posttagswbreplies" topic.id topic.last_reply topic.whiteboard.last_update user.is_authenticated current_timezone LANGUAGE_CODE request.page %}
             <tr>
 			<td align="left" valign="top" colspan="2" style="font-size: 10px; padding-right: 10px;">
                 {% show_tags_for topic %}
@@ -179,17 +149,16 @@
 			</tr>
 			
 		</table> <!-- end tags and drill-in link table -->	
-
-	</div>
-</div>
-
+        
 <div class="topic-whiteboard-container">
 {% show_whiteboard topic.whiteboard topic.group member %}
+</div>
+
 </div>
     
 {% attachablecomments topic %}
 
-{% endcache %}
+</div></div>
 
 {% endblock %}
 
