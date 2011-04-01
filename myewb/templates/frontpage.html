@@ -275,20 +275,32 @@ $(document).ready(function() {
     {% if user.is_authenticated %}
     
         <div class="toolbarcontent">
-				<a href="#" class="frontpage-reset">Latest posts</a>
+				<a href="#" class="frontpage-reset" style='text-decoration: none;'>
+                    <img src="{{ STATIC_URL }}images/fb/feed.png" style="position: relative; top: 6px; margin-top: -6px;"/>
+    				Latest posts
+				</a>
                 <div class="frontpage-mygroups-div">
-					<a href="#" class="frontpage-update" id="frontpage-update-featured">Featured posts</a><br/>
+					<a href="#" class="frontpage-update" id="frontpage-update-featured" style='text-decoration: none;'>
+                        <img src="{{ STATIC_URL }}images/fb/feed.png" style="position: relative; top: 6px; margin-top: -6px;"/>
+					    Featured posts
+					</a><br/>
 				</div>
 				
                 <div class="frontpage-mygroups-div">
-					<a href="#" class="frontpage-update" id="frontpage-update-ewb">Front-page posts only</a><br/>
+					<a href="#" class="frontpage-update" id="frontpage-update-ewb" style='text-decoration: none;'>
+                        <img src="{{ STATIC_URL }}images/fb/feed.png" style="position: relative; top: 6px; margin-top: -6px;"/>
+					    Front-page only
+					</a><br/>
 				</div>
              	{% for group in user.get_groups %}
              		{% if not group.recent_topic_count %}
              		<div class="frontpage-mygroups-nonew" style="display: none;">
              		{% endif %}
 	                <div class="frontpage-mygroups-div">
-	                	<a href="#" class="frontpage-update" id="frontpage-update-{{ group.slug }}">{{ group.name }}</a><br/>
+	                	<a href="#" class="frontpage-update" id="frontpage-update-{{ group.slug }}" style='text-decoration: none;'>
+                            <img src="{{ STATIC_URL }}images/fb/feed.png" style="position: relative; top: 6px; margin-top: -6px;"/>
+	                	    {{ group.name }}
+	                	</a><br/>
 	                	{% if group.recent_topic_count %}<small style="padding-left: 10px;">({{group.recent_topic_count}} recent)</small>{% endif %}
 
 		                <div class="frontpage-mygroups-actions">

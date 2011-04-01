@@ -199,8 +199,14 @@ Copyright 2009 Engineers Without Borders (Canada) Organisation and/or volunteer 
         
         <br/><br/>
         
-        <a href="#" id="fb-wall-link" style="display: block; padding: 2px; margin: 3px; text-decoration: none; background: #d8dfea; font-size: 1.2em; font-weight: bold;">Wall</a>
-        <a href="#" id="fb-info-link" style="display: block; padding: 2px; margin: 3px; text-decoration: none; font-size: 1.2em; font-weight: bold;">Info</a>
+        <a href="#" id="fb-wall-link" style="display: block; padding: 2px; margin: 3px; text-decoration: none; background: #d8dfea; font-size: 1.2em; font-weight: bold;">
+            <img src="{{ STATIC_URL }}images/fb/wall.png" style="position: relative; top: 6px;"/>
+            Wall
+        </a>
+        <a href="#" id="fb-info-link" style="display: block; padding: 2px; margin: 3px; text-decoration: none; font-size: 1.2em; font-weight: bold;">
+            <img src="{{ STATIC_URL }}images/fb/info.png" style="position: relative; top: 4px;"/>
+            Info
+        </a>
         <hr/>
         
         {% if is_me %}
