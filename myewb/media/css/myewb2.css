@@ -215,11 +215,6 @@ ul.tabs li a.current, ul.tabs li a:hover,
 .red ul.tabs .red,
 .purple ul.tabs .purple
 {
-    -webkit-border-top-right-radius: 0.8em;
-    -webkit-border-top-left-radius: 0.8em;
-    -moz-border-radius-topright: 0.8em;
-    -moz-border-radius-topleft: 0.8em;  
-    
     /* padding: 0.6em 1.2em 0.2em; */
     margin-top: 0;
     
@@ -227,20 +222,9 @@ ul.tabs li a.current, ul.tabs li a:hover,
     margin-top: 0em;
 }
 
-div#subnav {
-    -webkit-border-top-right-radius: 0.3em;
-    -webkit-border-top-left-radius: 0.3em;
-    -moz-border-radius-topright: 0.3em;
-    -moz-border-radius-topleft: 0.3em;
-}
-
 ul.subnav {
     margin: 0;
-    -webkit-border-top-right-radius: 0.3em;
-    -webkit-border-top-left-radius: 0.3em;
-    -moz-border-radius-topright: 0.3em;
-    -moz-border-radius-topleft: 0.3em;
-    padding: 0.3em 1em;
+    padding: 0 1em 0.5em 1em;
     font-size: 1.5em;
 }
 
@@ -276,10 +260,6 @@ ul.legal {
     text-align: center;
     border: 1px solid black;
     border-top: 0;
-    -webkit-border-bottom-right-radius: 0.5em;
-    -webkit-border-bottom-left-radius: 0.5em;
-    -moz-border-radius-bottomright: 0.5em;
-    -moz-border-radius-bottomleft: 0.5em;
     width: 90%;
     margin: auto;
 }

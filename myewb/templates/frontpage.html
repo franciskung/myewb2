@@ -269,20 +269,11 @@ $(document).ready(function() {
 {% endblock %}
 
 {% block toolbar_left %}
+    {{ block.super }}
+        
     {% if user.is_authenticated %}
     
-        {# my groups #}
-        {#{% cache CACHE_TIMEOUT "frontpagegroups" user.username LATEST_POST CACHE_STAMP adminovision %}  #}
         <div class="toolbarcontent">
-        
-        <div style='height: 50px; width: 50px; float: left;'>
-            {% avatar user 50 %}
-        </div>
-        {{ user.visible_name }}<br/>
-        Edit My Profile
-        <br style='clear: left;'/><br/><br/>
-        
-    
 				<a href="#" class="frontpage-reset">Latest posts</a>
                 <div class="frontpage-mygroups-div">
 					<a href="#" class="frontpage-update" id="frontpage-update-featured">Featured posts</a><br/>
@@ -353,23 +344,20 @@ $(document).ready(function() {
         {% endif %}
         
         
-    {% else %}
-        <div class="toolbarcontent">
-            <form class="toolbarlogin" method="POST" action="{% url acct_login %}">
-                {% for field in login_form %}
-                    <div style="padding-bottom: 7px;">
-                        {{ field.label_tag }} &nbsp;&nbsp;&nbsp;
-                        {{ field }}
-                    </div>
-                {% endfor %}
-                <div style="text-align: center;">
-                    <input type="submit" value="{% trans "sign in" %} &raquo;" /><br/>
-                    <a href="{% url acct_passwd_reset %}">{% trans "Forgot password?" %}</a>
-                </div>
-            </form>
-        </div>
     {% endif %}
             
+    <hr/>
+    <div class="toolbarcontent" id="box-online-contents" style='line-height: 1.5em;'>
+        <strong>Navigation</strong><br/>
+        <a href="{% if user.get_profile.get_chapter %}{% url network_detail user.get_profile.get_chapter.slug %}{% else %}{% url networks_index %}{% endif %}">Chapters</a><br/>
+        
+        <a href="{% url communities_index %}">Communities</a><br/>
+        
+        <a href="{% url events_all %}">Events</a><br/>
+        
+        <a href="{% url applications %}">Get Involved</a>
+    </div>
+    
     <hr/>
     <div class="toolbarcontent" id="box-online-contents">
         {#<strong>Who's Online</strong><br/>#}
