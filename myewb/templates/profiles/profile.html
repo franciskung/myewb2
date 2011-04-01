@@ -136,27 +136,7 @@ Copyright 2009 Engineers Without Borders (Canada) Organisation and/or volunteer 
     
         
 	{% endif %}
-        
-    	{% comment %}
-    	eh. maybe. maaaaybe.
-            <p>
-                <a href="{% url tweet_followers other_user %}">{% trans "Followers" %}</a>: {{ other_user.followers.count|default:"0" }}
-                <a href="{% url tweet_following other_user %}">{% trans "Following" %}</a>: {{ other_user.followed.count|default:"0" }}
-            </p>
 
-            {% if not is_me %}
-
-            {# @@@ this could be done with ajax, or at the very least turned into an inclusion tag #}
-            <div>
-                <form method="POST" action="{% url toggle_follow other_user %}">
-                    {% if is_following %}
-                        <input type="hidden" name="action" value="unfollow" /><input type="submit" value="{% trans "unfollow" %}"/>
-                    {% else %}
-                        <input type="hidden" name="action" value="follow" /><input type="submit" value="{% trans "follow tweets" %}"/>
-                    {% endif %}
-                </form>
-            </div>
-		{% endcomment %}
 		                
 	{# friend handling used to be here; moving to sidebar #}
     
@@ -241,10 +221,16 @@ Copyright 2009 Engineers Without Borders (Canada) Organisation and/or volunteer 
 {% endblock %}
 
 {% block toolbar_left %}
-    {# TODO: not really "is_me", admins should have some of these options too #}
-    {% if is_me %}
-        <div class="toolbarheader bkgd" id="box-my-profile-actions">{% trans "Actions" %}</div>
-        <div class="toolbarcontent">
+    <div class="toolbarcontent">
+        {% avatar other_user 150 %}
+        
+        <br/><br/>
+        
+        Wall<br/>
+        Info
+        <hr/>
+        
+        {% if is_me %}
             <a href="{% url profile_edit %}" rel="facebox">update profile info</a><br/>
             <a href="{% url profile_settings other_user.username %}">update settings</a><br/>
             <a href="{% url acct_passwd %}">change password</a><br/>
@@ -256,7 +242,7 @@ Copyright 2009 Engineers Without Borders (Canada) Organisation and/or volunteer 
 	        {% if renew %}
 	            <a href="{% url profile_pay_membership other_user %}">Pay my membership fee</a><br/>
 	        {% endif %}
-        </div>
+	        <hr/>
     {% else %}
         {# looking at another profile. #}
         
@@ -265,8 +251,6 @@ Copyright 2009 Engineers Without Borders (Canada) Organisation and/or volunteer 
         
         
         {% if user.is_authenticated %}
-    		<div class="toolbarheader bkgd" id="box-friends-actions">{% trans "Friends" %}</div>
-            <div class="toolbarcontent">
     
     	    {% if is_friend %}
     	        <p>
@@ -331,24 +315,19 @@ Copyright 2009 Engineers Without Borders (Canada) Organisation and/or volunteer 
     	        {% endif %} {# previous_invitations_from #}
     	        
     	    {% endif %} {# is_friend #}
-        	</div>
+    	    <hr/>
 		{% endif %}  {# is authenticated #}
         
         {# exec / admin actions #}
         {% if perms.profiles or is_exec_over %}
-            <div class="toolbarheader bkgd" id="box-profile-actions">{% trans "Exec Actions" %}</div>
-            <div class="toolbarcontent">
     			    <a href="{% url profile_pay_membership other_user %}" id="manual_update">Make regular member</a><br/>
     			    (only click if they have paid their fee in cash)
-            </div>
             
         {% endif %}
         
         {# and various admin options #}
        	{% if user.is_staff %}
 
-               <div class="toolbarheader bkgd" id="box-profile-actions">{% trans "Admin Actions" %}</div>
-               <div class="toolbarcontent">
            	    {# intentional use of is_staff... #}
            	    <a href="{% url profile_impersonate other_user %}">Impersonate user</a>
            	    <br/><br/>
@@ -362,18 +341,84 @@ Copyright 2009 Engineers Without Borders (Canada) Organisation and/or volunteer 
            	    <br/><br/>
 	           	
 	            <a href="{% url account_delete other_user %}">Delete user</a><br/>
-
-               </div>
-
        	
        	{% endif %}
         	
     {% endif %}
     
+    </div>
+
+    {% if other_friends  %}
+    	<div class="toolbarcontent">
+	        {% for friend in other_friends %}
+	         <div style="float: left; width: 15px; height: 15px;">
+	             {% avatar friend 15 %}
+	         </div>
+	         <div style="margin-left: 18px; height: 18px;">
+	             <a href="{% url profile_detail friend.username %}">{{ friend.visible_name }}</a>
+	         </div>
+	         
+	        {% endfor %}
+	        <hr/>
+	    </div>
+    {% endif %}
+    
+{% if is_me or has_visibility %}
+    {% if other_user.basegroup_set.all %}
+    	<div class="toolbarcontent">
+			<p>
+				<strong>Chapters</strong><br/>
+            	{% for group in other_user.get_networks %}
+            		<span style="padding-bottom: 3px; display:block;">
+						{% ifequal user.get_profile.get_chapter group %}
+		                	<strong><a href="{% url group_detail group.slug %}">{{ group.name }}</a></strong>
+		                {% else %}
+		                	<a href="{% url group_detail group.slug %}">{{ group.name }}</a>
+		                {% endifequal %}
+	                </span>
+            	{% endfor %}
+            </p>
+			<p>
+				<strong>Communities</strong><br/>
+            	{% for group in other_user.get_communities %}
+            		{% group_is_visible group for user as grpvisible %}
+            		{% if is_me or grpvisible %}
+            			<span style="padding-bottom: 3px; display:block;">
+		                	<a href="{% url group_detail group.slug %}">{{ group.name }}</a>
+	                	</span>
+	                {% endif %}
+            	{% endfor %}
+            </p>
+        </div>
+    {% endif %}
+    
+{% endif %}
 {% endblock %}
 
 {% block toolbar_right %}
-	{% include "profiles/profile_right_panel.html" %}
+    {% if user.is_authenticated and user.get_profile.get_chapter %}
+        <div class="toolbarcontent" style="padding: 2px;">
+            <div style='background: #f2f2f2; padding: 5px; font-weight: bold;'>People You May <span style='text-decoration: line-through'>Want To Stalk</span> Know</div>
+            <br/>
+            {% get_random_admins 5 user.get_profile.get_chapter as admins %}
+            {% for admin in admins %}
+                <div class="chapter-executive-sidebox-item">
+                    <div class="chapter-executive-sidebox-img">
+                        {% avatar admin.user 30 %}
+                    </div>
+                    <a href="{% url profile_detail admin.user.username %}">{{ admin.user.visible_name }}</a><br/>
+                </div>
+            {% endfor %}
+        </div>
+        <br/>
+    {% endif %}
+    
+    <div class="toolbarcontent" style="padding: 2px;">
+        <div style='background: #f2f2f2; padding: 5px; font-weight: bold;'>Sponsored</div>
+        <br/>
+        fake ad here
+    </div>
+        
 {% endblock %}
 
 {% block extra_body %}
