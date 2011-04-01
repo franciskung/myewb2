@@ -1,6 +1,7 @@
 
 
 /* Standard colours (ie toolbar header backgrounds & borders) */
+/*
 .blue, .blue .bkgd  { background: #0049ee; }
 .green, .green .bkgd  { background: #00a81c; }
 .yellow, .yellow .bkgd { background: #f1ce00; }
@@ -15,23 +16,27 @@
 .red div, div.red-border    { border: 0px solid #b71818; }
 .purple div, div.purple-border { border: 0px solid #8b00cc; }
 div { border: 0px solid #000000; }
+*/
 
 /* Light colours (ie for subnav, subheader background) */
+/*
 .blue .bkgd-light   { background: #c2d1ff; }
 .green .bkgd-light  { background: #bce2bc; }
 .yellow .bkgd-light, .yellow.bkgd-light { background: #fcf2bd; }
 .orange .bkgd-light, .orange.bkgd-light { background: #ffcf9f; }
 .red .bkgd-light, .red.bkgd-light    { background: #efcaca; }
 .purple .bkgd-light { background: #d9c1e5; }
+*/
 
 /* Dark colours (ie for subnav text) */
+/*
 .blue ul.subnav,   .blue ul.subnav   a { color: #002ba2; }
 .green ul.subnav,  .green ul.subnav  a { color: #00590f; }
 .yellow ul.subnav, .yellow ul.subnav a { color: #776000; }
 .orange ul.subnav, .orange ul.subnav a { color: #964400; }
 .red ul.subnav,    .red ul.subnav    a { color: #750c0c; }
 .purple ul.subnav, .purple ul.subnav a { color: #530084; }
-
+*/
 
 .lighter {
 color: #777;

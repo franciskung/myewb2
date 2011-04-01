@@ -6,7 +6,7 @@
 {% if not hideheader %}
 
 {% if group %}
-	<div class="ajaxpoststitle">
+	<div style='padding: 15px;'>
 	
 	   <div class="ajaxpostsside">
 	   <ul>
@@ -48,7 +48,7 @@
 {% else  %}
 
 {# assuming it's the homepage! how excitin'! #}
-<div class="ajaxpoststitle">
+<div style='padding: 15px;'>
 	
 	   <div class="ajaxpostsside">
 	   <ul>
@@ -99,14 +99,15 @@
 {% endif %}
 
 {% endif %}
-
+<hr/>
 {% if request.REQUEST.short %}
 
 <div class="shortpostcontainer">
 {% endif %}
 
-
+{% comment %}
 {% cache CACHE_TIMEOUT "postlist" user.username request.page group mode LATEST_POST CACHE_STAMP current_timezone LANGUAGE_CODE %}
+{% endcomment %}
 
 {% autopaginate topics 10 %}
 
@@ -116,7 +117,7 @@
 
 {% paginate %}
 
-{% endcache %}
+{# {% endcache %} #}
 
 
 {% if request.REQUEST.short %}

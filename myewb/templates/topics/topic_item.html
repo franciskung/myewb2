@@ -10,141 +10,33 @@
 {% load cache %}
 {% load time_filters %}
 
-{% cache CACHE_TIMEOUT "postpreview" topic.id topic.last_reply current_timezone LANGUAGE_CODE %}
 
-<div class="post">
-	<div class="postheader bkgd" style="position: relative;"> <!-- header row -->
-		
-		{# is there a more efficient way than calling get_attachments_for ? #}
-		{# TODO: display the icon if any replies have an attachment, too #}
-        {% get_attachments_for topic as "attachments" %}
-        {% if attachments.count %}
-		<a href="{{ topic.get_absolute_url }}"><img src="{{ STATIC_URL }}images/post_icons/paperclip.gif" class="posts-icon-paperclip" border="0"/></a>
-		{% endif %}
+<div>
+	<a href="{% url profile_detail topic.creator.username %}">
+	    {# {% avatar topic.creator 40 %} #}
+	    <img src="{% avatar_url topic.creator 50 %}" title="{{topic.creator.visible_name}}" alt="{{topic.creator.visible_name}}" style='float: left; height: 50px; width: 50px; padding: 10px;'/>
+	</a>
 
+    <div style='margin-left: 75px; padding-top: 10px;'>       
+        <a href="{% url profile_detail topic.creator %}" style='font-weight: bold;'>{{ topic.creator.visible_name }}</a><br/><br/>
 
-		{% get_comment_count for topic as num_comments %}
-        {% get_latest_comments_for 1 as latest for topic %}
-		<div class="topic-numberofreplies {% if num_comments and topic.num_whiteboard_edits %} topic-nor-two{% endif %}">
-
+        <div style="border-left: 2px solid #d0d0d0; padding: 5px;">        
+            <a href="{{ topic.get_absolute_url }}" style='font-weight: bold;'>{{ topic.title }}</a><br/>
             
-			{% if topic.num_whiteboard_edits %}
-    			<a href="{{ topic.get_absolute_url }}#post-whiteboard" class="posts-icon-whiteboard" border="0"><img src="{{ STATIC_URL }}images/post_icons/whiteboard.gif" border="0"/></a>
+            <p style='color: #a0a0a0;'>
+                {{ topic.intro|striptags }}
+            </p>
+        
+    		{% get_comment_count for topic as num_comments %}
+
+		    {% if num_comments %}
+    		    <div style='background: #edeff4; padding: 5px;'>
+    			    <a href="{{ topic.get_absolute_url }}" class="nodeco">
+    			        View {% ifnotequal num_comments 1 %}all {% endifnotequal%}{{ num_comments }} comment{{ num_comment|pluralize}}
+        			</a>
+        	    </div>
     		{% endif %}
 
-			{% if num_comments %}
-			  {% spaceless %}
-				<a href="{{ topic.get_absolute_url }}" style="color: white;" class="nodeco">
-				{% ifequal num_comments 1 %}
-					1 reply
-				{% else %}
-					{{ num_comments }} replies
-				{% endifequal %}
-    			</a>
-			  {% endspaceless %}
-			{% else %}
-					{#&nbsp;#}
-			{% endif %}
-			
-			{% if num_comments and topic.num_whiteboard_edits %}<br/>{% endif %}
-
-			{% if topic.num_whiteboard_edits %}
- 				<a href="{{ topic.get_absolute_url }}#post-whiteboard" style="color: white;" class="nodeco">{{topic.num_whiteboard_edits}} whiteboard edit{% ifnotequal topic.num_whiteboard_edits 1 %}s{% endifnotequal %}</a>
-            {% else %}
- 				&nbsp;
-			{% endif %}
-		</div>
-		
-		{% if topic.send_as_email %}
-			<a href="{{ topic.get_absolute_url }}"><img src="{{ STATIC_URL }}images/post_icons/envelope.gif"
-			style="float: left; margin-right: 5px; margin-top: 0; padding: 0;" border="0" title="this post was sent as an email"/></a>
-		{% endif %} 
-		
-		<a href="{{ topic.get_absolute_url }}" class="postheaderlink">{{ topic.title }}</a>
-
-	</div>
-
-	<div class="postsubheader bkgd-light"> <!-- stat row -->
-		<table width="100%" style="margin:0; padding: 0;">
-			<tr>
-				<td>By <a href="{% url profile_detail topic.creator.username %}">{{ topic.creator.visible_name }}</a> {% mktime topic.created %}</td>
-				<td align="right" width="50%">
-					{% ifnotequal topic.group.slug "ewb" %}
-				    	<a href="{{ topic.group.get_absolute_url }}#group-posts">{{ topic.group }}</a>
-				    {% endifnotequal %}
-				</td>
-			</tr>
-		</table>
-	</div>
-
-	<div class="postcontent"> <!-- main row -->
-
-
-
-		<a href="{% url profile_detail topic.creator.username %}">
-		    {# {% avatar topic.creator 40 %} #}
-		    <img src="{% avatar_url topic.creator 40 %}" class="posthumbnail" title="{{topic.creator.visible_name}}" alt="{{topic.creator.visible_name}}"/>
-		</a>
-
-        {{ topic.intro|safe }}
-        
-        {% comment %}
-        {% if topic.intro_has_more %}
-            <em>(more inside)</em>
-        {% endif %}
-        {% endcomment %}
-		
-		<br style="clear:both; height: 1px; line-height: 1px;" />
-	
-		<table width="100%" style="margin:0; padding: 0; margin-top: 6px;"> <!-- tags and drill-in link table -->
-			<tr>
-			<td align="right" valign="top" colspan="2" style="font-size: 10px; padding-right: 10px; line-height:14px;">
-		        {% if num_comments %}
-					<a href="{{ topic.get_absolute_url }}{% replies_page_number num_comments %}#reply-{{ latest.0.id }}">Latest reply</a> by <a href="{% url profile_detail latest.0.user.username %}" class="nodeco">{{ latest.0.user.visible_name }}</a>{#<br/>#}, {% mktime latest.0.date_submitted %}
-
-                    {% if topic.num_whiteboard_edits %}<br/>{% endif %}
-				{% endif %}
-					
-		        {% if topic.num_whiteboard_edits and topc.whiteboard.latest_changeset.editor.username %}
-		            <a href="{{ topic.get_absolute_url }}#post-whiteboard">Latest whiteboard edit</a> by <a href="{% url profile_detail topic.whiteboard.latest_changeset.editor.username %}">{{ topic.whiteboard.latest_changeset.editor.visible_name }}</a><br/> on {{ topic.whiteboard.latest_changeset.modified|date }} at {{ topic.whiteboard.latest_changeset.modified|time }}
-		        {% endif %}
-		    </td>
-    		</tr>
-
-    		<tr>
-		    <td valign="top" style="font-size: 10px;">
-				
-				{# removing this lets us cache much more aggresively. #}
-				{# they can click through before watchlisting it...! ;-) #}
-				{% comment %}
-				{% if user.is_authenticated %}
-					{% topic_on_watchlist user topic as on_list %}
-					
-					<span id="toggle_watchlist_container-{{ topic.pk }}">
-					{% if on_list %}
-	    				<a href="#" id="toggle_watchlist-{{ topic.pk }}" class="more watchlist-toggle toggle-remove">[remove from watch-list]</a>
-	    			{% else %}
-	    				<a href="#" id="toggle_watchlist-{{ topic.pk }}" class="more watchlist-toggle toggle-add">[add to watch-list]</a>
-	    			{% endif %}
-    				</span>
-				{% endif %}
-				{% endcomment %}
-				
-				{% comment %}
-                {% show_tags_for topic %}
-                {% endcomment %}
-		    </td>
-
-			<td align="right" valign="top" width="250" style="font-size: 10px; padding-right: 10px;">
-				<a href="{{ topic.get_absolute_url }}" class="more">read more and reply &raquo;</a>
-			</td>
-    		</tr>
-
-		</table> <!-- end tags and drill-in link table -->	
-
-
-	</div>
-
+        </div>
+    </div>
 </div>
-
-{% endcache %}
