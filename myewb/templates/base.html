@@ -81,7 +81,7 @@ $(document).ready(function(){
     <div style='height: 35px; background: #3b5998;'>
     	<div style='width: 80%; margin: 0 auto;'>
     		<div style='width: 20%; float: left; padding-top: 10px; color: #ffffff; font-weight: bold; font-size: 1.5em; font-family: verdana, sans serif;'>
-    			ewbbook
+    			<a href="{% url home %}" style='color: #ffffff; text-decoration: none;'>ewbbook</a>
 {#    			[fr] [msg] [not] #}
     		</div>
     		<div style='margin-left: 20%; width: 80%; background: #627aad; border: 1px solid #1d4088; border-bottom: 0; height: 30px; position: relative; top: 4px;'>
@@ -247,7 +247,7 @@ $(document).ready(function(){
             
             {% block toolbarcolumn_right_bottom %}{% endblock %}
 
-            <div id="maincolumn" style="overflow-x: hidden;">
+            <div id="maincolumn" style="overflow-x: hidden; padding: 5px;">
 
 	            {% if user.is_authenticated and user.nomail %}
 	            	<div id="nomail" class="round" style="background: #ff0000; color: #ffffff; font-weight: bold;">
