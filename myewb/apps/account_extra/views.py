@@ -25,6 +25,7 @@ from account.views import signup as pinaxsignup
 from account.forms import AddEmailForm
 from base_groups.models import LogisticalGroup
 
+from emailconfirmation.signals import email_confirmed
 from siteutils import online_middleware
 
 def login(request, form_class=EmailLoginForm, 
@@ -33,6 +34,8 @@ def login(request, form_class=EmailLoginForm,
     
     if not success_url:
         success_url = request.GET.get("url", None)
+        
+    next = request.GET.get("next", None)
     
     return pinaxlogin(request, form_class, template_name, success_url, 
             associate_openid, openid_success_url, url_required)
@@ -108,6 +111,29 @@ def email(request, form_class=AddEmailForm, template_name="account/email.html",
                     EmailConfirmation.objects.send_confirmation(email_address)
                 except EmailAddress.DoesNotExist:
                     pass
+            elif request.POST["action"] == 'manual_verify':
+                if request.user.has_module_perms("profiles"):
+                    email = request.POST["email"]
+                    try:
+                        email_address = EmailAddress.objects.get(
+                            user=user,
+                            email=email,
+                        )
+
+                        email_address.verified = True
+                        email_address.set_as_primary(conditional=True)
+                        email_address.save()
+                        email_confirmed.send(sender=EmailAddress, email_address=email_address)
+
+                        request.user.message_set.create(
+                            message=_("Confirmed %(email)s as a valid email") % {
+                                'email': email,
+                            })
+                    except EmailAddress.DoesNotExist:
+                        pass
+                else:
+                    request.user.message_set.create(message=_("You don't have permission to do this!"))
+                
             elif request.POST["action"] == "remove":
                 email = request.POST["email"]
                 try:
@@ -128,12 +154,22 @@ def email(request, form_class=AddEmailForm, template_name="account/email.html",
                     user=user,
                     email=email,
                 )
+                if user.nomail and user.bouncing:
+                    user.nomail = False
+                    user.bouncing = False
+                    user.save()
                 email_address.set_as_primary()
     else:
         add_email_form = form_class()
+        
+    emails = user.emailaddress_set.all().order_by('-primary', '-verified', 'email')
+    mailchimp_enable = settings.MAILCHIMP_SUBSCRIBE
     return render_to_response(template_name, {
         "add_email_form": add_email_form,
         "other_user": user,
+        "is_me": user == request.user,
+        'emails': emails,
+        'mailchimp_enable': mailchimp_enable
     }, context_instance=RequestContext(request))
 
 def silent_signup(request, email):
@@ -175,7 +211,8 @@ def password_reset_from_key(request, key, form_class=ResetPasswordKeyForm,
 
             # get the password_reset object
             temp_key = password_reset_key_form.cleaned_data.get("temp_key")
-            password_reset = PasswordReset.objects.get(temp_key__exact=temp_key, reset=False)
+            password_reset = PasswordReset.objects.filter(temp_key__exact=temp_key, reset=False)
+            password_reset = password_reset[0]  # should always be safe, as form_clean checks this
     
             # now set the new user password
             user = User.objects.get(passwordreset__exact=password_reset)

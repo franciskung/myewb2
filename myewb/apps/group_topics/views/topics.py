@@ -137,9 +137,9 @@ def topics(request, group_slug=None, form_class=GroupTopicForm,
         
     if mode == 'featured':
         topics = GroupTopic.objects.featured(topics)
-    elif mode == 'newposts':
+    elif mode == 'newposts' and request.user.is_authenticated():
         topics = GroupTopic.objects.since(request.user.get_profile().previous_login, qs=topics)
-    elif mode == 'newreplies':
+    elif mode == 'newreplies' and request.user.is_authenticated():
         topics = GroupTopic.objects.replies_since(request.user.get_profile().previous_login, qs=topics)
 
     if request.user.is_authenticated():
@@ -276,12 +276,18 @@ def new_topic(request, group_slug=None, bridge=None):
                     sender = None
                     if topic_form.cleaned_data.get('send_as_email', None):
                         sender = topic_form.cleaned_data.get('sender', None)
+
+                    is_large_group = False
+                    if group.members.count() > 50:
+                        is_large_group = True
+        
                     return render_to_response("topics/preview.html",
                                               {"group": group,
                                                "topic": topic,
                                                "is_member": is_member,
                                                "sender": sender,
-                                               "attachments": attachments
+                                               "attachments": attachments,
+                                               "is_large_group": is_large_group,
                                               },
                                               context_instance=RequestContext(request))
         else:

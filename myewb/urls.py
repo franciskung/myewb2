@@ -23,12 +23,15 @@ import os.path
 #from bookmarks.feeds import BookmarkFeed
 #bookmarks_feed_dict = {"feed_dict": { '': BookmarkFeed }}
 
+from group_topics.views.rss import RSSAllPosts
+rss = {'posts': RSSAllPosts}
+
 admin.autodiscover()
 
 urlpatterns = patterns('',
     url(r'^$', 'group_topics.views.topics.topics', {'template_name': 'frontpage.html'}, name="home"),
 
-    (r'^volunteering/', include('volunteering.urls')),
+    (r'^apply/', include('apply.urls')),
 
     
     (r'^about/', include('about.urls')),
@@ -66,22 +69,32 @@ urlpatterns = patterns('',
     (r'^events/', include('events.urls')),
     (r'^posts/', include('group_topics.urls.topics')),
     (r'^creditcard/', include('creditcard.urls')),
+    (r'^conference/', include('conference.urls')),
     (r'^usersearch/', include('user_search.urls')),
     (r'^permissions/', include('permissions.urls')),
-    url(r'^search/', include('search.urls')),
+    (r'^search/', include('search.urls')),
     (r'^stats/', include('stats.urls')),
     (r'^champ/', include('champ.urls')),
     (r'^workspace/', include('workspace.urls')),
+    (r'^mailchimp/', include('mailchimp.urls')),
+	(r'^finance/', include('finance.urls')),
+	(r'^confcomm/', include('confcomm.legacy_urls')),
+    (r'^jobboard/', include('jobboard.urls')),
     
     url(r'^unsubscribe/$', 'networks.views.network.unsubscribe', name='network_unsubscribe',),
     
 #    (r'^feeds/tweets/(.*)/$', 'django.contrib.syndication.views.feed', tweets_feed_dict),
 #    (r'^feeds/posts/(.*)/$', 'django.contrib.syndication.views.feed', blogs_feed_dict),
 #    (r'^feeds/bookmarks/(.*)/?$', 'django.contrib.syndication.views.feed', bookmarks_feed_dict),
+
+    # these are atom feeds, not rss.  just in case that's a useful distinction.
     url(r'^feeds/posts/group/(?P<group_slug>[-\w]+)/$', 'group_topics.views.feed.group', name="topic_feed_group"),
     url(r'^feeds/posts/tag/(?P<tag>[-\w]+)/$', 'group_topics.views.feed.tag', name="topic_feed_tag"),
     url(r'^feeds/posts/featured/$', 'group_topics.views.feed.featured', name="topic_feed_featured"),
     url(r'^feeds/posts/all/$', 'group_topics.views.feed.all', name="topic_feed_all"),
+    
+    # only really for the Polar Mobile app... but hey, let's do RSS as well
+    url(r'^rss/(?P<url>.*)/$', 'django.contrib.syndication.views.feed', {'feed_dict': rss}), 
     
     url(r'^newpost/$', 'group_topics.views.topics.new_topic', name="topic_new"),
     
@@ -89,16 +102,16 @@ urlpatterns = patterns('',
     url(r'^keepalive/$', direct_to_template, {"template": "whosonline.html"}, name="whosonline_refresh"),
     
     # legacy URLs from myEWB 1
-    url(r'^home/', include('legacy_urls.home')),
-    url(r'^profile/', include('legacy_urls.profile')),
-    url(r'^chapter/', include('legacy_urls.chapter')),
-    url(r'^mailing/', include('legacy_urls.mailing')),
-    url(r'^events/', include('legacy_urls.eventsurls')),
-    url(r'^volunteering/', include('legacy_urls.volunteering')),
-    url(r'^api/', include('legacy_urls.api')),
-    url(r'^cal/', include('legacy_urls.cal')),
-    url(r'^actions/', include('legacy_urls.actions')),
-    url(r'^postfile/', include('legacy_urls.postfile')),
+    (r'^home/', include('legacy_urls.home')),
+    (r'^profile/', include('legacy_urls.profile')),
+    (r'^chapter/', include('legacy_urls.chapter')),
+    (r'^mailing/', include('legacy_urls.mailing')),
+    (r'^events/', include('legacy_urls.eventsurls')),
+    (r'^volunteering/', include('legacy_urls.volunteering')),
+    (r'^api/', include('legacy_urls.api')),
+    (r'^cal/', include('legacy_urls.cal')),
+    (r'^actions/', include('legacy_urls.actions')),
+    (r'^postfile/', include('legacy_urls.postfile')),
 )
 
 ## @@@ for now, we'll use friends_app to glue this stuff together

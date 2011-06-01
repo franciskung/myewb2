@@ -1,0 +1,37 @@
+{# {% extends "jobboard/base.html" %} #}
+{# this should only be loaded via ajax in a popup ... #}
+{% extends 'ajaxbase.html' %}
+
+{% load uni_form_tags %}
+
+{% block extra_head %}
+	<link rel="stylesheet" href="{{ STATIC_URL }}css/autocomplete.css" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/jquery-ui.css" /> 
+	<style>
+		div.ui-datepicker {z-index:10000000;}
+	</style>
+	
+    <script type="text/javascript" src="{{STATIC_URL}}jquery.autocomplete.min.js"></script>
+	<script type="text/javascript" src="{{STATIC_URL}}js/ui.datepicker.js"></script>
+{% endblock %}
+
+{% block body %}
+	{% if job %}
+		<h3>Edit: {{ job.name }}</h3>
+	{% else %}
+		<h3>Add A New Posting</h3>
+	{% endif %}
+	
+    <form class="uniForm" method="POST" action="">
+        <fieldset class="inlineLabels">
+            {{ form|as_uni_form }}
+            <input type="submit" value="Save" />
+            <p class="form_block">
+            </p>
+        </fieldset>
+    </form>
+
+	<script type="text/javascript">
+		var datepicker123 = $("input#id_deadline").datepicker({});
+	</script>
+{% endblock %}

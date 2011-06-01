@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
-from django.db import models
+from django.db import models, IntegrityError
+
 from django.db.models.signals import post_save
 from emailconfirmation.models import EmailAddress
 from manager_extras.models import ExtraUserManager
@@ -15,7 +16,7 @@ import settings
 def clean_up_email_addresses(sender, instance, created, **kwargs):
     """
     Cleans up unverified emails with the same email and deletes any users who
-    have no remaining emails.
+    have no remaining emails. Sets the verified user to not bulk.
     """
     if instance.verified:
         others = EmailAddress.objects.filter(email__iexact=instance.email, verified=False)
@@ -30,6 +31,10 @@ def clean_up_email_addresses(sender, instance, created, **kwargs):
                     # so do this as a fallback
                     u.is_active = False
                     u.save()
+        u = instance.user
+        if u.is_bulk:
+            u.is_bulk = False
+            u.save()
 post_save.connect(clean_up_email_addresses, sender=EmailAddress)
 
 # some duck punches to the User class and extras Manager
@@ -37,7 +42,11 @@ post_save.connect(clean_up_email_addresses, sender=EmailAddress)
 # add an is_bulk boolean directly to the User model
 User.add_to_class('is_bulk', models.BooleanField(default=False))
 
-def create_bulk_user_method(self, email):
+# add a no-mail setting directly to the User model too
+User.add_to_class('nomail', models.BooleanField(default=False))
+User.add_to_class('bouncing', models.BooleanField(default=False))
+
+def create_bulk_user_method(self, email, verified=False):
     # ensure email is not already in use
     emailaddress = EmailAddress.objects.filter(email=email, verified=True)  # shoudl I remove the verified=True ?
     if emailaddress.count() > 0:
@@ -47,22 +56,37 @@ def create_bulk_user_method(self, email):
     if emailaddress2.count() > 0:
         return emailaddress2[0]
 
+    # unverified user already exists...
+    emailaddress3 = EmailAddress.objects.filter(email=email)
+    if emailaddress3.count() > 0:
+        return emailaddress3[0].user
+    
     # create random username
     username = User.objects.make_random_password()
     while User.objects.filter(username=username).count() > 0:   # ensure uniqueness
         username = User.objects.make_random_password()
     
     # create the user
-    new_user = self.create_user(username=username, email=email)
+    new_user = self.create_user(username=username, email='')
     new_user.is_bulk = True
+#    if verified:
+#        new_user.email = email
+    if settings.ACCOUNT_EMAIL_VERIFICATION:
+        new_user.is_active = False
     new_user.save()
-    
-    # and the EmailAddress object too (should this be a User.postsave instead?)
-    # (do not use EmailAddress.objects.add_email since that will generate a verification email)
-    try:
-        EmailAddress.objects.create(user=new_user, email=email)
-    except:
-        pass
+
+    # this requires our modified emailconfirmation app, which takes
+    # additional keyword args...
+    if verified:
+#        EmailAddress.objects.add_email(new_user, email,
+#                                       verified=True,
+#                                       send_confirmation=False)
+        EmailAddress.objects.create(email=email, user=new_user)
+        new_user.email = email
+        new_user.save()
+    else:
+        EmailAddress.objects.add_email(new_user, email,
+                                       confirmation_template="emailconfirmation/bulkuser.txt")
     
     # and finish up
     signals.listsignup.send(sender=new_user, user=new_user)
@@ -82,7 +106,12 @@ def softdelete(self, *args, **kwargs):
     for avatar in avatars:
         avatar.delete()
     
-    self.get_profile().delete()
+    try:        # we really shouldn't be using profiles as a foreignkey...!!!
+        self.get_profile().delete()
+    except:
+        pass
+    
+    old_email = self.email
     self.email = ""
     for email in self.emailaddress_set.all():
         email.delete()
@@ -91,7 +120,7 @@ def softdelete(self, *args, **kwargs):
     #self.last_name = "user"
     self.is_active = False
     self.save()
-    signals.deletion.send(sender=self, user=self)
+    signals.deletion.send(sender=self, user=self, email=old_email)
     
 User.softdelete = softdelete
 
@@ -152,6 +181,34 @@ def set_google_password(username, password):
             pass
     return True
 
+def create_google_account(self, username):
+    if settings.GOOGLE_APPS:
+        import gdata.apps.service
+        service = gdata.apps.service.AppsService(email=settings.GOOGLE_ADMIN,
+                                                 domain=settings.GOOGLE_DOMAIN,
+                                                 password=settings.GOOGLE_PASSWORD)
+        service.ProgrammaticLogin()
+    
+        try:
+            guser = service.RetrieveUser(username)
+        except:
+            guser = service.CreateUser(user_name=username,
+                                       family_name=self.last_name,
+                                       given_name=self.first_name,
+                                       password=self.password)  # yes, this is a useless hash value.
+            self.google_username=username                       # account is not active until they log in...
+            self.google_sync=False
+            self.save()
+            EmailAddress.objects.get_or_create(user=self,
+                                               email="%s@ewb.ca" % username,
+                                               verified=True)
+            return True
+        else:
+            return False    # account already exists
+        
+    else:
+        return True
+        
 def check_password(self, raw_password):
     result = check_password2(self, raw_password)
     if result and not self.google_sync:
@@ -170,3 +227,5 @@ def set_password(self, raw_password):
 
 User.check_password = check_password
 User.set_password = set_password
+User.create_google_account = create_google_account
+

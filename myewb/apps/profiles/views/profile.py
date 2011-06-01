@@ -30,7 +30,7 @@ from siteutils.decorators import owner_required, secure_required
 from siteutils.models import PhoneNumber
 from siteutils.context_processors import timezones
 from profiles.models import MemberProfile, StudentRecord, WorkRecord, ToolbarState
-from profiles.forms import StudentRecordForm, WorkRecordForm, MembershipForm, MembershipFormPreview, PhoneNumberForm, SettingsForm 
+from profiles.forms import StudentRecordForm, WorkRecordForm, MembershipForm, MembershipFormPreview, PhoneNumberForm, SettingsForm, EWBMailForm 
 
 from networks.models import Network
 from networks.helpers import is_exec_over
@@ -56,19 +56,23 @@ def profiles(request, template_name="profiles/profiles.html"):
             
         # people with profile super-permissions get more results
         else:
-            # include email addresses in search
-            qry2 = Q(emailaddress__email__icontains=search_terms.split()[0])
-            for term in search_terms.split()[1:]:
-                qry2 = qry2 & Q(emailaddress__email__icontains=term)
-            qry = qry | qry2
-            
             # also include usernames... why not...
             qry2 = Q(username__icontains=search_terms.split()[0])
             for term in search_terms.split()[1:]:
                 qry2 = qry2 & Q(username__icontains=term)
             qry = qry | qry2
             
-            users = User.objects.filter(is_active=True).filter(qry)
+            # up until now, searches on name/username should only return active users
+            qry = qry & Q(is_active=True)
+            
+            # include email addresses in search now
+            # (done after is_active since bulk unverified users are is_bulk=True & is_active=False
+            qry2 = Q(emailaddress__email__icontains=search_terms.split()[0])
+            for term in search_terms.split()[1:]:
+                qry2 = qry2 & Q(emailaddress__email__icontains=term)
+            qry = qry | qry2
+
+            users = User.objects.filter(qry)
             
         users = users.distinct().order_by("profile__name")
     else:
@@ -445,7 +449,9 @@ def profile_by_id(request, profile_id):
 def profile(request, username, template_name="profiles/profile.html", extra_context=None):
     other_user = get_object_or_404(User, username=username)
 
-    if not other_user.is_active:
+    if not other_user.is_active \
+       and not other_user.emailaddress_set.count() \
+       and request.user.has_module_perms("profiles"):
         return render_to_response('profiles/deleted.html', {}, context_instance=RequestContext(request)) 
 
     """
@@ -590,6 +596,14 @@ def profile(request, username, template_name="profiles/profile.html", extra_cont
         previous_invitations_to = None
         previous_invitations_from = None
         has_visibility = False
+        
+    uprofile = False
+    if request.user.has_module_perms("profiles"):
+        try:
+            from stats.models import usage_profile
+            uprofile = usage_profile(other_user)
+        except:
+            pass
     
     return render_to_response(template_name, dict({
         "is_me": is_me,
@@ -603,6 +617,7 @@ def profile(request, username, template_name="profiles/profile.html", extra_cont
         "previous_invitations_from": previous_invitations_from,
         "pending_requests": pending_requests,
         "has_visibility": has_visibility,
+        "other_usage_profile": uprofile,
     }, **extra_context), context_instance=RequestContext(request))
 
 @secure_required
@@ -833,3 +848,30 @@ def timezone_switch(request):
             return HttpResponseRedirect(redirect)
     
     return HttpResponseForbidden
+
+@staff_member_required   
+def create_ewbmail_account(request, username):
+    user = get_object_or_404(User, username=username)
+    
+    if user.google_username:
+        form = None
+
+    elif request.method == 'POST':
+        form = EWBMailForm(request.POST)
+        
+        if form.is_valid():
+            if user.create_google_account(form.cleaned_data['username']):
+                request.user.message_set.create(message='Account successfully created.')
+                return HttpResponseRedirect(reverse('profile_detail', kwargs={'username': user.username}))
+            else:
+                request.user.message_set.create(message='Unable to create account - the username is probably already in use.')
+    else:
+        initial_username = "%s%s" % (user.first_name, user.last_name)
+        initial_username = initial_username.lower().replace(' ', '')
+        form = EWBMailForm(initial={'username': initial_username})
+        
+    return render_to_response("profiles/ewbmail.html",
+                              {"other_user": user,
+                               'form': form,
+                               'is_me': user.pk == request.user.pk},
+                               context_instance=RequestContext(request))

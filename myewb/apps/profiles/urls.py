@@ -26,6 +26,7 @@ urlpatterns = patterns('profiles.views.profile',
     url(r'^(?P<username>[\w\._-]+)/membership2/$', 'pay_membership2', name='profile_pay_membership2'),
     url(r'^(?P<username>[\w\._-]+)/membership/preview/$', 'pay_membership_preview', name='profile_pay_preview'),
 
+    url(r'^(?P<username>[\w\._-]+)/ewbmail/$', 'create_ewbmail_account', name='profile_ewbmail_account'),
     url(r'^(?P<username>[\w\._-]+)/impersonate/$', 'impersonate', name='profile_impersonate'),
     url(r'^(?P<username>[\w\._-]+)/delete/$', 'softdelete', name='account_delete'),
 
@@ -55,9 +56,10 @@ urlpatterns += patterns('profiles.views.friend',
 urlpatterns += patterns('profiles.views.address',
     url(r'^(?P<username>[\w\._-]+)/address/$', 'address_index', name='profile_address_index'),
     url(r'^(?P<username>[\w\._-]+)/address/new/$', 'new_address', name='profile_new_address'),
-    url(r'^(?P<username>[\w\._-]+)/address/(?P<label>[\w\. _-]+)/$', 'address_detail', name='profile_address_detail'),
-    url(r'^(?P<username>[\w\._-]+)/address/(?P<label>[\w\. _-]+)/delete/$', 'delete_address', name='profile_delete_address'),
-    url(r'^(?P<username>[\w\._-]+)/address/(?P<label>[\w\. _-]+)/edit/$', 'edit_address', name='profile_edit_address'),
+    url(r'^(?P<username>[\w\._-]+)/address/(?P<id>\d+)/$', 'address_detail', name='profile_address_detail'),
+    url(r'^(?P<username>[\w\._-]+)/address/$', 'address_detail', name='profile_address_detail'),
+    url(r'^(?P<username>[\w\._-]+)/address/(?P<id>\d+)/delete/$', 'delete_address', name='profile_delete_address'),
+    url(r'^(?P<username>[\w\._-]+)/address/(?P<id>\d+)/edit/$', 'edit_address', name='profile_edit_address'),
 )
 
 urlpatterns = urlpatterns + patterns('pinax.apps.autocomplete_app.views',

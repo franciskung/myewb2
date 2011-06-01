@@ -24,6 +24,9 @@ from emailconfirmation.models import EmailAddress
 
 from pinax.apps.profiles.models import Profile, create_profile
 
+from base_groups.models import GroupMember
+from communities.models import ExecList
+from networks.models import Network  
 from profiles import signals
 #from networks import emailforwards
 from datetime import date, datetime
@@ -128,11 +131,13 @@ class MemberProfile(Profile):
     replies_as_emails2 = models.BooleanField(_('replies as emails two'), null=False, blank=True, default=True)
     watchlist_as_emails = models.BooleanField(_('watchlist replies as emails'), null=False, blank=True, default=True)
     messages_as_emails = models.BooleanField(_('private messages as emails'), null=False, blank=True, default=True)
+    
+    chapter = models.ForeignKey(Network, null=True, blank=True, default=None)
 
     #addresses = generic.GenericRelation(Address)
     addresses = models.ManyToManyField(Address)
     phone_numbers = generic.GenericRelation(PhoneNumber)
-    sending_groups = models.ManyToManyField("volunteering.SendingGroup", blank=True)
+    sending_groups = models.ManyToManyField("apply.SendingGroup", blank=True)
     
     grandfathered = models.BooleanField(_('grandfathered'),
                                         help_text=_('imported from old myewb and has not accepted new terms of service'),
@@ -154,7 +159,10 @@ class MemberProfile(Profile):
         return self.country == "CA"
     
     def email_addresses(self):
-        return EmailAddress.objects.filter(verified=True, user=self.user)
+        return EmailAddress.objects.filter(verified=True, user=self.user).order_by('-primary')
+    
+    def unverified_email_addresses(self):
+        return EmailAddress.objects.filter(verified=False, user=self.user)
     
     def save(self, force_insert=False, force_update=False):
         if self.first_name or self.last_name:
@@ -184,22 +192,44 @@ class MemberProfile(Profile):
         return models.Model.save(self, force_insert, force_update)
 
     def location(self):
-      addresses = self.addresses.all()
-      if (len(addresses) > 0):
-        home_addresses = addresses.filter(label='home')
-        if (len(home_addresses) > 0):
-          addresses = home_addresses
-          
-        current_address = addresses[0]
-        
+      current_address = default_address()
+      
+      if current_address:
         location = current_address.city
         if current_address.province:
-            location += ", %s" % (current_address.province)
+          location += ", %s" % (current_address.province)
       
       else:
         location = ""
       
       return location
+  
+    def default_address(self):
+        current_address = None
+        
+        addresses = self.addresses.all()
+        if (len(addresses) > 0):
+            home_addresses = addresses.filter(label='home')
+            if (len(home_addresses) > 0):
+                addresses = home_addresses
+            
+            current_address = addresses[0]
+        
+        return current_address
+    
+    def default_phone(self):
+        current_phone = None
+        
+        phones = self.phone_numbers.all()
+        if (len(phones) > 0):
+            home_phone = phones.filter(label='home')
+            if (len(home_phone) > 0):
+                phones = home_phone
+            
+            current_phone = phones[0]
+        
+        return current_phone
+    
             
     def student(self):
         """Determine whether the instant user is a student based on the user's student records"""
@@ -237,13 +267,53 @@ class MemberProfile(Profile):
                                       self.membership_expiry.day)
         self.save()
         
+    def is_paid_member(self):
+        if self.membership_expiry and date.today() < self.membership_expiry:
+            return True
+        return False
+        
     def chapters(self):
-        net_members = self.user.member_groups.filter(group__visiblegroup__network__chapter_info__isnull=False)
-        chapters = []
-        for nm in net_members:
-            chapters.append(nm.group)
-        return chapters
+        return self.user2.get_networks()
             
+    # get primary chapter
+    def get_chapter(self):
+        user = self.user2
+
+        # quick check to see if chapter flag makes sense...
+        if self.chapter and self.chapter.user_is_member(user):
+            return self.chapter
+        
+        # if it's not set, or if the user isn't a member of that group (any more),
+        # take an educated guess at primary chapter
+        self.chapter = None
+        
+        networks = user.get_networks()
+        if networks.count() == 1:
+            # if you're only a member of one chapter, it's gotta be your primary
+            self.chapter = networks[0]
+            
+        elif networks.count():
+            for n in networks:
+                # if you're a chapter exec, that should be your primary chapter
+                # (and you *should* only ever be exec of one chapter)
+                if n.user_is_admin(user, admin_override=False):
+                    self.chapter = n
+
+            # if, somehow, you're on an exec list but not marked as a leader
+            if self.chapter is None:
+                execs = ExecList.objects.filter(member_users=user, is_active=True)
+                if execs.count():
+                    self.chapter = execs[0].parent.network
+
+            # last resort... take the first chapter they joined as the primary
+            if self.chapter is None:
+                gm = GroupMember.objects.filter(group__in=list(networks), user=user).order_by('joined')
+                self.chapter = gm[0].group.network
+
+        if self.chapter is not None:
+            self.save()
+            
+        return self.chapter
 
 def create_member_profile(sender, instance=None, **kwargs):
     """Automatically creates a MemberProfile for a new User."""

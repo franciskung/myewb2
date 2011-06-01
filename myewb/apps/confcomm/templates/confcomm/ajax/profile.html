@@ -1,0 +1,52 @@
+<div class="profile-container">
+    <h2>Profile for <%= model.get('member_profile').name %></h2>
+    <div class="cohort-info">
+    <img class="facebox-profile-img" src="<%= model.get('avatar_url') %>" />
+    <p><strong>Registered: </strong>
+        <% if (model.get('registered')) { %>
+        <span class="yes-text"><strong>Yes</strong></span>
+        <% } 
+        else { %>
+            Not Yet
+        <% } %>
+
+    </p>
+        <% if (model.get('cohorts')) { %>
+        <p>
+            <ul class="facebox-cohort-list">
+                     <% _.each(model.get('cohorts'), function(c) { %>
+                     <li><a class="cohort-link" href="#/?<% for (p in c.relevant_properties) { %><%= c.relevant_properties[p] %>=<%= c[c.relevant_properties[p]] %>&<% } %>"><%= c.display %></a></li>
+                    <% }); %>
+        </ul>
+        </p>
+        <% } %>
+    </div>
+    
+    <% if (!model.get('active')) { %><p>There's nothing here yet! Check back soon!</p><% } %>
+    <div class="profile-container-details">
+
+        <% if (model.get('active')) { %>
+        <p>
+            <span class="facebox-profile-question">What I'm excited to do at conference</span>
+            <span class="facebox-profile-answer"><%= model.get('conference_goals').replace(/\n/g, "<br/>") %></span>
+        </p>
+
+        <p>
+            <span class="facebox-profile-question">Topics I'd like to discuss</span>
+            <span class="facebox-profile-answer"><%= model.get('conference_question').replace(/\n/g, "<br/>") %></span>
+        </p>
+        
+        <p>
+            <span class="facebox-profile-question">What I'm doing now</span>
+            <span class="facebox-profile-answer"><%= model.get('what_now').replace(/\n/g, "<br/>") %></span>
+        </p>
+        <p>
+            <span class="facebox-profile-question">My current interests</span>
+            <span class="facebox-profile-answer"><%= model.get('text_interests').replace(/\n/g, "<br/>") %></span>
+        </p>
+        
+        <% } %>
+    </div>
+    <div class="clear"></div>
+    
+</div>

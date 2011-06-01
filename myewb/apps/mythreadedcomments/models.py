@@ -19,7 +19,7 @@ from threadedcomments.models import ThreadedComment, FreeThreadedComment
 from attachments.models import Attachment
 from group_topics.models import GroupTopic, Watchlist, wiki_convert
 
-def send_to_watchlist(sender, instance, created, **kwargs):
+def send_to_watchlist(self):
     """
     Sends an email to everyone who is watching this thread, and/or to post owner.
     
@@ -29,16 +29,14 @@ def send_to_watchlist(sender, instance, created, **kwargs):
     on other types of objects.
     """
 
-    if not created:
-        return
-
     # build email
-    topic = instance.content_object
-    attachments = Attachment.objects.attachments_for_object(topic)
+    topic = self.content_object
+    attachments = Attachment.objects.attachments_for_object(self)
     
     ctx = {'group': topic.group,
            'title': topic.title,
            'topic_id': topic.pk,
+           'reply_id': self.pk,
            'event': None,
            'attachments': attachments
           }
@@ -49,23 +47,23 @@ def send_to_watchlist(sender, instance, created, **kwargs):
     for list in topic.watchlists.all():
         user = list.owner
         # TODO: for user in list.subscribers blah blah
-        if user.get_profile().watchlist_as_emails:
+        if user.get_profile().watchlist_as_emails and not user.nomail:
             recipients.add(user.email)
             
     # send email to original post creator
-    if topic.creator.get_profile().replies_as_emails:
+    if topic.creator.get_profile().replies_as_emails and not topic.creator.nomail:
         recipients.add(topic.creator.email)
         
     # send email to participants
     participants = []
     allcomments = ThreadedComment.objects.all_for_object(topic)
     for c in allcomments:
-        if c.user.get_profile().replies_as_emails2:
+        if c.user.get_profile().replies_as_emails2 and not c.user.nomail:
             recipients.add(c.user.email)
             
     # but remove original poster
-    if instance.user.email in recipients:
-        recipients.remove(instance.user.email)
+    if self.user.email in recipients:
+        recipients.remove(self.user.email)
         
     messagebody = """<p>Hello</p>        
 
@@ -81,7 +79,7 @@ def send_to_watchlist(sender, instance, created, **kwargs):
 added it to your watchlist.  To change your email preferences, 
 <a href="http://my.ewb.ca%s">click here</a>.
 </p>
-""" % (instance.user.visible_name(), topic.title, instance.comment, reverse('profile_settings'))
+""" % (self.user.visible_name(), topic.title, self.comment, reverse('profile_settings'))
       
     if len(recipients):
         send_mail(subject="Re: %s" % topic.title,
@@ -91,8 +89,8 @@ added it to your watchlist.  To change your email preferences,
                   recipients=recipients,
                   context=ctx,
                   shortname=topic.group.slug)
-        
-post_save.connect(send_to_watchlist, sender=ThreadedComment, dispatch_uid='sendreplytowatchlist')
+
+ThreadedComment.send_to_watchlist = send_to_watchlist
 
 def update_scores(sender, instance, **kwargs):
     """

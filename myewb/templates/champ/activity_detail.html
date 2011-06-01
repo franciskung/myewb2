@@ -4,95 +4,267 @@
 
 {% block champ_body %}
 
+<style>
+	table {
+		border: 1px solid #a0a0a0;
+		width: 100%;
+	}
+	th, td {
+		border: 1px solid #a0a0a0;
+		padding: 5px 25px 5px 10px;
+		vertical-align: top;
+	}
+	th {
+		background: #d0d0d0;
+		text-align: left;
+		padding-left: 50px;
+		font-size: 14px;
+	}
+	.edit {
+		font-size: 12px;
+		font-weight: normal;
+		margin-left: 15px;
+	}
+	#metricform label {
+		font-size: 12px;
+	}
+	#metricform textarea {
+		height: 50px;
+	}
+	#metricform .submit {
+		padding: 5px;
+		font-size: 14px;
+	}
+	#metricform .formHint {
+		font-size: 10px;
+	}
+	#metricform .errorField {
+		font-size: 10px;
+		color: #ff0000;
+	}
+	h2.metricdetail, h3.metricdetail {
+		text-align: center;
+	}
+</style>
+
 <h2>{{ group.name }}</h2>
 <h3>{{ activity.name }}</h3>
 
-<p>
-{% if activity.confirmed %}
+<p id="has_been_confirmed" class="champ_confirmation_message" style="display: none;">
 	This activity has been confirmed.
-{% else %}
-	{% if activity.can_be_confirmed %}
-		<a href="{% url champ_confirm_activity group.slug activity.pk %}">
-			<span style="font-size: 16px; background-color: yellow; color: green;">This activity can be confirmed</span>
-		</a>
-	{% else %}
-		<span style="color: red;">Some values are missing - cannot confirm this activity yet</span>
-	{% endif %}
-{% endif %}
+</p>
+<p id="click_to_confirm" class="champ_confirmation_message" style="display: none;">
+	<a href="{% url champ_confirm_activity group.slug activity.pk %}">
+		<span style="font-size: 16px; background-color: yellow; color: green;">Click here to confirm this activity</span>
+	</a>
+</p>
+<p id="values_missing" class="champ_confirmation_message" style="display: none;">
+	<span style="color: red;">Some values are missing - cannot confirm this activity yet</span>
+</p>
+<p id="not_confirmed" class="champ_confirmation_message" style="display: none;">
+	This activity has not been confirmed.
 </p>
 
 <table>
-	<tr>
-		<th colspan="2">Basic Info</th>
-	</tr>
-	
-	<tr>
-		<td><strong>Chapter</strong></td>
-		<td>{{ activity.group.name }}</td>
-	</tr>
-	<tr>
-		<td><strong>Activity name</strong></td>
-		<td>{{ activity.name }}</td>
-	</tr>
-	<tr>
-		<td><strong>Activity date</strong></td>
-		<td>{{ activity.date|date }}</td>
-	</tr>
-	<tr>
-		<td><strong>Record Created</strong></td>
-		<td>
-			by <a href="{% url profile_detail activity.creator.username %}">{{ activity.creator.visible_name }}</a><br/>
-			on {{ activity.created_date|date }}
-		</td>
-	</tr>
-	<tr>
-		<td><strong>Record last edited</strong></td>
-		<td>
-			by <a href="{% url profile_detail activity.editor.username %}">{{ activity.editor.visible_name }}</a><br/>
-			on {{ activity.modified_date|date }}
-		</td>
-	</tr>
-	<tr>
-		<td><strong># of Volunteers</strong></td>
-		<td>{{ activity.numVolunteers }}</td>
-	</tr>
-	<tr>
-		<td><strong>Person-hours of prep</strong></td>
-		<td>{{ activity.prepHours }}</td>
-	</tr>
-	<tr>
-		<td><strong>Person-hours of execution</strong></td>
-		<td>{{ activity.execHours }}</td>
-	</tr>
-	
-	{% if not activity.confirmed %}
-		<tr>
-			<td colspan="2">
-				(<a href="{% url champ_edit_activity group.slug activity.pk %}">edit</a>)
-			</td>
-		</tr>
-	{% endif %}
+	{% include "champ/activity_basic.html" %}
 
-	<tr>
-		<td colspan="2">&nbsp;</td>
-	</tr>
-	
 	{% for metric in activity.get_metrics %}
 		{% include "champ/metrics.html" %}
 	{% endfor %}
-	
-</table>
 
+	{% if not activity.confirmed and is_group_admin %}
+		<tr id="addmetricrow">
+			<th colspan="2">
+				<form action="{% url champ_add_metric group.slug activity.id %}" method="post" id="addmetric">
+					<span style="font-size: 14px; font-weight: bold;">Add a metric:</span>
+					
+					<select name="metrictype">
+						{% for type, name in activity.get_available_metrics.items %}
+							<option value="{{ type }}">{{ name }}</option>
+						{% endfor %}
+					</select>
+					
+					<input type="submit" value="add"/>
+				</form>
+			</th>
+		</tr>
+	{% endif %}
+
+</table>
+<br/><br/><br/>
+<br/><br/><br/>
 
 {% endblock %}
 
 {% block toolbar_left %}
 	{% if is_admin %}
-        <div class="toolbarheader bkgd" id="box-activity-delete">{% trans "Delete" %}</div>
+        <div class="toolbarheader bkgd" id="box-activity-delete">Activity Status</div>
         <div class="toolbarcontent">
+			{% if activity.confirmed %}
+				<a href="{% url champ_unconfirm_activity group.slug activity.pk %}">
+					Un-confirm this activity
+				</a><br/>
+				(re-open it for editing)
+			{% else %}
+				{% if activity.can_be_confirmed %}
+					<a href="{% url champ_confirm_activity group.slug activity.pk %}">
+						Confirm this activity
+					</a>
+				{% else %}
+					Missing values - <br/>
+					can't confirm
+				{% endif %}
+			{% endif %}
+			<br/><br/>
+			
+			<a href="{% url champ_activity_copy group.slug activity.pk %}">
+				Copy this activity
+			</a><br/>
+			(useful for repeating or similar events)
+			<br/><br/>
+			
+			<a href="{% url champ_activity_pdf group.slug activity.pk %}">
+				Download as PDF
+			</a><br/>
+			(if you have a turnover binder)
+			<br/><br/>
+			
         	<a href="{% url champ_activity_delete group.slug activity.pk %}">Delete this activity</a>
         </div>
     {% endif %}
+    
+    <div id="hiddendiv" style="display: none;">
+    </div>
         
     {{ block.super }}
+{% endblock %}
+
+{% block extra_body %}
+<link type="text/css" href="{{STATIC_URL}}css/colorbox.css" rel="stylesheet" />
+<script type="text/javascript" src="{{STATIC_URL}}js/colorbox.js"></script>
+<script type="text/javascript">
+	$().ready(function() {
+		{% if activity.confirmed %}
+			$('#has_been_confirmed').show();
+		{% else %}
+			{% if is_group_admin %}
+				{% if activity.can_be_confirmed %}
+					$('#click_to_confirm').show();
+				{% else %}
+					$('#values_missing').show();
+				{% endif %}
+			{% else %}
+				$('#not_confirmed').show();
+			{% endif %}
+		{% endif %}
+
+		bind_editors();
+
+		$('#addmetric').submit(function() {
+			var select = $('select[name=metrictype]', $(this));
+			
+			$.post($(this).attr('action'),
+				   $(this).serialize(),
+				   function(data) {
+				   		if (data.status == 'success')
+				   		{
+					   		$('#addmetricrow').before(data.html);
+					   		bind_editors();
+
+							$('option[value=' + select.val() + ']', select).remove();
+							
+					   		$('#metric-edit-' + data.metricid).click();
+				   		}
+				   });
+			return false;
+		});
+	});
+
+	var closing = false;
+	function bind_form_save()
+	{
+		closing = false;
+		$('#metricform').submit(function() {
+			closing = true;
+			$.post($(this).attr('action'),
+				   $(this).serialize(),
+				   function(data) {
+					 	//data = $.parseJSON(data);
+					 	if (data.status == 'success')
+					 	{
+						 	$('.metric-' + data.metricname).remove();
+						 	$('.metricspace-' + data.metricname).replaceWith(data.html);
+						 	//$.colorbox.close();
+						 	$('#cboxClose').click();
+						 	bind_editors();
+
+						 	$('.champ_confirmation_message').hide();
+							if (data.confirmable == 'confirmed')
+								$('#has_been_confirmed').show();
+							else if (data.confirmable == 'yes')
+								$('#click_to_confirm').show();
+							else if (data.confirmable == 'no')
+								$('#values_missing').show();
+							else
+								$('#not_confirmed').show();
+						 }
+					 	else
+					 	{
+						 	$('#cboxLoadedContent').html(data.html);
+						 	bind_form_save();
+					 	}
+			  	   });
+			return false;
+		});
+	}
+	
+	function bind_editors()
+	{
+		$('.edit2').unbind('click');
+		$('.edit2').colorbox({height: '80%',
+							  width: '75%',
+							  opacity: '0.5',
+							  onComplete: bind_form_save,
+							  onCleanup: function() {
+											 if (!closing)
+											 {
+												 closing = true;
+												 if (confirm("Do you want to save your changes before closing the window?"))
+												 {
+													 $('#metricform').submit();
+												 }
+											 }
+										 }
+							 });
+
+		 $('.removemetric').unbind('click');
+		 $('.removemetric').click(function() {
+			 if (confirm("Are you sure?\n\nAll data associated with this metric will be permanently deleted!"))
+			 {
+				 $.post($(this).attr('href'),
+						 {},
+						 function(data) {
+							 if (data.status == 'success')
+							 {
+							 	$('.metric-' + data.metricname).remove();
+							 	$('.metricspace-' + data.metricname).remove();
+							 	$('select[name=metrictype]').append('<option value="' + data.metricname + '">' + data.metriclabel + '</option>');
+
+							 	$('.champ_confirmation_message').hide();
+								if (data.confirmable == 'confirmed')
+									$('#has_been_confirmed').show();
+								else if (data.confirmable == 'yes')
+									$('#click_to_confirm').show();
+								else if (data.confirmable == 'no')
+									$('#values_missing').show();
+								else
+									$('#not_confirmed').show();
+							 }
+						 }); 
+			 }
+			 
+			 return false;
+		 });
+	}
+</script>
 {% endblock %}

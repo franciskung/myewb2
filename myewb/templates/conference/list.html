@@ -1,0 +1,19 @@
+{% extends 'events/base.html' %}
+
+{% load i18n %}
+
+{% block head_title %}National Conference 2011{% endblock %}
+
+{% block body %}
+<br/><br/>
+
+<h1>National Conference 2011</h1>
+	
+<h2>Registration List for {{ group.name }}</h2>
+	
+{% for reg in registrations %}
+	<p><a href="{% url profile_detail reg.user.username %}">{{ reg.user.visible_name }}</a></p>
+{% endfor %}
+	
+
+{% endblock %}

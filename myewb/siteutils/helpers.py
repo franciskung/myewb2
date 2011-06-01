@@ -103,8 +103,10 @@ def visible_name(self):
     elif self.email:
         return self.email.split('@')[0] + "@..."
     else:
-        return "Unknown user (%s)" % self.username
+        #return "Unknown user (%s)" % self.username
         #return "Unknown user"
+        return "Inactive user"
+        
 User.add_to_class("visible_name", visible_name)
 
 def wiki_convert(text):
@@ -157,3 +159,12 @@ def fix_encoding(text):
         return encoder(text)[0]
     except:
         return text
+
+# Thanks to http://djangosnippets.org/snippets/1040/
+from django.db.models import AutoField
+def copy_model_instance(obj):
+    initial = dict([(f.name, getattr(obj, f.name))
+                    for f in obj._meta.fields
+                    if not isinstance(f, AutoField) and\
+                       not f in obj._meta.parents.values()])
+    return obj.__class__(**initial)

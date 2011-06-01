@@ -6,18 +6,36 @@
 <table class="standard standard-right search-form">
     <tbody>
 
+	{% comment %}
         {% for c in other_user.get_profile.chapters %}
             {% get_membership c other_user as title %}
-            {% if title.admin_title %}
-                <tr>
-                    <th>&nbsp;</th>
-                    <td>
-                        <strong>{{title.admin_title}}, {{ c.name }}</strong>
-                    </td>
-                </tr>
+            {% if title.is_admin %}
+	            {% if title.admin_title %}
+	                <tr>
+	                    <th>&nbsp;</th>
+	                    <td>
+	                        <strong>{{title.admin_title}}, {{ c.name }}</strong>
+	                    </td>
+	                </tr>
+	            {% endif %}
             {% endif %}
-        {% endfor %}	
-	
+        {% endfor %}
+	{% endcomment %}
+
+	{% if other_user.get_profile.get_chapter %}
+		<tr>
+			<th>&nbsp;</th>
+			<td>
+				{% get_membership other_user.get_profile.get_chapter other_user as title %}
+				{% if title.is_admin %}
+					<strong>{{title.admin_title}}, {{ other_user.get_profile.get_chapter.name }}</strong>
+				{% else %}
+					{{ other_user.get_profile.get_chapter.name }}
+				{% endif %}
+			</td>
+		</tr>
+	{% endif %}
+
         <tr>
             <th>Profile Info</th>
             <td>
@@ -28,6 +46,10 @@
             		Last signed in {{ other_user.get_profile.current_login|timesince }} ago
             		<br/>
             		{{ other_user.get_profile.login_count }} logins
+            		{% if other_usage_profile %}
+            			<br/>
+            			Usage profile: {{ other_usage_profile }}
+            		{% endif %}
             		<br/>
             		<a href="{% url topic_list_by_user other_user %}">
             			{% num_topics_for_user other_user %} posts/replies
@@ -62,6 +84,16 @@
             </td>
         </tr>
 	   {% endif %}
+	   
+	   {% if other_user.get_profile.date_of_birth %}
+        <tr>
+            <th>{% trans "Date of Birth" %}</th>
+            <td>
+                {{ other_user.get_profile.date_of_birth }}
+            </td>
+        </tr>
+	   
+	   {% endif %}
 		
 		
 		{% comment %}
@@ -92,7 +124,15 @@
             <th>{% trans "Emails" %}</th>
             <td>
     			{% for address in other_user.get_profile.email_addresses %}
-    				<br/>{{ address.email }}
+    				<br/>
+    				{% if address.primary %}
+    					<strong>{{ address.email }}</strong>
+    				{% else %}
+    					{{ address.email }}
+    				{% endif %}
+    			{% endfor %}
+    			{% for address in other_user.get_profile.unverified_email_addresses %}
+    				<br/><span style='color: #a0a0a0; font-style: italic;'>{{ address.email }} (unverified)</span>
     			{% endfor %}
     			
     			{% if is_me %}
@@ -175,8 +215,28 @@
             </tr>
         {% endif %}
                 
-                
-
+		{% if perms.jobboard or is_me %}
+			{% if other_user.interested_jobs.all or other_user.jobposting_set.all %}
+		        <tr>
+		            <th>Volunteer Zone</th>
+		            <td>
+		            	{% if other_user.jobposting_set.all %}
+		            		<strong>Posted</strong><br/>
+		            		{% for job in other_user.jobposting_set.all %}
+		            			{{ job.name }}<br/>
+		            		{% endfor %}
+		            	{% endif %}
+		            	{% if other_user.interested_jobs.all %}
+		            		<strong>Interested</strong><br/>
+		            		{% for job in other_user.interested_jobs.all %}
+		            			{{ job.name }}<br/>
+		            		{% endfor %}
+		            	{% endif %}
+		            </td>
+		        </tr>
+		    {% endif %}
+		{% endif %}
+	
     </tbody>
 </table>
 

@@ -3,15 +3,17 @@ from django.template import RequestContext
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import permission_required
+from emailconfirmation.models import EmailAddress
 
 from account_extra.models import set_google_password
 from base_groups.models import GroupMember
-from base_groups.decorators import group_admin_required
+from base_groups.decorators import group_admin_required, group_membership_required
 from communities.models import ExecList
 from networks.models import Network, ChapterInfo, EmailForward
 from networks.forms import ChapterInfoForm, EmailForwardForm
 from networks import emailforwards
 from networks.views import network_detail
+from siteutils.shortcuts import get_object_or_none 
 
 def chapters_index(request):
     if request.method == 'GET':
@@ -70,11 +72,19 @@ def chapter_detail(request, group_slug, template_name="networks/chapter_detail.h
 
 @group_admin_required()
 def edit_chapter(request, group_slug):
-    if request.method == 'POST':
-        return chapter_detail(request, group_slug)
     network = get_object_or_404(Network, slug=group_slug)
     chapter = get_object_or_404(ChapterInfo, network=network)
-    form = ChapterInfoForm(instance=chapter)
+
+    if request.method == 'POST':
+        form = ChapterInfoForm(request.POST,
+                               instance=chapter)
+        if form.is_valid():
+            form.save()
+            return chapter_detail(request, group_slug)
+    
+    else:
+        form = ChapterInfoForm(instance=chapter)
+        
     return render_to_response(
             'networks/edit_chapter.html',
             {
@@ -127,7 +137,11 @@ def email_forwards_delete(request, group_slug, fwd_id):
     
     if request.method == "POST":
         fwd = get_object_or_404(EmailForward, id=fwd_id, network=network)
+        email = get_object_or_none(EmailAddress, email=fwd.address)
         fwd.delete()
+        if email:
+            email.delete()
+            
         request.user.message_set.create(message="Deleted")  #should template-ize?
             
     return HttpResponseRedirect(reverse('email_forwards_index', kwargs={'group_slug': group_slug}))
@@ -142,6 +156,12 @@ def email_account_reset(request, group_slug):
             # you've gotta stop changing your name.
             if group_slug == 'grandriver':
                 group_slug = 'waterloopro'
+            elif group_slug == 'mcmaster':
+                group_slug = 'mac'
+            elif group_slug == 'uwaterloo':
+                group_slug = 'waterloo'
+            elif group_slug == 'usask':
+                group_slug = 'usaskatchewan'
                 
             result = set_google_password(group_slug, request.POST.get("newpass", ""))
             if result:
@@ -153,3 +173,14 @@ def email_account_reset(request, group_slug):
     else:
         return HttpResponse("invalid")
         
+@group_membership_required()
+def set_primary_chapter(request, group_slug):
+    network = get_object_or_404(Network, slug=group_slug)
+    profile = request.user.get_profile()
+    profile.chapter = network
+    profile.save()
+
+    if request.is_ajax():
+        return "Set as primary chapter"
+    else:
+        return HttpResponseRedirect(reverse('chapter_detail', kwargs={'group_slug': group_slug}))

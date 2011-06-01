@@ -1,0 +1,57 @@
+{% extends "champ/champalytics/base.html" %}
+
+{% block body %}
+    {% block title %}
+    {% endblock %}
+
+    {% block table %}    
+    {% endblock %}
+
+    <div style="position: relative;">
+    {% block champsays %}
+        <div id="champsays" style="position: fixed; width: 250px; top: 25px; right: 0px;">
+        {% if champsays %}
+            <div style="border: 1px solid #a0a0a0; padding: 15px; -moz-border-radius: 1em; -webkit-border-radius: 1em; position: relative;">
+                <img src="{{STATIC_URL}}images/thechamp.png" style="position: absolute; top: -15px; right: -40px;"/>
+                <span style="font-weight: bold; font-decoration: italic; font-size: 16px;">THE CHAMP SAYS...</span>
+                <br/><br/>
+                {{ champsays|random }}
+                <br/><br/>
+            </div>
+            <br/>
+        {% endif %}
+        <div id="graphdetail" style="border: 1px solid #a0a0a0; padding: 15px; -moz-border-radius: 1em; -webkit-border-radius: 1em; display: none;">
+        </div>
+    {% endblock %}
+    </div>
+
+    {% block graphs %}
+        <div id="graphcontainer" style="position: relative; width: 650px;">
+            <div id="graphlabels" style="width: 250px; position: absolute; top: 0; left: 0; text-align: right; padding-top: 15px;">
+            </div>
+            <div id="graph" style="width: 350px; position: absolute; top: 0; left: 250px;">
+            </div>
+        </div>
+    {% endblock %}
+    </div>
+    
+    <script type="text/javascript" src="{{STATIC_URL}}js/raphael/raphael-min.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/raphael/g.raphael-min.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/raphael/g.bar.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/raphael/g.pie-min.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/raphael/g.line-min.js"></script>
+    {% block jscript %}
+    {% endblock %}
+    
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var newmargin = ($(window).width() - $('#graphcontainer').width() - $('#champsays').width()) / 2;
+            var newheight = ($(window).height() - 500) / 2;
+            if (newheight < 0)
+                newheight = 5;
+            $('#champsays').css('margin-right', newmargin + 'px');
+            $('#champsays').css('margin-top', newheight + 'px');
+        });
+    </script>
+    
+{% endblock %}

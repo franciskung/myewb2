@@ -7,19 +7,13 @@ function onAddressUpdateSuccess(data, ui, prevLabel) {
         
         // Hardcoding due to possible issues if we simply try to replace an arbitrary string
         // in the auto-generated URL
-        var viewUrl = getBaseAddressUrl() + data.label + "/"
+        var viewUrl = getBaseAddressUrl() + data.id + "/"
         atabs.tabs('add', viewUrl, data.label, index + 1);
         
         atabs.tabs('remove', index)
     } else {
-        errorList = $('#edit-address-errors-' + prevLabel);
-        errorList.empty();
-        if(data.label_error) {
-            errorList.append('<li>Error: Label is already used</li>')
-        }
-        $.each(data.errors, function(i, error) {
-            errorList.append('<li>' + error + '</li>')
-        })
+    	$(ui.panel).html(data.html);
+    	onAddressTabEditPageLoad(ui);
     }
 }
 
@@ -36,7 +30,7 @@ function onAddressTabEditPageSubmit(ui) {
     
     // Hardcoding due to possible issues if we simply try to replace an arbitrary string
     // in the auto-generated URL
-    var editUrl = getBaseAddressUrl() + prevLabel + "/edit/"
+    var editUrl = $('#edit-address-' + prevLabel).attr('action');
     $.ajax({
       type: 'POST',
       url: editUrl,
@@ -50,7 +44,7 @@ function onAddressTabEditPageSubmit(ui) {
 
 function onDeleteAddressSubmit(ui) {
     var prevLabel = $('input[name=prevLabel]', ui.panel).val();
-    var deleteUrl = getBaseAddressUrl() + prevLabel + "/delete/"
+    var deleteUrl = $('#delete-address-' + prevLabel).attr('action');
     
     $.ajax({
       type: 'POST',
@@ -87,18 +81,12 @@ function onNewAddressSuccess(data, ui) {
         
         // Hardcoding due to possible issues if we simply try to replace an arbitrary string
         // in the auto-generated URL
-        var viewUrl = getBaseAddressUrl() + data.label + "/"
+        var viewUrl = getBaseAddressUrl() + data.id + "/"
         
         atabs.tabs('add', viewUrl, data.label, length - 1);
     } else {
-        errorList = $('#newAddressErrors');
-        errorList.empty();
-        if(data.label_error) {
-            errorList.append('<li>' + getLabelDuplicationError() + '</li>')
-        }
-        $.each(data.errors, function(i, error) {
-            errorList.append('<li>' + error + '</li>')
-        })
+    	$(ui.panel).html(data.html);
+        onNewAddressSubmit(ui);
     }
 }
 

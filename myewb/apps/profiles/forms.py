@@ -47,6 +47,11 @@ class WorkRecordForm(forms.ModelForm):
 		model = WorkRecord
 		exclude = ('user', 'network')
 		
+class SimpleAddressForm(forms.ModelForm):
+    class Meta:
+        model = Address
+        exclude = ('label', 'content_type', 'object_id')
+
 class AddressForm(forms.ModelForm):
     class Meta:
         model = Address
@@ -82,13 +87,14 @@ class MembershipForm(forms.Form):
         super(MembershipForm, self).__init__(*args, **kwargs)
     
 class MembershipFormPreview(PaymentFormPreview):
+    preview_template = 'profiles/membership_preview.html'
     username = None
 	
     # this gets called after transaction has been attempted
     def done(self, request, cleaned_data):
     	response = super(MembershipFormPreview, self).done(request, cleaned_data)
     	
-    	if response == None:
+    	if response[0] == True:
     		request.user.get_profile().pay_membership()
         	
         	message = loader.get_template("profiles/member_upgraded.html")
@@ -98,7 +104,7 @@ class MembershipFormPreview(PaymentFormPreview):
         	return HttpResponseRedirect(reverse('profile_detail', kwargs={'username': self.username }))
         else:
         	f = self.form(request.POST)
-        	f.trnError = response
+        	f.trnError = response[1]
         	f.clean
         	context = {'form': f, 'stage_field': self.unused_name('stage'), 'state': self.state}
         	return render_to_response(self.form_template, context, context_instance=RequestContext(request))
@@ -152,3 +158,8 @@ class SettingsForm(forms.ModelForm):
                   'replies_as_emails2',
                   'watchlist_as_emails',
                   'messages_as_emails')
+
+class EWBMailForm(forms.Form):
+    username = forms.SlugField(help_text='This is usually firstnamelastname - do not include @ewb.ca',
+                               required=True)
+    

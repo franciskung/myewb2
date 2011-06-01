@@ -19,7 +19,8 @@
         {#<li><a href="{% url chapters_index %}">{% trans "All Chapters" %}</a></li>#}
         <li><a href="{% url national_office %}">{% trans "National Office" %}</a></li>
         {% if is_exec %}
-       		<li><a href="{% link_to_current_champ %}">CHAMP</a></li>
+       		<li><a href="{% link_to_current_champ request.user %}">CHAMP</a></li>
+       		<li><a href="{% link_to_current_finance request.user %}">Finance</a></li>
         {% endif %}
     </ul>
 {% endblock %}
@@ -46,11 +47,11 @@
             	
             	Feeds:
             	<a href="{% url topic_feed_group group.slug %}">
-            		<img src="{{STATIC_URL}}images/feeds/rss.gif"/>RSS
+            		<img src="{{STATIC_URL}}images/feeds/rss.gif" style="border: 0"/>RSS
             	</a>&nbsp;&nbsp;
             	{# kinda hack-ish, but we can assume this since we have "if group.is_chapter" earlier... #}
             	<a href="{% url events_feed_for_instance "networks" "network" group.pk %}">
-            		<img src="{{STATIC_URL}}images/feeds/ical.gif"/>
+            		<img src="{{STATIC_URL}}images/feeds/ical.gif" style="border: 0"/>
 				</a>
             </p>
             
@@ -64,16 +65,16 @@
             <div class="toolbarheader bkgd" id="box-admin-options">{% trans "Admin Options" %}</div>
             <div class="toolbarcontent">
 		        <a href="{% url network_new_member group.slug %}">{% trans "Add users" %}</a><br/>
-		        <a href="{% url network_invite_member group.slug %}">{% trans "Invite users" %}</a><br/>
-	            <a href="{% url network_bulk_import group.slug %}">{% trans "Bulk-add email addresses" %}</a><br/>
-	            <a href="{% url network_bulk_remove group.slug %}">{% trans "Bulk-remove email addresses" %}</a><br/>
+		        <a href="{% url network_invite_member group.slug %}">{% trans "Invite users" %}</a><br/><br/>
+	            <a href="{% url network_bulk_import group.slug %}">{% trans "Bulk-add emails" %}</a><br/>
+	            <a href="{% url network_bulk_remove group.slug %}">{% trans "Bulk-remove emails" %}</a><br/><br/>
 	            {% if group.is_chapter %}
-		            <a href="{% url email_forwards_index group.slug %}">{% trans "Manage chapter email addresses" %}</a><br/>
+		            <a href="{% url email_forwards_index group.slug %}">{% trans "Manage chapter email addresses" %}</a><br/><br/>
 	            {% endif %}
-	            <br/>
 	            
 {#       			<a href="{% url edit_network group.slug %}">{% trans "Edit network details" %}</a><br/><br/> #}
-       			<a href="{% url edit_network group.slug %}">{% trans "Edit chapter details" %}</a><br/><br/> 
+       			<a href="{% url edit_network group.slug %}">{% trans "Edit chapter details" %}</a><br/> 
+       			<a href="{% url edit_chapter group.slug %}">{% trans "Edit chapter address" %}</a><br/><br/> 
 		        <a href="{% url network_stats group.slug %}">{% trans "Group statistics" %}</a><br/>
 		        
 		        <a href="/champ/{{ group.slug }}">{% trans "CHAMP" %}</a><br/>{# @@@ two questions: should this be here, and should it be under is_admin? #}

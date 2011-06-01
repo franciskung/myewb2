@@ -24,7 +24,7 @@
 		<link rel="stylesheet" href="{{ STATIC_URL }}pinax/css/facebox.css" />
 		<link rel="stylesheet" href="{{ STATIC_URL }}pinax/css/accounts.css" />
         <link rel="stylesheet" href="{{ STATIC_URL }}css/toolbars.css" />    
-		<script src="{{ STATIC_URL }}pinax/js/jquery.js" type="text/javascript"></script>
+		<script src="{{ STATIC_URL }}/js/jquery.js" type="text/javascript"></script>
 		{#<script src="{{ STATIC_URL }}uni_form/uni-form.jquery.js" type="text/javascript"></script>#}
 		{# commenting out the above because it crashes firefox/mac consistently, when used with select menus nested inside other labels (Eg. on the messageing search slidedown.) Sean - 2010-05-17 #}
 		<script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}pinax/js/facebox.js"></script>
@@ -67,10 +67,16 @@
 	        	{% block subnav_base %}
 	        	
 				<div id="subnavsearchbox">
-					<form method="get" action="{% url search %}">
-						<input type="text" value="search" style="width: 150px; color: #a0a0a0;" id="global_search_box" name="q"/>
-						<input type="submit" value="search" class="bkgd-light" />
+					<form method="get" action="{% url search %}" id="mainsearchform">
+						<input type="text" value="search" style="width: 200px; color: #a0a0a0; margin-left: 10px;" id="global_search_box" name="q"/>
+						{# <input type="submit" value="search" class="bkgd-light" /> #}
 					</form>
+					<div class="bkgd-light" style="position: relative; height: 20px; padding: 10px; border-radius: 1em; display: none;" id="mainsearchoptions">
+						<input type="button" value="search content" class="bkgd-light" id="mainsearchcontent" />
+						{% if user.is_authenticated %}
+							<input type="button" value="search members" class="bkgd-light" id="mainsearchmembers" />
+						{% endif %}
+					</div>
 				</div>
 
 	        	{% block subnav %}&nbsp;{% endblock %}
@@ -135,6 +141,18 @@
 
             <div id="maincolumn" style="overflow-x: hidden;">
 
+	            {% if user.is_authenticated and user.nomail %}
+	            	<div id="nomail" class="round" style="background: #ff0000; color: #ffffff; font-weight: bold;">
+	            		 
+		            	{% if user.bouncing %}
+		            		Your email address is bouncing	
+		            	{% else %}
+		            		myEWB emails to your account are disabled 
+		            	{% endif %}
+		            	- <a href="{% url acct_email %}">click here to resume email delivery</a>
+		            </div>
+	            {% endif %}
+	            
                 {% block body %}
 
                 {% endblock %}
@@ -152,12 +170,17 @@
         {% endblock %}
         
         <script type="text/javascript">
+        	var is_searching = false;
+        	var is_focused = false;
+        	
         	$('#global_search_box').focus(function() {
         		if ($(this).val() == "search")
         		{
         			$(this).css("color", "#000000");
         			$(this).val("")
         		}
+        		$('#mainsearchoptions').slideDown();
+        		is_focused = true;
         	});
         	$('#global_search_box').blur(function() {
         		if ($(this).val() == "")
@@ -165,15 +188,33 @@
         			$(this).css("color", "#a0a0a0");
         			$(this).val("search")
         		}
+        		if (!is_searching)
+        			$('#mainsearchoptions').slideUp();
+    			is_focused = false;
         	});
+        	$('#subnavsearchbox').hover(function() {
+            	is_searching = true;
+        	}, function() {
+            	is_searching = false;
+            	if (!is_focused)
+        			$('#mainsearchoptions').slideUp();
+        	});
+
+        	$('#mainsearchcontent').click(function() {
+            	$('#mainsearchform').submit();
+        	});
+        	{% if user.is_authenticated %}
+        	$('#mainsearchmembers').click(function() {
+            	$('#mainsearchform').attr('action', '{% url profiles_index %}');
+            	$('#mainsearchform').attr('method', 'get');
+            	$('#global_search_box').attr('name', 'search');
+            	$('#mainsearchform').submit();
+        	});
+        	{% endif %}
+        	
         </script>
         
     </div>
-        
-        
-        
-        
-        
 
         
         

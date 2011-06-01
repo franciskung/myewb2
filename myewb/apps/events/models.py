@@ -72,6 +72,7 @@ class Event(models.Model):
     whiteboard = models.ForeignKey(Whiteboard, related_name="event", verbose_name=_('whiteboard'), null=True)
     
     converted = models.BooleanField(default=True, editable=False)
+    modified_date = models.DateTimeField(auto_now=True)
     
     objects = EventManager()
 
@@ -102,8 +103,12 @@ class Event(models.Model):
         
         # and set the parent_group property
         # (to be honest, we could probably do away with generic foreign keys altogether)
-        group = BaseGroup.objects.get(id=self.object_id)
-        self.parent_group = group
+        base_group_type = ContentType.objects.get_for_model(BaseGroup)
+        if self.content_type == base_group_type:
+            group = BaseGroup.objects.get(id=self.object_id)
+            self.parent_group = group
+        else:
+            self.parent_group = None
         
         # validate HTML content
         # Additional options at http://codespeak.net/lxml/lxmlhtml.html#cleaning-up-html

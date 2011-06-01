@@ -1,0 +1,31 @@
+{% extends "champ/champalytics/base.html" %}
+
+{% block body %}
+    <form method="get" action="{% url champalytics %}">
+        <input type="hidden" name="metric" value="{{ metric }}"/>
+        <input type="hidden" name="group" value="{{ group }}"/>
+        <input type="hidden" name="stage" value="options"/>
+
+        <input type="submit" name="graphtype" value="Progress to goal" class="graphtype"/>
+        <br/>
+        
+        {% ifnotequal group "none" %}
+            <input type="submit" name="graphtype" value="Contribution to national" class="graphtype"/>
+            <br/>
+        {% endifnotequal %}
+        
+        <input type="submit" name="graphtype" value="Year over year" class="graphtype"/>
+        <br/>
+    </form>
+    
+    
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('.uhoh').click(function() {
+                window.alert("Not implemented.");
+                return false;
+            });
+        });
+    </script>
+
+{% endblock %}

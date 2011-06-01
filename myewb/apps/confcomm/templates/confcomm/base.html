@@ -1,0 +1,17 @@
+{# {% extends "base.html" %} #}
+{% extends 'conference/confsite.html' %}
+
+{% load i18n %}
+{# {% load openid_tags %} #}
+{% load ifsetting_tag %}
+{% load analytics %}
+
+
+
+{% block extra_head_base %}
+		<link rel="SHORTCUT ICON" href="{{ STATIC_URL}}favicon.ico" />
+		<link rel="stylesheet" href="{{ STATIC_URL }}css/confcomm.css" />
+		<link rel="stylesheet" href="{{ STATIC_URL }}pinax/css/facebox.css" />
+		<script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}pinax/js/facebox.js"></script>
+		{% block extra_head %}{% endblock %}
+{% endblock %}

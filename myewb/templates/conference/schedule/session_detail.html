@@ -1,0 +1,105 @@
+{% extends "conference/schedule/base.html" %}
+
+{% load conference_tags %}
+{% load avatar_tags %}
+
+{% block body %}
+    <h1>{{ session.name }}</h1>
+
+    {% if not request.is_mobile and not session.fixed %}
+        <div style="float: right; width: 25%; border: 1px solid; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; padding: 0.5em; margin: 0.5em;">
+            Capacity: {{ session.capacity }}
+            <br/>
+            <p>
+                Attending:<br/>
+                {% for u in attendees %}
+                    <div style="float: left; width: 35px; height: 35px; padding: 3px; margin: 4px; border: 1px solid #d0d0d0;">
+                        <img src="{% avatar_url u 35 %}" alt="{{ u.visible_name }}" title="{{ u.visible_name }}" width="35" height="35"/>
+                    </div>
+                {% endfor %}
+                <br style="clear: both;"/>
+                <div style="text-align: right; font-style: italic; padding-right: 30px;">... and more</div>
+            </p>
+        </div>
+    {% endif %}
+    
+    {{ session.day|date:"l"}}, {{ session.time|time:"g:i A" }} - {{ session.endtime|time:"g:i A" }} ({{ session.room }})<br/>
+    <span class="{{ session.stream }}"><em>{{ session.streamverbose }}</em></span>
+    {% if session.popular and not session.fixed %}
+        <br/>
+        <span style="color: red;">Popular - arrive early to save a seat!</span>
+    {% endif %}
+    {% if perms.conference %}
+        <br/>
+        <a href="{% url conference_session_edit session.id %}">edit session</a> | 
+        <a href="{% url conference_session_delete session.id %}">delete session</a> |
+        <a href="{% url conference_send_sms session.id %}">text all attendees</a>
+    {% endif %}
+
+    <br/><br/>
+    
+    {% if request.user.is_authenticated and not session.fixed %}
+        {% attendance session request.user as attending tentative %}
+        {% if attending %}
+            <strong>This session is in your schedule!</strong><br/>
+            <em>This is NOT a formal RSVP; all sessions are first-come, first-serve</em>
+            <br/>
+            <a href="{% url conference_session_tentative session.id %}">Move to my backup list</a> | 
+            <a href="{% url conference_session_skip session.id %}">Remove from my schedule</a>
+        {% endif %}
+        
+        {% if tentative %}
+            <strong>This session is in your backup list.</strong><br/>
+            <em>This is NOT a formal RSVP; all sessions are first-come, first-serve</em>
+            <br/>
+            <a href="{% url conference_session_attend session.id %}">Move to my schedule</a> | 
+            <a href="{% url conference_session_skip session.id %}">Remove from my list</a>
+        {% endif %}
+        
+        {% if not attending and not tentative %}
+            Add to... 
+            <a href="{% url conference_session_attend session.id %}">my schedule</a> | 
+            <a href="{% url conference_session_tentative session.id %}">my backup list</a>
+        {% endif %}
+        <br/><br/>
+    {% endif %}
+    
+    <p>
+        {{ session.long_description|safe|linebreaksbr }}
+    </p>
+    <br style="clear: both;">
+    <hr/>
+    
+    {% if request.is_mobile and not session.fixed %}
+        <p>
+            Session capacity: {{ session.capacity }}
+        </p>
+        <p>
+            Attending:<br/>
+            {% for u in attendees %}
+                <div style="float: left; width: 35px; height: 35px; padding: 3px; margin: 4px; border: 1px solid #d0d0d0;">
+                    <img src="{% avatar_url u 35 %}" alt="{{ u.visible_name }}" title="{{ u.visible_name }}" width="35" height="35"/>
+                </div>
+            {% endfor %}
+            <br style="clear: both;"/>
+            <div style="text-align: right; font-style: italic; padding-right: 30px;">... and more</div>
+        </p>
+        <br style="clear: both;"/>
+        <hr/>
+    {% endif %}
+    
+    <p>
+        {% if not session.fixed %}
+            <a href="{% url conference_by_time session.dayverbose session.timeverbose %}">Find other sessions at this time</a><br/>
+            <a href="{% url conference_by_stream session.stream %}">Find other sessions in this content stream</a>
+            <br/><br/>
+        {% endif %}
+        
+        {% if request.user.is_authenticated %}
+            {% if attending or session.fixed %}
+                <a href="{% url conference_for_user session.dayverbose %}">&laquo; back to my schedule</a><br/>
+            {% endif %}
+        {% endif %}   
+        <a href="{% url conference_by_day session.dayverbose 'all' %}">&laquo; back to the master schedule</a><br/>
+    </p>
+{% endblock %}

@@ -54,14 +54,15 @@ class GroupTopicManager(models.Manager):
                                                          is_admin=True,
                                                          group__model='Network')
                 admingroups = admingroups.values_list('group', flat=True)
-                filter_q |= Q(parent_group__parent__in=admingroups)
+                filter_q |= Q(parent_group__parent__in=list(admingroups))
                 
                 #filter_q |= Q(parent_group__parent__members__user=user,
                 #              parent_group__parent__members__is_admin=True)
             
             # everyone else only sees stuff from their own groups
             groups = user.basegroup_set.all()
-            filter_q |= Q(parent_group__in=groups)
+            groups = groups.values_list('pk', flat=True)
+            filter_q |= Q(parent_group__in=list(groups))
                 # doing this is MUCH MUCH quicker than trying to do a dynamic
                 # join based on member records, ie, Q(parent_group__member_users=user),
                 # and then needing to call distinct() later. 
@@ -206,15 +207,17 @@ class GroupTopic(Topic):
         
         for list in self.watchlists.all():
             user = list.owner
-            # TODO: for user in list.subscribers blah blah
-            sender = 'myEWB <notices@my.ewb.ca>'
-    
-            send_mail(subject=self.title,
-                      txtMessage=None,
-                      htmlMessage=self.body,
-                      fromemail=sender,
-                      recipients=[user.email],
-                      context=c)
+            
+            if not user.nomail:
+                # TODO: for user in list.subscribers blah blah
+                sender = 'myEWB <notices@my.ewb.ca>'
+        
+                send_mail(subject=self.title,
+                          txtMessage=None,
+                          htmlMessage=self.body,
+                          fromemail=sender,
+                          recipients=[user.email],
+                          context=c)
         
     def num_whiteboard_edits(self):
         if self.whiteboard:
@@ -223,11 +226,12 @@ class GroupTopic(Topic):
             return 0
             
     def intro(self):
-        if len(self.body) < 400:
+        if len(self.body) < 250:
             return self.body
 
         # thanks http://stackoverflow.com/questions/250357/smart-truncate-in-python
-        intro = self.body[:400].rsplit(' ', 1)[0]
+        intro = self.body[:250].rsplit(' ', 1)[0]
+        intro += '...'
 
         intro = Cleaner(scripts=False,      # disable it all except page_structure
                         javascript=False,   # as proper cleaning is done on save;
@@ -242,7 +246,6 @@ class GroupTopic(Topic):
                         remove_unknown_tags=False,
                         safe_attrs_only=False).clean_html(intro)
         
-        intro += "..."
         return intro
     
     def intro_has_more(self):

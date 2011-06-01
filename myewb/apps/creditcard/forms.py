@@ -12,6 +12,7 @@ Last modified: 2009-08-12
 """
 
 import re, datetime, time, urllib, pycountry
+from decimal import Decimal
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.formtools.preview import FormPreview
@@ -19,11 +20,15 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import Context, loader, RequestContext
 from django.utils.safestring import mark_safe
+from types import ListType
+
 from mailer import send_mail
 from apps.creditcard.utils import *
 from apps.creditcard.models import Payment, Product
-from siteutils.forms import AddressField
+from siteutils.forms import AddressField, CompactAddressField
 from siteutils.models import Address
+from siteutils.helpers import fix_encoding
+from siteutils.shortcuts import get_object_or_none
 
 from contrib.uni_form.helpers import FormHelper, Submit, Reset
 from contrib.uni_form.helpers import Layout, Fieldset, Row, HTML
@@ -85,7 +90,7 @@ class ProductWidget(forms.HiddenInput):
         html = super(ProductWidget, self).render(name, value, attrs)
         
         product = Product.objects.get(sku=value)
-        html = "%s $%s - %s" % (html, product.amount, product.name)
+        html = "%s $%s - %s<br/><br/>" % (html, product.amount, product.name)
         return mark_safe(html)
         
 class PaymentForm(forms.ModelForm):
@@ -102,7 +107,8 @@ class PaymentForm(forms.ModelForm):
                                label='products',
                                widget=ProductWidget)
     
-    address = AddressField(label='Billing Address')
+    #address = AddressField(label='Billing Address')
+    address = CompactAddressField(label='Billing Address')
         
 	# this gets set if the card is declined at the bank
     trnError = None
@@ -120,7 +126,8 @@ class PaymentForm(forms.ModelForm):
                              'cc_expiry',
                              css_class='inlineLabels'),
                     Fieldset('Your information',
-                             'address'),
+                             'address',
+                             css_class='inlineLabels'),
                     Fieldset('',
                              'phone',
                              'email',
@@ -238,16 +245,22 @@ class PaymentFormPreview(FormPreview):
     """
 
     """
-        This returns the transaction status in a roundabout way: returning
-        None indicates success, and a string indicates error.  Weird, but that 
-        lets us pass an error message if there was one...
+        This returns the transaction status in a list.
+        response[0] is True or False depending on success or failure
+        if response[0] == True, response[1] is the transaction ID and responsse[2] the receipt ID
+        if response[0] == False, respponse[1] is the decline message
     """
     def done(self, request, cleaned_data):
         
-        product = Product.objects.get(sku=cleaned_data['products'])
-        address = Address.objects.get(pk=cleaned_data['address'])
-        if not request.user.get_profile() == address.content_object:
-            return HttpResponseForbidden()
+        #product = Product.objects.get(sku=cleaned_data['products'])
+        address = get_object_or_none(Address, pk=cleaned_data['address'])
+        if not address or  not request.user.get_profile() == address.content_object:
+            address = Address()
+            address.street = '366 Adelaide'
+            address.city = 'Toronto'
+            address.province = 'ON'
+            address.postal_code = 'M5V1R9'
+            address.country = 'CA'
         
         # stuff necessary values into dictionary... to be encoded.
         param = {'trnCardOwner': cleaned_data['billing_name'],
@@ -263,63 +276,92 @@ class PaymentFormPreview(FormPreview):
                  'ordProvince': address.province,
                  'ordPostalCode': address.postal_code,
                  'ordCountry': address.country,
-                 'prod_id_1': product.sku,
-                 'prod_quantity_1': '1',
-                 'prod_name_1': product.name,
-                 'prod_cost_1': product.amount,
-                 'trnAmount': product.amount,
                  'requestType': 'BACKEND',
-                 'trnOrderNumber': 'dues-%s' % int(time.time()),
+                 'trnOrderNumber': '%s' % int(time.time()),
                  'merchant_id': settings.TD_MERCHANT_ID,
                 }
-        encoded = urllib.urlencode(param)
         
-        # push the transaction to the bank
-        handle = urllib.urlopen(settings.TD_MERCHANT_URL,
-                                encoded)
-        result = handle.read().split('&')
-        
-        # parse the result string back into a dictionary
-        results = {}
-        for r in result:
-            r2 = r.split('=')
-            r2[0] = urllib.unquote_plus(r2[0])
-            r2[1] = urllib.unquote_plus(r2[1])
-            results[r2[0]] = r2[1]
-        
-        # TODO: any other processing/recordkeeping we want to do?
-        # do I want to save this into the db?
-        p = Payment()
-        p.billing_name=cleaned_data['billing_name']
-        p.phone=cleaned_data['phone']
-        p.email=cleaned_data['email']
-        p.approved=results['trnApproved']
-        p.response="\n".join(result)
-        p.amount = product.amount
-        p.save()
-        p.products.add(product)
-        p.save()
-        
-        # return based on value
-        if results['trnApproved'] == '1':
-            
-            # send receipt
-            message = loader.get_template("creditcard/receipt.html")
-            c = Context({'name': cleaned_data['billing_name'],
-                         'date': datetime.today(),
-                         'txid': results['trnOrderNumber'],
-                         'product': product.name,
-                         'amount': product.amount})
-            body = message.render(c)
-
-            send_mail(subject='Credit Card Receipt',
-                      txtMessage=body,
-                      htmlMessage=None,
-                      fromemail='Engineers Without Borders Canada <system@my.ewb.ca>',
-                      recipients=[cleaned_data['email']],
-                      use_template=False)
-        
-            # return success
-            return None
+        product_count = 1
+        total_cost = 0
+        product_list = []
+        if isinstance(cleaned_data['products'],ListType):
+            for sku in cleaned_data['products']:
+                product = Product.objects.get(sku=sku)
+                param['prod_id_%s' % product_count] = product.sku
+                param['prod_quantity_%s' % product_count] = '1'
+                param['prod_name_%s' % product_count] = product.name
+                param['prod_cost_%s' % product_count] = product.amount
+                total_cost += Decimal(product.amount)
+                product_count = product_count + 1
+                product_list.append(product)
         else:
-            return results['messageText']
+            product = Product.objects.get(sku=cleaned_data['products'])
+            param['prod_id_1'] = product.sku
+            param['prod_quantity_1'] = '1'
+            param['prod_name_1'] = product.name
+            param['prod_cost_1'] = product.amount
+            total_cost += Decimal(product.amount)
+            product_list.append(product)
+        
+        param['trnAmount'] = total_cost
+            
+        if total_cost > 0:
+            #param = [fix_encoding(p) for p in param]
+            fixed_param = {}
+            for x, y in param.items():
+                fixed_param[x] = fix_encoding(y)
+            encoded = urllib.urlencode(fixed_param)
+            
+            # push the transaction to the bank
+            handle = urllib.urlopen(settings.TD_MERCHANT_URL,
+                                    encoded)
+            result = handle.read().split('&')
+            
+            # parse the result string back into a dictionary
+            results = {}
+            for r in result:
+                r2 = r.split('=')
+                r2[0] = urllib.unquote_plus(r2[0])
+                r2[1] = urllib.unquote_plus(r2[1])
+                results[r2[0]] = r2[1]
+            
+            # TODO: any other processing/recordkeeping we want to do?
+            # do I want to save this into the db?
+            p = Payment()
+            p.cc_type = cleaned_data['cc_type']
+            p.billing_name=cleaned_data['billing_name']
+            p.phone=cleaned_data['phone']
+            p.email=cleaned_data['email']
+            p.approved=results['trnApproved']
+            p.response="\n".join(result)
+            p.amount = total_cost
+            p.save()
+            for prod in product_list:
+                p.products.add(prod)
+            p.save()
+            
+            # return based on value
+            if results['trnApproved'] == '1':
+                
+                # send receipt
+                message = loader.get_template("creditcard/receipt.html")
+                c = Context({'name': cleaned_data['billing_name'],
+                             'date': datetime.today(),
+                             'txid': results['trnOrderNumber'],
+                             'product': product_list,
+                             'amount': total_cost})
+                body = message.render(c)
+    
+                send_mail(subject='Credit Card Receipt',
+                          txtMessage=body,
+                          htmlMessage=None,
+                          fromemail='Engineers Without Borders Canada <system@my.ewb.ca>',
+                          recipients=[cleaned_data['email']],
+                          use_template=False)
+            
+                # return success
+                return (True, results['trnId'], results['trnOrderNumber'])
+            else:
+                return (False, results['messageText'])
+        else:
+            return (True, '00000', '00000')

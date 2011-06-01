@@ -101,6 +101,7 @@ MIDDLEWARE_CLASSES = (
     'pinax.middleware.security.HideSensistiveFieldsMiddleware',
     'django.middleware.transaction.TransactionMiddleware',
     'siteutils.online_middleware.OnlineUsers',
+    'siteutils.mobile_detection.MobileDetectionMiddleware',
     # 'djangologging.middleware.LoggingMiddleware',
     #'siteutils.helpers.SQLLogToConsoleMiddleware',
     #'siteutils.profile_middleware.ProfileMiddleware',
@@ -137,6 +138,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "group_topics.context_processors.newposts",
     "communities.context_processors.is_exec",
     "profiles.context_processors.toolbar_states",
+    "stats.context_processors.organization_role",
+    "stats.context_processors.usage_profile",
 )
 
 COMBINED_INBOX_COUNT_SOURCES = (
@@ -162,14 +165,14 @@ INSTALLED_APPS = (
     'emailconfirmation',
     'django_extensions',
     'robots',
-    'dbtemplates',
+    #'dbtemplates',
     'friends',
     'mailer',
     'messages',
     'messages_ext',
     'group_announcements',
     'oembed',
-    'djangodblog',
+    #'djangodblog',
     'pagination',
 #    'gravatar',
     'threadedcomments',
@@ -178,18 +181,18 @@ INSTALLED_APPS = (
     'wiki',
 #    'swaps',
     'timezones',
-    'voting',
-    'voting_extras',
+    #'voting',
+    #'voting_extras',
     'tagging',
     'tagging_utils',
-    'bookmarks',
-    'blog',
+    #'bookmarks',
+    #'blog',
     'ajax_validation',
-    'photologue',
+    #'photologue',
     'avatar',
-    'flag',
-    'microblogging',
-    'locations',
+    #'flag',
+    #'microblogging',
+    #'locations',
     'uni_form',
     'django_sorting',
     'django_markup',
@@ -203,8 +206,8 @@ INSTALLED_APPS = (
     'account_extra',
 #    'misc',
     'signup_codes',
-    'tribes',
-    'photos',
+    #'tribes',
+    #'photos',
     'tag_app',    
     'attachments',
     'topics',
@@ -214,6 +217,7 @@ INSTALLED_APPS = (
     'networks',
     'communities',
     'creditcard',
+    'conference',
     
     'django.contrib.admin',
     'events',
@@ -221,7 +225,7 @@ INSTALLED_APPS = (
     'siteutils',
     
     # MyEWB apps
-    'volunteering',
+    'apply',
     'siteutils',
     'manager_extras',
     'user_search',
@@ -230,6 +234,10 @@ INSTALLED_APPS = (
     'profile_query',
     'champ',
     'workspace',
+    'mailchimp',
+    'finance',
+    'confcomm',
+    'jobboard',
 
     # our own third-party libs
     'contrib.django_evolution',
@@ -330,6 +338,13 @@ GOOGLE_ADMIN = ""
 GOOGLE_DOMAIN = ""
 GOOGLE_PASSWORD = ""
 
+# Mailchimp integration.  Leave set to None to disable (or replace in local_settings)
+MAILCHIMP_KEY = None            # your API key with them
+MAILCHIMP_LISTID = None         # the ID of the list you use
+MAILCHIMP_CALLBACK_KEY = None   # a key to use for securing callbacks
+MAILCHIMP_SUBSCRIBE = "http://www.mailchimp.com"      # link to mailchimp subscribe form
+
+
 # debug login
 LOGGING_OUTPUT_ENABLED = True
 LOGGING_LOG_SQL = True
@@ -356,8 +371,14 @@ COVERAGE_REPORT_HTML_OUTPUT_DIR = os.path.join(PROJECT_ROOT, 'coverage_report')
 AVATAR_DEFAULT_URL =  MEDIA_URL + 'images/nophoto.gif'
 AVATAR_GRAVATAR_BACKUP = False
 
+CONF_HASH = ""
+API_KEY = ""
 
-
+# twilio account
+TWILIO_API_VERSION = '2010-04-01'
+TWILIO_ACCOUNT_SID = ''
+TWILIO_ACCOUNT_TOKEN = ''
+THUNDERTEXTING_KEY = ''
 
 # local_settings.py can be used to override environment-specific settings
 # like database and email that differ between development and production.

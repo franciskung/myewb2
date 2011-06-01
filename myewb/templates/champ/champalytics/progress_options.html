@@ -1,0 +1,52 @@
+{% extends "champ/champalytics/base.html" %}
+
+{% load helpers %}
+
+{% block body %}
+
+    <h3>Progress to goal</h3>
+
+    <form method="get" action="{% url champalytics %}">
+        <input type="hidden" name="metric" value="{{ metric }}"/>
+        <input type="hidden" name="group" value="{{ group }}"/>
+        <input type="hidden" name="graphtype" value="Progress to goal"/>
+        <input type="hidden" name="stage" value="draw"/>
+        
+        <input type="radio" name="progressby" value="formetric" id="formetric" checked="checked"/>
+        <label for="formetric">
+            {% lookup_ctx namedict metric as metricname %}
+            show me all chapters' progress for {{ metricname.0 }}
+        </label>
+        <br/>
+        
+        <div id="useabsolutediv" style="padding-left: 50px; padding-top: 10px;">
+            <input type="checkbox" name="useabsolute" id="useabsolute"/>
+            <label for="useabsolute">
+                use absolute numbers instead of percentages
+            </label>
+        </div>
+        <br/><br/>
+
+        {% if group %}
+        {% ifnotequal group "none" %}
+            <input type="radio" name="progressby" value="forchapter" id="forchapter"/>
+            <label for="forchapter">
+                show me my chapter's overall progress ({{ group }})
+            </label>
+            <br/>
+            
+            <div id="includenatldiv" style="padding-left: 50px; padding-top: 10px;">
+                <input type="checkbox" name="includenatl" id="includenatl"/>
+                <label for="includenatl">
+                    compare to national goals
+                </label>
+            </div>
+            
+            <br/><br/>
+        {% endifnotequal %}
+        {% endif %}
+
+        <input type="submit" value="CHAMP-alyze it!" class="graphtype"/>
+        <br/>
+        
+{% endblock %}

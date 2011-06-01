@@ -12,9 +12,12 @@
 {% get_threaded_comment_tree for object as responses %}
 {% autopaginate responses %}
 
-<div class="post">
+<div class="post" id="replies">
 
     {% if responses %}
+		{% paginate %}
+		<br style='clear: both;'/>
+		
     	<div class="postheader bkgd" style="position: relative;"> <!-- header row -->
 		    Replies
     	</div>
@@ -53,7 +56,7 @@
                                 {% for att in attachments %}
                                 
 <li class="file_$file.extension attachmentItem">
-                                {% icon_for_filename att.filename %}<a href="{% get_STATIC_URL %}{{ att.attachment_file.name }}" target="_blank">{{ att.filename }}</a>
+                                {% icon_for_filename att.filename %}<a href="{% get_STATIC_URL %}{% filter urlencode %}{{ att.attachment_file.name }}{% endfilter %}" target="_blank">{{ att.filename }}</a>
                                 {% image_preview att.attachment_file.name att.filename response.pk %}
                                 {% filesize_for_filename att.attachment_file.name %}
                                 </li>
@@ -127,7 +130,7 @@
 	{# FIXME: is there any way to use a proper django form, instead of hardcoding? #}
 	{# FIXME: this is also loaded for EVERY comment, which gets really slow if there #}
 	{#        are a lot of comments (esp with the tinymce editor #}
-	<h2>{% trans "Add a reply" %}</h2>
+	<h2 class="clear">{% trans "Add a reply" %}</h2>
 	<div class="post-reply-container">
         <form method="POST" enctype="multipart/form-data" action="{% get_comment_url object %}">
                     <textarea id="id_comment" class="tinymce" rows="8" cols="80" style="width:99%" name="comment"></textarea>

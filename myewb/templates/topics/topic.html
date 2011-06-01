@@ -26,7 +26,7 @@
 {% block body %}
 
 <div class="post">
-	{% cache CACHE_TIMEOUT "postbody" topic.id current_timezone LANGUAGE_CODE %}
+	{% cache CACHE_TIMEOUT "postbody" topic.id current_timezone LANGUAGE_CODE request.page %}
 	<div class="postheader bkgd" style="position: relative;"> <!-- header row -->
 		
         {% get_attachments_for topic as "attachments" %}
@@ -64,11 +64,21 @@
 
 	<div class="postcontent"> <!-- main row -->
 	
-	    
+		<!-- AddThis Button BEGIN -->
+		<div class="addthis_toolbox addthis_default_style " style="float: right; width: 115px;">
+		<a class="addthis_button_preferred_1"></a>
+		<a class="addthis_button_preferred_2"></a>
+		<a class="addthis_button_preferred_3"></a>
+		<a class="addthis_button_preferred_4"></a>
+		<a class="addthis_button_compact"></a>
+		</div>
+		<script type="text/javascript">var addthis_config = {"data_track_clickback":true};</script>
+		<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=ewbcanada"></script>
+		<!-- AddThis Button END -->
 
 		<a href="{% url profile_detail topic.creator.username %}">
 		    {# {% avatar topic.creator 40 %} #}
-		    <img src="{% avatar_url topic.creator 60 %}" class="posthumbnail" style="max-width:70px; max-height:70px;"  title="{{topic.creator}}" alt="{{topic.creator}}"/>
+		    <img src="{% avatar_url topic.creator 60 %}" class="posthumbnail" style="max-width:70px; max-height:70px; clear: right;"  title="{{topic.creator}}" alt="{{topic.creator}}"/>
 		</a>
 
         <div class="textbody">
@@ -88,7 +98,7 @@
                         <ul>
                             {% for att in attachments %}
                                 <li class="attachmentItem">
-                                    {% icon_for_filename att.filename %} <a href="{{ STATIC_URL }}{{ att.attachment_file.name }}" target="_blank">{{ att.filename }}</a>
+                                    {% icon_for_filename att.filename %} <a href="{{ STATIC_URL }}{% filter urlencode %}{{ att.attachment_file.name }}{% endfilter %}" target="_blank">{{ att.filename }}</a>
                                     {% image_preview att.attachment_file.name att.filename topic.pk %} 
                                     {% filesize_for_filename att.attachment_file.name %}
                                 </li>
@@ -130,7 +140,7 @@
 				{% endif %}
 				
 				<div align="right" style="font-size: 1-px; margin-bottom: 15px;">
-	        printable verison:<br/>
+	        printable verison:{#<br/>#}
 	        <a href="{% url topic_printable_with_replies topic.id %}" class="more">with replies</a> |
 	        <a href="{% url topic_printable topic.id %}" class="more">without replies</a>
 	    </div>
@@ -161,7 +171,7 @@
 			</td>
     		</tr>
 
-			{% cache CACHE_TIMEOUT "posttagswbreplies" topic.id topic.last_reply topic.whiteboard.last_update user.is_authenticated current_timezone LANGUAGE_CODE %}
+			{% cache CACHE_TIMEOUT "posttagswbreplies" topic.id topic.last_reply topic.whiteboard.last_update user.is_authenticated current_timezone LANGUAGE_CODE request.page %}
             <tr>
 			<td align="left" valign="top" colspan="2" style="font-size: 10px; padding-right: 10px;">
                 {% show_tags_for topic %}
@@ -254,5 +264,9 @@
 	<script type="text/javascript" src="{{STATIC_URL}}js/colorbox.js"></script>
 	<script type="text/javascript">
 		$('.preview-img').colorbox({transition: "elastic", width:"80%", height:"80%"});
+
+		{% ifnotequal request.page 1 %}
+			$.scrollTo('#replies');
+		{% endifnotequal %}
 	</script>
 {% endblock %}

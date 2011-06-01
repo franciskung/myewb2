@@ -1,9 +1,11 @@
+from django.contrib.auth.models import User
 from django.http import HttpResponseForbidden
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 
-from django.contrib.auth.models import User
 from base_groups.models import BaseGroup, GroupMember
+from communities.models import Community
+from siteutils.shortcuts import get_object_or_none
 
 class chapter_president_required(object):
     """
@@ -35,3 +37,27 @@ class chapter_president_required(object):
                 
             return render_to_response('denied.html', context_instance=RequestContext(request))
         return newf
+
+class chapter_exec_required(object):
+    """
+    Checks to see whether the user is an exec of any chapter 
+    """
+    def __call__(self, f):
+        def newf(request, *args, **kwargs):            
+            user = request.user
+                        
+            if user.has_module_perms("base_groups"):
+                return f(request, *args, **kwargs)
+
+            if not user.is_authenticated():
+                # deny access - would set this to redirect
+                # to a custom template eventually
+                return render_to_response('denied.html', context_instance=RequestContext(request))
+            
+            execlist = get_object_or_none(Community, slug='exec')
+            if execlist and execlist.user_is_member(user):
+                return f(request, *args, **kwargs)
+                
+            return render_to_response('denied.html', context_instance=RequestContext(request))
+        return newf
+   

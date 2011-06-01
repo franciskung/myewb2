@@ -1,0 +1,91 @@
+{% extends "conference/schedule/base.html" %}
+
+{% load conference_tags %}
+
+{% block viewport %}1400px{% endblock %}
+
+{% block body %}
+    <h1>Conference Schedule</h1>
+
+    {% if request.user.is_authenticated %}
+        <p>
+            <a href="{% url conference_for_user day %}">View my personalized schedule</a>
+        </p>
+    {% endif %}
+
+    <div style="line-height: 1.5em;">
+        Day: 
+        {% for did, dname, dnum in days %}
+            {% ifequal day did %}
+                <strong>{{ dname }}</strong>
+            {% else %}
+                <a href="{% url conference_by_day did stream %}">{{ dname }}</a>
+            {% endifequal %}
+            {% if not forloop.last %} | {% endif %}
+        {% endfor %}
+        <br/>
+
+        Stream:     
+        {% ifequal stream "all" %}
+            <strong>All</strong>
+        {% else %}
+            <a href="{% url conference_by_day day 'all' %}">All</a>
+        {% endifequal %} | 
+        {% for sid, sname in streams %}
+            {% ifequal stream sid %}
+                <strong class="{{ sid }}">{{ sname }}</strong>
+            {% else %}
+                <a href="{% url conference_by_day day sid %}" class="{{ sid }}">{{ sname }}</a>
+            {% endifequal %}
+            {% if not forloop.last %} | {% endif %}
+        {% endfor %}
+    </div>
+    <br/>
+
+    <div style="width: 100%; overflow-x: auto;">
+    <table border="1" width="100%" id="byday" class='scheduler'>
+        {% for t in timelist %}
+            <tr>
+                <th>{{ t }}:00</th>
+                {% for s in sessions %}
+                    {% ifequal s.time.hour t %}
+                        {% ifequal s.time.minute 0 %}
+                            <td rowspan="{% rowspan s.length %}" class="tlink {{ s.stream }}" style="height: {% height s.length %}" colspan="{% colspans s.capacity %}">
+                                <a href="{{ s.url }}">
+                                    <strong>{{ s.name }}</strong>
+{#                                    <br/> #}
+{#                                    <em>{{ s.room }}</em> #}
+                                </a>
+                            </td>
+                        {% endifequal %}
+                    {% endifequal %}
+                {% endfor %}
+            </tr>
+            <tr>
+                <th>&nbsp;</th>
+                {% for s in sessions %}
+                    {% ifequal s.time.hour t %}
+                        {% ifequal s.time.minute 30 %}
+                            <td rowspan="{% rowspan s.length %}" class="tlink {{ s.stream }}" style="height: {% height s.length %}" colspan="{% colspans s.capacity %}">
+                                <a href="{{ s.url }}">
+                                    <strong>{{ s.name }}</strong>
+{#                                     <br/> #}
+{#                                    <em>{{ s.room }}</em> #}
+                                </a>
+                            </td>
+                        {% endifequal %}
+                    {% endifequal %}
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
+    </div>
+    
+    {% if perms.conference %}
+        <p>
+            <a href="{% url conference_session_new %}">Add a new session</a><br/>
+            <a href="{% url conference_send_sms %}">Send a text to conference delegates</a>
+        </p>
+    {% endif %}
+        
+{% endblock %}
