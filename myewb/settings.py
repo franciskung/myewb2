@@ -102,6 +102,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.transaction.TransactionMiddleware',
     'siteutils.online_middleware.OnlineUsers',
     'siteutils.mobile_detection.MobileDetectionMiddleware',
+    'themeswitch.middleware.ThemeSwitchMiddleware',
     # 'djangologging.middleware.LoggingMiddleware',
     #'siteutils.helpers.SQLLogToConsoleMiddleware',
     #'siteutils.profile_middleware.ProfileMiddleware',
@@ -112,9 +113,11 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'urls'
 
 TEMPLATE_DIRS = (
+    os.path.join(PROJECT_ROOT, "templates/myewb1"),
     os.path.join(PROJECT_ROOT, "templates"),
     os.path.join(PINAX_ROOT, "templates", PINAX_THEME),
 )
+THEMESWITCH_BASE_DIR = os.path.join(PROJECT_ROOT, "templates")
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.auth",
@@ -218,6 +221,7 @@ INSTALLED_APPS = (
     'communities',
     'creditcard',
     'conference',
+    'themeswitch',
     
     'django.contrib.admin',
     'events',
