@@ -242,6 +242,7 @@ INSTALLED_APPS = (
     'finance',
     'confcomm',
     'jobboard',
+    'socialmap',
 
     # our own third-party libs
     'contrib.django_evolution',
