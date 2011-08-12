@@ -1,0 +1,462 @@
+{% extends "profiles/base.html" %}
+
+{% comment %}
+This file is part of myEWB
+Copyright 2009 Engineers Without Borders (Canada) Organisation and/or volunteer contributors
+{% endcomment %}
+
+{% load i18n %}
+{% load avatar_tags %}
+{% load uni_form_tags %}
+{% load profile_tags %}
+{% load group_topics_tags %}
+{% load base_groups_tags %}
+{% load pagination_tags %}
+{% load fake_ads %}
+
+{% block head_title %}{% blocktrans with other_user.visible_name as username %}Profile for {{ username }}{% endblocktrans %}{% endblock %}
+
+{% block body %}
+	<style>
+		  a img {
+	    	border: 0;
+	  	}
+		table.tablesorter th {
+		  	text-align: left;
+		  	background-image: url('{{STATIC_URL}}js/tablesort/bg.gif');
+		  	background-repeat: no-repeat;
+		  	background-position: center right;
+		  	cursor: pointer;
+		}
+	</style>
+
+	<br/>
+
+    {% if not is_me %}
+		{% if has_visibility %}
+	    	<div style="width: 150px; float: right; padding-top: 10px;" text-align: right;>
+				
+				<form method="GET" action="{% url messages_compose_to other_user.username %}">
+	                <input type="submit" value="Send Message" style='padding: 3px; background: #d0d0d0;'/>
+                    <button style='padding: 3px; background: #d0d0d0;'>Poke</button>
+	            </form>
+	            
+	            {% if is_friend %}
+<br/>
+    	            <form method="POST" action="">
+    	                <input type="hidden" name="action" value="remove" /><input type="submit" value="{% trans "Remove from friends" %}"/>
+    	            </form>
+	            {% endif %}
+	            
+			</div>
+			<br/>
+		{% endif %}
+    {% endif %}
+    
+    
+
+
+    <h1>{{ other_user.visible_name }}</h1>
+
+    {% if is_me or has_visibility or other_user.is_staff %}
+        <div style="position: relative; top: -5px;">
+            <a href="mailto:{{other_user.email}}">{{other_user.email}}</a>
+        </div>
+    {% endif %}
+
+    <div style='color: #a0a0a0; font-size: 0.8em;'>
+        {% if other_user.get_profile.get_chapter %}
+            {% get_membership other_user.get_profile.get_chapter other_user as title %}
+            {% if title.is_admin %}
+                    {{title.admin_title}} at {{ other_user.get_profile.get_chapter.name }} |
+            {% else %}
+                    {{ other_user.get_profile.get_chapter.name }} |
+            {% endif %}
+        {% endif %}
+
+	    Account created {{ other_user.date_joined|timesince }} ago |
+		Last signed in {{ other_user.get_profile.current_login|timesince }} ago |
+		{{ other_user.get_profile.login_count }} logins
+    </div>
+    
+    <div id='profile-fb-wall'>
+        {% autopaginate topics 10 %}
+        {% for topic in topics %}
+        	{% include "topics/topic_item.html" %}
+        {% endfor %}
+        {% paginate %}
+    </div>
+    
+    <div id='profile-fb-info' style='display: none;'>
+    {% if other_user.get_profile.about %}
+        <p class="profile_info profile_about_p">
+            {{ other_user.get_profile.about }}
+        </p>
+    {% endif %}
+    
+    
+{#start main content info table#}
+<h2>{% trans "About" %}</h2>
+    
+    
+
+        
+	{% if is_me or has_visibility %}
+
+		{% include "profiles/profile_info.html" %}        
+    
+        
+	{% endif %}
+
+		                
+	{# friend handling used to be here; moving to sidebar #}
+    
+    {% if perms.profiles %}
+        <h2>{% trans "myEWB History" %}</h2>
+        {#we'll add a neat-o search &amp; sort feature and stuff soon#}
+        <table id="user-history" class="standard tablesorter">
+            <thead>
+            <tr>
+                <th>{% trans "Date" %}</th>
+                <th>{% trans "Group" %}</th>
+                <th>{% trans "Is Admin?" %}</th>
+                <th>{% trans "Admin Title" %}</th>
+                <th>{% trans "Notes" %}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for record in other_user.group_records.all %}
+            <tr style="{% cycle 'background: #ffffff;' 'background: #eee;' %}">
+                <td>{{ record.datetime|date:"d M Y" }}</td>
+                <td>{{ record.group }}</td>
+                <td>
+                    {% if record.is_admin %}
+                        {% trans "Yes" %}
+                    {% else %}
+                        {% trans "No" %}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if record.admin_title %}
+                        {{ record.admin_title }}
+                    {% comment %}
+                    {% else %}
+                        {% trans "N/A" %}
+                    {% endcomment %}
+                    {% endif %}
+                </td>
+                <td>
+                    {# {% ifequal record.datetime|date:"d M Y" record.joined|date:"d M Y" %} #}
+                    {% if record.membership_start %}
+                        {% trans "joined" %}
+                    {% endif %}
+                    {# {% endifequal %} #}
+                    {% if record.membership_end %}
+                        {% trans "left" %}
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        
+        {% if other_user.pending_memberships.all %}
+            <h2>{% trans "Pending Memberships" %}</h2>
+            <table id="pending-memberships">
+                <thead>
+                    <tr>
+                        <th>{% trans "Date" %}</th>
+                        <th>{% trans "Group" %}</th>
+                        <th>{% trans "Status" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for pending_membership in other_user.pending_memberships.all %}
+                    <tr>
+                        <td>{{ pending_membership.request_date|date:"d M Y" }}</td>
+                        <td>{{ pending_membership.group }}</td>
+                        <td>
+                            {% if pending_membership.is_invited %}
+                                Invited
+                            {% else %}
+                                Requested
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    {% endif %}{# end of perms.profiles block for user history#}
+    
+    </div>
+        
+{% endblock %}
+
+{% block toolbar_left %}
+    <div class="toolbarcontent">
+        {% avatar other_user 150 %}
+        
+        <br/><br/>
+        
+        <a href="#" id="fb-wall-link" style="display: block; padding: 2px; margin: 3px; text-decoration: none; background: #d8dfea; font-size: 1.2em; font-weight: bold;">
+            <img src="{{ STATIC_URL }}images/fb/wall.png" style="position: relative; top: 6px;"/>
+            Wall
+        </a>
+        <a href="#" id="fb-info-link" style="display: block; padding: 2px; margin: 3px; text-decoration: none; font-size: 1.2em; font-weight: bold;">
+            <img src="{{ STATIC_URL }}images/fb/info.png" style="position: relative; top: 4px;"/>
+            Info
+        </a>
+        <hr/>
+        
+        {% if is_me %}
+            <a href="{% url profile_edit %}" rel="facebox">update profile info</a><br/>
+            <a href="{% url profile_settings other_user.username %}">update settings</a><br/>
+            <a href="{% url acct_passwd %}">change password</a><br/>
+            <a href="{% url avatar_change %}">update picture</a><br/>
+            <br/>
+            <a href="{% url account_delete other_user %}">delete my account</a><br/>
+            <br/>
+            
+	        {% if renew %}
+	            <a href="{% url profile_pay_membership other_user %}">Pay my membership fee</a><br/>
+	        {% endif %}
+	        <hr/>
+    {% else %}
+        {# looking at another profile. #}
+        
+        {#friendship handling stuff here #}
+        
+        
+        
+        {% if user.is_authenticated %}
+    
+    	    {% if is_friend %}
+    	        <p>
+    	        	{% blocktrans %}You are friends with{% endblocktrans %} {{ other_user.visible_name }}.
+    	            <form method="GET" action="{% url messages_compose_to other_user.username %}">
+    	                <input type="submit" value="{% trans "Send a message!" %}"/>
+    	            </form>
+    	        </p>
+    	    {% else %}
+    	        {% if previous_invitations_from %}
+    	            <p>{{ other_user.visible_name }} {% blocktrans %}wants to be friends.{% endblocktrans %}</p>
+    	            <p>If you accept this invitation, {{ other_user.visible_name }} will be able to see your contact information and send you messages through myEWB.</p>
+    	            {% for invitation in previous_invitations_from %}
+    	            	{% comment %}
+    	            	I've disabled the message on the request form, so no need to display it here either.
+    	            	We can bring it back when we've had time to plan out the UI.
+    	            	
+    	                <div class="friendship_request">
+    	                    <p>From <a href="{% url profile_detail invitation.from_user.username %}">{{ invitation.from_user }}</a> ({{ invitation.sent }}):</p>
+    	                    <p class="invitation_message">{{ invitation.message }}</p>
+    	                    <form method="post" action="">
+    	                        <input type="hidden" name="invitation" value="{{ invitation.id }}"/>
+    	                        <input type="hidden" name="action" value="accept"/>
+    	                        <input type="submit" value="{% trans 'accept' %}" />
+    	                    </form>
+    	                    <form method="post" action="">
+    	                        <input type="hidden" name="invitation" value="{{ invitation.id }}"/>
+    	                        <input type="hidden" name="action" value="decline"/>
+    	                        <input type="submit" value="{% trans 'decline' %}" />
+    	                    </form>
+    	                </div>
+    	                {% endcomment %}
+    
+                        <form method="post" action="" style="float: left;">
+                            <input type="hidden" name="invitation" value="{{ invitation.id }}"/>
+                            <input type="hidden" name="action" value="accept"/>
+                            <input type="submit" value="{% trans 'accept' %}" />
+                        </form>
+                        <form method="post" action="">
+                            <input type="hidden" name="invitation" value="{{ invitation.id }}"/>
+                            <input type="hidden" name="action" value="decline"/>
+                            <input type="submit" value="{% trans 'decline' %}" style="margin-left: 10px;"/>
+                        </form>
+    
+    	            {% endfor %}
+    	        {% else %}
+    	            {% if previous_invitations_to %}
+    	                <p>{{ other_user.visible_name }} {% trans "has not yet responded to your friendship request" %}.</p>
+    	            {% else %}
+    	            	<p>If you know {{ other_user.visible_name }}, click the button below to be able to send messages to each other through myEWB and see each others' contact information.</p>
+    	                <form class="uniForm" method="POST" action="">
+    	                    <fieldset class="inlineLabels">  
+    	                        {#{{ invite_form|as_uni_form }} #}
+    	                        <div class="form_block">
+    	                            <input type="hidden" name="to_user" value="{{other_user.username}}" />
+    	                            <input type="hidden" name="action" value="invite" />
+    	                            <input type="submit" value="{% trans "send friendship request" %}"/>
+    	                        </div>
+    	                    </fieldset>
+    	                </form>
+    	            {% endif %} {# previous_invitations_to #}
+    	        {% endif %} {# previous_invitations_from #}
+    	        
+    	    {% endif %} {# is_friend #}
+    	    <hr/>
+		{% endif %}  {# is authenticated #}
+        
+        {# exec / admin actions #}
+        {% if perms.profiles or is_exec_over %}
+    			    <a href="{% url profile_pay_membership other_user %}" id="manual_update">Make regular member</a><br/>
+    			    (only click if they have paid their fee in cash)
+            
+        {% endif %}
+        
+        {# and various admin options #}
+       	{% if user.is_staff %}
+
+           	    {# intentional use of is_staff... #}
+           	    <a href="{% url profile_impersonate other_user %}">Impersonate user</a>
+           	    <br/><br/>
+           	    
+           	    {% if not other_user.google_username %}
+	           	    <a href="{% url profile_ewbmail_account other_user.username %}">Create EWB mail account</a>
+	           	{% else %}
+	           	    <a href="" style='text-decoration: line-through;'>Create EWB mail account</a><br/>
+	           		<em>(already has an EWB email)</em>
+	           	{% endif %}
+           	    <br/><br/>
+	           	
+	            <a href="{% url account_delete other_user %}">Delete user</a><br/>
+       	
+       	{% endif %}
+        	
+    {% endif %}
+    
+    </div>
+
+    {% if other_friends  %}
+    	<div class="toolbarcontent">
+	        {% for friend in other_friends %}
+	         <div style="float: left; width: 15px; height: 15px;">
+	             {% avatar friend 15 %}
+	         </div>
+	         <div style="margin-left: 18px; height: 18px;">
+	             <a href="{% url profile_detail friend.username %}">{{ friend.visible_name }}</a>
+	         </div>
+	         
+	        {% endfor %}
+	        <hr/>
+	    </div>
+    {% endif %}
+    
+{% if is_me or has_visibility %}
+    {% if other_user.basegroup_set.all %}
+    	<div class="toolbarcontent">
+			<p>
+				<strong>Chapters</strong><br/>
+            	{% for group in other_user.get_networks %}
+            		<span style="padding-bottom: 3px; display:block;">
+						{% ifequal user.get_profile.get_chapter group %}
+		                	<strong><a href="{% url group_detail group.slug %}">{{ group.name }}</a></strong>
+		                {% else %}
+		                	<a href="{% url group_detail group.slug %}">{{ group.name }}</a>
+		                {% endifequal %}
+	                </span>
+            	{% endfor %}
+            </p>
+			<p>
+				<strong>Communities</strong><br/>
+            	{% for group in other_user.get_communities %}
+            		{% group_is_visible group for user as grpvisible %}
+            		{% if is_me or grpvisible %}
+            			<span style="padding-bottom: 3px; display:block;">
+		                	<a href="{% url group_detail group.slug %}">{{ group.name }}</a>
+	                	</span>
+	                {% endif %}
+            	{% endfor %}
+            </p>
+        </div>
+    {% endif %}
+    
+{% endif %}
+{% endblock %}
+
+{% block toolbar_right %}
+    {% if user.is_authenticated and user.get_profile.get_chapter %}
+        <div class="toolbarcontent" style="padding: 2px;">
+            <div style='background: #f2f2f2; padding: 5px; font-weight: bold;'>People You May <span style='text-decoration: line-through'>Want To Stalk</span> Know</div>
+            <br/>
+            {% get_random_admins 5 user.get_profile.get_chapter as admins %}
+            {% for admin in admins %}
+                <div class="chapter-executive-sidebox-item">
+                    <div class="chapter-executive-sidebox-img">
+                        {% avatar admin.user 30 %}
+                    </div>
+                    <a href="{% url profile_detail admin.user.username %}">{{ admin.user.visible_name }}</a><br/>
+                </div>
+            {% endfor %}
+        </div>
+        <br/>
+    {% endif %}
+    
+    <div class="toolbarcontent" style="padding: 2px;">
+        <div style='background: #f2f2f2; padding: 5px; font-weight: bold;'>Sponsored</div>
+        <br/>
+        {% fake_ad %}
+        <hr/>
+        {% fake_ad %}
+        <hr/>
+        {% fake_ad %}
+    </div>
+        
+{% endblock %}
+
+{% block extra_body %}
+	{% show_student_records_js other_user is_me %}
+	{% show_work_records_js other_user is_me %}
+	
+	{% if messages %}
+		{# looks for messages that are network suggestions only #}
+		<script type="text/javascript">
+            $(function(){
+                $('.network-suggestion').click(function(){
+                        var postData = {};
+                        if ($(this).hasClass('join')){
+                            postData['user'] = {{ user.id }};
+                            postData['is_admin'] = false;
+                            postData['admin_title'] = '';
+                        }
+                        var parentDiv = $(this).parents('div:first');
+                        $.post($(this).attr('href'), postData, function(data){
+                            parentDiv.html(data);
+                            });
+                        return false;
+                    });
+            });
+		</script>
+	{% endif %}
+    
+	<link type="text/css" href="{{STATIC_URL}}css/colorbox.css" rel="stylesheet" />
+	<script type="text/javascript" src="{{STATIC_URL}}js/colorbox.js"></script>
+	<script type="text/javascript" src="{{ STATIC_URL }}js/tablesort/jquery.tablesorter.min.js"></script>
+    <script type="text/javascript">
+	    $(document).ready(function() {
+			$('#avatar').colorbox({transition: "elastic", width:"80%", height:"80%"});
+			$(".tablesorter").tablesorter();
+
+            $('#fb-wall-link').click(function() {
+                $('#fb-info-link').css('background', '#ffffff');
+                $('#fb-wall-link').css('background', '#d8dfea');
+                $('#profile-fb-info').hide();
+                $('#profile-fb-wall').show();
+            });			
+            $('#fb-info-link').click(function() {
+                $('#fb-wall-link').css('background', '#ffffff');
+                $('#fb-info-link').css('background', '#d8dfea');
+                $('#profile-fb-wall').hide();
+                $('#profile-fb-info').show();
+            });			
+	    });
+		$('#manual_update').click(function() {
+			var confirmed = confirm("Only continue if this person has paid their membership fees in person - this will renew their membership by one year.");
+			if (confirmed)
+				return true;
+			else
+				return false;
+		});
+    </script>
+{% endblock %}
+

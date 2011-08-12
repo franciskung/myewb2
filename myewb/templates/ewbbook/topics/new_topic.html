@@ -1,0 +1,109 @@
+{% extends "topics/base.html" %}
+
+{% load i18n %}
+{% load uni_form_tags %}
+
+{#{% load uni_form_tags %}#}
+
+{% load pagination_tags %}
+{% load group_tags %}
+{% load tagging_tags %}
+
+{% comment %}
+**********
+NOTE: this template should only be used in the context of a group (ie, the group 
+variable is not None).  The generic/combined post listing has been moved to
+templates/frontpage.html
+
+The {% if group %} checks are left in just in case, and should be removed eventually.
+***********
+{% endcomment %}
+
+{% block head_title %}{% trans "New Post" %}{% endblock %}
+
+{% block body %}
+    <h2><span class="lighter">{% trans "New Post to the" %}</span><br/>
+    {% ifnotequal group.slug "ewb" %}
+    
+    {{group.name}}
+    
+    {% else %}
+    myEWB Front Page
+    {% endifnotequal %}
+    </h2>
+    
+
+	
+        
+    <form class="uniForm wideform" method="POST" enctype="multipart/form-data" action="" id='new_post_form'>
+        <fieldset class="inlineLabels">
+            {{ topic_form|as_uni_form }}
+            <div id="attachFiles">
+                {% for af in attach_forms %}
+                    {{ af|as_uni_form }}
+                {% endfor %}
+
+				<div id="attachLink" class="ctrlHolder">
+				<label>&nbsp;</label>
+					<a class="getAttachForm" href="{% url topic_get_attachment_form %}">{% trans "Attach a file to this post" %}</a>
+				</div>
+            </div>
+            {% ifequal group.slug "ewb" %}
+            	<p style='font-size: 14px;'>
+            		<strong>This post will be displayed on the front page.</strong><br/>
+            		If you are looking to 
+            		post to a specific chapter or community, find the group under the Chapters
+            		or Communities tab, and post from the group page.
+            	</p>
+            {% endifequal %}
+            <p class="form_block">
+                <input type="hidden" id="attachCount" name="attach_count" value="{{ attach_count }}">
+                <input type="hidden" name="next" value="{{ request.path }}" />
+                <input type="submit" id="submitPost" value="{% trans "Create New Post" %}" /></td>
+            </p>
+        </fieldset>
+    </form>
+{% endblock %}
+
+{% block extra_body %}
+	{{ block.super }}
+	{% include "tinymce.html" %}
+    {% include "comments-js.html" %}
+	
+	<link rel="stylesheet" href="{{ STATIC_URL }}css/autocomplete.css" />
+    <script type="text/javascript" src="{{STATIC_URL}}jquery.autocomplete.min.js"></script>
+	<script type="text/javascript">
+    $("#id_tags").autocomplete('{% url tagging_utils_autocomplete "group_topics" "grouptopic" %}', {
+                max: 10,
+                multiple: true,
+                multipleSeparator: ", ",
+            });
+            
+    $('#id_send_as_email').click(function() {
+        if ($('#id_send_as_email').attr('checked'))
+    		$('#div_id_sender').slideDown();
+        else
+    		$('#div_id_sender').slideUp();
+    });
+    
+    $(document).ready(function() {
+    
+        {% comment %}
+        {% if request.REQUEST.sendasemail %}
+        $('#id_send_as_email').attr('checked', true);
+        {% else %}
+        $('#id_send_as_email').attr('checked', false);
+        {% endif %}
+        {% endcomment %}
+        {# This is going to be a problem - needs to be done server side so it doesn't override eg. previewing and going back, etc. #}
+    
+    
+    	if ($('#id_send_as_email:checked').val())
+    		$('#div_id_sender').show();
+    	else
+    		$('#div_id_sender').hide();
+
+    });
+    </script>	
+{% endblock %}
+    

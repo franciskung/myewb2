@@ -1,0 +1,139 @@
+{% extends 'events/base.html' %}
+{% load events_tags %} 
+
+{% block extra_head %}
+
+ 
+{% endblock %}
+
+{% block body %}
+
+<h1>
+{% if parent.name %}
+	Events for {{parent.name}}
+	<span style="font-weight: normal; font-size: 12px;">
+		(<a href="{% url events_feed_for_instance app_label model_name parent.pk %}">ical</a>)
+	</span>
+{% else %}
+	{% if parent.visible_name %}
+		Events for {{parent.visible_name}}
+		<span style="font-weight: normal; font-size: 12px;">
+			(<a href="{% url events_feed_for_user parent.username %}">ical</a>)
+		</span>
+	{% else %}
+		Events
+	{% endif %}
+{% endif %}
+</h1>
+
+{% if parent %}
+<div>
+	<a href="{% event_link_add_to parent 'css_id' 1 %}">Add an event</a>
+	<br/><br/>
+</div>
+{% endif %}
+
+<div id="calendar" style="float: left; border-width: 1px;" class="ui-corner-all">
+{% for event in events %}
+  <p>{{event}}</p>
+{% endfor %}
+</div>
+<div id="hidden-helper" style="display: none;">
+<div id="hidden-helper2">{% for e in events %}{{e.start|date:"Y/m/d"}}{% if not forloop.last %}|{% endif %}{% endfor %}</div>
+</div>
+
+<div id="loading" style="height: 1; width: 1; overflow: visible; position: relative; top: 0.8em; left: 2em; display: none;">loading...</div>
+<div id="detail" style="margin-left: 20.5em;">
+    <div id="detail-box">
+        <h2 id="detail-title" ></h2>
+        <div id="detail-content"></div>
+    </div>
+</div>
+
+{% if parent and parent.get_absolute_url %}
+<div style="clear: both;">
+	<br/>
+	<a href="{{ parent.get_absolute_url }}">&laquo; Back to {{parent}}</a>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_body %}
+
+  <script type="text/javascript" src="{{STATIC_URL}}js/ui.datepicker.js"></script>
+
+  <script type="text/javascript">
+  $(document).ready(function(){
+  
+    $("div#calendar").html('');
+
+	function checkEvents(date){
+		var events = $('#hidden-helper2').html().split("|");
+		
+		{# probably efficiency gains in here somewhere! #}
+		{#  (but at 3AM, I'll go for functional)  #}
+		for (var i = 0; i < events.length; i++)
+			if (events[i] == $.datepicker.formatDate("yy/mm/dd", date))
+			{
+	           	var a = new Array(true, '');
+	            return a;
+	        }
+   	    var a = new Array(false, '');
+       	return a;
+    }
+
+	function loadDate(dateText)
+	{
+    	var working = true;
+        $('#detail').slideUp('normal', function() {
+            $('#loading').show();
+        });
+        $('#detail-content').load('{% link_to_events_for parent "css_class" 1 %}' + dateText + '/' + ' #for_day',
+        						  null,
+          						  function() {
+					                  $('#detail').stop(true, true);
+           						  	  $('#loading').hide();
+					                  $('#detail-title').html("Events for " + dateText);
+					                  $('#detail').slideDown();
+								  });
+	}
+
+	var is_loading = false;
+    var datepicker = $("div#calendar").datepicker({
+        dateFormat: 'yy/mm/dd',
+        changeMonth: true,
+        changeYear: true,
+        beforeShowDay: checkEvents,
+        onChangeMonthYear: function(year, month, inst){
+        	if (!is_loading)
+        	{
+            	is_loading = true;
+				$('#hidden-helper2').html('');
+        		$('#hidden-helper').load('{% link_to_events_for parent "css_class" 1 %}' + year + '/' + month + '/' + ' #hidden-helper2',
+        					null,
+        					function(data, textStatus) {
+					        	$('div#calendar').datepicker({
+				        			beforeShowDay: checkEvents
+				        		});
+								if (month < 10)
+									month = "0" + month;
+								$("div#calendar").datepicker("setDate", 
+															$.datepicker.parseDate("y/m/d", year + '/' + month + '/01'));
+								is_loading = false;
+         					});
+         	}
+        },
+        onSelect: function(dateText, inst) {
+            loadDate(dateText);
+        }
+    });
+    {% if selected_date %}
+		loadDate("{{ selected_date}}");
+	{% endif %} 
+
+  });
+  </script>
+
+
+{% endblock %}

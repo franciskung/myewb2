@@ -1,0 +1,50 @@
+{% load i18n %}
+{% load avatar_tags %}
+{% load threadedcommentstags %}
+{% load attachablecomments_tags %}
+{% load extra_tagging_tags %}
+{% load group_tags %}
+{% load group_topics_tags %}
+{% load attachments_tags %}
+{% load helpers %}
+{% load cache %}
+{% load time_filters %}
+
+
+<div>
+	<a href="{% url profile_detail topic.creator.username %}">
+	    {# {% avatar topic.creator 40 %} #}
+	    <img src="{% avatar_url topic.creator 50 %}" title="{{topic.creator.visible_name}}" alt="{{topic.creator.visible_name}}" style='float: left; height: 50px; width: 50px; padding: 10px;'/>
+	</a>
+
+    <div style='margin-left: 75px; padding-top: 10px;'>       
+        <a href="{% url profile_detail topic.creator %}" style='font-weight: bold;'>{{ topic.creator.visible_name }}</a><br/><br/>
+
+        <div style="border-left: 2px solid #d0d0d0; padding: 5px;">        
+            <a href="{{ topic.get_absolute_url }}" style='font-weight: bold;'>{{ topic.title }}</a>
+            <div style='color: #a0a0a0;'>
+                {% mktime topic.created %}
+			</div>
+            
+            <p style='color: #a0a0a0;'>
+                {{ topic.intro|striptags }}
+            </p>
+        
+    		{% get_comment_count for topic as num_comments %}
+
+		    {% if num_comments %}
+    		    <div style='background: #edeff4; padding: 5px;'>
+    			    <a href="{{ topic.get_absolute_url }}" class="nodeco">
+                        <img src="{{ STATIC_URL }}images/fb/comments.gif" style="position: relative; top: 6px; margin-top: -6px;"/>
+    			        {% ifnotequal num_comments 1 %}
+    			            View all {{ num_comments }} comments
+    			        {% else %}
+    			            View 1 comment
+    			        {% endifnotequal %}
+        			</a>
+        	    </div>
+    		{% endif %}
+
+        </div>
+    </div>
+</div>

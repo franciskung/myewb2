@@ -1,0 +1,66 @@
+#toolbarcolumn_right_container
+{
+        width: 300px;
+        float: right;
+        
+        margin:0 -1em 0 1em;        
+}
+#toolbarcolumn_right {
+width: 300px;
+margin:0;
+}
+
+#box-around-ewb-rightbar {
+-moz-border-radius-topleft:7px;
+-webkit-border-top-left-radius: 7px;
+
+}
+.toolbarheader_right
+{
+        /* background-repeat:no-repeat;
+        background-position:top left;
+        background-image:url("$base/images/${area}_l_long.gif"); */
+        background-color: #001f65;
+        color: white;
+        font-weight: bold;
+        padding:3px;
+        padding-left: 9px;
+        font-size: 13px;
+        
+        clear:both;
+
+}
+
+.toolbarheader_right a
+{
+    color: #ffffff;
+    text-decoration: none;
+}
+
+div.toolbarcontent_right
+{
+        background-color: #f1f5ff;
+        padding: 6px;
+        padding-bottom: 0px;
+        border: 1px solid white;
+        border-top: 0px;
+        border-left: 1px solid #002BA2;
+        margin-bottom: 5px;
+}
+
+.toolbarcontent_right ul
+{
+	list-style-type: none;
+	padding-left: 0px;
+}
+
+.toolbarbottom_right
+{
+        background-repeat:no-repeat;
+        background-position:top left;
+        background-image: url("$base/images/${area}_body_bottom.gif");
+        height:5px;
+        overflow:hidden;
+/*      width:300px; */
+        margin-bottom: 12px;
+}

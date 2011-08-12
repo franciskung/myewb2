@@ -1,0 +1,18 @@
+{% load avatar_tags %}
+        <div id="whos_online_ajax">
+	        {% for online in online_users %}
+	            <a href="{% url profile_detail online %}" style='display: block; float: left; width: 30px; height: 30px; margin: 1px;' name="{{online.visible_name}}">
+			<img src="{% avatar_url online 30 %}" title="{{online.visible_name}}" alt="{{online.visible_name}}" style='height: 30px; width: 30px;'/>
+{#			{% avatar online 30 %} #}
+		    </a>
+	        {% endfor %}
+	         <br style='clear: left;'/>
+	        {% if online_anon %}
+		        and {{ online_anon }} guest{{ online_anon|pluralize }}
+	        {% endif %}
+        </div>
+
+        <div id="inbox_count_ajax" style="display: none;">
+	        <a href="{% url messages_inbox %}">{{ messages_inbox_count }} unread message{% ifnotequal messages_inbox_count 1 %}s{% endifnotequal %}</a>
+        </div>
+

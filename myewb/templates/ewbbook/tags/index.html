@@ -1,0 +1,23 @@
+{% extends "topics/base.html" %}
+
+{% load i18n %}
+
+{% load in_filter %}
+{% load extra_tagging_tags %}
+{% load pagination_tags %}
+
+{% block head_title %}{% blocktrans %}Tags{% endblocktrans %}{% endblock %}
+
+{% block body %}
+
+    <h1>{% trans "All posts matching " %}<i>"{{ tag }}"</i></h1>
+
+    {% autopaginate topictags 10 %}
+    
+    {% for topic in topictags %}
+        {% include "topics/topic_item.html" %}
+    {% endfor %}
+    
+    {% paginate %}
+    
+{% endblock %}

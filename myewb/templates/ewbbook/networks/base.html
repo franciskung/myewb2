@@ -1,0 +1,113 @@
+{% extends "base_groups/base.html" %}
+
+{% load i18n %}
+{% load group_tags %}
+{% load avatar_tags %}
+{% load networks_tags %}
+{% load base_groups_tags %}
+
+{% block body_class %}networks yellow{% endblock %}
+
+{% block subnav %}
+    <ul class="subnav">
+        {% if group %}
+            {% ifnotequal group.slug "natloffice" %}
+                <li><a href="{% url network_detail group.slug %}">{{ group.name }}</a></li>
+            {% endifnotequal %}
+        {% endif %}
+        <li><a href="{% url networks_index %}">{% trans "All Chapters" %}</a></li> 
+        {#<li><a href="{% url chapters_index %}">{% trans "All Chapters" %}</a></li>#}
+        <li><a href="{% url national_office %}">{% trans "National Office" %}</a></li>
+        {% if is_exec %}
+       		<li><a href="{% link_to_current_champ request.user %}">CHAMP</a></li>
+       		<li><a href="{% link_to_current_finance request.user %}">Finance</a></li>
+        {% endif %}
+    </ul>
+{% endblock %}
+
+
+{% block toolbar_left %}
+    {% if group and group.is_chapter %}
+        <div class="toolbarheader bkgd" id="box-chapterinfo">{% trans "Chapter Info" %}</div>
+        <div class="toolbarcontent">
+            <a href="http://{{ group.slug }}.ewb.ca" target="_blank"><img src="{{STATIC_URL}}images/chapterlogos/{{ group.slug }}_small.jpg" style="width:100%; border:0;" /></a>
+
+            <p>
+            	<a href="http://{{ group.slug }}.ewb.ca" target="_blank">http://{{ group.slug }}.ewb.ca</a><br/>
+            	Email: <a href="mailto:{{ group.slug }}@ewb.ca">{{ group.slug }}@ewb.ca</a><br/>
+            </p>
+            
+            <p>
+            	Logos:
+            	<a href="{{STATIC_URL}}images/chapterlogos/{{ group.slug }}.jpg">jpg</a>&nbsp;
+            	<a href="{{STATIC_URL}}images/chapterlogos/{{ group.slug }}.eps">eps</a>&nbsp;
+            	<a href="{{STATIC_URL}}images/chapterlogos/{{ group.slug }}.svg">svg</a>&nbsp;
+            	<a href="{{STATIC_URL}}images/chapterlogos/{{ group.slug }}.pdf">pdf</a>
+            	<br/>
+            	
+            	Feeds:
+            	<a href="{% url topic_feed_group group.slug %}">
+            		<img src="{{STATIC_URL}}images/feeds/rss.gif" style="border: 0"/>RSS
+            	</a>&nbsp;&nbsp;
+            	{# kinda hack-ish, but we can assume this since we have "if group.is_chapter" earlier... #}
+            	<a href="{% url events_feed_for_instance "networks" "network" group.pk %}">
+            		<img src="{{STATIC_URL}}images/feeds/ical.gif" style="border: 0"/>
+				</a>
+            </p>
+            
+        </div>
+    {% endif %}
+    
+    {{ block.super }}
+
+    {% if group %}
+	    {% if is_admin %}
+            <div class="toolbarheader bkgd" id="box-admin-options">{% trans "Admin Options" %}</div>
+            <div class="toolbarcontent">
+		        <a href="{% url network_new_member group.slug %}">{% trans "Add users" %}</a><br/>
+		        <a href="{% url network_invite_member group.slug %}">{% trans "Invite users" %}</a><br/><br/>
+	            <a href="{% url network_bulk_import group.slug %}">{% trans "Bulk-add emails" %}</a><br/>
+	            <a href="{% url network_bulk_remove group.slug %}">{% trans "Bulk-remove emails" %}</a><br/><br/>
+	            {% if group.is_chapter %}
+		            <a href="{% url email_forwards_index group.slug %}">{% trans "Manage chapter email addresses" %}</a><br/><br/>
+	            {% endif %}
+	            
+{#       			<a href="{% url edit_network group.slug %}">{% trans "Edit network details" %}</a><br/><br/> #}
+       			<a href="{% url edit_network group.slug %}">{% trans "Edit chapter details" %}</a><br/> 
+       			<a href="{% url edit_chapter group.slug %}">{% trans "Edit chapter address" %}</a><br/><br/> 
+		        <a href="{% url network_stats group.slug %}">{% trans "Group statistics" %}</a><br/>
+		        
+		        <a href="/champ/{{ group.slug }}">{% trans "CHAMP" %}</a><br/>{# @@@ two questions: should this be here, and should it be under is_admin? #}
+		        
+                
+                {% if perms.base_groups and not group.is_chapter %}
+                    <a href="{% url new_chapter %}?network={{ group.slug }}">{% trans "Convert to chapter" %}</a><br/>
+                {% endif %}      
+            </div>
+        {% endif %}
+	{% endif %}
+{% endblock %}
+
+
+{% block toolbar_right %}
+    {% if group and group.is_chapter %}
+        <div class="toolbarheader bkgd" id="box-chapter-executive">{% trans "Chapter Executive" %}</div>
+        <div class="toolbarcontent">
+            {% get_admins group as admins %}
+            {% for admin in admins %}
+
+                <div class="chapter-executive-sidebox-item">
+                    <div class="chapter-executive-sidebox-img">
+                        {% avatar admin.user 30 %}
+                    </div>
+                    <a href="{% url profile_detail admin.user.username %}">{{ admin.user.visible_name }}</a><br/>
+                    {{ admin.admin_title }} {% if is_admin %}<a href="{% url network_edit_member group.slug admin.user.username %}">(edit)</a>{% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {{ block.super }}
+{% endblock %}
+
+

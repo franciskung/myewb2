@@ -1,0 +1,550 @@
+{% extends "champ/base.html" %}
+
+{% load i18n %}
+{% load uni_form_tags %}
+{% load wiki_tags %}
+{% load avatar_tags %}
+{% load threadedcommentstags %}
+{% load pagination_tags %}
+{% load extra_tagging_tags %}
+{% load networks_tags %}
+{% load base_groups_tags %}
+{% load group_tags %}
+{% load topics_tags %}
+{% load events_tags %}
+{% load schoolyear %} 
+{% load helpers %}
+
+{% block champ_body %}
+<style>
+	#champtable td, #champtable th.topheading {
+		text-align: center;
+	}
+	#champtable td.labelcell {
+		text-align: left;
+	}
+	.champalytics_icon {
+	    height: 20px;
+	    width: 20px;
+	    padding: 2px;
+	    border: 1px solid #d0d0d0;
+	    -moz-border-radius: 0.5em;
+	    -webkit-border-radius: 0.5em;
+	    margin: -5px;
+	}
+</style>
+
+<h3 align="center">Currently Displaying: 
+
+{% if term %}
+    {{ term }} term, {{ year }}
+{% else %}
+    {% if month %}
+        {{ month|month }}, {{ year }}
+    {% else %}
+        {% if year %}
+            {{ year|schoolyear }}
+        {% else %}
+            all dates
+        {% endif %}
+    {% endif %}
+{% endif %}
+
+</h3>
+
+
+<table style="width: 95%"> <tr>
+<td align="left" valign="middle">
+	{# maybe templatetag this entire thing...!!! #}
+	{% if group %}
+		{% if term %}
+			<a href="{% url champ_dashboard year=prevterm.1,term=prevterm.0,group_slug=group.slug %}" class="more">&laquo; previous term</a>
+		{% else %}
+		    {% if month %}
+				<a href="{% url champ_dashboard year=prevmonth.1,month=prevmonth.0,group_slug=group.slug %}" class="more">&laquo; previous month</a>
+		    {% else %}
+		        {% if year %}
+					<a href="{% url champ_dashboard year=prevyear,group_slug=group.slug %}" class="more">&laquo; previous year</a>
+		        {% endif %}
+		    {% endif %}
+		{% endif %}
+	{% else %}
+		{% if term %}
+			<a href="{% url champ_dashboard year=prevterm.1,term=prevterm.0 %}" class="more">&laquo; previous term</a>
+		{% else %}
+		    {% if month %}
+				<a href="{% url champ_dashboard year=prevmonth.1,month=prevmonth.0 %}" class="more">&laquo; previous month</a>
+		    {% else %}
+		        {% if year %}
+					<a href="{% url champ_dashboard year=prevyear %}" class="more">&laquo; previous year</a>
+		        {% endif %}
+		    {% endif %}
+		{% endif %}
+	{% endif %}
+	
+</td>
+<td align="center">
+	<span style="font-size: 11px;">Jump to:</span> <br /> 
+	
+	{% if group %}
+	    <a href="{% url champ_dashboard year=nowyear,month=nowmonth,group_slug=group.slug %}" class="more">[current month]</a> 
+	    <a href="{% url champ_dashboard year=nowyear,term=nowterm,group_slug=group.slug %}" class="more">[current term]</a> 
+	    <a href="{% url champ_dashboard year=nowschoolyear,group_slug=group.slug %}" class="more">[current year]</a> 
+	    <a href="{% url champ_dashboard group_slug=group.slug%}" class="more">[all dates]</a></td>
+	{% else %}
+	    <a href="{% url champ_dashboard year=nowyear,month=nowmonth %}" class="more">[current month]</a> 
+	    <a href="{% url champ_dashboard year=nowyear,term=nowterm %}" class="more">[current term]</a> 
+	    <a href="{% url champ_dashboard year=nowschoolyear %}" class="more">[current year]</a> 
+	    <a href="{% url champ_dashboard %}" class="more">[all dates]</a></td>
+    {% endif %}
+<td align="right" valign="middle">
+	{% if group %}
+		{% if term %}
+			<a href="{% url champ_dashboard year=nextterm.1,term=nextterm.0,group_slug=group.slug %}" class="more">&raquo; next term</a>
+		{% else %}
+		    {% if month %}
+				<a href="{% url champ_dashboard year=nextmonth.1,month=nextmonth.0,group_slug=group.slug %}" class="more">&raquo; next month</a>
+		    {% else %}
+		        {% if year %}
+					<a href="{% url champ_dashboard year=nextyear,group_slug=group.slug %}" class="more">&raquo; next year</a>
+		        {% endif %}
+		    {% endif %}
+		{% endif %}
+	{% else %}
+		{% if term %}
+			<a href="{% url champ_dashboard year=nextterm.1,term=nextterm.0 %}" class="more">&raquo; next term</a>
+		{% else %}
+		    {% if month %}
+				<a href="{% url champ_dashboard year=nextmonth.1,month=nextmonth.0 %}" class="more">&raquo; next month</a>
+		    {% else %}
+		        {% if year %}
+					<a href="{% url champ_dashboard year=nextyear %}" class="more">&raquo; next year</a>
+		        {% endif %}
+		    {% endif %}
+		{% endif %}
+	{% endif %}
+	
+</td>
+</tr> </table>
+
+<br />
+
+<div style="text-align: center;">
+Chapter: 
+<form>
+<select id="champ_groups">
+    <option value="">all (national)</option>
+    {% for grp in allgroups %}
+        <option value="{{grp.slug}}" {% ifequal group grp %}selected="selected"{% endifequal %}>{{grp.name}}</option>
+    {% endfor %}
+</select>
+</form>
+</div>
+<br/>
+
+{% if group and is_group_admin %}
+	<div style="text-align: center; padding-bottom: 5px;">
+		<a href="{% url champ_new_activity group.slug %}">add a new CHAMP activity</a>
+	</div>
+{% endif %}
+
+<table class="cellpadding8 standard" {# width="500" #} style="margin: 0 auto; width: 90%;" id="champtable">
+
+<tr>
+	<th {# style="width: 300px;" #}>&nbsp;</th>
+	{% if group %}
+		<th {# style="width: 150px;" #} class="topheading">
+			{{ group.name }}:<br/>
+			{% if term %}
+			    {{ term }} term, {{ year }}
+			{% else %}
+			    {% if month %}
+			        {{ month|month }}, {{ year }}
+			    {% else %}
+			        {% if year %}
+			            {{ year|schoolyear }}
+			        {% else %}
+			            all dates
+			        {% endif %}
+			    {% endif %}
+			{% endif %}
+		</th>
+		<th {# style="width: 150px;" #} class="topheading">{{ year|schoolyear }} Plan
+		{% if is_group_admin %}
+		     <br />
+		     {% if year %}
+		     	<a href="{% url champ_yearplan group.slug year %}">[edit]</a>
+		     {% else %}
+		     	<a href="{% url champ_yearplan group.slug %}">[edit]</a>
+		     {% endif %}
+		{% endif %}
+		</th>
+	{% endif %}
+	<th {#style="width: 150px;"#} class="topheading">
+		National:<br/>
+		{% if term %}
+		    {{ term }} term, {{ year }}
+		{% else %}
+		    {% if month %}
+		        {{ month|month }}, {{ year }}
+		    {% else %}
+		        {% if year %}
+		            {{ year|schoolyear }}
+		        {% else %}
+		            all dates
+		        {% endif %}
+		    {% endif %}
+		{% endif %}
+	</th>
+	<th {#style="width: 150px;"#} class="topheading">
+		National goals<br/>
+		({{ year|schoolyear }})
+	</th>
+	<th {#style="width: 150px;"#} class="topheading">
+	    &nbsp;
+	</th>
+</tr>
+
+
+<tr><td style="width: 200px"></td><td></td></tr>
+
+<tr><th colspan="6" align="left">CHAMP Usage</th></tr>
+<tr>
+	<td  class="labelcell">Unconfirmed Activities:</td>
+	{% if group %}
+		<td> {{ unconfirmed }} <a href="{% url champ_unconfirmed_activities group.slug %}" class="more">list &raquo;</a></td>
+		<td>&nbsp;</td>
+	{% endif %}
+	<td>{{ natl_unconfirmed }}</td>
+	<td>&nbsp;</td>
+	<td>&nbsp;</td>
+</tr>
+<tr>
+	<td class="labelcell">Confirmed Activities:</td>
+	{% if group %}
+		<td>  {{ confirmed }} <a href="{% url champ_confirmed_activities group.slug %}" class="more">list &raquo;</a></td>
+		<td>&nbsp;</td>
+	{% endif %}
+	<td>{{ natl_confirmed }}</td>
+	<td>&nbsp;</td>
+	<td>&nbsp;</td>
+</tr>
+
+<tr><th colspan="6" align="left">Member Learning</th></tr>
+<tr>
+	<td class="labelcell">Member Learning Hours:</td>
+	{% if group %}
+		<td> {{ ml_hours|number_format }} </td>
+		<td> {% if yearplan %} {{ yearplan.ml_total_hours|number_format }} {% endif %}</td>
+	{% endif %}
+	<td>{{ natl_ml_hours|number_format }}</td>
+	<td>{{ national.ml_hours|number_format }}</td>
+	<td>
+	    <a href="#" class="champalytics" id="ml_hours">
+	        <img src="{{ STATIC_URL }}images/icons/Stats.ico" class="champalytics_icon"/>
+	    </a>
+    </td>
+</tr>
+<tr>
+	<td  class="labelcell">Average Attendance:</td>
+	{% if group %}
+		<td> {{ ml_attendance|number_format }}  </td>
+		<td> {% if yearplan %} {{ yearplan.ml_average_attendance|number_format }} {% endif %}</td>
+	{% endif %}
+	<td>{{ natl_ml_attendance|number_format }}</td>
+	<td>{{ national.ml_attendance|number_format }}</td>
+	<td>
+	    <a href="#" class="champalytics" id="ml_attendance">
+	        <img src="{{ STATIC_URL }}images/icons/Stats.ico" class="champalytics_icon"/>
+	    </a>
+    </td>
+</tr>
+<tr>
+	<td  class="labelcell">Number of events:</td>
+	{% if group %}
+		<td> {{ ml_events|number_format }}  </td>
+		<td> {% if yearplan %} {{ yearplan.ml_events|number_format }} {% endif %}</td>
+	{% endif %}
+	<td>{{ natl_ml_events|number_format }}</td>
+	<td>{{ national.ml_events|number_format }}</td>
+	<td>
+	    <a href="#" class="champalytics" id="ml_events">
+	        <img src="{{ STATIC_URL }}images/icons/Stats.ico" class="champalytics_icon"/>
+	    </a>
+    </td>
+</tr>
+
+<tr><th colspan="6" align="left">Public Outreach</th></tr>
+<tr>
+	<td class="labelcell">People reached on campus:</td>
+	{% if group %}
+		<td> {{ pe_people_oncampus|number_format }} </td>
+		<td> {% if yearplan %} {{ yearplan.eng_people_reached|number_format }} {% endif %}</td>
+	{% endif %}
+	<td>{{ natl_pe_people_oncampus|number_format }}</td>
+	<td>{{ national.pe_people_oncampus|number_format }}</td>
+	<td>
+	    <a href="#" class="champalytics" id="pe_people_oncampus">
+	        <img src="{{ STATIC_URL }}images/icons/Stats.ico" class="champalytics_icon"/>
+	    </a>
+    </td>
+</tr>
+<tr>
+	<td class="labelcell">People reached off campus:</td>
+	{% if group %}
+		<td> {{ pe_people_offcampus|number_format }} </td>
+		<td> {% if yearplan %} {{ yearplan.eng_people_reached_offcampus|number_format }} {% endif %}</td>
+	{% endif %}
+	<td>{{ natl_pe_people_offcampus|number_format }}</td>
+	<td>{{ national.pe_people_offcampus|number_format }}</td>
+	<td>
+	    <a href="#" class="champalytics" id="pe_people_offcampus">
+	        <img src="{{ STATIC_URL }}images/icons/Stats.ico" class="champalytics_icon"/>
+	    </a>
+    </td>
+</tr>
+<tr>
+	<td class="labelcell">Number of events:</td>
+	{% if group %}
+		<td> {{ pe_events|number_format }} </td>
+		<td> {% if yearplan %} {{ yearplan.eng_events|number_format }} {% endif %}</td>
+	{% endif %}
+	<td>{{ natl_pe_events|number_format }}</td>
+	<td>{{ national.pe_events|number_format }}</td>
+	<td>
+	    <a href="#" class="champalytics" id="pe_events">
+	        <img src="{{ STATIC_URL }}images/icons/Stats.ico" class="champalytics_icon"/>
+	    </a>
+    </td>
+</tr>
+
+<tr><th colspan="6" align="left">Advocacy</th></tr>
+<tr>
+	<td class="labelcell">MP meetings:</td>
+	{% if group %}
+		<td> {{ po_contacts|number_format }} </td>
+		<td> {% if yearplan %} {{ yearplan.adv_contacts|number_format }} {% endif %}</td>
+	{% endif %}
+	<td>{{ natl_po_contacts|number_format }}</td>
+	<td>{{ national.po_contacts|number_format }}</td>
+	<td>
+	    <a href="#" class="champalytics" id="po_contacts">
+	        <img src="{{ STATIC_URL }}images/icons/Stats.ico" class="champalytics_icon"/>
+	    </a>
+    </td>
+</tr>
+<tr>
+	<td class="labelcell">Letters to the editor:</td>
+	{% if group %}
+		<td> {{ po_letters|number_format }} </td>
+		<td> {% if yearplan %} {{ yearplan.adv_letters|number_format }} {% endif %}</td>
+	{% endif %}
+	<td>{{ natl_po_letters|number_format }}</td>
+	<td>{{ national.po_letters|number_format }}</td>
+	<td>
+	    <a href="#" class="champalytics" id="po_letters">
+	        <img src="{{ STATIC_URL }}images/icons/Stats.ico" class="champalytics_icon"/>
+	    </a>
+    </td>
+</tr>
+
+<tr><th colspan="6" align="left">Global Engineering</th>
+</tr>
+<tr>
+	<td class="labelcell">Students Reached:</td>
+	{% if group %}
+		<td> {{ ce_students|number_format }} </td>
+		<td> {% if yearplan %} {{ yearplan.ce_students|number_format }} {% endif %}</td>
+	{% endif %}
+	<td>{{ natl_ce_students|number_format }}</td>
+	<td>{{ national.ce_students|number_format }}</td>
+	<td>
+	    <a href="#" class="champalytics" id="ce_students">
+	        <img src="{{ STATIC_URL }}images/icons/Stats.ico" class="champalytics_icon"/>
+	    </a>
+    </td>
+</tr>
+<tr>
+	<td class="labelcell">Total Class Hours:</td>
+	{% if group %}
+		<td> {{ ce_hours|number_format }} </td>
+		<td> {% if yearplan %} {{ yearplan.ce_hours|number_format }} {% endif %}</td>
+	{% endif %}
+	<td>{{ natl_ce_hours|number_format }}</td>
+	<td>{{ national.ce_hours|number_format }}</td>
+	<td>
+	    <a href="#" class="champalytics" id="ce_hours">
+	        <img src="{{ STATIC_URL }}images/icons/Stats.ico" class="champalytics_icon"/>
+	    </a>
+    </td>
+</tr>
+
+<tr><th colspan="6" align="left">Workplace Outreach</th></tr>
+<tr>
+	<td class="labelcell">Professionals Reached:</td>
+	{% if group %}
+		<td>  {{ wo_professionals|number_format }} </td>
+		<td> {% if yearplan %} {{ yearplan.wo_reached|number_format }} {% endif %}</td>
+	{% endif %}
+	<td>{{ natl_wo_professionals|number_format }}</td>
+	<td>{{ national.wo_professionals|number_format }}</td>
+	<td>
+	    <a href="#" class="champalytics" id="wo_professionals">
+	        <img src="{{ STATIC_URL }}images/icons/Stats.ico" class="champalytics_icon"/>
+	    </a>
+    </td>
+</tr>
+<tr>
+	<td class="labelcell">Presentations:</td>
+	{% if group %}
+		<td>  {{ wo_presentations|number_format }} </td>
+		<td> {% if yearplan %} {{ yearplan.wo_presentations|number_format }} {% endif %}</td>
+	{% endif %}
+	<td>{{ natl_wo_presentations|number_format }}</td>
+	<td>{{ national.wo_presentations|number_format }}</td>
+	<td>
+	    <a href="#" class="champalytics" id="wo_presentations">
+	        <img src="{{ STATIC_URL }}images/icons/Stats.ico" class="champalytics_icon"/>
+	    </a>
+    </td>
+</tr>
+
+<tr><th colspan="6" align="left">Youth Engagement</th></tr>
+<tr>
+	<td class="labelcell">Students Reached:</td>
+	{% if group %}
+		<td>  {{ so_students|number_format }} </td>
+		<td> {% if yearplan %} {{ yearplan.so_reached|number_format }} {% endif %}</td>
+	{% endif %}
+	<td>{{ natl_so_students|number_format }}</td>
+	<td>{{ national.so_students|number_format }}</td>
+	<td>
+	    <a href="#" class="champalytics" id="so_students">
+	        <img src="{{ STATIC_URL }}images/icons/Stats.ico" class="champalytics_icon"/>
+	    </a>
+    </td>
+</tr>
+<tr>
+	<td class="labelcell">Presentations:</td>
+	{% if group %}
+		<td>  {{ so_presentations|number_format }} </td>
+		<td> {% if yearplan %} {{ yearplan.so_presentations|number_format }} {% endif %}</td>
+	{% endif %}
+	<td>{{ natl_so_presentations|number_format }}</td>
+	<td>{{ national.so_presentations|number_format }}</td>
+	<td>
+	    <a href="#" class="champalytics" id="so_presentations">
+	        <img src="{{ STATIC_URL }}images/icons/Stats.ico" class="champalytics_icon"/>
+	    </a>
+    </td>
+</tr>
+
+<tr><th colspan="6" align="left">Fundraising</th></tr>
+<tr>
+	<td class="labelcell">Total Dollars Fundraised:</td>
+	{% if group %}
+		<td>  $ {{ fundraising_dollars|default:0|number_format }} </td>
+		<td> {% if yearplan %} $ {{ yearplan.fund_total|default:0|number_format }} {% endif %}</td>
+	{% endif %}
+	<td>$ {{ natl_fundraising_dollars|default:0|number_format }}</td>
+	<td>$ {{ national.fundraising_dollars|number_format }}</td>
+	<td>
+	    <a href="#" class="champalytics" id="fundraising_dollars">
+	        <img src="{{ STATIC_URL }}images/icons/Stats.ico" class="champalytics_icon"/>
+	    </a>
+    </td>
+</tr>
+<tr>
+	<td class="labelcell">Dollars from one-off events:</td>
+	{% if group %}
+		<td>  $ {{ fundraising_dollars_oneoff|default:0|number_format }} </td>
+		<td> {% if yearplan %} $ {{ yearplan.fund_oneoff|default:0|number_format }} {% endif %}</td>
+	{% endif %}
+	<td>$ {{ natl_fundraising_dollars_oneoff|default:0|number_format }}</td>
+	<td>$ {{ national.fundraising_dollars_oneoff|number_format }}</td>
+	<td>
+	    <a href="#" class="champalytics" id="fundraising_dollars_oneoff">
+	        <img src="{{ STATIC_URL }}images/icons/Stats.ico" class="champalytics_icon"/>
+	    </a>
+    </td>
+</tr>
+<tr>
+	<td class="labelcell">Dollars from recurring activities:</td>
+	{% if group %}
+		<td>  $ {{ fundraising_dollars_recurring|default:0|number_format }} </td>
+		<td> {% if yearplan %} $ {{ yearplan.fund_recurring|default:0|number_format }} {% endif %}</td>
+	{% endif %}
+	<td>$ {{ natl_fundraising_dollars_recurring|default:0|number_format }}</td>
+	<td>$ {{ national.fundraising_dollars_recurring|number_format }}</td>
+	<td>
+	    <a href="#" class="champalytics" id="fundraising_dollars_recurring">
+	        <img src="{{ STATIC_URL }}images/icons/Stats.ico" class="champalytics_icon"/>
+	    </a>
+    </td>
+</tr>
+<tr>
+	<td class="labelcell">Dollars from non-event sources:</td>
+	{% if group %}
+		<td>  $ {{ fundraising_dollars_nonevent|default:0|number_format }} </td>
+		<td> {% if yearplan %} $ {{ yearplan.fund_nonevent|default:0|number_format }} {% endif %}</td>
+	{% endif %}
+	<td>$ {{ natl_fundraising_dollars_nonevent|default:0|number_format }}</td>
+	<td>$ {{ national.fundraising_dollars_nonevent|number_format }}</td>
+	<td>
+	    <a href="#" class="champalytics" id="fundraising_dollars_nonevent">
+	        <img src="{{ STATIC_URL }}images/icons/Stats.ico" class="champalytics_icon"/>
+	    </a>
+    </td>
+</tr>
+
+<tr><th colspan="6" align="left">Publicity</th></tr>
+<tr>
+	<td class="labelcell">Media Hits:</td>
+	{% if group %}
+		<td>  {{ publicity_hits|number_format }} </td>
+		<td> {% if yearplan %} {{ yearplan.pub_media_hits|number_format }} {% endif %}</td>
+	{% endif %}
+	<td>{{ natl_publicity_hits|number_format }}</td>
+	<td>{{ national.publicity_hits|number_format }}</td>
+	<td>
+	    <a href="#" class="champalytics" id="publicity_hits">
+	        <img src="{{ STATIC_URL }}images/icons/Stats.ico" class="champalytics_icon"/>
+	    </a>
+    </td>
+</tr>
+</table>
+
+{% endblock %}
+
+{% block extra_body %}
+    <link type="text/css" href="{{STATIC_URL}}css/colorbox.css" rel="stylesheet" />
+    <script type="text/javascript" src="{{STATIC_URL}}js/colorbox.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#champ_groups').change(function() {
+                if ($(this).val())
+	                window.location.href="{% url champ_dashboard %}" + $(this).val() + "/" + {{ nowyear }} + "/";
+	            else
+	                window.location.href="{% url champ_dashboard %}" + {{ nowyear }} + "/";
+            });
+            
+            $('.champalytics').click(function() {
+                var metric = $(this).attr('id');
+            	{% if group %}
+                    var group = '{{ group.slug }}';
+                {% else %}
+                    var group = 'none';
+                {% endif %}
+                
+                $(document).colorbox({href: '{% url champalytics %}?metric=' + $(this).attr('id') + '&group=' + group,
+                            open: true,
+                            iframe: true,
+                            width: '95%',
+                            height: '80%',
+                            opacity: '0.5'});
+                return false;
+            });
+        });
+    </script>
+{% endblock %}
+

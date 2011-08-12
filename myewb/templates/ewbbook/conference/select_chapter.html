@@ -1,0 +1,76 @@
+{% extends 'events/base.html' %}
+
+{% load i18n %}
+
+{% block head_title %}National Conference 2011{% endblock %}
+
+{% block body %}
+<br/><br/>
+
+<h1>National Conference 2011</h1>
+
+<p>You're an admin, or are an exec of multiple chapters.</p>
+
+<p>Which chapter do you want to a view a list for?</p>
+
+<style>
+#confreg-list th
+{
+  padding: 10px;
+  text-align: left;
+}
+#confreg-list td
+{
+  padding: 10px 20px;
+}
+</style>
+
+
+{% if is_admin %}
+	<div style="width: 50%; float: right;">
+		<h2>More conference stats</h2>
+	
+		<p>	
+			<strong>{{ stats.member_registration}} subsidized chapter member registrations</strong><br/>
+			<strong>{{ stats.open_registration}} open member registrations</strong><br/>
+			<strong>{{ stats.alumni_registration}} alumni registrations</strong><br/>
+			<strong>{{ stats.external_registration}} external registrations</strong><br/>
+			<strong>{{ stats.total_registration}} total registrations (${{ stats.reg_fees}} collected)</strong>
+		</p>
+	
+		<p>
+			<strong>${{ stats.africafund }} for African delegates ({{ stats.africafund_percent }}% of registrations)</strong>
+		</p>
+		
+		<p>
+			{{ stats.male_percent }}% male ({{ stats.male }}), {{ stats.female_percent }}% female ({{ stats.female }})<br/>
+		</p>
+	
+		<p>
+			<a href="{% url conference_download_all %}">download all registrations</a><br/>
+			<a href="{% url conference_download_chapter %}">download subsidized chapter registrations</a><br/>
+			<a href="{% url conference_download_open %}">download open member registrations</a><br/>
+			<a href="{% url conference_download_alumni %}">download alumni registrations</a><br/>
+			<a href="{% url conference_download_external %}">download external registrations</a>
+		</p>
+	</div>	
+{% endif %}
+
+<table border="1" id="confreg-list">
+
+{% for chapter in chapters %}
+	<tr>
+		<th>
+			<a href="{% url conference_list_chapter chapter.network.slug %}">
+				{{ chapter.chapter_name }}
+			</a>
+		</th>
+		<td>
+			{{ chapter.numRegistrations }}
+		</td>
+	</tr>
+{% endfor %}
+</table>
+
+
+{% endblock %}

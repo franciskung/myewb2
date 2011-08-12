@@ -1,0 +1,91 @@
+{% extends "conference/schedule/base.html" %}
+
+{% load conference_tags %}
+
+{% block viewport %}600px{% endblock %}
+
+{% block body %}
+    <h1>
+        My Conference Schedule
+        {% if not request.is_mobile and not printable %}
+            &nbsp;
+            {% if day %}
+                <a href="{% url conference_for_user day %}?printable=true" target="_new">
+            {% else %}
+                <a href="{% url conference_for_user %}?printable=true" target="_new">
+            {% endif %}
+                <img src="{{STATIC_URL}}images/icons3/Print.png" style="border: 1px solid #d0d0d0; height: 25px; width: 25px; -moz-border-radius: 5px; -webkit-border-radius: 5px;"/>
+            </a>
+        {% endif %}
+        {% if printable %}
+            : {{ request.user.visible_name }}
+        {% endif %}
+    </h1>
+    
+    {% if not printable %}
+        <p>
+            {% if day %}
+                <a href="{% url conference_by_day day 'all' %}">View the master schedule</a>
+            {% else %}
+                <a href="{% url conference_by_day 'fri' 'all' %}">View the master schedule</a>
+            {% endif %}
+        </p>
+
+        {% for did, dname, dnum in days %}
+            {% ifequal day did %}
+                <strong>{{ dname }}</strong>
+            {% else %}
+                <a href="{% url conference_for_user did %}">{{ dname }}</a>
+            {% endifequal %}
+            {% if not forloop.last %} | {% endif %}
+        {% endfor %}
+        <br/><br/>
+    {% else %}
+        <h2>{{ fday|date:"l, F j" }}</h2>
+    {% endif %}
+    
+    <table border="1" width="100%" id="byuser" class="scheduler">
+        {% for t in timelist %}
+            <tr>
+                <th>{{ t }}:00</th>
+                {% for s in sessions %}
+                    {% ifequal s.time.hour t %}
+                        {% ifequal s.time.minute 0 %}
+                            <td rowspan="{% rowspan s.length %}" class="tlink {{ s.stream }}" style="height: {% height s.length %}">
+                                <a href="{{ s.url }}">
+                                    <strong>{{ s.name }}</strong>
+                                    <br/>
+                                    <span class="room">{{ s.room }}</span>
+                                </a>
+                            </td>
+                        {% endifequal %}
+                    {% endifequal %}
+                {% endfor %}
+            </tr>
+            <tr>
+                <th>&nbsp;</th>
+                {% for s in sessions %}
+                    {% ifequal s.time.hour t %}
+                        {% ifequal s.time.minute 30 %}
+                            <td rowspan="{% rowspan s.length %}" class="tlink {{ s.stream }}" style="height: {% height s.length %}">
+                                <a href="{{ s.url }}">
+                                    <strong>{{ s.name }}</strong>
+                                    <br/>
+                                    <span class="room">{{ s.room }}</span>
+                                </a>
+                            </td>
+                        {% endifequal %}
+                    {% endifequal %}
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
+    <br/>
+    
+    {% if not printable %}
+        <a href="{% url conference_private_new %}">Add a custom event to my schedule</a>
+        <br/>
+    {% endif %}
+    
+{% endblock %}
+

@@ -1,0 +1,71 @@
+/* temporarily deprecated! good times, trying the newest 1.4 release of uni-form */
+
+.uniForm .inlineLabels label, .uniForm .inlineLabels .label {
+margin:0;
+padding:0.65em 2% 0 0;
+width:  auto;
+display:block;
+
+/* float:none; */
+
+min-height: 20px;
+
+width: 100px;
+text-align: right;
+font-weight: bold;
+}
+
+
+form.uniForm fieldset.inlineLabels {
+margin:0 auto;
+max-width:1000px;
+/* min-width:700px; */
+}
+
+
+div#div_id_body {
+background-color:#F8F8F8;
+}
+
+
+.wideform .inlineLabels input[type="text"], .wideform .inlineLabels input[type="password"], table.standard.wideform input[type="text"]  {
+width: 586px;  /* probably not consistent between browsers - tinyMCE is set to a 600px width, and this is 600 - 4px left/right padding and 3px l/r borders */
+}
+
+.uniForm .inlineLabels textarea {
+/* clear:both; */
+width:600px;
+height:380px;
+}
+
+.centerwidth .uniForm .inlineLabels textarea {
+width: 400px;
+height: 250px;
+}
+
+
+
+.settings-page-special.uniForm .inlineLabels label
+{
+width:43%;
+}
+
+.settings-page-special.uniForm .inlineLabels .formHint {
+/* width:20%; */
+margin-left: 0;
+text-align: right;
+
+}
+
+.settings-page-special ul, .inlineLabels ul {
+list-style: none;
+margin:0; padding:0;
+}
+
+.settings-page-special.uniForm .inlineLabels ul  li label {
+width:auto;
+}
+.settings-page-special.uniForm .inlineLabels ul  li, .inlineLabels ul {
+display: block;
+clear:right;
+}

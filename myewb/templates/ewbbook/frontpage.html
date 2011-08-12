@@ -1,0 +1,406 @@
+{% extends "topics/base.html" %}
+
+{% load avatar_tags %}
+{% load i18n %}
+{% load uni_form_tags %}
+{% load pagination_tags %}
+{% load group_tags %}
+{% load tagging_tags %}
+{% load events_tags %}
+{% load cache %}
+{% load champ_tags %}
+{% load perspectives %}
+{% load networks_tags %}
+{% load fake_ads %}
+
+{% block extra_head %}
+    {{ block.super }}
+    
+    <link rel="alternate" type="application/rss+xml" title="myEWB Front Page" href="{% url topic_feed_all %}" />
+	<link rel="stylesheet" href="{{ STATIC_URL }}css/toolbars.css" />   
+	
+	<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.ba-bbq.min.js"></script>
+	
+	
+	{# JS here for the frontpage ajax updates #}
+<script type="text/javascript">
+// Frontpage Ajax updates
+
+	/*var currentURL = "";
+	
+	var shortPosts = false; */
+	// both covered by the hashstate
+
+var currentGroup = '';
+var currentPage = ''; // not the actual default of 1, so that it'll actually load the first time.
+var shortPosts = 0;
+
+var timeout_id = 0;
+
+$(window).bind( 'hashchange', function(e) {
+    rockAjaxPosts(0);
+});
+
+
+function rockAjaxPosts(forceReload) {
+    group = $.bbq.getState( 'group' ) || '';
+    
+    page = $.bbq.getState( 'page' ) || 1;
+    
+    short = $.bbq.getState( 'short' ) || 0;
+    
+    
+    if ( short !== shortPosts ) {
+        // turn on or off shortposts
+        if (short == 1) {
+            //console.log('short on');
+            
+                $('div.postcontent').slideUp(); $('div.postheader').addClass('shortpost'); $('#collapse-posts').hide(); $('#expand-posts').show(); 
+                shortPosts = true;
+            
+        } 
+        else {
+            //console.log('short off');
+            
+            $('div.postcontent').slideDown(); $('div.postheader').removeClass('shortpost'); $('#expand-posts').hide(); $('#collapse-posts').show(); 
+          	   
+            shortPosts = false;
+        }
+        shortPosts = short;
+        
+    }
+    
+    
+    if ( forceReload || (group !== currentGroup && page !== currentPage) ) {
+        // switching both at once; only likely to happen via curious people typing in the address bar
+        
+        //console.log('changegroup to ' + group + ' and page to ' + page);
+        
+        load_posts(group,page,short,false);
+        
+        currentGroup = group;
+        currentPage = page; // is this always intended? probably.
+        // make sure we don't get an endless loop of resetting the page number here.
+    }
+    
+    else if ( group !== currentGroup ) {
+        // load the new group
+        
+        //console.log('changegroup to ' + group);
+        
+        load_posts(group,1,short,false);
+        
+        currentGroup = group;
+        currentPage = 1; 
+    }
+    else if ( page !== currentPage ) {
+        // load the new page
+        
+        //console.log('changepage to ' + page);
+        
+        load_posts(group,page,short,false);
+        
+        currentPage = page;
+    }
+    
+
+
+}
+
+function load_posts(group,page,short,silent)   // now, this'll be a behind-the-scenes function that's only called by hashchanges.
+{
+	clearTimeout(timeout_id)
+    var url = '';
+
+	// no group yet; load default
+	if(group=='') {
+	   url = "/?ajax=1";
+	} else {
+	   url = '/groups/' + group + '/posts/?ajax=1';
+	}
+	
+	if(page && page!=0) {
+	   url = url + '&page=' + page;
+	}
+	if (short==1) {
+    	url += '&short=1';
+	}
+	
+	/* update highlighting in the groups listing */
+	if (group) {
+    	$('.frontpage-mygroups-actions').hide();
+    	$('.frontpage-mygroups-div').removeClass('bkgd-light');
+
+    	$('#frontpage-update-'+group).parent().addClass('bkgd-light');
+    	$('#frontpage-update-'+group).siblings('.frontpage-mygroups-actions').show();
+	} else {
+		$('.frontpage-mygroups-actions').hide();
+		$('.frontpage-mygroups-div').removeClass('bkgd-light');
+	}
+
+	{# if there is no current timezone selected, auto-detect one #}
+	{% if not current_timezone %}
+		var d = new Date();
+		url = url + "&tzoffset=" + d.getTimezoneOffset();
+	{% endif %}
+   
+    currentURL = url;
+
+    if (silent == false)
+    {
+    	// maybe bring this back...?  dunno...!
+    	//$('#topiclisting').hide();
+		$('.frontpage-loading').slideDown();  // @@@ this should be adjusted so it doesn't move everything around.
+    }
+    
+    $('#topiclisting').load(url,
+        function() {
+            $('.frontpage-loading').stop().hide();
+
+            // if hidden earlier, need to re-show here
+            //$('#topiclisting').show();
+
+            // catch pagination-related clicks and load via ajax
+            $('.pagination a').click(function() {
+               	targetPage =  $.deparam( $(this).attr('href') )['?page'] ;
+               	var state = {};
+               	state['page'] = targetPage;
+               	$.bbq.pushState( state );
+               	if(shortPosts!=true)
+                {
+                	$().scrollTo(0,600);
+                }
+                return false;
+            });
+		});
+
+	// and set a timer to auto-refresh... every half hour, let's say?
+    timeout_id = setTimeout('load_posts(\'' + group + '\',\'' + page + '\',\'' + short + '\')', 30 * 60 * 1000, true);
+}
+	
+$(document).ready(function() {
+	$('.frontpage-update').click(function() {
+	  
+	  // related actions take place in the updater function now.
+	  
+	  var groupSlug = $(this).attr("id").substring(17);
+	  //load_posts('/groups/' + groupSlug + '/posts/');
+	  //$('.frontpage-reset').show();
+	  
+      var state = {};
+      state['group'] = groupSlug;
+      state['page'] = 1;
+      $.bbq.pushState( state );
+        
+            
+            return false;
+	  
+	  
+	  return false;
+	});
+	
+	$('.frontpage-reset').click(function() {
+	  
+	  //load_posts('{{request.url}}');
+	  //$('.frontpage-reset').hide();
+	  
+      var state = {};
+      state['group'] = '';
+      state['page'] = 1;
+      $.bbq.pushState( state );
+	  
+	  return false;
+    });
+	
+    $('#frontpage-loading-refreshlink').click(function() {
+        rockAjaxPosts(1);
+        return false;
+    });
+	
+	// and the initial start trigger here! shazam!
+	$(window).trigger( 'hashchange' );
+});
+ 
+ </script>
+ 
+ 
+{% endblock %}
+
+{% block frontpagerightJS %}
+            function toggleFrontpageToolbar() {
+                $('#toolbarcolumn_right_container').toggle();
+                $('#toolbarcolumn_right_show').toggle();
+                
+                {% if user.is_authenticated %}
+                    
+                    var action = "";
+                    if (! $('#toolbarcolumn_right_container').is(':visible'))
+                        action = "close";
+                    else
+                        action = "show";
+                    
+                    $.ajax({
+                      url: "{% url profile_toolbar_action %}" + action + "/" + "toolbarcolumn_right_container" + "/",
+                      cache: false,  // this prepends another query onto the end with a timestamp - make sure it doesn't mix up the handler page?
+                    });
+                {% endif %}
+                {# state saving only works if youre logged in, so only really try then #}
+
+                                
+
+            }
+            
+            $('.frontpagetoolbarToggles').click(function(){	
+                toggleFrontpageToolbar();
+
+          	  });
+          	  
+{% endblock %}
+
+
+{% block head_title %}{% trans "Discussion Board" %}{% endblock %}
+
+{% block body %}
+
+	<div class="frontpage-loading"><a href="#" id="frontpage-loading-refreshlink">[refresh]</a>Loading...</div>     
+ 
+ 	<div id="topiclisting">
+    </div>
+            
+{% endblock %}
+
+{% block toolbar_left %}
+    {{ block.super }}
+        
+    {% if user.is_authenticated %}
+    
+        <div class="toolbarcontent">
+				<a href="#" class="frontpage-reset" style='text-decoration: none;'>
+                    <img src="{{ STATIC_URL }}images/fb/feed.png" style="position: relative; top: 6px; margin-top: -6px;"/>
+    				Latest posts
+				</a>
+                <div class="frontpage-mygroups-div">
+					<a href="#" class="frontpage-update" id="frontpage-update-featured" style='text-decoration: none;'>
+                        <img src="{{ STATIC_URL }}images/fb/feed.png" style="position: relative; top: 6px; margin-top: -6px;"/>
+					    Featured posts
+					</a><br/>
+				</div>
+				
+                <div class="frontpage-mygroups-div">
+					<a href="#" class="frontpage-update" id="frontpage-update-ewb" style='text-decoration: none;'>
+                        <img src="{{ STATIC_URL }}images/fb/feed.png" style="position: relative; top: 6px; margin-top: -6px;"/>
+					    Front-page only
+					</a><br/>
+				</div>
+             	{% for group in user.get_groups %}
+             		{% if not group.recent_topic_count %}
+             		<div class="frontpage-mygroups-nonew" style="display: none;">
+             		{% endif %}
+	                <div class="frontpage-mygroups-div">
+	                	<a href="#" class="frontpage-update" id="frontpage-update-{{ group.slug }}" style='text-decoration: none;'>
+                            <img src="{{ STATIC_URL }}images/fb/feed.png" style="position: relative; top: 6px; margin-top: -6px;"/>
+	                	    {{ group.name }}
+	                	</a><br/>
+	                	{% if group.recent_topic_count %}<small style="padding-left: 10px;">({{group.recent_topic_count}} recent)</small>{% endif %}
+
+		                <div class="frontpage-mygroups-actions">
+		                	{# {{group.recent_topic_count}} recent posts<br/> #}
+		                	<a href="{% groupurl topic_new group %}">New post &raquo;</a><br/>
+		                	<a href="{% url group_detail group.slug %}">View group info &raquo;</a>
+		                </div>
+		            </div>
+             		{% if not group.recent_topic_count %}
+             		</div>
+             		{% endif %}
+            	{% endfor %}
+            	<div style="text-align: right;">
+            		<a href="#" onclick="$('.frontpage-mygroups-nonew').slideToggle(); {#$(this).hide();#} return false;">show all</a>
+            		
+            		{% if can_adminovision %}
+                    {% spaceless %}
+                        <br/><a href="{% url topic_adminovision %}">
+                            {% if adminovision %}
+                    			Turn off adminovision
+                    		{% else %}
+                    			Turn on adminovision
+                    		{% endif %}
+                    	</a>
+                    {% endspaceless %}
+           	{% else %}
+               	{% if can_execovision %}
+               		{% spaceless %}
+               			<br/><a href="{% url topic_adminovision %}">
+                		{% if adminovision %}
+                			Turn off execovision
+                		{% else %}
+                			Turn on execovision
+                		{% endif %}
+                		</a>
+                	{% endspaceless %}
+                {% endif %}
+           	{% endif %}
+            		
+            	</div>
+        </div>
+{#        {% endcache %} #}
+        
+        {% if is_exec and request.user.get_profile.get_chapter %}
+            <hr/>
+	        <div class="toolbarcontent" style="line-height: 1.5em;">
+	        <strong>CHAMP summary</strong><br/>
+      			<a href="{% link_to_current_champ request.user %}">{% champ_activities request.user.get_profile.get_chapter %} {% month %} activities<a/><br/> 
+                &nbsp;&nbsp;
+                (<a href="{% url champ_unconfirmed_activities request.user.get_profile.get_chapter.slug %}">{% champ_unconfirmed request.user.get_profile.get_chapter %} unconfirmed<a/>)<br/>
+                &nbsp;&nbsp;
+                <a href="{% url champ_new_activity request.user.get_profile.get_chapter.slug %}">record an activity</a><br/>
+	        </div>
+        {% endif %}
+        
+        
+    {% endif %}
+            
+    <hr/>
+    <div class="toolbarcontent" style='line-height: 1.5em;'>
+        <strong>Navigation</strong><br/>
+        <a href="{% if user.get_profile.get_chapter %}{% url network_detail user.get_profile.get_chapter.slug %}{% else %}{% url networks_index %}{% endif %}">Chapters</a><br/>
+        
+        <a href="{% url communities_index %}">Communities</a><br/>
+        
+        <a href="{% url events_all %}">Events</a><br/>
+        
+        <a href="{% url applications %}">Get Involved</a>
+    </div>
+    
+    <hr/>
+    <div class="toolbarcontent" id="box-online-contents">
+        {#<strong>Who's Online</strong><br/>#}
+        {% include "whosonline.html" %}
+    </div>
+    
+{% endblock %}
+
+{% block toolbar_right %}
+    <div class="toolbarcontent" style="padding: 2px; overflow: none;">
+        <div style='background: #f2f2f2; padding: 5px; font-weight: bold;'>Upcoming Events</div>
+        <br/>
+        {% events_widget user %}
+        <div style="text-align: right;">
+            <a href="{% url events_all %}">{% trans "more events" %} &raquo;</a>
+        </div>
+    </div>
+    
+    <div class="toolbarcontent" style="padding: 2px; overflow: none;">
+        <div style='background: #f2f2f2; padding: 5px; font-weight: bold;'>Sponsored</div>
+        <br/>
+        {% fake_ad %}
+        <hr/>
+        {% fake_ad %}
+        <hr/>
+        {% fake_ad %}
+    </div>
+    
+{% endblock %}      
+
+{% block extra_body %}
+	
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends "profiles/base.html" %}
+
+
+{% load i18n %}
+{% load uni_form_tags %}
+{% load ifsetting_tag %}
+
+{% block head_title %}{% trans "Login" %}{% endblock %}
+
+{% block body %}
+    <h1>{% trans "Log In" %} to MyEWB</h1>
+    
+    {% if user.is_authenticated %}
+        <p><span class="warning">{% trans "Note" %}</span>: {% blocktrans %}you are already logged in as {{ user }}.{% endblocktrans %}</p>
+    {% endif %}
+    
+
+    <div class="createaccount">
+		        {% ifsetting ACCOUNT_OPEN_SIGNUP %}
+		        {% url acct_signup as signup_url %}
+		        <span class="noaccountquestion">Don't have an account yet?</span>
+		        <input type="button" onclick="window.location='{{ signup_url }}'" value="{% trans "Sign up for myEWB!" %}" />
+		        {% endifsetting %}
+    </div>
+
+
+    <form class="login uniForm" method="post" action="">
+        <fieldset class="inlineLabels">
+            {{ form.as_p }}
+
+			<p><label for="id_login"></label>
+				<input type="submit" name="login" id="id_login" value="{% trans "Login" %}" />
+
+
+		    </p>
+
+			<p><label for="forgotten_password"></label>
+				<a href="{% url acct_passwd_reset %}">{% trans "Forgot password?" %}</a>
+			</p>
+
+            <div class="form_block">
+                
+            </div>            
+        </fieldset>
+    </form>
+    
+    {% comment %}
+    {% if not openid %}
+        <p>{% trans "Or sign in with your OpenID" %}:</p>
+        {# @@@ why isn't this just does as a form object ? #}
+        <form class="login uniForm" action="/openid/register/" method="POST">
+            <fieldset class="inlineLabels">
+                {% if url_required %}
+                    <div class="ctrlHolder error">
+                        <p class="errorField">
+                            <strong>This field is required.</strong>
+                        </p>       
+                        <label for="id_username">* OpenID Identifier</label>
+                        <input class="openid" type="text" name="openid_url" />
+                    </div>
+                {% else %}
+                    <div class="ctrlHolder">
+                        <label for="id_username">* OpenID Identifier</label>
+                        <input class="openid" type="text" name="openid_url" />
+                    </div>
+                {% endif %}
+                <div class="form_block">
+                    <input type="submit" value="{% trans "Log in &raquo;" %}" />
+                </div>
+            </fieldset>
+        </form>
+    {% endif %}
+    {% endcomment %}
+{% endblock %}
+
+{% block extra_body %}
+<script type='text/javascript' charset="utf-8">
+    $("#id_username").focus();
+</script>
+{% endblock %}

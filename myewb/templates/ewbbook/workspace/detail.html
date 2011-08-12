@@ -1,0 +1,62 @@
+{% load filesize_tags %}
+{% load time_filters %}
+{% load uni_form_tags %}
+{% load workspace_tags %}
+
+{% workspace_perms workspace request.user as can_view can_edit %}
+
+<div>
+<strong>{{ file.get_filename }}</strong><br/>
+{% if file.get_folder %}
+	<em style="padding-left: 15px;">in {{ file.get_folder }}</em><br/>
+{% endif %}
+
+<p>
+	[<a href="{{ file.get_url }}">download file</a>]&nbsp;&nbsp;
+	{% if can_edit %}
+    	[<a href="#" onclick="replace_file('{{file.get_relative_path}}'); return false;">replace/update file</a>]&nbsp;&nbsp;
+    	[<a href="#" onclick="move_file('{{file.get_relative_path}}'); return false;">move file</a>]&nbsp;&nbsp;
+	    [<a href="#" onclick="delete_file('{{file.get_relative_path}}'); return false;">delete file</a>]&nbsp;&nbsp;
+    {% endif %}
+</p>
+
+<p id="move-file-div" style="display: none;">
+</p>
+
+<p>
+    size: {{ file.get_size|filesize }}<br/>
+    created: {% mktime file.created %} 
+    	{% if file.creator %}({{ file.creator.visible_name }}){% endif %}<br/>
+    modified: {% mktime file.modified %} 
+    	{% if file.updator %}({{ file.updator.visible_name }}){% endif %}<br/>
+    
+</p>
+
+<hr/>
+{% if can_edit and file.workspacerevision_set.all %}
+revisions: 
+<select name="revisions" id="revisions" onchange="revision_history('{{file.get_relative_path}}');">
+	<option value="current">current</option>
+	{% for r in file.workspacerevision_set.all %}
+		<option value="{{ r.id }}">{{ r.date|date }} {{ r.date|time }} - {{ r.user.visible_name }}</option>
+	{% endfor %}
+</select>
+<input type="button" value="download" id="download-revision" class="fg-button ui-state-default ui-corner-all" style="display: none;" onclick="download_revision()"/>
+{% endif %}
+<p id="workspace-preview" style="display: none"></p>
+<script type="text/javascript">
+{% can_preview file as preview %}
+{% if preview %}
+    var can_preview = '{{ file.get_relative_path }}';
+{% else %}
+    var can_preview = false;
+{% endif %}
+
+{% if force_selection %}
+    var force_selection = '{{ file.get_relative_path }}';
+{% else %}
+    var force_selection = false;
+{% endif %}
+</script>
+
+</div>

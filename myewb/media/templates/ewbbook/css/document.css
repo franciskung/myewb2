@@ -1,0 +1,25 @@
+body
+{
+	background: #d0d0d0;
+	padding: 5px;
+ 	font-size: 8px;
+}
+#docbody
+{
+	background: #ffffff;
+	padding: 20px;
+ 	border: 1px solid;
+ 	border-right: 3px solid;   
+ 	border-bottom: 3px solid;
+ 	overflow: hidden;
+ 	font-size: 8px;
+}
+img
+{
+	width: 30%;
+	height: auto;
+}
+table, tr, td
+{
+ 	font-size: 8px;
+}

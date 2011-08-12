@@ -1,0 +1,322 @@
+{% extends 'conference/confsite.html' %}
+
+{% load i18n %}
+{% load uni_form_tags %}
+{% load avatar_tags %}
+{% load threadedcommentstags %}
+{% load pagination_tags %}
+{% load extra_tagging_tags %}
+{% load group_tags %}
+{% load topics_tags %}
+
+{% block head_title %}National Conference 2011{% endblock %}
+
+{% block body %}
+<br/><br/>
+
+	<style type="text/css">
+		.descform
+		{
+			width: auto;
+			position: static;
+		}
+		.descform th, .descform td
+		{
+			align: center;
+			padding: 10px;
+		}
+		label
+		{
+			text-align: right;
+			font-weight: bold;
+		}
+		li label
+		{
+			text-align: left;
+			font-weight: normal;
+		} 
+		div.heading
+		{
+			font-weight: bold;
+			font-size: 1.5em;
+			text-align: center;
+		}
+		.uniForm .inlineLabels select, .uniForm select
+		{
+			width: auto;
+			max-width: 200px;
+		}
+		
+		input.deleteAddressSubmit
+		{
+		    position: relative;
+		    top: -26px;
+		    left: 80px;
+		}
+		
+		#new-address label, .editAddress .inlineLabels label
+		{
+			font-size: 12px;
+			float: none;
+			margin: 0;
+			width: 100%;
+			font-weight: normal;
+			text-align: left;
+			line-height: 2;
+		}
+		#new-address .ctrlholder, .editAddress .ctrlholder
+		{
+			padding: 0 1em 0.5em 1em;
+		}
+		#address_detail div
+		{
+			font-size: 12px;
+		}
+	</style> 
+
+	{% if not registration %}
+	
+		{% if form.non_field_errors %}
+			<div class="uniForm">
+				<div class="ctrlHolder error">{{ form.non_field_errors }}</div>
+			</div>
+		{% else %}
+			{% if form.errors %}
+				<div class="uniForm">
+					<div class="ctrlHolder error">Please correct the errors below</div>
+				</div>
+			{% endif %}
+		{% endif %}
+
+		{% comment %}
+		<p>We are very happy to invite our members to join us for 3 exciting days of work and learning at our 10th Anniversary National Conference from January 13-15, 2011!</p>
+		
+		<p>You will require a registration code from your chapter president to register below at the subsidized rate.</p>
+		
+		<p>
+			What does this registration include?
+			<ul>
+				<li>Attendance and accommodations from Wednesday night through Saturday night.</li>
+    			<li>One ticket to the closing Gala Saturday evening</li>
+    			<li>Presidents, JFs and certain executive members will also be invited for a special leadership day on Wednesday the 12th at no extra cost.</li>
+    			<li>The most stimulating and challenging single experience you'll ever have.</li>
+			</ul>
+		</p>
+		
+		<p>This is your first step on the exciting road to Conference 2011! After registering you will begin to get regular updates and be given opportunities to participate in a series of lead up activities to help you get the most out of the event.</p>
+		{% endcomment %}
+		<br/>
+		
+		<form id="conf-registration" method="POST" action="{% url conference_preview %}" class="uniForm" enctype="multipart/form-data">
+			<fieldset class="inlineLabels">
+				<div class="heading">Personal Details</div>
+			
+				<div class="ctrlHolder">
+					<label>Name</label>
+					{{ user.first_name}} {{user.last_name }}
+				</div>
+			
+				<div class="ctrlHolder">
+					<label>Email</label>
+					{{ user.email }}
+				</div>
+				
+				{% comment %}
+				<div class="ctrlHolder">
+					<label>Phone Number</label>
+					{{ user.get_profile.default_phone }}
+				</div>
+				{% endcomment %}
+				
+				<div class="ctrlHolder">
+					<label>Gender</label>
+					{% ifequal user.get_profile.gender "M" %}
+						Male
+					{% else %}
+						{% ifequal user.get_profile.gender "F" %}
+							Female
+						{% else %}
+							Unknown
+						{% endifequal %}
+					{% endifequal %}
+				</div>
+				
+				{% if not user.is_bulk %}
+				<div class="ctrlHolder">
+					<label>Student status</label>
+					{% if user.get_profile.student %}
+						Yes
+					{% else %}
+						No
+					{% endif %}
+				</div>
+				{% endif %}
+				
+				<div class="ctrlHolder">
+					<label>Preferred language</label>
+					{% ifequal user.get_profile.language "E" %}
+						English
+					{% else %}
+						{% ifequal user.get_profile.language "F" %}
+							French
+						{% else %}
+							Unknown
+						{% endifequal %}
+					{% endifequal %}
+				</div>
+				
+				{% if needsRenewal and not user.is_bulk %}
+					<div class="ctrlHolder">
+						<label>EWB membership</label>
+						You are not a paid member of EWB - the membership fee will be automatically added to your registration<br/>
+						($20 for students, $40 for professionals)<br/>
+					</div>
+				{% endif %}
+
+				{% if not user.is_bulk %}
+				<div class="ctrlHolder" style="text-align: center;">
+					<em>To change your personal details, please
+					<a href="{% url profile_edit %}" target="_new">update your myEWB profile</a>.</em>
+				</div>
+				{% endif %}
+				<hr/>
+
+				<div class="heading">Registration Details</div>
+										
+				{{ form|as_uni_form }}
+				
+	            <div class="form_block ctrlHolder">
+	                <input type="submit" value="Preview your registration" />
+	                <label>&nbsp;</label>
+	            </div>
+				
+			</fieldset>
+		</form>
+
+		{% if not user.is_bulk %}
+		<table border='1' class='descform' id='confoptiontable' style='display: none;'>
+		  <tr>
+		    <th>&nbsp;</th>
+		    <th>Shared bed</th>
+		    <th>Single bed</th>
+		    <th>No room</th>
+		  </tr>
+		  <tr>
+		    <th>Subsidized: BC/AB/NF</th>
+		    <td>$100 (student)<br/>$250 (general)</td>    
+		    <td>$220 (student)<br/>$370 (general)</td>
+		    <td>$80 (student)<br/>$200 (general)</td>    
+		  </tr>
+		  <tr>
+		    <th>Subsidized: SK/MB/NB/NS</th>
+		    <td>$200 (student)<br/>$350 (general)</td>    
+		    <td>$320 (student)<br/>$470 (general)</td>    
+		    <td>$160 (student)<br/>$280 (general)</td>    
+		  </tr>
+		  <tr>
+		    <th>Subsidized: ON/QB</th>
+		    <td>$350 (student)<br/>$500 (general)</td>    
+		    <td>$470 (student)<br/>$620 (general)</td>    
+		    <td>$280 (student)<br/>$400 (general)</td>    
+		  </tr>
+		  <tr>
+		  	<th>
+		  		EWB Alumni<br/>
+		  		special early-bird rate
+		  	</th>
+		  	<td colspan='2' style='text-align: center;'>
+		  		$125<br/>
+		  		hotel NOT included<br/>
+		  		select these options to indicate interest in a group rate,<br/>
+		  		details to follow
+		  	</td>
+		  	<td>$125</td>
+		  </tr>
+		  <tr>
+		    <th>Standard<br/>(no registration code)</th>
+		    <td>$620</td>
+		    <td>$740</td>    
+		    <td>$500</td>    
+		  </tr>
+		</table>
+
+		{% else %}
+		
+		<table border='1' class='descform' id='confoptiontable' style='display: none;'>
+		  <tr>
+		    <th>&nbsp;</th>
+		    <th>Friday only</th>
+		    <th>Saturday only</th>
+		    <th>Friday and Saturday</th>
+		  </tr>
+		  <tr>
+		    <th>General registration</th>
+		    <td>$120</td>    
+		    <td>$120</td>
+		    <td>$220</td>    
+		  </tr>
+		  <tr>
+		    <th>Students</th>
+		    <td>$60</td>    
+		    <td>$60</td>    
+		    <td>$110</td>    
+		  </tr>
+		</table>
+		
+		{% endif %}
+
+		<script type="text/javascript">
+			$().ready(function() {
+				$('#confoptiontablelink').colorbox({transition: 'elastic',
+													opacity: '0.5',
+													inline: true,
+													href: '#confoptiontable',
+													onLoad: function() {
+															$('#confoptiontable').show();
+														},
+													onCleanup: function() {
+															$('#confoptiontable').hide();
+														},
+				});
+
+				$('#conf-registration').submit(function() {
+					if ($('select[name=address]').val() == 'new')
+					{
+						$('select.compactaddresswidget').change(function() {
+							$('#conf-registration').submit();
+						});
+						$('#new-address').submit();
+						return false;
+					}
+					else
+						return true;
+				});
+			});
+		</script>
+
+	{% else %}
+		<br />
+		<p align="center" style="font-weight: bold;">
+			You are currently registered to attend the conference!
+			From this page you may:
+		</p>
+
+		<p align="center">
+			<a href="{% url conference_receipt %}" style="font-weight: bold;">click here for a printable receipt &raquo;</a>
+		</p>
+
+		<p align="center">or</p>
+
+		<p align="center">
+{#			<a href="{% url conference_cancel %}">click here to cancel your registration</a> #}
+<span style="text-decoration: line-through;">click here to cancel your registration</span><br/>
+<em>Registration changes and cancellations can not be made after January 7.</em>
+		</p>
+
+		<br />
+		<br />
+		<p>Keep checking the conference website at <a href="http://conference2011.ewb.ca/">http://conference2011.ewb.ca</a> for up-to-date information regarding the conference!</p>
+
+	{% endif %}
+
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "communities/base.html" %}
+
+{% load i18n %}
+{% load uni_form_tags %}
+{% load humanize %}
+{% load pagination_tags %}
+{% load order_by %}
+{% load extra_tagging_tags %}
+
+{% block head_title %}{% blocktrans %}Add Member{% endblocktrans %}{% endblock %}
+
+{% block body %}
+    {% include "base_groups/new_member.html" %}
+{% endblock %}

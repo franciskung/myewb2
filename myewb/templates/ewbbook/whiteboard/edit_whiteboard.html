@@ -1,0 +1,49 @@
+{% extends "communities/base.html" %}
+{% load i18n %}
+{% load uni_form_tags %}
+
+{% block head_title %}
+    {% trans "Edit whiteboard" %}
+{% endblock %}
+
+{% block body %}
+	<h1>{% trans "Edit whiteboard" %}</h1>
+
+	<form class="uniForm" id="edit-member" method="POST" enctype="multipart/form-data" action="">
+		<fieldset class="inlineLabels">
+			{{ form|as_uni_form }}
+            <div id="attachFiles">
+                {% for af in attach_forms %}
+                    {{ af|as_uni_form }}
+                {% endfor %}
+                <div id="attachLink">
+                    <a class="getAttachForm" href="{% url topic_get_attachment_form %}">{% trans "Attach a file to this post" %}</a>
+                </div>
+            </div>
+
+			<p class="form_block">
+                <input type="hidden" id="attachCount" name="attach_count" value="{{ attach_count }}">
+				<input type="submit" value="{% trans "save" %}"/>
+			</p>
+		</fieldset>
+	</form>
+
+	{% comment %}
+	<br/><br/>
+	<p>
+		Back to <a href="{{ group.get_absolute_url }}">{{ group.name }}</a>
+	</p>
+	{% endcomment %}
+
+{% endblock %}
+
+{% block toolbar_left %}
+{% endblock %}
+{% block toolbar_right %}
+{% endblock %}
+
+{% block extra_body %}
+	{{ block.super }}
+	{% include "tinymce.html" %}
+    {% include "comments-js.html" %}
+{% endblock %}

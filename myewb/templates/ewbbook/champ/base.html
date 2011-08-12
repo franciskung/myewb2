@@ -1,0 +1,76 @@
+{% extends "networks/base.html" %}
+
+{% load i18n %}
+{% load networks_tags %}
+
+{% block head_title %}CHAMP{% endblock %}
+
+{% block body %}
+<style>
+	#box-champ-content {
+		line-height: 1.5em;
+	}
+</style>
+
+<h1>CHAMP</h1>
+
+{% block champ_body %}
+{% endblock %}
+
+{% endblock %}
+
+{% block toolbar_left %}
+        <div class="toolbarheader bkgd" id="box-champ-title">{% trans "CHAMP" %}</div>
+        <div class="toolbarcontent" id="box-champ-content">
+        	<p>
+        		{% if group %}
+       				<a href="{% link_to_current_champ_by_group request.user group %}">Dashboard</a><br/>
+        		{% else %}
+       				<a href="{% link_to_current_champ_national %}">Dashboard</a><br/>
+        		{% endif %}
+        	</p>
+        	
+        	<p>
+        		<a href="{% url champ_search %}">Search</a>
+        	</p>
+        
+            {% if group and is_group_admin %}
+                <p>
+                Activities:<br/>
+                <a href="{% url champ_new_activity group.slug %}">record an activity</a><br/>
+                <a href="{% url champ_unconfirmed_activities group.slug %}">list unconfirmed</a><br/>
+                <a href="{% url champ_confirmed_activities group.slug %}">list confirmed</a>
+                </p>
+                
+                {% comment %}
+                {% if is_president %}
+                	<p>
+                	Reflection journal:<br/>
+                	<a href="{% url champ_journal_new group.slug %}">write in journal</a><br/>
+                	<a href="{% url champ_journal_list group.slug %}">browse journal</a>
+                	</p>
+                {% endif %}
+                {% endcomment %}
+            {% endif %}
+            
+            <p>
+            {% if group and is_group_admin %}
+               Spreadsheets:<br/>
+               	<a href="{% url champ_csv_so group.slug %}">SO spreadsheet</a><br/>
+               	<a href="{% url champ_csv group.slug %}">activity spreadsheet</a><br/>
+            {% endif %}
+            
+            {% if perms.champ %}
+            	{% if not group or not is_group_admin %}
+            		Spreadsheets:<br/>
+            	{% endif %}
+               	<a href="{% url champ_global_csv_so %}">global SO spreadsheet</a><br/>
+               	<a href="{% url champ_global_csv %}">global spreadsheet</a>
+            {% endif %}
+            </p>
+        </div>
+{% endblock %}
+
+{% block toolbar_right %}
+    {# override default networks toolbars, force to be empty #}
+{% endblock %}

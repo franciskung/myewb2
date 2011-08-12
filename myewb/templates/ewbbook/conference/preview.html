@@ -1,0 +1,204 @@
+{% extends 'conference/confsite.html' %}
+
+{% load i18n %}
+{% load creditcard_tags %}
+
+{% block head_title %}National Conference 2011{% endblock %}
+
+{% block body %}
+
+<br/><br/>
+
+<h1>National Conference 2011: Registration Preview</h1>
+	
+<h2>Personal Details</h2>
+
+<style>
+	table
+	{
+		border: 0px;
+	}
+	td.leftcell
+	{
+		text-align: right;
+		font-weight: bold;
+		border-right: 1px solid #d0d0d0;
+	}
+	td
+	{
+		border: 1px solid #d0d0d0;
+		border-left: 0px;
+		border-right: 0px;
+		padding: 5px 15px;
+	}
+</style>
+
+<table>
+	<tr>
+		<td class='leftcell'>Name</td>
+		<td>{{ user.first_name}} {{user.last_name }}</td>
+	</tr>
+
+	<tr>
+		<td class='leftcell'>Email</td>
+		<td>{{ user.email }}</td>
+	</tr>
+
+	{% comment %}
+	<tr>
+		<td class='leftcell'>Phone number</td>
+		<td>{{ user.get_profile.default_phone }}</td>
+	</tr>
+	{% endcomment %}
+
+	<tr>
+		<td class='leftcell'>Gender</td>
+		<td>{{ user.get_profile.gender }}</td>
+	</tr>
+	
+	{% if not user.is_bulk %}
+	<tr>
+		<td class='leftcell'>Student status</td>
+		<td>
+			{% if user.get_profile.student %}
+				Yes
+			{% else %}
+				No
+			{% endif %}
+		</td>
+	</tr>
+	{% endif %}
+
+	<tr>
+		<td class='leftcell'>Preferred language</td>
+		<td>{{ user.get_profile.language }}</td>
+	</tr>
+
+	<tr>
+		<td colspan='2'>
+			<h2>Registration Details</h3>
+		</td>
+	</tr>
+	
+	<tr>
+		<td class='leftcell'>Headset requested</td>
+		<td>
+			{% if form.headset.data %}
+				Yes
+			{% else %}
+				No
+			{% endif %}
+		</td>
+	</tr>
+	<tr>
+		<td class='leftcell'>Food preferences</td>
+		<td>{{ form.foodPrefs.data }}</td>
+	</tr>
+	<tr>
+		<td class='leftcell'>Special needs</td>
+		<td>{{ form.specialNeeds.data }}</td>
+	</tr>
+	<tr>
+		<td class='leftcell'>Emergency Contact</td>
+		<td>{{ form.emergName.data }}<br/>{{ form.emergPhone.data }}</td>
+	</tr>
+	
+	{% if not user.is_bulk %}
+	<tr>
+		<td class='leftcell'>Past national conferences</td>
+		<td>{{ form.prevConfs.data }}</td>
+	</tr>
+	<tr>
+		<td class='leftcell'>Past regional retreats</td>
+		<td>{{ form.prevRetreats.data }}</td>
+	</tr>
+	{% endif %}
+	
+	<tr>
+		<td class='leftcell'>Cell phone</td>
+		<td>{{ form.cellphone.data }}</td>
+	</tr>
+	
+	{% if user.is_bulk %}
+	<tr>
+		<td class='leftcell'>Industry</td>
+		<td>
+			{{ form.grouping.data }}
+			{% if form.grouping2.data %}
+				({{ form.grouping2.data }})
+			{% endif %}
+		</td>
+	</tr>
+	{% endif %}
+	
+	{% if not user.is_bulk %}
+	<tr>
+		<td class='leftcell'>Registration code</td>
+		<td>{{ form.code.data }}</td>
+	</tr>
+	{% endif %}
+	<tr>
+		<td class='leftcell'>Registration type</td>
+		<td>{{ form.type.data }}</td>
+	</tr>
+	<tr>
+		<td class='leftcell'>Support an African delegate?</td>
+		<td>
+			{% if form.africaFund.data %}
+				Yes
+			{% else %}
+				No
+			{% endif %}
+		</td>
+	</tr>
+	
+	<tr>
+		<td colspan='2'>
+			<h2>Payment Details</h3>
+		</td>
+	</tr>
+	
+	<tr>
+		<td class='leftcell'>Credit card type</td>
+		<td>{{ form.ccardtype.data }}</td>
+	</tr>
+	<tr>
+		<td class='leftcell'>Credit card number</td>
+		<td>**** **** **** {{ form.cc_number.data|slice:"12:" }}</td>
+	</tr>
+	<tr>
+		<td class='leftcell'>Credit card expiry</td>
+		<td>{{ form.cc_expiry.data }}</td>
+	</tr>
+	<tr>
+		<td class='leftcell'>Name on credit card</td>
+		<td>{{ form.billing_name.data }}</td>
+	</tr>
+	<tr>
+		<td class='leftcell'>Amount</td>
+		<td>
+			{% for p in form.cleaned_data.products %}
+				{% get_product_info p %} <br/>
+			{% endfor %}
+			<strong>Total: ${{ form.cleaned_data.total_cost|floatformat:2 }}</strong>
+		</td>
+	</tr>
+</table>
+
+<form action="" method="post">
+{% for field in form %}{{ field.as_hidden }}
+{% endfor %}
+<input type="hidden" name="{{ stage_field }}" value="2" />
+<input type="hidden" name="{{ hash_field }}" value="{{ hash_value }}" />
+<p>
+	<input type="button" value="Go back" onClick="history.go(-1);" />
+	&nbsp;&nbsp;
+	<input type="submit" value="Submit" />
+</p>
+</form>
+<br/>
+
+
+
+
+{% endblock %}

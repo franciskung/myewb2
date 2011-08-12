@@ -1,0 +1,55 @@
+{% extends "messages/base.html" %}
+
+{% load i18n %}
+{% load oembed_tags %}
+{% load timezone_filters %}
+
+{% block li-view %}current ui-tabs-selected ui-state-active{% endblock %}
+
+{% block msgheader %}{% trans "View Message" %}{% endblock %}
+
+
+{% block msgbody %}
+    
+    <dl class="message-headers">
+        <dt>{% trans "Sender" %}:</dt>
+        <dd><a href="{% url profile_detail message.sender %}">{{ message.sender.visible_name }}</a></dd>
+        <dt>{% trans "Subject" %}:</dt>
+        <dd><strong>{{ message.subject }}</strong></dd>
+        <dt>{% trans "Date" %}:</dt>
+        <dd>{{ message.sent_at|localtime:account.timezone|date:_("DATETIME_FORMAT")}}</dd>
+        <dt>{% trans "Recipient" %}:</dt>
+        <dd>{{ message.recipient.visible_name }}</dd>
+    </dl>
+    
+    <div class="message-body">
+    {% oembed %}{{ message.body|safe }}{% endoembed %}
+    
+    </div>
+    
+    <hr/>
+    <p>
+    {% ifequal message.recipient user %}
+	    <a href="{% url messages_reply message.id %}">{% trans "Reply" %}</a>&nbsp;&nbsp;&nbsp;&nbsp;
+	    {# <form class="inline-form-button" action="{% url messages_reply message.id %}" method="POST"><input type="submit" value="{% trans "Reply" %}"></form> #}
+    {% endifequal %}
+    
+    <a href="{% url messages_delete message.id %}" class="deletemessage">{% trans "Delete" %}</a>
+	{# <form class="inline-form-button"  action="{% url messages_delete message.id %}" method="POST"><input type="submit" value="{% trans "Delete" %}"></form> #}
+    </p>
+    
+{% endblock %}
+
+{% block extra_body %}
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$('a.deletemessage').click(function() {
+				var confirmed = confirm("Are you sure you want to delete this message?");
+				if (confirmed)
+					return true;
+				else
+					return false;
+			});
+		})
+	</script>
+{% endblock %}

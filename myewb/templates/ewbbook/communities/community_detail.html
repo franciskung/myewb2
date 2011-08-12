@@ -1,0 +1,64 @@
+{% extends "communities/base.html" %}
+
+{% load i18n %}
+{% load uni_form_tags %}
+{% load wiki_tags %}
+{% load avatar_tags %}
+{% load threadedcommentstags %}
+{% load pagination_tags %}
+{% load extra_tagging_tags %}
+{% load communities_tags %}
+{% load base_groups_tags %}
+{% load group_tags %}
+{% load topics_tags %}
+{% load events_tags %} 
+
+{% block head_title %}{{ group.name }}{% endblock %}
+
+{% block groupbody %}
+    
+<table class="standard standard-right search-form">
+    <tbody>
+
+        {% comment %}<tr>
+            <th>label</th>
+            <td>content</td>
+        </tr>
+        {% endcomment %}
+        
+        <tr>
+            <th>{% trans "Description" %}</th>
+            <td>
+                <p>{{ group.description }}</p>
+            </td>
+        </tr> 
+  
+        <tr>
+            <th>{% trans "Date created" %}</th>
+            <td>{{ group.created|date }}</td>
+        </tr>
+  
+  		{% ifnotequal group.creator.id 1 %}
+	        <tr>
+	            <th>{% trans "Created by" %}</th>
+	            <td><a href="{% url profile_detail group.creator.username %}">{{ group.creator.visible_name }}</a></td>
+	        </tr>
+	    {% endifnotequal %}
+        
+
+        
+        {% if group.tags %}
+        <tr>
+            <th>{% trans "Tags" %}</th>
+            <td>{% show_tags_for group %}</td>
+        </tr>    
+        {% endif %}
+        {# @@@ currently not used. #}
+        
+   
+        
+    </tbody>
+</table>
+
+{% endblock %}
+

@@ -1,0 +1,83 @@
+{% extends "topics/base.html" %}
+
+{% load i18n %}
+{% load uni_form_tags %}
+{% load pagination_tags %}
+{% load group_tags %}
+{% load tagging_tags %}
+
+{% comment %}
+**********
+NOTE: this template should only be used in the context of a group (ie, the group 
+variable is not None).  The generic/combined post listing has been moved to
+templates/frontpage.html
+
+The {% if group %} checks are left in just in case, and should be removed eventually.
+***********
+{% endcomment %}
+
+{% block head_title %}{% trans "New Post" %}{% endblock %}
+
+{% block body %}
+    <h2>{% trans "New Post" %}
+    
+	{% ifnotequal group.slug "ewb" %}
+       	 to: <a href="{{group.get_absolute_url}}" target="_blank">{{group.name}}</a>
+    {% endifnotequal %}
+    
+    </h2>
+
+    
+
+		<h2><span class="lighter">Title: </span>{{ topic.title }}</h2>
+
+	
+	{% if sender %}
+		<h3><span class="lighter">Send as email from: </span>{{ sender }}</h3>
+	{% endif %}
+	
+	<div style="padding: 10px; margin: 25px; border: 1px solid #ccc;" class="message-body">
+	   <div class="textbody openlinks">
+		{{ topic.body|safe }}
+       </div>
+	</div>
+	
+	<div>
+		<strong>Tags: </strong> {{ topic.tags }}
+	</div>
+	<br/>
+	{% if attachments %}
+		<div>
+			<strong>Attachments: </strong><br/>
+			{% for aname in attachments %}
+				{{ aname }}<br/>
+			{% endfor %}
+		</div>
+		<br/>
+	{% endif %}
+	
+    <form class="uniForm" method="POST" action="">
+        <p class="form_block">
+            <input type="hidden" name="postid" value="{{ topic.id }}" />
+            <input type="hidden" name="sender" value="{{sender}}"/>
+            <input type="submit" name="goback" value="{% trans "Go back and edit" %}" />
+            <input type="submit" name="previewed" id="confirm_and_save" value="{% trans "Confirm and save" %}" />
+        </p>
+    </form>
+{% endblock %}
+
+
+{% block extra_body %}
+	{{ block.super }}
+	
+	<script type="text/javascript">
+	   	{% if is_large_group %}
+	   		{% if sender %}
+		   		$('#confirm_and_save').click(function() {
+	       			return confirm('Are you sure you want to send this as an email to {{ group.members.count }} people?');
+	   			});
+		   	{% endif %}
+	   	{% endif %}
+	</script>
+{% endblock %}
+    

@@ -1,0 +1,11 @@
+{% extends "communities/base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "Email bulk remove for" %} {{ group.name }}{% endblock %}
+
+{% block body %}
+	
+    {% include "base_groups/bulk_remove.html" %}
+
+{% endblock %}

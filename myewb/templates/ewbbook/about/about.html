@@ -1,0 +1,71 @@
+{% extends "topics/base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "About myEWB" %}{% endblock %}
+
+{% block body %}
+    <h1>{% trans "About myEWB" %}</h1>
+
+    {% blocktrans %}
+    
+    <p>myEWB is Engineers Without Borders Canada's online community!
+    We envision this online community as a place where EWB members and non-members alike can connect to discuss human development and EWB's operations.
+    EWB is a large, distributed virtual organization and myEWB can help to keep us connected and working together effectively.</p>
+
+    <p>myEWB is also EWB's chapter membership management system, providing EWB chapters with automatic mailing lists and other useful tools.</p>
+
+    <p>
+    myEWB is an evolving system, with new features being added all the time to support the EWB community.
+    </p>
+    
+    <p>
+    In the past, features were added slowly but the system was solid and stable; however in the future 
+    we see a more agile myEWB where we can experiment and play with new ideas.  This also means that 
+    things may not always work perfectly... if you find any problems, please 
+    <a href="#" onclick="$('#feedback-button-woot').click(); return false;">tell us</a>
+    and we'll be sure to fix them ASAP!
+    </p>
+
+    <h1>The Software</h1>
+
+    <p>The software powering myEWB is an open-source project: see our 
+    <a href="http://office.ewb.ca/fastrac/myewb2">project page</a> and
+    <a href="http://github.com/ewbcanada/myewb2">GitHub repository</a>.
+    It is written in Python, using the <a href="http://djangoproject.com">django</a>
+    and <a href="http://pinaxproject.com">pinax</a> projects.
+    </p>
+    
+    <p>If you would like to contribute to the project, give us a shout!</p>
+    
+    <p>
+    The old version of myEWB (myEWB1 or OpenMyEWB, written in Java) is also available 
+    <a href="http://nicolas.kruchten.com/openmyewb.html">here</a>.
+    </p>
+    
+    {% endblocktrans %}
+
+{% endblock %}    
+
+
+{% block toolbar_right %}
+	<style>
+	#toolbarcolumn_right {
+		width: 400px;
+		margin: 0 -1em 0 2em;
+	}
+	.toolbarcontent ul li
+	{
+		margin-left: 1em;
+		font-size: 12px;
+		list-style: disc;
+		padding-bottom: 5px;
+	}
+	</style>
+	
+    <div class="toolbarheader bkgd" id="box-status2">{% trans "myEWB status" %}</div>
+    <div class="toolbarcontent">
+    	{% include "about/status.html" %}
+    </div>
+	
+{% endblock %}      

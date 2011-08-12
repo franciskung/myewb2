@@ -1,0 +1,16 @@
+{% extends "networks/base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{{ member.user.visible_name }}{% endblock %}
+
+{% block extra_head %}
+	{{ block.super }}
+	{{ form.media }}
+{% endblock %}
+
+{% block body %}
+    
+    {% include "base_groups/edit_member.html" %}
+
+{% endblock %}

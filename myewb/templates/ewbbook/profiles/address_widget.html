@@ -1,0 +1,47 @@
+{% load i18n %}
+
+
+<script type="text/javascript" src="{{STATIC_URL}}js/address_tabs.js"></script>
+
+
+<span id="address_hidden_field">
+{{ field }}
+</span>
+
+<div id="addresses">
+    <ul style="width: 100%;">
+	    {% for address in user.get_profile.addresses.all %}
+	        <li>
+	            <a href="{% url profile_address_detail user.username address.pk %}">
+	                <span>{{ address.label }}</span>
+	            </a>
+	        </li>
+	    {% endfor %}
+  		    <li>
+  		        <a href="{% url profile_new_address user.username %}">
+  		            <span><b>+</b></span>
+  		        </a>
+  		    </li>
+    </ul>		    
+</div>
+
+<script type='text/javascript'>
+	$(document).ready(function() {
+		// Makes sure the hidden input field matches the currently displayed address tab
+		$('#addresses').bind("tabsshow",
+							 function(event, ui) {
+			 					var current_id = $('div#addresses div:not(.ui-tabs-hide)').find('#address-line-pk').html();
+			 					if (!current_id)
+				 					current_id = 0;
+								$('#address_hidden_field input').val(current_id);
+							 });
+	});
+
+    // We can't pre-generate URLs for specific addresses
+    // There are also possible issues if we simply try to replace an arbitrary string
+    // in the auto-generated URL
+    function getBaseAddressUrl() { return "{% url profile_address_index user.username %}"; }
+    function getNewAddressUrl() { return "{% url profile_new_address user.username %}"; }
+    function getLabelDuplicationError() { return '{% trans "Error: Label is already used" %}'; }
+
+</script>

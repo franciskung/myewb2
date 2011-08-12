@@ -1,0 +1,3 @@
+{{ object.title }}
+{{ object.owner.visible_name }}
+{{ object.description|striptags }}
