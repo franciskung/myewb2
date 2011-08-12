@@ -4,6 +4,8 @@ from django.shortcuts import get_object_or_404, render_to_response
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseForbidden
 from django.template import RequestContext, Context, loader
 
+from themeswitch.models import RequestLog
+
 def dashboard(request):
     return render_to_response("themeswitch/dashboard.html",
                               {},

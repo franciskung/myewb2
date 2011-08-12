@@ -103,6 +103,7 @@ MIDDLEWARE_CLASSES = (
     'siteutils.online_middleware.OnlineUsers',
     'siteutils.mobile_detection.MobileDetectionMiddleware',
     'themeswitch.middleware.ThemeSwitchMiddleware',
+    'themeswitch.middleware.ThemeSwitchTrackingMiddleware',
     # 'djangologging.middleware.LoggingMiddleware',
     #'siteutils.helpers.SQLLogToConsoleMiddleware',
     #'siteutils.profile_middleware.ProfileMiddleware',
