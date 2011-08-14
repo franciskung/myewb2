@@ -11,7 +11,10 @@ class ThemeSwitchMiddleware(object):
     def process_request(self, request):
         theme = request.session.get("theme", "myewb1")
         
-        dirs = list(settings.TEMPLATE_DIRS)
+        if not hasattr(settings, 'TEMPLATE_DIRS_ORIGINAL'):
+            settings.TEMPLATE_DIRS_ORIGINAL = settings.TEMPLATE_DIRS
+        
+        dirs = list(settings.TEMPLATE_DIRS_ORIGINAL)
         dirs.insert(0, os.path.join(settings.THEMESWITCH_BASE_DIR, theme))
         settings.TEMPLATE_DIRS = tuple(dirs)
         
