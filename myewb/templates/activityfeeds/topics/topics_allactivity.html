@@ -1,0 +1,68 @@
+{% load i18n %}
+{% load pagination_tags %}
+{% load group_tags %}
+{% load cache %}
+{% load avatar_tags %}
+{% load threadedcommentstags %}
+{% load attachablecomments_tags %}
+{% load extra_tagging_tags %}
+{% load group_topics_tags %}
+{% load attachments_tags %}
+{% load helpers %}
+{% load time_filters %}
+
+{% for k in keys %}
+	{% lookup_ctx activities k as act %}
+	
+	{% if not act.date_submitted %}
+	
+		<div>
+			<a href="{% url profile_detail act.creator.username %}">
+			    <img src="{% avatar_url act.creator 25 %}" title="{{act.creator.visible_name}}" alt="{{act.creator.visible_name}}" style='float: left; height: 30px; width: 30px; padding: 5px 15px 5px 5px;'/>
+			</a>
+		
+		    <div style='margin-left: 50px; padding-top: 5px; height: 30px; font-size: 12px; color: #505050;'>       
+		        <a href="{% url profile_detail act.creator %}" style="font-weight: bold; font-size: 12px;">{{ act.creator.visible_name }}</a>
+		        posted 
+		        <a href="{{ act.get_absolute_url }}" style='font-weight: bold; font-size: 12px;'>{{ act.title }}</a>
+		        <br/>
+		       	<span style="font-size: 10px; color: #a0a0a0;">{% mktime act.created %}</span>
+			</div>
+			
+			<div style='clear: left;'></div>
+		
+			{% comment %}
+		    <p style='color: #a0a0a0; margin: 0.5em 0; font-size: 12px;'>
+		    	{{ topic.intro|striptags }}
+		    </p>
+		    {% endcomment %}
+		    
+		</div>
+	{% else %}
+	
+		<div>
+			<a href="{% url profile_detail act.user.username %}">
+			    {# {% avatar topic.creator 40 %} #}
+			    <img src="{% avatar_url act.user 25 %}" title="{{act.user.visible_name}}" alt="{{act.user.visible_name}}" style='float: left; height: 30px; width: 30px; padding: 5px 15px 5px 5px;'/>
+			</a>
+		
+		    <div style='margin-left: 50px; padding-top: 5px; height: 30px; font-size: 12px; color: #505050;'>       
+		        <a href="{% url profile_detail act.user %}" style="font-weight: bold; font-size: 12px;">{{ act.user.visible_name }}</a>
+		        replied to 
+		        <a href="{{ act.content_object.get_absolute_url }}" style='font-weight: bold; font-size: 12px;'>{{ act.content_object.title }}</a>
+		        <br/>
+		       	<span style="font-size: 10px; color: #a0a0a0;">{% mktime act.date_submitted %}</span>
+			</div>
+			
+			<div style='clear: left;'></div>
+		
+			{% comment %}
+		    <p style='color: #a0a0a0; margin: 0.5em 0; font-size: 12px;'>
+		    	{{ topic.intro|striptags }}
+		    </p>
+		    {% endcomment %}
+		    
+		</div>
+	{% endif %}
+
+{% endfor %}

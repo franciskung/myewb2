@@ -180,6 +180,32 @@ def topics(request, group_slug=None, form_class=GroupTopicForm,
         "num_posts": num_posts
     }, context_instance=RequestContext(request))
     
+def allactivity(request, template_name=None):
+    # generic topic listing: show posts from groups you're in
+    # also shows posts from public groups...
+    # for guests, show posts from public groups only
+    topics = GroupTopic.objects.visible(user=request.user)
+    topics = topics[:25]
+
+    activity = {}
+    for t in topics:
+        activity[t.created] = t
+        
+        replies = ThreadedComment.objects.all_for_object(t)
+        replies = replies[:25]
+        
+        for r in replies:
+             activity[r.date_submitted] = r
+             
+    keys = activity.keys()
+    keys.sort()
+    keys.reverse()
+
+    return render_to_response("topics/topics_allactivity.html", {
+        "activities": activity,
+        "keys": keys[:25]
+    }, context_instance=RequestContext(request))
+    
 def new_topic(request, group_slug=None, bridge=None):
     is_member = False
     group = None

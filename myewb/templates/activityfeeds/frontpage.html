@@ -115,7 +115,7 @@ function load_posts(group,page,short,silent)   // now, this'll be a behind-the-s
 
 	// no group yet; load default
 	if(group=='') {
-	   url = "/?ajax=1";
+	   url = "/posts/allactivity/?ajax=1";
 	} else {
 	   url = '/groups/' + group + '/posts/?ajax=1';
 	}
