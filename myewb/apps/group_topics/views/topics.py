@@ -101,6 +101,9 @@ def topics(request, group_slug=None, form_class=GroupTopicForm,
     
     if request.is_ajax() or request.GET.get('ajax', None):
         template_name = "topics/topics_ajax.html"
+        num_posts = 5
+    else:
+        num_posts = 10
 
     # kinda hack-ish.  but the easiest way; doesn't feel worth adding an AJAX param for this.
     if group_slug == 'featured':
@@ -173,7 +176,8 @@ def topics(request, group_slug=None, form_class=GroupTopicForm,
         "can_execovision": can_execovision,
         "adminovision": adminovision,
         "login_form": EmailLoginForm(),                # for front-page toolbar
-        "mode": mode
+        "mode": mode,
+        "num_posts": num_posts
     }, context_instance=RequestContext(request))
     
 def new_topic(request, group_slug=None, bridge=None):

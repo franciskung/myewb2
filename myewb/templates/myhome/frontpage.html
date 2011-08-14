@@ -1,0 +1,586 @@
+{% extends "base.html" %}
+{#{% extends "topics/base.html" %}#}
+
+{% load avatar_tags %}
+{% load i18n %}
+{% load uni_form_tags %}
+{% load pagination_tags %}
+{% load group_tags %}
+{% load tagging_tags %}
+{% load events_tags %}
+{% load cache %}
+{% load champ_tags %}
+{% load perspectives %}
+{% load networks_tags %}
+{% load fake_ads %}
+
+{% block extra_head %}
+    {{ block.super }}
+    
+    <link rel="alternate" type="application/rss+xml" title="myEWB Front Page" href="{% url topic_feed_all %}" />
+	<link rel="stylesheet" href="{{ STATIC_URL }}css/toolbars.css" />   
+	
+	<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.ba-bbq.min.js"></script>
+	
+	
+	{# JS here for the frontpage ajax updates #}
+<script type="text/javascript">
+// Frontpage Ajax updates
+
+	/*var currentURL = "";
+	
+	var shortPosts = false; */
+	// both covered by the hashstate
+
+var currentGroup = '';
+var currentPage = ''; // not the actual default of 1, so that it'll actually load the first time.
+var shortPosts = 0;
+
+var timeout_id = 0;
+
+$(window).bind( 'hashchange', function(e) {
+    rockAjaxPosts(0);
+});
+
+
+function rockAjaxPosts(forceReload) {
+    group = $.bbq.getState( 'group' ) || '';
+    
+    page = $.bbq.getState( 'page' ) || 1;
+    
+    short = $.bbq.getState( 'short' ) || 0;
+    
+    
+    if ( short !== shortPosts ) {
+        // turn on or off shortposts
+        if (short == 1) {
+            //console.log('short on');
+            
+                $('div.postcontent').slideUp(); $('div.postheader').addClass('shortpost'); $('#collapse-posts').hide(); $('#expand-posts').show(); 
+                shortPosts = true;
+            
+        } 
+        else {
+            //console.log('short off');
+            
+            $('div.postcontent').slideDown(); $('div.postheader').removeClass('shortpost'); $('#expand-posts').hide(); $('#collapse-posts').show(); 
+          	   
+            shortPosts = false;
+        }
+        shortPosts = short;
+        
+    }
+    
+    
+    if ( forceReload || (group !== currentGroup && page !== currentPage) ) {
+        // switching both at once; only likely to happen via curious people typing in the address bar
+        
+        //console.log('changegroup to ' + group + ' and page to ' + page);
+        
+        load_posts(group,page,short,false);
+        
+        currentGroup = group;
+        currentPage = page; // is this always intended? probably.
+        // make sure we don't get an endless loop of resetting the page number here.
+    }
+    
+    else if ( group !== currentGroup ) {
+        // load the new group
+        
+        //console.log('changegroup to ' + group);
+        
+        load_posts(group,1,short,false);
+        
+        currentGroup = group;
+        currentPage = 1; 
+    }
+    else if ( page !== currentPage ) {
+        // load the new page
+        
+        //console.log('changepage to ' + page);
+        
+        load_posts(group,page,short,false);
+        
+        currentPage = page;
+    }
+    
+
+
+}
+
+function load_posts(group,page,short,silent)   // now, this'll be a behind-the-scenes function that's only called by hashchanges.
+{
+	clearTimeout(timeout_id)
+    var url = '';
+
+	// no group yet; load default
+	if(group=='') {
+	   url = "/?ajax=1";
+	} else {
+	   url = '/groups/' + group + '/posts/?ajax=1';
+	}
+	
+	if(page && page!=0) {
+	   url = url + '&page=' + page;
+	}
+	if (short==1) {
+    	url += '&short=1';
+	}
+	
+	/* update highlighting in the groups listing */
+	if (group) {
+    	$('.frontpage-mygroups-actions').hide();
+    	$('.frontpage-mygroups-div').removeClass('bkgd-light');
+
+    	$('#frontpage-update-'+group).parent().addClass('bkgd-light');
+    	$('#frontpage-update-'+group).siblings('.frontpage-mygroups-actions').show();
+	} else {
+		$('.frontpage-mygroups-actions').hide();
+		$('.frontpage-mygroups-div').removeClass('bkgd-light');
+	}
+
+	{# if there is no current timezone selected, auto-detect one #}
+	{% if not current_timezone %}
+		var d = new Date();
+		url = url + "&tzoffset=" + d.getTimezoneOffset();
+	{% endif %}
+   
+    currentURL = url;
+
+    if (silent == false)
+    {
+    	// maybe bring this back...?  dunno...!
+    	//$('#topiclisting').hide();
+		$('.frontpage-loading').slideDown();  // @@@ this should be adjusted so it doesn't move everything around.
+    }
+    
+    $('#topiclisting').load(url,
+        function() {
+            $('.frontpage-loading').stop().hide();
+
+            // if hidden earlier, need to re-show here
+            //$('#topiclisting').show();
+
+            // catch pagination-related clicks and load via ajax
+            $('.pagination a').click(function() {
+               	targetPage =  $.deparam( $(this).attr('href') )['?page'] ;
+               	var state = {};
+               	state['page'] = targetPage;
+               	$.bbq.pushState( state );
+               	if(shortPosts!=true)
+                {
+                	$().scrollTo(0,600);
+                }
+                return false;
+            });
+		});
+
+	// and set a timer to auto-refresh... every half hour, let's say?
+    timeout_id = setTimeout('load_posts(\'' + group + '\',\'' + page + '\',\'' + short + '\')', 30 * 60 * 1000, true);
+}
+	
+$(document).ready(function() {
+	$('.frontpage-update').click(function() {
+	  
+	  // related actions take place in the updater function now.
+	  
+	  var groupSlug = $(this).attr("id").substring(17);
+	  //load_posts('/groups/' + groupSlug + '/posts/');
+	  //$('.frontpage-reset').show();
+	  
+      var state = {};
+      state['group'] = groupSlug;
+      state['page'] = 1;
+      $.bbq.pushState( state );
+        
+            
+            return false;
+	  
+	  
+	  return false;
+	});
+	
+	$('.frontpage-reset').click(function() {
+	  
+	  //load_posts('{{request.url}}');
+	  //$('.frontpage-reset').hide();
+	  
+      var state = {};
+      state['group'] = '';
+      state['page'] = 1;
+      $.bbq.pushState( state );
+	  
+	  return false;
+    });
+	
+    $('#frontpage-loading-refreshlink').click(function() {
+        rockAjaxPosts(1);
+        return false;
+    });
+	
+	// and the initial start trigger here! shazam!
+	$(window).trigger( 'hashchange' );
+});
+ 
+ </script>
+ 
+ 
+{% endblock %}
+
+{% block frontpagerightJS %}
+            function toggleFrontpageToolbar() {
+                $('#toolbarcolumn_right_container').toggle();
+                $('#toolbarcolumn_right_show').toggle();
+                
+                {% if user.is_authenticated %}
+                    
+                    var action = "";
+                    if (! $('#toolbarcolumn_right_container').is(':visible'))
+                        action = "close";
+                    else
+                        action = "show";
+                    
+                    $.ajax({
+                      url: "{% url profile_toolbar_action %}" + action + "/" + "toolbarcolumn_right_container" + "/",
+                      cache: false,  // this prepends another query onto the end with a timestamp - make sure it doesn't mix up the handler page?
+                    });
+                {% endif %}
+                {# state saving only works if youre logged in, so only really try then #}
+
+                                
+
+            }
+            
+            $('.frontpagetoolbarToggles').click(function(){	
+                toggleFrontpageToolbar();
+
+          	  });
+          	  
+{% endblock %}
+
+
+{% block head_title %}{% trans "Discussion Board" %}{% endblock %}
+
+{% block body_base %}
+
+	{% if user.is_authenticated and user.get_profile.get_chapter %}
+	<div style="margin: 5px 0px 20px 320px; padding: 10px; border: 1px solid #d0d0d0; border-right: 0; -moz-border-radius-topleft: 0.5em; -moz-border-radius-bottomleft: 0.5em; -webkit-border-top-left-radius: 0.5em; -webkit-border-bottom-left-radius: 0.5em;">
+		<div style="padding: 10px; font-size: 14px; background: #f0f0f0; font-weight: bold;">
+			<span style="float: right; font-weight: normal; font-size: 12px;" id="home_controls">
+			<a href="#" id="switch_home">
+				switch
+			</a> - 
+			<a href="#" id="hide_home">
+				hide
+			</a>
+			</span> 
+			<span style="float: right; font-weight: normal; font-size: 12px; display: none;" id="home_controls2">
+			<a href="#" id="expand_home">
+				expand
+			</a>
+			</span>
+			{{ user.get_profile.get_chapter.name }}
+		</div>
+		<div id="home_dashboard">
+		<br/>
+		<em>haven't built this yet, since it's still a preview... but imagine! =)</em><br/>
+
+		<div style="float: right; width: 50%; padding-left: 10px;">
+			<strong>Upcoming events</strong><br/>
+			Sept 1 - <a href="#">asdfasdfasdf</a><br/>
+			Sept 6 - <a href="#">456djnhjdt6456y4</a><br/>
+			Sept 8 - <a href="#">sdfgbdfye63y</a>
+			<br/><br/>
+			
+			<strong>Workspace</strong><br/>
+			Updated: <a href="#">Filename</a><br/>
+			New file: <a href="#">Filename</a><br/>
+			Updated: <a href="#">Filename</a>
+		</div>
+
+		<div style="margin-right: 50%;">
+			<strong>Discussions</strong><br/>
+			<a href="#">Lorum ipsum</a><br/>
+			<a href="#">Lorum ipsum</a><br/>
+			<a href="#">Lorum ipsum</a><br/>
+			
+			<br/>
+			<strong>People</strong><br/>
+			23 new members in the past month<br/>
+			123 members total<br/>
+			<a href="#">see full list &raquo;</a>
+		</div>
+		<div style="clear: right;"></div>		
+		</div>
+	</div>
+	{% endif %}
+   	
+
+	<div style="margin: 20px 0px 20px 320px; padding: 10px; border: 1px solid #d0d0d0; border-right: 0; -moz-border-radius-topleft: 0.5em; -moz-border-radius-bottomleft: 0.5em; -webkit-border-top-left-radius: 0.5em; -webkit-border-bottom-left-radius: 0.5em;">
+		<div style="padding: 10px; font-size: 14px; background: #f0f0f0; font-weight: bold;">
+			<a href="#" class="switch_discussions" style="float: right; font-weight: normal; font-size: 12px;">
+				customize
+			</a>
+			Recent Discussions
+		</div>
+		<br/>
+		
+		<div style="float: right; width: auto;">
+			<a href="{% groupurl topic_new group %}">Start a new discussion &raquo;</a>
+		</div>
+		<div>
+			<strong>Showing relevant discussions</strong> | 
+			<a href="#" class="switch_discussions">Switch to latest</a> | 
+			<a href="#" class="switch_discussions">Switch to most active</a>
+		</div>
+
+		<div class="frontpage-loading" style='border-top: 1px solid #e0e0e0;'><a href="#" id="frontpage-loading-refreshlink">[refresh]</a>Loading...</div>     
+	 
+	 	<div id="topiclisting">
+	    </div>
+
+		<div style="border-top: 1px solid #e0e0e0;">
+			<a href="{% url topic_list %}">See more discussions &raquo;</a>
+		</div>
+	</div>
+
+	<div style="margin-left: 320px;">
+	<div style="float: left; margin: 0; width: 320px; padding: 10px; border: 1px solid #d0d0d0; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em;">
+		<div style="padding: 5px 10px; font-size: 14px; background: #f0f0f0; font-weight: bold;">
+			EWB News
+		</div>
+		<br/>
+
+		<iframe width="320" height="216" src="http://www.youtube.com/embed/U1Ni9nvtYhE" frameborder="0" allowfullscreen></iframe>
+		<br/><br/>
+		
+		<div style="font-size: 10px;"><em>These would all be news stories from the main website??</em><br/>
+		<em>Or pull in the twitter feed here??</em></div>
+
+		<a href="#">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</a><br/>
+		<div style="font-size: 10px; color: #a0a0a0; padding-bottom: 7px;">
+			August 1, 2011
+		</div>
+		<a href="#">Aliquam ut nisi nulla, ut facilisis velit. Mauris sed libero.</a><br/>
+		<div style="font-size: 10px; color: #a0a0a0; padding-bottom: 7px;">
+			August 1, 2011
+		</div>
+		<a href="#">Sed nisl nisi, tempor non blandit eu, adipiscing.</a><br/>
+		<div style="font-size: 10px; color: #a0a0a0; padding-bottom: 7px;">
+			August 1, 2011
+		</div>
+		<a href="#">Aliquam iaculis, purus eu tempus molestie, quam felis ultricies sem, vitae consectetur odio.</a><br/>
+		<div style="font-size: 10px; color: #a0a0a0; padding-bottom: 7px;">
+			August 1, 2011
+		</div>
+		<a href="#">Donec sollicitudin vestibulum nulla, vel faucibus tellus placerat sed. Aliquam.</a><br/>
+		<div style="font-size: 10px; color: #a0a0a0; padding-bottom: 7px;">
+			August 1, 2011
+		</div>
+		
+	</div>	
+
+	<div style="margin: 0; margin-left: 360px; padding: 10px; border: 1px solid #d0d0d0; border-right: 0; -moz-border-radius-topleft: 0.5em; -moz-border-radius-bottomleft: 0.5em; -webkit-border-top-left-radius: 0.5em; -webkit-border-bottom-left-radius: 0.5em; height: 100%;">
+		<div style="padding: 5px 10px; font-size: 14px; background: #f0f0f0; font-weight: bold;">
+			Latest Blogs
+		</div>
+		<br/>
+
+		<img style="height: 20px; width: 35px; margin: 0 10px; float: left;" src="http://t1.gstatic.com/images?q=tbn:ANd9GcQOBIkab60eXq3i3mL2QO5Ww3rmtavpaqWi625siCNGQFXTYkjo"/>
+		<a href="http://fraserinmalawi.wordpress.com/2011/08/13/relocation/" title="I&#8217;ve officially changed countries.  Check out the new post at www.fraserinzambia.wordpress.com!" target="_blank">Relocation</a>
+		<br/>
+		<span style="font-size: 10px; color: #a0a0a0;">on <abbr title="August 13, 2011">Saturday</abbr>
+		from Fraser &ndash; <em title="Just another EWB JF Blog"><a href="http://fraserinmalawi.wordpress.com/" target="_blank">Tales From the Heart</a></em>
+		</span> 
+
+		<br/><br/>                
+                
+		<img style="height: 20px; width: 35px; margin: 0 10px; float: left;" src="http://t2.gstatic.com/images?q=tbn:ANd9GcRnu3SsfvlzsCuwUrBAcCsmSTJ-jZBJehKgB1ZB2qezuko2d2Nv"/>
+		<a href="http://vivianmau.wordpress.com/2011/08/13/seasons-for-food/" title="In rural communities weather shapes a lot the day to day lives. Seasons have great impact on the activities that you do: right before..." target="_blank">Seasons for food</a>
+		<br/><span style="font-size: 10px; color: #a0a0a0;">
+		on <abbr title="August 13, 2011">Saturday</abbr> 
+                    
+                    from
+                                        Vivian &ndash;
+                                        
+                                            <em title="ideas about a summer in Malawi"><a href="http://vivianmau.wordpress.com/" target="_blank">Malawi thoughts</a></em> 
+                                            </span> 
+		<br/><br/>
+
+		<img style="height: 20px; width: 35px; margin: 0 10px; float: left;" src="http://t2.gstatic.com/images?q=tbn:ANd9GcRnu3SsfvlzsCuwUrBAcCsmSTJ-jZBJehKgB1ZB2qezuko2d2Nv"/>
+		<a href="http://markeveryware.wordpress.com/2011/08/12/training-day/" title="I spent much of today with my colleague Spencer Weber at a training he was helping run for agrodealer agents (commission sales people) to..." target="_blank">Training day.</a> 
+		<br/><span style="font-size: 10px; color: #a0a0a0;">
+                    on <abbr title="August 12, 2011">Friday</abbr> 
+                    
+                    from
+                                        Mark &ndash;
+                                        
+                                            <em title="You cannot pick up a pebble with one finger ~Malawi Proverb"><a href="http://markeveryware.wordpress.com/" target="_blank">Picking Up Pebbles</a></em> 
+                                            </span>
+        <br/><br/>
+        
+		<img style="height: 20px; width: 35px; margin: 0 10px; float: left;" src="http://t1.gstatic.com/images?q=tbn:ANd9GcQOBIkab60eXq3i3mL2QO5Ww3rmtavpaqWi625siCNGQFXTYkjo"/>
+                    <a href="http://whisperstovoices.wordpress.com/2011/08/12/something-to-aspire-to/" title="It&#8217;s International Youth Day today &#8211; a day to celebrate the potential of youth and discuss with critical minds the..." target="_blank">something to aspire to</a></h3> 
+		<br/><span style="font-size: 10px; color: #a0a0a0;">
+                    on <abbr title="August 12, 2011">Friday</abbr> 
+                    
+                    from
+                                        
+                                            <em title="connecting Canadians to Africa!"><a href="http://whisperstovoices.wordpress.com/" target="_blank">from a whisper to a voice of hope</a></em> 
+                                            </span> 
+		<br/><br/>            
+                                    
+		<img style="height: 20px; width: 35px; margin: 0 10px; float: left;" src="http://74.54.19.227/GHP/img/pics/79307655.jpg"/>
+                    <a href="http://africashmafrica.wordpress.com/2011/08/12/africa-shmafrica-perspectives-n-shit/" title="In EWB, IDS and African Studies the one conversation is always the same. In all the intellectual circles I run in, &#8220;perspectives..." target="_blank">Turning the table: Perspectives of Canada</a></h3> 
+		<br/><span style="font-size: 10px; color: #a0a0a0;">
+                    on <abbr title="August 12, 2011">Friday</abbr> 
+                    
+                    from
+                                        Bailey &ndash;
+                                        
+                                            <em title="I will be blogging during summer 2011 about my experience living in Tamale, Ghana and working at the Network for Youth Action."><a href="http://africashmafrica.wordpress.com/" target="_blank">Africa, Shmafrica: Rants of a JF in Ghana</a></em> 
+                                            </span>
+                                            
+		<br/><br/>                                            
+                                             
+		<img style="height: 20px; width: 35px; margin: 0 10px; float: left;" src="http://t1.gstatic.com/images?q=tbn:ANd9GcQOBIkab60eXq3i3mL2QO5Ww3rmtavpaqWi625siCNGQFXTYkjo"/>
+                    <a href="http://elliotcudmore.wordpress.com/2011/08/12/the-origin-of-roads/" title="My  cousin once told me that this road, yes, this one which links my driveway to the city, can leads me to South America. Follow it..." target="_blank">The Origin of Roads</a></h3> 
+		<br/><span style="font-size: 10px; color: #a0a0a0;">
+                    on <abbr title="August 12, 2011">Friday</abbr> 
+                    
+                    from
+                                        Elliot &ndash;
+                                        
+                                            <em title="4 months in Zambia, learning the basics of connecting farmers to seeds"><a href="http://elliotcudmore.wordpress.com/" target="_blank">Elliot's Elementary Learnings</a></em> 
+                                            </span>
+                                            
+		<br/><br/>                                             
+		<img style="height: 20px; width: 35px; margin: 0 10px; float: left;" src="http://t2.gstatic.com/images?q=tbn:ANd9GcRnu3SsfvlzsCuwUrBAcCsmSTJ-jZBJehKgB1ZB2qezuko2d2Nv"/>
+                    <a href="http://markeveryware.wordpress.com/2011/08/11/election-campaign-in-chipata/" title="A convoy of blue trucks passed me today while I acquainted myself with my new home base in Chipata, Zambia. It is a large town close to..." target="_blank">Election campaign in Chipata</a> 
+                    <br/><span style="font-size: 10px; color: #a0a0a0;">
+                    on <abbr title="August 12, 2011">Friday</abbr> 
+                    
+                    from
+                                        Mark &ndash;
+                                        
+                                            <em title="You cannot pick up a pebble with one finger ~Malawi Proverb"><a href="http://markeveryware.wordpress.com/" target="_blank">Picking Up Pebbles</a></em> 
+                                            </span> 
+		<br/><br/>            
+		<img style="height: 20px; width: 35px; margin: 0 10px; float: left;" src="http://74.54.19.227/GHP/img/pics/79307655.jpg"/>
+                    <a href="http://tastingpalmoil.wordpress.com/2011/08/11/auntie-ajuwa-this-is-for-you/" title="I woke up this morning around six. Like always, I was awakened by noises in the yard. I sat up; rays of sunlight peeked through the..." target="_blank">Auntie Ajuwa, This is for You</a>
+                    <br/><span style="font-size: 10px; color: #a0a0a0;"> 
+                    on <abbr title="August 11, 2011">Thursday</abbr> 
+                    
+                    from
+                                        Annie &ndash;
+                                        
+                                            <em title="Annie's 2011 summer in Ghana"><a href="http://tastingpalmoil.wordpress.com/" target="_blank">Tasting Palm Oil</a></em> 
+                                            </span>
+		<br/><br/>
+		<img style="height: 20px; width: 35px; margin: 0 10px; float: left;" src="http://74.54.19.227/GHP/img/pics/79307655.jpg"/>
+                    <a href="http://danielainghana.blogspot.com/2011/08/all-in-family.html" title="Hey my peoples!Sorry I’ve been M.I.A. but it’s definitely crunch time in my placement. I’ve been wanting to write this post for..." target="_blank">All in the Family</a> 
+                    <br/><span style="font-size: 10px; color: #a0a0a0;">
+                    on <abbr title="August 11, 2011">Thursday</abbr> 
+                    
+                    from
+                                        Daniela &ndash;
+                                        
+                                            <em ><a href="http://danielainghana.blogspot.com/" target="_blank">Let's Go Black Stars!</a></em> 
+                                            </span>
+                                            
+		<br/><br/>                                             
+		<img style="height: 20px; width: 35px; margin: 0 10px; float: left;" src="http://t2.gstatic.com/images?q=tbn:ANd9GcRnu3SsfvlzsCuwUrBAcCsmSTJ-jZBJehKgB1ZB2qezuko2d2Nv"/>
+                    <a href="http://markeveryware.wordpress.com/2011/08/11/on-the-road-again/" title="We missed a day or 2 because of travel but here is a quick photo of 3/4 of the southern Africa team in Addis Ababa airport. On the final..." target="_blank">On the road again</a> 
+                    <br/><span style="font-size: 10px; color: #a0a0a0;">
+                    on <abbr title="August 11, 2011">Thursday</abbr> 
+                    
+                    from
+                                        Mark &ndash;
+                                        
+                                            <em title="You cannot pick up a pebble with one finger ~Malawi Proverb"><a href="http://markeveryware.wordpress.com/" target="_blank">Picking Up Pebbles</a></em> 
+                                            </span> 
+	</div>
+	<br style="clear: left;"/>
+	</div>
+	
+	<br/>
+
+{% endblock %}
+ 
+
+{% block extra_body %}
+<div style="display: none;">
+<div id="div_switch_home">
+	<h1>We haven't built this yet...</h1>
+	
+	<p>
+		But we want to let you choose where your "home" is: what group in EWB do
+		you identify most with?
+	</p>
+	
+	<p>
+		For many people this will be your local chapter; but it could also be a distributed 
+		team, an APS/JF group, or even a historical group like "All chapter presidents from 2005-2006".
+	</p>
+	
+	<p>
+		Then, we'll show you recent activity from this group. What have other people been 
+		doing?  What active discussions are happening?  What's the group up to? 
+	</p>
+</div>
+
+<div id="div_switch_discussions">
+	<h1>We haven't built this yet...</h1>
+	
+	<p>
+		But we want to know what you find relevant.  This will be a list of topics:
+		fair trade, advocacy, youth engagement, water & sanitation, agricultural value chains, 
+		etc, that you can choose multiple topics from.
+	</p>
+	
+	<p>
+		We'll then offer to fill the "recent discussions" box with content that 
+		specifically matches your interests - letting you build your own niche within EWB.
+	</p>
+	
+	<p>
+		Of course, you'll still be able to see all recent posts, like the current myEWB -
+		and we also want to add an option for the most viewed/active posts too
+		(regardless of topic).
+	</p>
+	
+	<p>
+		Viva la choix!  (as long as it's not confusing!)
+	</p>
+	
+</div>
+</div>
+	
+<script type="text/javascript">
+	$().ready(function() {
+
+		$('#switch_home').colorbox({width: '50%',
+									height: '50%',
+									opacity: '0.5',
+									inline: true,
+									href: '#div_switch_home'
+								   });
+		$('.switch_discussions').colorbox({width: '50%',
+										   height: '50%',
+										   opacity: '0.5',
+										   inline: true,
+										   href: '#div_switch_discussions'
+										  });
+		$('#hide_home').click(function() {
+			$('#home_dashboard').slideUp();
+			$('#home_controls').hide();
+			$('#home_controls2').show();
+		});
+		$('#expand_home').click(function() {
+			$('#home_dashboard').slideDown();
+			$('#home_controls2').hide();
+			$('#home_controls').show();
+		});
+	});
+</script>
+{% endblock %}
