@@ -1,0 +1,56 @@
+{% extends "base_groups/base.html" %}
+
+{% load i18n %}
+{% load base_groups_tags %}
+{% load group_tags %}
+{% load avatar_tags %}
+{% load networks_tags %}
+
+{% block body_class %}communities orange{% endblock %}
+
+{% block subnav %}
+    <ul class="subnav">
+        {% if group %}
+            {% ifnotequal group.slug "natloffice" %}
+                <li><a href="{% url group_detail group.slug %}">{{ group.name }}</a></li>
+            {% endifnotequal %}
+        {% endif %}
+        <li><a href="{% url networks_index %}">{% trans "Chapter list" %}</a></li> 
+        <li><a href="{% url communities_index %}">{% trans "Browse Communities" %}</a></li>
+        <li><a href="{% url national_office %}">{% trans "National Office" %}</a></li>
+        {% if is_exec %}
+       		<li><a href="{% link_to_current_champ request.user %}">CHAMP</a></li>
+       		<li><a href="{% link_to_current_finance request.user %}">Finance</a></li>
+        {% endif %}
+    </ul>
+{% endblock %}
+
+{% block toolbar_left %}
+    {{ block.super }}
+
+    {% if group and group.is_active %}
+	    {% if is_admin %}
+            <div class="toolbarheader bkgd" id="box-admin-options">{% trans "Admin Options" %}</div>
+            <div class="toolbarcontent">
+		        <a href="{% url community_new_member group.slug %}">{% trans "Add users" %}</a><br/>
+		        <a href="{% url community_invite_member group.slug %}">{% trans "Invite users" %}</a><br/>
+
+				{% can_bulk_add group user as can_bulkadd %}
+				{% if can_bulkadd %}
+	            	<a href="{% url community_bulk_import group.slug %}">{% trans "Bulk-add email addresses" %}</a><br/>
+	            	<a href="{% url community_bulk_remove group.slug %}">{% trans "Bulk-remove email addresses" %}</a><br/>
+	            {% endif %}
+
+				<br/>
+		        <a href="{% url community_stats group.slug %}">{% trans "Group statistics" %}</a><br/>
+	            <br/>
+	            
+       			<a href="{% url edit_community group.slug %}">{% trans "Edit list details" %}</a><br/><br/>
+       			
+       			<a href="{% url delete_community group.slug %}">{% trans "Delete this group" %}</a><br/><br/>
+            </div>
+        {% endif %}
+	{% endif %}
+{% endblock %}
+
+

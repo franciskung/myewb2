@@ -1,0 +1,10 @@
+{% load i18n %}
+{% load pagination_tags %}
+{% load group_tags %}
+{% load cache %}
+
+{% autopaginate topics num_posts %}
+
+{% for topic in topics %}
+	{% include "topics/topic_item2.html" %}
+{% endfor %}

@@ -1,0 +1,36 @@
+{% load i18n %}
+{% load avatar_tags %}
+{% load threadedcommentstags %}
+{% load attachablecomments_tags %}
+{% load extra_tagging_tags %}
+{% load group_tags %}
+{% load group_topics_tags %}
+{% load attachments_tags %}
+{% load helpers %}
+{% load cache %}
+{% load time_filters %}
+
+
+<div>
+	<a href="{% url profile_detail topic.creator.username %}">
+	    {# {% avatar topic.creator 40 %} #}
+	    <img src="{% avatar_url topic.creator 25 %}" title="{{topic.creator.visible_name}}" alt="{{topic.creator.visible_name}}" style='float: left; height: 30px; width: 30px; padding: 5px 15px 5px 5px;'/>
+	</a>
+
+    <div style='margin-left: 50px; padding-top: 5px; height: 30px; font-size: 12px; color: #505050;'>       
+        <a href="{% url profile_detail topic.creator %}" style="font-weight: bold; font-size: 12px;">{{ topic.creator.visible_name }}</a>
+        started a post, 
+        <a href="{{ topic.get_absolute_url }}" style='font-weight: bold; font-size: 12px;'>{{ topic.title }}</a>
+        <br/>
+       	<span style="font-size: 10px; color: #a0a0a0;">{% mktime topic.created %}</span>
+	</div>
+	
+	<div style='clear: left;'></div>
+
+	{% comment %}
+    <p style='color: #a0a0a0; margin: 0.5em 0; font-size: 12px;'>
+    	{{ topic.intro|striptags }}
+    </p>
+    {% endcomment %}
+    
+</div>
