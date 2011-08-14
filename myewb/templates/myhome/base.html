@@ -155,12 +155,12 @@ $(document).ready(function(){
 		        <br style='clear: left;'/>
 			</div>
 			
-			<div style="background: #f0f0f0; border-right: 1px solid #ffb90f;">
-				<span style="padding-left: 10px; font-weight: bold; font-size: 14px;">Go to my...</span>
-				<a href="{% url home %}" style="display: block; font-size: 14px; background: #ffb90f; color: #000000; padding: 10px; border-bottom: 1px solid #ff7200;">
+			<div style="background: #f0f0f0; border: 2px solid #ffb90f; border-left: 0; border-bottom: 0;">
+				<span style="padding-left: 10px; line-height: 26px; font-weight: bold; font-size: 14px;">Go to my...</span>
+				<a href="{% url home %}" style="display: block; font-size: 14px; background: {##ffb900#}#ffb900; color: #000000; padding: 10px; border-bottom: 1px solid #ff7200;">
 					Home &raquo;
 				</a>
-				<a style="display: block; font-size: 14px; background: #ffb90f; color: #000000; padding: 10px; border-bottom: 1px solid #ff7200;"
+				<a style="display: block; font-size: 14px; background: {##ffb90f#}#ffcc66; color: #000000; padding: 10px; border-bottom: 1px solid #ff7200;"
 		        {% if user.get_profile.get_chapter %}
 		        	href="{% url network_detail user.get_profile.get_chapter.slug %}"
 		        {% else %}
@@ -169,20 +169,20 @@ $(document).ready(function(){
 		        ">
 					Chapter &raquo;
 				</a>
-				<a href="{% url communities_index %}" style="display: block; font-size: 14px; background: #ffb90f; color: #000000; padding: 10px; border-bottom: 1px solid #ff7200;">
+				<a href="{% url communities_index %}" style="display: block; font-size: 14px; background: {##ffb90f#}#ffcc66; color: #000000; padding: 10px; border-bottom: 1px solid #ff7200;">
 					Teams &raquo;
 				</a>
-				<a href="{% url topic_list %}" style="display: block; font-size: 14px; background: #ffb90f; color: #000000; padding: 10px; border-bottom: 1px solid #ff7200;">
+				<a href="{% url topic_list %}" style="display: block; font-size: 14px; background: {##ffb90f#}#ffcc66; color: #000000; padding: 10px; border-bottom: 1px solid #ff7200;">
 					Discussions &raquo;
 				</a>
-				<a href="{% url events_all %}" style="display: block; font-size: 14px; background: #ffb90f; color: #000000; padding: 10px; border-bottom: 1px solid #ff7200;">
+				<a href="{% url events_all %}" style="display: block; font-size: 14px; background: {##ffb90f#}#ffcc66; color: #000000; padding: 10px; border-bottom: 1px solid #ff7200;">
 					Events &raquo;
 				</a>
-				<div style="height: 1px; background: #ffb90f; border-bottom: 1px solid #ff7200; {#border-top: 1px solid #ff7200;#}">&nbsp;</div>
-				<a href="#" style="display: block; font-size: 14px; background: #ffb90f; color: #000000; padding: 10px; border-bottom: 1px solid #ff7200; {#border-top: 1px solid #ff7200;#}" id="ataglance">
+				<div style="height: 1px; background: {##ffb90f#}#ffcc66; border-bottom: 1px solid #ff7200; {#border-top: 1px solid #ff7200;#}">&nbsp;</div>
+				<a href="#" style="display: block; font-size: 14px; background: {##ffb90f#}#ffcc66; color: #000000; padding: 10px; border-bottom: 1px solid #ff7200; {#border-top: 1px solid #ff7200;#}" id="ataglance">
 					EWB at a glance &raquo;
 				</a>
-				<a href="{% url applications %}" style="display: block; font-size: 14px; background: #ffb90f; color: #000000; padding: 10px; border-bottom: 1px solid #ff7200;">
+				<a href="{% url applications %}" style="display: block; font-size: 14px; background: {##ffb90f#}#ffcc66;; color: #000000; padding: 10px; border-bottom: 1px solid #ff7200;">
 					Get Involved &raquo;
 				</a>
 				
