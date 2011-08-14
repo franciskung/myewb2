@@ -42,7 +42,10 @@ def filesize_for_filename(attachment_path):
     """
 
     path = os.path.join(settings.MEDIA_ROOT, attachment_path)
-    size = os.path.getsize(path)
+    try:
+        size = os.path.getsize(path)
+    except:
+        size = 0
     formatted_size = bytestr(size)
     
     return {
