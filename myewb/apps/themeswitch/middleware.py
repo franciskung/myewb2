@@ -18,6 +18,8 @@ class ThemeSwitchMiddleware(object):
         dirs.insert(0, os.path.join(settings.THEMESWITCH_BASE_DIR, theme))
         settings.TEMPLATE_DIRS = tuple(dirs)
         
+        request.theme = theme
+        
         return None
 
 class ThemeSwitchTrackingMiddleware(object):
