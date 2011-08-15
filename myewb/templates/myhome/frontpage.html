@@ -261,6 +261,8 @@ $(document).ready(function() {
 
 {% block head_title %}{% trans "Discussion Board" %}{% endblock %}
 
+{% block subnav_base %}{% endblock %}
+
 {% block body_base %}
 
 	{% if user.is_authenticated and user.get_profile.get_chapter %}

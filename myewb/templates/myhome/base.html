@@ -31,7 +31,7 @@
         <link rel="stylesheet" href="{{ STATIC_URL }}css/jquery-ui.css" />
 
 
-		<link rel="stylesheet" href="{{ STATIC_URL }}css/myewb2-posts.css?d=20100629" /> 
+		<link rel="stylesheet" href="{{ STATIC_URL }}templates/myhome/css/myewb2-posts.css?d=20100629" /> 
 		<link rel="stylesheet" href="{{ STATIC_URL }}css/segmented_control.css" />
 		
 		
@@ -112,7 +112,7 @@ $(document).ready(function(){
    	
    	<div style='float: left; width: 300px; {#border-right: 1px solid #d0d0d0; #}padding-top: 5px;'>
     	{% if not user.is_authenticated %}
-	   		<div style="padding: 20px; border: 1px solid #ffb90f">
+	   		<div style="padding: 20px; border: 1px solid #{#ffb90f#}ff7200;">
 				{% if login_form %}
 		            <form class="toolbarlogin" method="POST" action="{% url acct_login %}">
 		                {% for field in login_form %}
@@ -134,7 +134,7 @@ $(document).ready(function(){
 				{% endif %}
 			</div>
 		{% else %}
-	   		<div style="padding: 20px; border: 1px solid #ffb90f; border-left: 0; border-bottom: 0; -moz-border-radius-topright: 0.5em; -webkit-border-top-right-radius: 0.5em; background: #f0f0f0;">
+	   		<div style="padding: 20px; border: 1px solid #{#ffb90f#}ff7200; border-left: 0; border-bottom: 0; -moz-border-radius-topright: 0.5em; -webkit-border-top-right-radius: 0.5em; background: #f0f0f0;">
 		        <div style='height: 95px; width: 95px; float: left;'>
 		            {% avatar user 95 %}
 		        </div>
@@ -155,9 +155,9 @@ $(document).ready(function(){
 		        <br style='clear: left;'/>
 			</div>
 			
-			<div style="background: #f0f0f0; border: 2px solid #ffb90f; border-left: 0; border-bottom: 0;">
+			<div style="background: #f0f0f0; border: 2px solid #{#ffb90f#}ff7200; border-left: 0; border-bottom: 0;">
 				<span style="padding-left: 10px; line-height: 26px; font-weight: bold; font-size: 14px;">Go to my...</span>
-				<a href="{% url home %}" style="display: block; font-size: 14px; background: {##ffb900#}#ffb900; color: #000000; padding: 10px; border-bottom: 1px solid #ff7200;">
+				<a href="{% url home %}" style="display: block; font-size: 14px; background: #ffb90f; color: #000000; padding: 10px; border-top: 1px solid #ff7200; border-bottom: 1px solid #ff7200;">
 					Home &raquo;
 				</a>
 				<a style="display: block; font-size: 14px; background: {##ffb90f#}#ffcc66; color: #000000; padding: 10px; border-bottom: 1px solid #ff7200;"
@@ -182,13 +182,13 @@ $(document).ready(function(){
 				<a href="#" style="display: block; font-size: 14px; background: {##ffb90f#}#ffcc66; color: #000000; padding: 10px; border-bottom: 1px solid #ff7200; {#border-top: 1px solid #ff7200;#}" id="ataglance">
 					EWB at a glance &raquo;
 				</a>
-				<a href="{% url applications %}" style="display: block; font-size: 14px; background: {##ffb90f#}#ffcc66;; color: #000000; padding: 10px; border-bottom: 1px solid #ff7200;">
+				<a href="{% url applications %}" style="display: block; font-size: 14px; background: {##ffb90f#}#ffcc66;; color: #000000; padding: 10px; border-bottom: 2px solid #ff7200;">
 					Get Involved &raquo;
 				</a>
 				
 			</div>
 			
-			<div style="padding-left: 10px; padding-top: 20px; border-right: 1px solid #ffb90f; border-bottom: 1px solid #ffb90f; background: #f0f0f0; -moz-border-radius-bottomright: 0.5em; -webkit-border-bottom-right-radius: 0.5em;">
+			<div style="padding-left: 10px; padding-top: 20px; border-right: 1px solid #ff7200{##ffb90f#}; border-bottom: 1px solid #ff7200{##ffb90f#}; background: #f0f0f0; -moz-border-radius-bottomright: 0.5em; -webkit-border-bottom-right-radius: 0.5em;">
 				<span style="font-weight: bold; font-size: 14px;">Recent activity</span>
 				<br/><br/>
 				<div style="padding-bottom: 10px;">
@@ -259,7 +259,7 @@ $(document).ready(function(){
 
 
 		<br/><br/>
-  		<div style="padding: 20px; border: 1px solid #ffb90f; border-left: 0; -moz-border-radius-topright: 0.5em; -moz-border-radius-bottomright: 0.5em; -webkit-border-top-right-radius: 0.5em; -webkit-border-bottom-right-radius: 0.5em; background: #f0f0f0;">
+  		<div style="padding: 20px; border: 1px solid {##ffb90f#}#ff7200; border-left: 0; -moz-border-radius-topright: 0.5em; -moz-border-radius-bottomright: 0.5em; -webkit-border-top-right-radius: 0.5em; -webkit-border-bottom-right-radius: 0.5em; background: #f0f0f0;">
 	        <strong>EWBers Currently Online</strong><br/>
 	        {% include "whosonline.html" %}
 	    </div>
@@ -300,13 +300,13 @@ $(document).ready(function(){
 	            </div>
             {% endif %}
 
-		<div style="margin: 0px 0px 0px 315px; padding: -1em;">
 	        	{% block subnav_base %}
+		<div style="margin: 0px 0px 0px 315px; padding: -1em;">
 	        	
 	        	{% block subnav %}&nbsp;{% endblock %}
 	        	
-	        	{% endblock %}
 	        </div>
+	        	{% endblock %}
 	        
 	{% block body_base %}
 	{#<div style="margin: 5px 0px 20px 320px; padding: 10px; border: 1px solid #d0d0d0; border-right: 0; -moz-border-radius-topleft: 0.5em; -moz-border-radius-bottomleft: 0.5em; -webkit-border-top-left-radius: 0.5em; -webkit-border-bottom-left-radius: 0.5em;">#}
