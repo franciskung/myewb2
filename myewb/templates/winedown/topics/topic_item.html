@@ -1,0 +1,52 @@
+{% load i18n %}
+{% load avatar_tags %}
+{% load threadedcommentstags %}
+{% load attachablecomments_tags %}
+{% load extra_tagging_tags %}
+{% load group_tags %}
+{% load group_topics_tags %}
+{% load attachments_tags %}
+{% load helpers %}
+{% load cache %}
+{% load time_filters %}
+
+
+<div style='border-top: 1px solid #e0e0e0;'>
+	<a href="{% url profile_detail topic.creator.username %}">
+	    {# {% avatar topic.creator 40 %} #}
+	    <img src="{% avatar_url topic.creator 50 %}" title="{{topic.creator.visible_name}}" alt="{{topic.creator.visible_name}}" style='float: left; height: 50px; width: 50px; padding: 10px;'/>
+	</a>
+
+    <div style='margin-left: 75px; padding-top: 10px; height: 55px;'>       
+	    {% get_comment_count for topic as num_comments %}
+        {% get_latest_comments_for 1 as latest for topic %}
+	
+    	<div style='float: right; padding-right: 25px; width: auto; background: #edeff4; padding: 5px; text-align: right;'>
+	   		<a href="{{ topic.get_absolute_url }}" class="nodeco">
+	   			<img src="{{ STATIC_URL }}images/fb/comments.gif" style="position: relative; top: 6px; margin-top: -6px;"/>
+			    {% if num_comments %}
+	    			{% ifnotequal num_comments 1 %}
+	    				{{ num_comments }} replies so far
+	    			{% else %}
+	    				1 reply so far
+	    			{% endifnotequal %}
+	    		{% else %}
+	    			Add a reply
+	    		{% endif %}
+    		</a><br/>
+    		{% if latest %}
+				<span style='color: #707070; font-size: 10px;'>{% mktime latest.0.date_submitted %}</span>
+			{% endif %}	    		
+    	</div>
+
+        <a href="{{ topic.get_absolute_url }}" style='font-weight: bold; font-size: 14px;'>{{ topic.title }}</a><br/>
+        <a href="{% url profile_detail topic.creator %}">{{ topic.creator.visible_name }}</a><br/>
+        <span style='color: #707070;'>
+        	{% mktime topic.created %}
+		</span>
+	</div>
+
+    <p style='color: #a0a0a0;'>
+    	{{ topic.intro|striptags }}
+    </p>
+</div>

@@ -1,3 +1,23 @@
+<style>
+	#themeswitch_dashboard {
+		font-family: sans;
+		font-size: 14px;
+		color: #000000;
+		padding: 15px;
+	}
+	
+	#themeswitch_dashboard a, #themeswitch_dashboard a:visited, #themeswitch_dashboard a:active {
+		color: blue;
+		text-decoration: none;
+	}
+	
+	#themeswitch_dashboard a:hover {
+		text-decoration: underline;
+	}
+</style>
+
+<div id="themeswitch_dashboard">
+
 <h1>Help us pick a new myEWB look!</h1>
 
 <p>Check out the different concepts and let us know what you'd like to see in a new myEWB!</p>
@@ -27,8 +47,15 @@
 <br/>
 
 <div>
+	<a href="{% url themeswitch_select 'winedown' %}"><strong>National Wine-Down</strong></a><br/>
+	Highlights and news from across the country!
+</div>
+<br/>
+
+<div>
 	<a href="{% url themeswitch_select 'ewbbook' %}"><strong>EWBbook</strong></a><br/>
 	The "ewbbook" concept from April Fool's Day (for nostalgia. sadly, not a viable option since it's too much of a facebook clone.)
 </div>
 <br/>
 
+</div>

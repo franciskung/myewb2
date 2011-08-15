@@ -260,12 +260,89 @@ $(document).ready(function() {
 
 {% block head_title %}{% trans "Discussion Board" %}{% endblock %}
 
-{% block body %}
+{% block body_base %}
+
+	<div style="margin: 5px 0px 20px 320px; padding: 10px; border: 1px solid #d0d0d0; border-right: 0; -moz-border-radius-topleft: 0.5em; -moz-border-radius-bottomleft: 0.5em; -webkit-border-top-left-radius: 0.5em; -webkit-border-bottom-left-radius: 0.5em;">
+		<div style="padding: 10px; font-size: 14px; background: #f0f0f0; font-weight: bold;">
+			<a href="#" id="switch_home" style="float: right; font-weight: normal; font-size: 12px;">
+				switch
+			</a>
+			University of Toronto chapter
+		</div>
+		<br/>
+		
+		<div style="padding-bottom: 10px;">
+	        <div style='height: 25px; width: 35px; float: left;'>
+	            {% avatar user 25 %}
+	        </div>
+	        FRIEND started a post, <a href="#">Fair trade on campus</a>
+		</div><br/>
+		
+		<div style="padding-bottom: 10px;">
+	        <div style='height: 25px; width: 35px; float: left;'>
+	            {% avatar user 25 %}
+	        </div>
+	        FRIEND started a post, <a href="#">Fair trade on campus</a>
+		</div><br/>
+		
+		<div style="padding-bottom: 10px;">
+	        <div style='height: 25px; width: 35px; float: left;'>
+	            {% avatar user 25 %}
+	        </div>
+	        FRIEND started a post, <a href="#">Fair trade on campus</a>
+		</div><br/>
+		
+		<div style="padding-bottom: 10px;">
+	        <div style='height: 25px; width: 35px; float: left;'>
+	            {% avatar user 25 %}
+	        </div>
+	        FRIEND started a post, <a href="#">Fair trade on campus</a>
+		</div><br/>
+		
+		<div style="padding-bottom: 10px;">
+	        <div style='height: 25px; width: 35px; float: left;'>
+	            {% avatar user 25 %}
+	        </div>
+	        FRIEND started a post, <a href="#">Fair trade on campus</a>
+		</div>
+		
+		
+	</div>
+   	
+
+	<div style="margin: 20px 0px 20px 320px; padding: 10px; border: 1px solid #d0d0d0; border-right: 0; -moz-border-radius-topleft: 0.5em; -moz-border-radius-bottomleft: 0.5em; -webkit-border-top-left-radius: 0.5em; -webkit-border-bottom-left-radius: 0.5em;">
+		<div style="padding: 10px; font-size: 14px; background: #f0f0f0; font-weight: bold;">
+			<a href="#" class="switch_discussions" style="float: right; font-weight: normal; font-size: 12px;">
+				customize
+			</a>
+			Recent Discussions
+		</div>
+		<br/>
+		
+		<div style="float: right; width: auto;">
+			<a href="{% groupurl topic_new group %}">Start a new discussion &raquo;</a>
+		</div>
+		<div>
+			<strong>Showing relevant discussions</strong> | 
+			<a href="#" class="switch_discussions">Switch to latest</a> | 
+			<a href="#" class="switch_discussions">Switch to most active</a>
+		</div>
+
+		<div class="frontpage-loading" style='border-top: 1px solid #e0e0e0;'><a href="#" id="frontpage-loading-refreshlink">[refresh]</a>Loading...</div>     
+	 
+	 	<div id="topiclisting">
+	    </div>
+
+	</div>
+	
+{% comment %}
 
 	<div class="frontpage-loading"><a href="#" id="frontpage-loading-refreshlink">[refresh]</a>Loading...</div>     
  
  	<div id="topiclisting">
     </div>
+    
+    {% endcomment %}
             
 {% endblock %}
 
@@ -402,5 +479,67 @@ $(document).ready(function() {
 {% endblock %}      
 
 {% block extra_body %}
+<div style="display: none;">
+<div id="div_switch_home">
+	<h1>We haven't built this yet...</h1>
 	
+	<p>
+		But we want to let you choose where your "home" is: what group in EWB do
+		you identify most with?
+	</p>
+	
+	<p>
+		For most people this will be your local chapter; but it could also be a distributed 
+		team, an APS/JF group, or even a historical group like "All chapter presidents from 2005-2006".
+	</p>
+	
+	<p>
+		Then, we'll show you recent activity from this group. What have other people been 
+		doing?  What active discussions are happening?  What's the group up to? 
+	</p>
+</div>
+
+<div id="div_switch_discussions">
+	<h1>We haven't built this yet...</h1>
+	
+	<p>
+		But we want to know what you find relevant.  This will be a list of topics:
+		fair trade, advocacy, youth engagement, water & sanitation, agricultural value chains, 
+		etc, that you can choose multiple topics from.
+	</p>
+	
+	<p>
+		We'll then offer to pick content that specifically matches your interests -
+		letting you build your own niche within EWB.
+	</p>
+	
+	<p>
+		Of course, you'll still be able to see all recent posts, like the current myEWB -
+		and we also want to add an option for the most viewed/active posts too.
+	</p>
+	
+	<p>
+		Viva la choix!  (as long as it's not confusing!)
+	</p>
+	
+</div>
+</div>
+	
+<script type="text/javascript">
+	$().ready(function() {
+
+		$('#switch_home').colorbox({width: '50%',
+									height: '50%',
+									opacity: '0.5',
+									inline: true,
+									href: '#div_switch_home'
+								   });
+		$('.switch_discussions').colorbox({width: '50%',
+										   height: '50%',
+										   opacity: '0.5',
+										   inline: true,
+										   href: '#div_switch_discussions'
+										  });
+	});
+</script>
 {% endblock %}

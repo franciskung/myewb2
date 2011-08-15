@@ -19,11 +19,11 @@
 		{% block extra_head_base %}
 		<link rel="SHORTCUT ICON" href="{{ STATIC_URL}}favicon.ico" />
 		<link rel="stylesheet" href="{{ STATIC_URL }}pinax/css/topics.css" />
-		<link rel="stylesheet" href="{{ STATIC_URL }}templates/ewbbook/css/social_project.css" />
+		<link rel="stylesheet" href="{{ STATIC_URL }}/css/social_project.css" />
 		<script type="text/javascript" src="{{ STATIC_URL }}pinax/js/topics.js"></script>
 		<script type="text/javascript" src="{{ STATIC_URL }}base.js"></script>
 		{% block extra_head %}{% endblock %}
-		<link rel="stylesheet" href="{{ STATIC_URL }}templates/badges/css/myewb2.css?d=20100629" />
+		<link rel="stylesheet" href="{{ STATIC_URL }}templates/winedown/css/myewb2.css?d=20100629" />
 
 		<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.scrollTo-min.js"></script>		
 		
@@ -80,11 +80,16 @@ $(document).ready(function(){
 
     {% include "themeswitch/themeswitch.html" %}
     
+    {% comment %}
     <div style='float: left; height: 35px; width: 300px; background: #ff7200; font-size: 30px; color: white; font-family: sans; font-weight: bold; padding: 5px 0; text-align: center; border-right: 1px solid #000000; border-bottom: 1px solid #000000;'>
     	myEWB
    	</div>
+   	{% endcomment %}
+    <div style='float: left; height: 55px; width: 300px; text-align: center;'>
+		<a href="{% url home %}"><img src="{{ STATIC_URL }}images/logos/title-graphic.png" alt="Engineers Without Borders" border="0" /></a>
+   	</div>
    	
-   	<div style='margin-left: 320px; {#margin-right: 260px;#} height: 35px; padding: 3px 0 0 0; font-size: 10px; text-align: center;'>
+   	<div style='margin-left: 320px; {#margin-right: 260px;#} height: 55px; padding: 8px 0 0 0; font-size: 10px; text-align: center;'>
    		QUICK LINKS: 
    		<a href="#">EWB Canada</a> |
    		<a href="#">Chapter Resrouces</a> | 
@@ -97,13 +102,13 @@ $(document).ready(function(){
    		
    		<br/>
    	
-   		<input type="text" style="width: 80%; color: #d0d0d0; margin-top: 6px;" value="search"/>
+   		<input type="text" style="width: 80%; color: #d0d0d0; margin-top: 12px;" value="search"/>
    	</div>
    	<br style="clear: both;"/>
    	
-   	<div style='float: left; width: 300px; border-right: 1px solid #d0d0d0; padding-top: 5px;'>
+   	<div style='float: left; width: 300px; {#border-right: 1px solid #d0d0d0; #}padding-top: 5px;'>
     	{% if not user.is_authenticated %}
-	   		<div style="padding: 0 20px;">
+	   		<div style="padding: 20px; border: 1px solid #ffb90f">
 				{% if login_form %}
 		            <form class="toolbarlogin" method="POST" action="{% url acct_login %}">
 		                {% for field in login_form %}
@@ -125,7 +130,7 @@ $(document).ready(function(){
 				{% endif %}
 			</div>
 		{% else %}
-	   		<div style="padding: 0 20px;">
+	   		<div style="padding: 20px; border: 1px solid #ffb90f; border-left: 0; border-bottom: 0; -moz-border-radius-topright: 0.5em; -webkit-border-top-right-radius: 0.5em; background: #f0f0f0;">
 		        <div style='height: 95px; width: 95px; float: left;'>
 		            {% avatar user 95 %}
 		        </div>
@@ -145,28 +150,27 @@ $(document).ready(function(){
 		        </div>
 		        <br style='clear: left;'/>
 			</div>
-			<br/><br/>
 			
-			<div>
+			<div style="background: #f0f0f0; border-right: 1px solid #ffb90f;">
+				<span style="padding-left: 10px; font-weight: bold; font-size: 14px;">Go to my...</span>
 				<a href="#" style="display: block; font-size: 14px; background: #ffb90f; color: #000000; padding: 10px; border-top: 1px solid #ff7200; border-bottom: 1px solid #ff7200;">
-					Go to my chapter
+					Chapter &raquo;
 				</a>
 				<a href="#" style="display: block; font-size: 14px; background: #ffb90f; color: #000000; padding: 10px; border-bottom: 1px solid #ff7200;">
-					Go to my teams
+					Teams &raquo;
 				</a>
 				<a href="#" style="display: block; font-size: 14px; background: #ffb90f; color: #000000; padding: 10px; border-bottom: 1px solid #ff7200;">
-					Go to my interests
+					Discussions &raquo;
 				</a>
 				<a href="#" style="display: block; font-size: 14px; background: #ffb90f; color: #000000; padding: 10px; border-bottom: 1px solid #ff7200;">
-					Go to my events
+					Events &raquo;
 				</a>
 				<a href="#" style="display: block; font-size: 14px; background: #ffb90f; color: #000000; padding: 10px; border-bottom: 1px solid #ff7200;">
-					EWB at a glance
+					EWB at a glance &raquo;
 				</a>
 			</div>
-			<br/><br/>
 			
-			<div style="padding-left: 10px;">
+			<div style="padding-left: 10px; padding-top: 20px; border-right: 1px solid #ffb90f; background: #f0f0f0;">
 				<span style="font-weight: bold; font-size: 14px;">Recent activity</span>
 				<br/><br/>
 				<div style="padding-bottom: 10px;">
@@ -257,11 +261,14 @@ $(document).ready(function(){
 		{% endif %} 
 	</div>
 	
-	<div style="margin-left: 300px; border-top: 1px solid #d0d0d0; padding: 10px 0 0 10px;">
-		adfsdf
+	{% block body_base %}
+	<div style="margin: 5px 0px 20px 320px; padding: 10px; border: 1px solid #d0d0d0; border-right: 0; -moz-border-radius-topleft: 0.5em; -moz-border-radius-bottomleft: 0.5em; -webkit-border-top-left-radius: 0.5em; -webkit-border-bottom-left-radius: 0.5em;">
+		{% block body %}
+		{% endblock %}		
 	</div>
+	{% endblock %}
+	
    	
-
 {% comment %}
     	<div style='width: 80%; margin: 0 auto;'>
     		<div style=
@@ -555,6 +562,7 @@ $(document).ready(function(){
 
         
 {% endcomment %}
+		    {% block extra_body %}{% endblock %}
         
     </body>
 </html>
