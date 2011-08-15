@@ -1,0 +1,102 @@
+{% extends "topics/base.html" %}
+
+{% load i18n %}
+{% load uni_form_tags %}
+{% load pagination_tags %}
+{% load group_tags %}
+{% load tagging_tags %}
+
+{% block extra_head %}
+    {{ block.super }}
+    
+    {% if group %}
+        <link rel="alternate" type="application/rss+xml" title="{{ group }}" href="{% url topic_feed_group group.slug %}" />
+    {% else %}
+        <link rel="alternate" type="application/rss+xml" title="myEWB Front Page" href="{% url topic_feed_all %}" />
+    {% endif %}
+{% endblock %}
+
+{% comment %}
+**********
+NOTE: this template should only be used in the context of a group (ie, the group 
+variable is not None).  The generic/combined post listing has been moved to
+templates/frontpage.html
+
+The {% if group %} checks are left in just in case, and should be removed eventually.
+***********
+{% endcomment %}
+
+{% block head_title %}{% spaceless %}
+{% if group %}
+    {% blocktrans with group.name as group_name %}Posts for {{ group_name }}{% endblocktrans %}
+{% else %}
+    {% trans "Posts" %}
+{% endif %}
+{% endspaceless %}{% endblock %}
+
+{% block body %}
+	{% comment %}
+    {% if group %}
+        <h1 class="posts-title">{% blocktrans with group.get_absolute_url as group_url and group.name as group_name %}Posts for <a href="{{ group_url }}">{{ group_name }}</a>{% endblocktrans %}</h1>
+        
+        {% if group.parent %}
+		<h2 class="posts-parent-partof lighter">{% trans "Part of the " %} <a href="{{ group.parent.get_absolute_url }}">{{ group.parent.name }}</a>		
+		</h2>
+	{% endif %}
+
+		<p style="font-size: 14px;">
+	    {% if is_member %}
+	    	<a href="{% groupurl topic_new group %}">Create a new post</a>
+	    {% else %}
+	       {% if is_admin %}
+    	       <a href="{% groupurl topic_new group %}" title="You're an admin! Go to town.">Create a new post</a> {# @@@ for some reason, this never goes - admins are shown as members anyway, only on this page #}
+	       {% else %}
+    	    	You need to join this group before you can post to it.
+    	   {% endif %}
+	    {% endif %}
+	    </p>
+    
+    {% endif %}
+
+
+    {% autopaginate topics 10 %}
+    
+    {% for topic in topics %}
+        {% include "topics/topic_item.html" %}
+    {% endfor %}
+    
+    {% paginate %}
+    {% endcomment %}
+    
+    {% include "topics/topics_ajax2.html" %}
+    
+    {% paginate %}
+
+{% endblock %}
+
+{% block extra_body %}
+	{{ block.super }}
+	{% include "tinymce.html" %}
+    {% include "comments-js.html" %}
+	
+	<link rel="stylesheet" href="{{ STATIC_URL }}css/autocomplete.css" />
+    <script type="text/javascript" src="{{STATIC_URL}}jquery.autocomplete.min.js"></script>
+	<script type="text/javascript">
+    $("#id_tags").autocomplete('{% url tagging_utils_autocomplete "group_topics" "grouptopic" %}', {
+                max: 10,
+                multiple: true,
+                multipleSeparator: ", ",
+            });
+            
+    $('#id_send_as_email').click(function() {
+    	$('#div_id_sender').slideToggle();
+    });
+    
+    $(document).ready(function() {
+    	if ($('#id_send_as_email').val())
+    		$('#div_id_sender').show();
+    	else
+    		$('#div_id_sender').hide();
+    });
+    </script>	
+{% endblock %}

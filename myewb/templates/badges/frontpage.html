@@ -1,0 +1,402 @@
+{% extends "topics/base.html" %}
+{#{% extends "topics/base.html" %}#}
+
+{% load avatar_tags %}
+{% load i18n %}
+{% load uni_form_tags %}
+{% load pagination_tags %}
+{% load group_tags %}
+{% load tagging_tags %}
+{% load events_tags %}
+{% load cache %}
+{% load champ_tags %}
+{% load perspectives %}
+{% load networks_tags %}
+{% load fake_ads %}
+
+{% block extra_head %}
+    {{ block.super }}
+    
+    <link rel="alternate" type="application/rss+xml" title="myEWB Front Page" href="{% url topic_feed_all %}" />
+	<link rel="stylesheet" href="{{ STATIC_URL }}css/toolbars.css" />   
+	
+	<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.ba-bbq.min.js"></script>
+	
+	
+	{# JS here for the frontpage ajax updates #}
+<script type="text/javascript">
+// Frontpage Ajax updates
+
+	/*var currentURL = "";
+	
+	var shortPosts = false; */
+	// both covered by the hashstate
+
+var currentGroup = '';
+var currentPage = ''; // not the actual default of 1, so that it'll actually load the first time.
+var shortPosts = 0;
+
+var timeout_id = 0;
+
+$(window).bind( 'hashchange', function(e) {
+    rockAjaxPosts(0);
+});
+
+
+function rockAjaxPosts(forceReload) {
+    group = $.bbq.getState( 'group' ) || '';
+    
+    page = $.bbq.getState( 'page' ) || 1;
+    
+    short = $.bbq.getState( 'short' ) || 0;
+    
+    
+    if ( short !== shortPosts ) {
+        // turn on or off shortposts
+        if (short == 1) {
+            //console.log('short on');
+            
+                $('div.postcontent').slideUp(); $('div.postheader').addClass('shortpost'); $('#collapse-posts').hide(); $('#expand-posts').show(); 
+                shortPosts = true;
+            
+        } 
+        else {
+            //console.log('short off');
+            
+            $('div.postcontent').slideDown(); $('div.postheader').removeClass('shortpost'); $('#expand-posts').hide(); $('#collapse-posts').show(); 
+          	   
+            shortPosts = false;
+        }
+        shortPosts = short;
+        
+    }
+    
+    
+    if ( forceReload || (group !== currentGroup && page !== currentPage) ) {
+        // switching both at once; only likely to happen via curious people typing in the address bar
+        
+        //console.log('changegroup to ' + group + ' and page to ' + page);
+        
+        load_posts(group,page,short,false);
+        
+        currentGroup = group;
+        currentPage = page; // is this always intended? probably.
+        // make sure we don't get an endless loop of resetting the page number here.
+    }
+    
+    else if ( group !== currentGroup ) {
+        // load the new group
+        
+        //console.log('changegroup to ' + group);
+        
+        load_posts(group,1,short,false);
+        
+        currentGroup = group;
+        currentPage = 1; 
+    }
+    else if ( page !== currentPage ) {
+        // load the new page
+        
+        //console.log('changepage to ' + page);
+        
+        load_posts(group,page,short,false);
+        
+        currentPage = page;
+    }
+    
+
+
+}
+
+function load_posts(group,page,short,silent)   // now, this'll be a behind-the-scenes function that's only called by hashchanges.
+{
+	clearTimeout(timeout_id)
+    var url = '';
+
+	// no group yet; load default
+	if(group=='') {
+	   url = "/?ajax=1";
+	} else {
+	   url = '/groups/' + group + '/posts/?ajax=1';
+	}
+	
+	if(page && page!=0) {
+	   url = url + '&page=' + page;
+	}
+	if (short==1) {
+    	url += '&short=1';
+	}
+	
+	/* update highlighting in the groups listing */
+	if (group) {
+    	$('.frontpage-mygroups-actions').hide();
+    	$('.frontpage-mygroups-div').removeClass('bkgd-light');
+
+    	$('#frontpage-update-'+group).parent().addClass('bkgd-light');
+    	$('#frontpage-update-'+group).siblings('.frontpage-mygroups-actions').show();
+	} else {
+		$('.frontpage-mygroups-actions').hide();
+		$('.frontpage-mygroups-div').removeClass('bkgd-light');
+	}
+
+	{# if there is no current timezone selected, auto-detect one #}
+	{% if not current_timezone %}
+		var d = new Date();
+		url = url + "&tzoffset=" + d.getTimezoneOffset();
+	{% endif %}
+   
+    currentURL = url;
+
+    if (silent == false)
+    {
+    	// maybe bring this back...?  dunno...!
+    	//$('#topiclisting').hide();
+		$('.frontpage-loading').slideDown();  // @@@ this should be adjusted so it doesn't move everything around.
+    }
+    
+    $('#topiclisting').load(url,
+        function() {
+            $('.frontpage-loading').stop().hide();
+
+            // if hidden earlier, need to re-show here
+            //$('#topiclisting').show();
+
+            // catch pagination-related clicks and load via ajax
+            $('.pagination a').click(function() {
+               	targetPage =  $.deparam( $(this).attr('href') )['?page'] ;
+               	var state = {};
+               	state['page'] = targetPage;
+               	$.bbq.pushState( state );
+               	if(shortPosts!=true)
+                {
+                	$().scrollTo(0,600);
+                }
+                return false;
+            });
+		});
+
+	// and set a timer to auto-refresh... every half hour, let's say?
+    timeout_id = setTimeout('load_posts(\'' + group + '\',\'' + page + '\',\'' + short + '\')', 30 * 60 * 1000, true);
+}
+	
+$(document).ready(function() {
+	$('.frontpage-update').click(function() {
+	  
+	  // related actions take place in the updater function now.
+	  
+	  var groupSlug = $(this).attr("id").substring(17);
+	  //load_posts('/groups/' + groupSlug + '/posts/');
+	  //$('.frontpage-reset').show();
+	  
+      var state = {};
+      state['group'] = groupSlug;
+      state['page'] = 1;
+      $.bbq.pushState( state );
+        
+            
+            return false;
+	  
+	  
+	  return false;
+	});
+	
+	$('.frontpage-reset').click(function() {
+	  
+	  //load_posts('{{request.url}}');
+	  //$('.frontpage-reset').hide();
+	  
+      var state = {};
+      state['group'] = '';
+      state['page'] = 1;
+      $.bbq.pushState( state );
+	  
+	  return false;
+    });
+	
+    $('#frontpage-loading-refreshlink').click(function() {
+        rockAjaxPosts(1);
+        return false;
+    });
+	
+	// and the initial start trigger here! shazam!
+	$(window).trigger( 'hashchange' );
+});
+ 
+ </script>
+ 
+ 
+{% endblock %}
+
+{% block frontpagerightJS %}
+            function toggleFrontpageToolbar() {
+                $('#toolbarcolumn_right_container').toggle();
+                $('#toolbarcolumn_right_show').toggle();
+                
+                {% if user.is_authenticated %}
+                    
+                    var action = "";
+                    if (! $('#toolbarcolumn_right_container').is(':visible'))
+                        action = "close";
+                    else
+                        action = "show";
+                    
+                    $.ajax({
+                      url: "{% url profile_toolbar_action %}" + action + "/" + "toolbarcolumn_right_container" + "/",
+                      cache: false,  // this prepends another query onto the end with a timestamp - make sure it doesn't mix up the handler page?
+                    });
+                {% endif %}
+                {# state saving only works if youre logged in, so only really try then #}
+
+                                
+
+            }
+            
+            $('.frontpagetoolbarToggles').click(function(){	
+                toggleFrontpageToolbar();
+
+          	  });
+          	  
+{% endblock %}
+
+
+{% block head_title %}{% trans "Discussion Board" %}{% endblock %}
+
+{% block body %}
+	<div style="border: 1px solid #d0d0d0; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; padding: 15px; width: 350px; float: right;">
+		<strong>What others are talking about</strong>
+		<br/>
+
+		<div class="frontpage-loading" style='border-top: 1px solid #e0e0e0;'><a href="#" id="frontpage-loading-refreshlink">[refresh]</a>Loading...</div>     
+	 
+	 	<div id="topiclisting">
+	    </div>
+
+	</div>
+
+
+	<div style="margin-right: 400px;">
+		<div style="border: 1px solid #d0d0d0; background: #f0f0f0; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; padding: 15px;">
+			<img src="{% avatar_url user 150 %}" title="{{user.visible_name}}" alt="{{user.visible_name}}" style='float: left; height: 150px; width: 150px; padding: 0;'/>
+			
+			<div style="margin-left: 175px;">
+				<h1>{{ request.user.visible_name }}</h1>
+				
+				<a href="#" class="badges_info" style="background:url({{ STATIC_URL }}images/badges/badges.png) -100px 0; background-size: 320%; width: 50px; height: 50px; display: block; float: left;"></a>
+				<a href="#" class="badges_info" style="background:url({{ STATIC_URL }}images/badges/badges.png) -100px -42px; background-size: 320%; width: 50px; height: 50px; display: block; float: left;"></a>
+				<a href="#" class="badges_info" style="background:url({{ STATIC_URL }}images/badges/badges.png) -50px -42px; background-size: 320%; width: 50px; height: 50px; display: block; float: left;"></a>
+				<a href="#" class="badges_info" style="background:url({{ STATIC_URL }}images/badges/badges.png) 0 -42px; background-size: 320%; width: 50px; height: 50px; display: block; float: left;"></a>
+	
+				<div style="height: 60px;"></div> 
+				<div style="padding-left: 25px;">
+					<strong>Learning topics:</strong><br/>
+					<em>(of course, these will be customizable)</em><br/>
+					<a href="#" class="learning-topic" style='font-weight: bold;'>Micro-credit</a><br/>
+					<a href="#" class="learning-topic">Behaviour change in large organizations</a><br/>
+					<a href="#" class="learning-topic">Online collaboration strategies</a><br/>
+					<a href="#" class="learning-topic">Fair Trade</a><br/>
+				</div>			
+			</div>
+	
+			<div style='clear: left;'></div>		
+		</div>
+
+		<div id="main-content-area" style="padding: 25px;">
+			<h2 id="learning-content-name">Micro-credit</h2>
+			
+			<div style="position: relative; width: 350px; height: 2em;">
+				Progress:
+				<div style="border: 1px solid; width: 250px; position: absolute; top: 0; left: 75px; height: 1.5em;">
+					<div style="background: #a0a0a0; width: 35%; position: absolute; top: 0; left: 0; height: 1.5em; text-align: center; color: #ffffff;">
+						35%
+					</div>
+				</div>
+			</div>
+			
+			<br/>
+			<strong>Discussions and articles</strong><br/>
+			<a href="#" class="learning_article">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</a><br/>
+			<a href="#" class="learning_article">Nullam ornare sagittis ullamcorper. Proin lacinia pulvinar turpis.</a><br/>
+			<a href="#" class="learning_article">Aliquam erat volutpat. Donec non ante velit, vel.</a><br/>
+			<a href="#" class="learning_article">Integer facilisis luctus ipsum egestas tempus. Nunc consequat.</a><br/>
+
+			<br/><br/>		
+			<strong>Others learning about this</strong><br/>
+			<img src="{% avatar_url user 50 %}" title="{{user.visible_name}}" alt="{{user.visible_name}}" style='float: left; height: 50px; width: 50px; padding: 10px;'/>
+			<img src="{% avatar_url user 50 %}" title="{{user.visible_name}}" alt="{{user.visible_name}}" style='float: left; height: 50px; width: 50px; padding: 10px;'/>
+			<img src="{% avatar_url user 50 %}" title="{{user.visible_name}}" alt="{{user.visible_name}}" style='float: left; height: 50px; width: 50px; padding: 10px;'/>
+			<img src="{% avatar_url user 50 %}" title="{{user.visible_name}}" alt="{{user.visible_name}}" style='float: left; height: 50px; width: 50px; padding: 10px;'/>
+			<img src="{% avatar_url user 50 %}" title="{{user.visible_name}}" alt="{{user.visible_name}}" style='float: left; height: 50px; width: 50px; padding: 10px;'/>
+			<img src="{% avatar_url user 50 %}" title="{{user.visible_name}}" alt="{{user.visible_name}}" style='float: left; height: 50px; width: 50px; padding: 10px;'/>
+		</div>
+	</div>
+{% endblock %}
+ 
+
+{% block extra_body %}
+<div style="display: none;">
+
+<div id="div_badges_info">
+	<h1>We haven't built this yet...</h1>
+	
+	<p>
+		But these badges would be a reflection of your achievements in EWB:
+		<ul>
+		<li>Five posts in the past month</li>
+		<li>Started a post with at least 10 replies</li>
+		<li>Currently a chapter exec</li>
+		<li>Have been a JF</li>
+		<li>Are an expert in Fair Trade</li>
+		<li>etc</li>
+		</ul>
+	</p>
+	
+	<p>
+		We haven't defined these specifically... but we want to balance
+		things you've done / positions you've held; participation in EWB / myEWB;
+		and learning / topic-based items... all while not making it intimidating for new 
+		members
+	</p>
+</div>
+
+<div id="div_learning_article">
+	<h1>We haven't built this yet...</h1>
+	
+	<p>
+		But these are articles and resources suggested by others who are learning 
+		about the same thing.
+	</p>
+	
+	<p>
+		Reading (or at least, clicking on) articles moves your progress ahead;
+		posting content moves it ahead by even more...
+	</p>
+</div>
+
+
+</div>
+	
+<script type="text/javascript">
+	$().ready(function() {
+
+		$('.badges_info').colorbox({width: '50%',
+									height: '50%',
+									opacity: '0.5',
+									inline: true,
+									href: '#div_badges_info'
+								   });
+		$('.learning_article').colorbox({width: '50%',
+										   height: '50%',
+										   opacity: '0.5',
+										   inline: true,
+										   href: '#div_learning_article'
+										  });
+		  
+		  
+		$('.learning-topic').click(function() {
+			$('#learning-content-name').html($(this).html());
+			$('.learning-topic').css('font-weight', 'normal');
+			$(this).css('font-weight', 'bold');
+		});
+	});
+</script>
+{% endblock %}
