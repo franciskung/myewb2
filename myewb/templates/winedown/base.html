@@ -170,93 +170,33 @@ $(document).ready(function(){
 				</a>
 			</div>
 			
-			<div style="padding-left: 10px; padding-top: 20px; border-right: 1px solid #ffb90f; background: #f0f0f0;">
-				<span style="font-weight: bold; font-size: 14px;">Recent activity</span>
+			<div style="padding-left: 10px; padding-top: 20px; padding-bottom: 10px;  border-right: 1px solid #ffb90f; background: #f0f0f0;">
+				
+				{% if user.get_profile.get_chapter %}
+				
+				<span style="font-weight: bold; font-size: 14px;">{{ user.get_profile.get_chapter.name }}</span><br/><br/>
+				<a href="#">8 new CHAMP entries</a><br/>
+				<a href="#">12 files recently modified</a><br/>
+				<a href="#">3 new discussions</a><br/>
+				<a href="#">34 new members</a>
+				<br/>
+			</div>
+	       		
+	       		
+			<div style="padding-left: 10px; padding-top: 5px; border: 1px solid #ffb90f; border-left: 0; background: #f0f0f0; -moz-border-radius-bottomright: 0.5em; -webkit-border-bottom-right-radius: 0.5em;">
+				{% endif %}
+				
+				<span style="font-weight: bold; font-size: 14px;">Essential EWB</span><br/><br/>
+		   		<a href="#">EWB Canada</a> <br/>
+		   		<a href="#">Chapter Resrouces</a> <br/> 
+		   		<a href="#">Overseas Library</a> <br/>
+		   		<a href="#">Orange Wiki</a> <br/>
+		   		<a href="#">Board of Directors</a> <br/>
+		   		<br/>
+		   		
+				<iframe width="200" height="135" src="http://www.youtube.com/embed/U1Ni9nvtYhE?controls=0" frameborder="0" allowfullscreen></iframe>
 				<br/><br/>
-				<div style="padding-bottom: 10px;">
-			        <div style='height: 25px; width: 35px; float: left;'>
-			            {% avatar user 25 %}
-			        </div>
-			        FRIEND started a post, <a href="#">Fair trade on campus</a>
-				</div>
-				
-				<div style="padding-bottom: 10px;">
-			        <div style='height: 25px; width: 35px; float: left;'>
-			            {% avatar user 25 %}
-			        </div>
-			        FRIEND started a post, <a href="#">Fair trade on campus</a>
-				</div>
-				
-				<div style="padding-bottom: 10px;">
-			        <div style='height: 25px; width: 35px; float: left;'>
-			            {% avatar user 25 %}
-			        </div>
-			        FRIEND started a post, <a href="#">Fair trade on campus</a>
-				</div>
-				
-				<div style="padding-bottom: 10px;">
-			        <div style='height: 25px; width: 35px; float: left;'>
-			            {% avatar user 25 %}
-			        </div>
-			        FRIEND started a post, <a href="#">Fair trade on campus</a>
-				</div>
-				
-				<div style="padding-bottom: 10px;">
-			        <div style='height: 25px; width: 35px; float: left;'>
-			            {% avatar user 25 %}
-			        </div>
-			        FRIEND started a post, <a href="#">Fair trade on campus</a>
-				</div>
-				
-				<div style="padding-bottom: 10px;">
-			        <div style='height: 25px; width: 35px; float: left;'>
-			            {% avatar user 25 %}
-			        </div>
-			        FRIEND started a post, <a href="#">Fair trade on campus</a>
-				</div>
-				
-				<div style="padding-bottom: 10px;">
-			        <div style='height: 25px; width: 35px; float: left;'>
-			            {% avatar user 25 %}
-			        </div>
-			        FRIEND started a post, <a href="#">Fair trade on campus</a>
-				</div>
-				
-				<div style="padding-bottom: 10px;">
-			        <div style='height: 25px; width: 35px; float: left;'>
-			            {% avatar user 25 %}
-			        </div>
-			        FRIEND started a post, <a href="#">Fair trade on campus</a>
-				</div>
-				
-				<div style="padding-bottom: 10px;">
-			        <div style='height: 25px; width: 35px; float: left;'>
-			            {% avatar user 25 %}
-			        </div>
-			        FRIEND started a post, <a href="#">Fair trade on campus</a>
-				</div>
-				
-				<div style="padding-bottom: 10px;">
-			        <div style='height: 25px; width: 35px; float: left;'>
-			            {% avatar user 25 %}
-			        </div>
-			        FRIEND started a post, <a href="#">Fair trade on campus</a>
-				</div>
-				
-				<div style="padding-bottom: 10px;">
-			        <div style='height: 25px; width: 35px; float: left;'>
-			            {% avatar user 25 %}
-			        </div>
-			        FRIEND started a post, <a href="#">Fair trade on campus</a>
-				</div>
-				
-				<div style="padding-bottom: 10px;">
-			        <div style='height: 25px; width: 35px; float: left;'>
-			            {% avatar user 25 %}
-			        </div>
-			        FRIEND started a post, <a href="#">Fair trade on campus</a>
-				</div>
-				
+
 			</div>
 		{% endif %} 
 	</div>
