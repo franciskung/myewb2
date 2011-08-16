@@ -108,7 +108,7 @@ $(document).ready(function(){
    	
    	<div style='float: left; width: 300px; {#border-right: 1px solid #d0d0d0; #}padding-top: 5px;'>
     	{% if not user.is_authenticated %}
-	   		<div style="padding: 20px; border: 1px solid #ffb90f">
+	   		<div style="padding: 20px; border: 1px solid #ffb90f; border-left: 0; -moz-border-radius-topright: 0.5em; -moz-border-radius-bottomright: 0.5em; -webkit-border-top-right-radius: 0.5em; -webkit-border-bottom-right-radius: 0.5em; background: #f0f0f0;">
 				{% if login_form %}
 		            <form class="toolbarlogin" method="POST" action="{% url acct_login %}">
 		                {% for field in login_form %}

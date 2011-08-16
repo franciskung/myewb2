@@ -263,7 +263,11 @@ $(document).ready(function() {
 
 {% block body %}
 	<div style="border: 1px solid #d0d0d0; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; padding: 15px; width: 350px; float: right;">
-		<strong>What others are talking about</strong>
+		{% if user.is_authenticated %}
+			<strong>What others are talking about</strong>
+		{% else %}
+			<strong>What EWBers are talking about</strong>
+		{% endif %}
 		<br/>
 
 		<div class="frontpage-loading" style='border-top: 1px solid #e0e0e0;'><a href="#" id="frontpage-loading-refreshlink">[refresh]</a>Loading...</div>     
@@ -275,6 +279,7 @@ $(document).ready(function() {
 
 
 	<div style="margin-right: 400px;">
+		{% if user.is_authenticated %}
 		<div style="border: 1px solid #d0d0d0; background: #f0f0f0; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; padding: 15px;">
 			<img src="{% avatar_url user 150 %}" title="{{user.visible_name}}" alt="{{user.visible_name}}" style='float: left; height: 150px; width: 150px; padding: 0;'/>
 			
@@ -328,6 +333,32 @@ $(document).ready(function() {
 			<img src="{% avatar_url user 50 %}" title="{{user.visible_name}}" alt="{{user.visible_name}}" style='float: left; height: 50px; width: 50px; padding: 10px;'/>
 			<img src="{% avatar_url user 50 %}" title="{{user.visible_name}}" alt="{{user.visible_name}}" style='float: left; height: 50px; width: 50px; padding: 10px;'/>
 		</div>
+		
+		{% else %}
+		
+				{% if login_form %}
+		            <form class="toolbarlogin" method="POST" action="{% url acct_login %}">
+		            	<h1>Sign in to myEWB</h1>
+		                {% for field in login_form %}
+		                        {{ field.label_tag }}<br/>
+		                        {{ field }}
+		                        <br/><br/>
+		                {% endfor %}
+	                    <input type="submit" value="{% trans "sign in" %} &raquo;" />
+	                    <br/>
+	                    <a href="{% url acct_passwd_reset %}">{% trans "Forgot your password?" %}</a><br/><br/>
+	                    
+					    Don't have an account?  <a href="{% url acct_signup %}" style="font-weight: bold;">{% trans "Sign up" %}</a><br/>
+		            </td></tr></table>
+		            </form>
+				{% else %}
+			        <a href="{% url acct_login %}?url={{request.path}}" style='margin-right: 15px; color: #ffffff; text-decoration: none;'>{% trans "Login" %}</a>
+				    <a href="{% url acct_signup %}" style='margin-right: 15px; color: #ffffff; text-decoration: none;'><strong>{% trans "Sign up" %}</strong></a>
+				{% endif %}
+			
+		
+		{% endif %}
+		
 	</div>
 {% endblock %}
  
