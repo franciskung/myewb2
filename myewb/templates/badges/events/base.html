@@ -1,0 +1,56 @@
+{% extends 'site_base.html' %}
+
+{% load i18n %}
+{% load events_tags %}
+{% load networks_tags %}
+
+{% block body_class %}events red{% endblock %}
+
+{% block subnav %}
+
+        <ul class="subnav">
+        
+{% if object.content_object %} {# shows on a specific event's page #}
+
+    {% if object.content_object.visible_name %}
+        {# then it's a user, but not necessarily yourself?? #}
+        {#<li><a href="{% link_to_events_for object.content_object 'css_class' 1 %} ">{{object.content_object.visible_name }}'s events</a></li> #}  {# @@@ For now, we'll just hide this. Not sure how you view someone else's events, the only case that would require this. #}
+        
+    {% else %}
+        {# is a chapter or community #}
+        <li><a href="{% link_to_events_for object.content_object 'css_class' 1 %} ">{{object.content_object }}</a></li>
+
+    {% endif %}
+
+{% else %}
+    {% if parent.name %}  {# shows on the list page for that chapter or community #}
+        <li><a href="{% link_to_events_for parent 'css_class' 1 %} ">{{parent.name }}</a></li>
+    {% else %}
+        {% if obj.name %}  {# used on "New Event for ..." page#}
+            <li><a href="{% link_to_events_for obj 'css_class' 1 %} ">{{obj.name }}</a></li>
+        {% endif %}
+
+    {% endif %}
+    
+
+{% endif %}
+            <li><a href="{% url events_all %} ">{% trans "All events" %}</a></li>
+    {% if user.is_authenticated %}
+            <li><a href="{% url events_for_user username=request.user.username%} ">{% trans "Your events" %}</a></li>
+            <li><a href="{% url event_add_choose_group %} ">{% trans "Add an Event" %}</a></li> 
+			
+            {# <li><a href="{% url confreg %}">Conference Registration</a></li> #}
+        	{% if is_exec %}
+	       		<li><a href="{% link_to_current_champ request.user %}">CHAMP</a></li>
+{#            	<li><a href="{% url conference_list %}">Conference Delegate List</a></li> #}
+            {% endif %}
+            
+            {% if perms.conference %}
+{#            	<li><a href="{% url conference_codes %}">Conference codes</a></li> #}
+            {% endif %}
+    {% endif %}
+        </ul>
+
+
+{% endblock %}
+
