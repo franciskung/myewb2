@@ -260,6 +260,8 @@ $(document).ready(function() {
 
 {% block head_title %}{% trans "Discussion Board" %}{% endblock %}
 
+{% block subnav_base %}{% endblock %}
+
 {% block body_base %}
 
 	<div style="float: right; width: 260px;	padding: 10px; border: 1px solid #ffb90f; border-right: 0; -moz-border-radius-topleft: 0.5em; -moz-border-radius-bottomleft: 0.5em; -webkit-border-top-left-radius: 0.5em; -webkit-border-bottom-left-radius: 0.5em; background: #f0f0f0;">
@@ -492,22 +494,13 @@ $(document).ready(function() {
 
 {% block extra_body %}
 <div style="display: none;">
-<div id="div_switch_home">
+<div id="div_cheers">
 	<h1>We haven't built this yet...</h1>
 	
 	<p>
-		But we want to let you choose where your "home" is: what group in EWB do
-		you identify most with?
-	</p>
-	
-	<p>
-		For most people this will be your local chapter; but it could also be a distributed 
-		team, an APS/JF group, or even a historical group like "All chapter presidents from 2005-2006".
-	</p>
-	
-	<p>
-		Then, we'll show you recent activity from this group. What have other people been 
-		doing?  What active discussions are happening?  What's the group up to? 
+		But this would be recent activities that people "like".  Posts, articles, 
+		events, CHAMP activities, any kind of content that is on myEWB would be 
+		"cheers"-able.  
 	</p>
 </div>
 
@@ -540,11 +533,11 @@ $(document).ready(function() {
 <script type="text/javascript">
 	$().ready(function() {
 
-		$('#switch_home').colorbox({width: '50%',
+		$('.cheers').colorbox({width: '50%',
 									height: '50%',
 									opacity: '0.5',
 									inline: true,
-									href: '#div_switch_home'
+									href: '#div_cheers'
 								   });
 		$('.switch_discussions').colorbox({width: '50%',
 										   height: '50%',

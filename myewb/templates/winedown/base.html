@@ -152,21 +152,20 @@ $(document).ready(function(){
 			</div>
 			
 			<div style="background: #f0f0f0; border-right: 1px solid #ffb90f;">
-				<span style="padding-left: 10px; font-weight: bold; font-size: 14px;">Go to my...</span>
-				<a href="#" style="display: block; font-size: 14px; background: #ffb90f; color: #000000; padding: 10px; border-top: 1px solid #ff7200; border-bottom: 1px solid #ff7200;">
-					Chapter &raquo;
-				</a>
-				<a href="#" style="display: block; font-size: 14px; background: #ffb90f; color: #000000; padding: 10px; border-bottom: 1px solid #ff7200;">
-					Teams &raquo;
-				</a>
-				<a href="#" style="display: block; font-size: 14px; background: #ffb90f; color: #000000; padding: 10px; border-bottom: 1px solid #ff7200;">
+				<a href="{% url topic_list %}" style="display: block; font-size: 14px; background: #ffb90f; color: #000000; padding: 10px; border-top: 1px solid #ff7200; border-bottom: 1px solid #ff7200;">
 					Discussions &raquo;
 				</a>
-				<a href="#" style="display: block; font-size: 14px; background: #ffb90f; color: #000000; padding: 10px; border-bottom: 1px solid #ff7200;">
+				<a href="{% url communities_index %}" style="display: block; font-size: 14px; background: #ffb90f; color: #000000; padding: 10px; border-bottom: 1px solid #ff7200;">
+					Groups &raquo;
+				</a>
+				<a href="{% url profiles_index %}" style="display: block; font-size: 14px; background: #ffb90f; color: #000000; padding: 10px; border-bottom: 1px solid #ff7200;">
+					People &raquo;
+				</a>
+				<a href="{% url events_all %}" style="display: block; font-size: 14px; background: #ffb90f; color: #000000; padding: 10px; border-bottom: 1px solid #ff7200;">
 					Events &raquo;
 				</a>
-				<a href="#" style="display: block; font-size: 14px; background: #ffb90f; color: #000000; padding: 10px; border-bottom: 1px solid #ff7200;">
-					EWB at a glance &raquo;
+				<a href="{% url applications %}" style="display: block; font-size: 14px; background: #ffb90f; color: #000000; padding: 10px; border-bottom: 1px solid #ff7200;">
+					Volunteer &amp; Apply &raquo;
 				</a>
 			</div>
 			
@@ -201,6 +200,13 @@ $(document).ready(function(){
 		{% endif %} 
 	</div>
 	
+	        	{% block subnav_base %}
+		<div style="margin: 0px 0px 0px 315px; padding: -1em;">
+	        	
+	        	{% block subnav %}&nbsp;{% endblock %}
+	        	
+	        </div>
+	        	{% endblock %}
 	{% block body_base %}
 	<div style="margin: 5px 0px 20px 320px; padding: 10px; border: 1px solid #d0d0d0; border-right: 0; -moz-border-radius-topleft: 0.5em; -moz-border-radius-bottomleft: 0.5em; -webkit-border-top-left-radius: 0.5em; -webkit-border-bottom-left-radius: 0.5em;">
 		{% block body %}
