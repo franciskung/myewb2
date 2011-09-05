@@ -14,6 +14,7 @@ import unicodedata
 
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import  User
+from django.contrib.sites.models import Site
 from django.utils.translation import ugettext_lazy as _
 from django.db import models, connection
 from django.db.models.signals import post_save, pre_delete
@@ -113,6 +114,17 @@ class BaseGroup(Group):
 
     def user_is_pending_member(self, user):
         return user.is_authenticated() and self.pending_members.filter(user=user).count() > 0
+    
+    def user_is_invited(self, user):
+        if not user.is_authenticated():
+            return False
+        
+        invitation = InvitationToJoinGroup.objects.filter(user=user, group=self)
+        
+        if invitation.count():
+            return True
+        
+        return False
     
     # setting admin_override = False means that site admins and parent group admins 
     # are not automatically admins of the group (need explicit permission)
@@ -491,7 +503,7 @@ def invitation_notify(sender, instance, created, **kwargs):
         msgbody = "%s has invited you to join the \"%s\" group.<br/><br/>" % (issuer.visible_name(), group)
         if message:
             msgbody += message + "<br/><br/>"
-        msgbody += "<a href='%s'>click here to respond</a>" % group.get_absolute_url()
+        msgbody += "<a href='http://%s%s'>click here to respond</a>" % (Site.objects.get_current().domain, group.get_absolute_url())
         
         Message.objects.create(subject="%s has invited you to join the \"%s\" group" % (issuer.visible_name(), group),
                                body=msgbody,

@@ -183,7 +183,6 @@ def dashboard(request, year=None, month=None, term=None,
 =======
     context['allgroups'] = Network.objects.filter(chapter_info__isnull=False, is_active=True).order_by('name')
     context['national'] = run_natl_goals()
->>>>>>> master:myewb/apps/champ/views.py
     
     return render_to_response('champ/dashboard.html',
                               context,
