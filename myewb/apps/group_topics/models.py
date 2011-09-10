@@ -203,7 +203,7 @@ class GroupTopic(Topic):
             }
             
         if self.send_as_email:
-            self.group.send_mail_to_members(self.title, self.body, sender=sender, context=c)
+            self.group.send_mail_to_members(self.title, self.body, sender=sender, context=c, content_object=self)
         
         for list in self.watchlists.all():
             user = list.owner
@@ -217,7 +217,8 @@ class GroupTopic(Topic):
                           htmlMessage=self.body,
                           fromemail=sender,
                           recipients=[user.email],
-                          context=c)
+                          context=c,
+                          content_object=self)
         
     def num_whiteboard_edits(self):
         if self.whiteboard:

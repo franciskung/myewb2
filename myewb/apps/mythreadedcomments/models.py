@@ -88,7 +88,8 @@ added it to your watchlist.  To change your email preferences,
                   fromemail=sender,
                   recipients=recipients,
                   context=ctx,
-                  shortname=topic.group.slug)
+                  shortname=topic.group.slug,
+                  content_object=self)
 
 ThreadedComment.send_to_watchlist = send_to_watchlist
 

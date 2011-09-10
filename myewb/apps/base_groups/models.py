@@ -184,7 +184,7 @@ class BaseGroup(Group):
             
     def send_mail_to_members(self, subject, htmlBody,
                              fail_silently=False, sender=None,
-                             context={}):
+                             context={}, content_object=None):
         """
         Creates and sends an email to all members of a network using Django's
         EmailMessage.
@@ -214,7 +214,8 @@ class BaseGroup(Group):
                   recipients=self.get_member_emails(),
                   context=context,
                   shortname=self.slug,
-                  lang=lang)
+                  lang=lang,
+                  content_object=content_object)
     
     def save(self, force_insert=False, force_update=False):
         # if we are updating a group, don't change the slug (for consistency)

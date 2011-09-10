@@ -1,13 +1,15 @@
+from django.contrib.contenttypes.models import ContentType
 from django.template import Context, loader
 from django.utils.encoding import force_unicode
 from mailer.models import Email
 from lxml.html.clean import clean_html, autolink_html, Cleaner
-
+import time
 
 def send_mail(subject=None, txtMessage=None, htmlMessage=None,
               fromemail=None, recipients=None, shortname=None,
               priority=None, context={}, use_template=True,
-              lang='en', cc=None, bcc=None):
+              lang='en', cc=None, bcc=None,
+              content_object=None):
 
     # try to be backwards-compatible
     if htmlMessage and recipients == None:
@@ -49,6 +51,12 @@ def send_mail(subject=None, txtMessage=None, htmlMessage=None,
         cc_string = ",".join(cc)
     if bcc:
         bcc_string = ",".join(bcc)
+
+    if content_object:
+        type_id = ContentType.objects.get_for_model(content_object)
+        message_id = '%d.%d.%d@my.ewb.ca' % (int(round(time.time())), type_id.id, content_object.id)
+    else:
+        message_id = '%d.0.0@my.ewb.ca' % int(round(time.time()))
             
     if shortname:
         shortname = shortname.lower()
@@ -60,7 +68,9 @@ def send_mail(subject=None, txtMessage=None, htmlMessage=None,
                              htmlMessage=htmlMessage,
                              lang=lang,
                              cc=cc_string,
-                             bcc=bcc_string)
+                             bcc=bcc_string,
+                             message_id=message_id,
+                             content_object=content_object)
     else:
         Email.objects.create(recipients=recips,
                              shortName=shortname,
@@ -70,4 +80,6 @@ def send_mail(subject=None, txtMessage=None, htmlMessage=None,
                              htmlMessage=htmlMessage,
                              lang=lang,
                              cc=cc_string,
-                             bcc=bcc_string)
+                             bcc=bcc_string,
+                             message_id=message_id,
+                             content_object=content_object)

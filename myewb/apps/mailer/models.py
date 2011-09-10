@@ -6,6 +6,8 @@ Copyright 2010 Engineers Without Borders Canada
 @author Francis Kung
 """
 
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes import generic
 from django.db import models
 
 class Email(models.Model):
@@ -22,3 +24,8 @@ class Email(models.Model):
 
     cc = models.TextField(blank=True, null=True)
     bcc = models.TextField(blank=True, null=True)
+    message_id = models.CharField(max_length=255)
+
+    content_type = models.ForeignKey(ContentType, blank=True, null=True)
+    object_id = models.PositiveIntegerField(blank=True, null=True)
+    content_object = generic.GenericForeignKey('content_type', 'object_id')
