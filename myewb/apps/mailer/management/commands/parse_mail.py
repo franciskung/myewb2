@@ -41,7 +41,7 @@ class Command(NoArgsCommand):
                 
                 print "processing", key, "--", msg['subject']
                 #break
-                #inbox.remove(key)
+                inbox.remove(key)
                 
         finally:
             inbox.flush()
@@ -133,7 +133,7 @@ def parse_references(references):
     parent_emails = Email.objects.filter(message_id__in=parent_ids)
     
     parent_objects = {}
-    for email in parent_email:
+    for email in parent_emails:
         if email.content_object:
             #parent_objects[email.content_object] = True
 
