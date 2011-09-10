@@ -24,9 +24,9 @@ class Command(NoArgsCommand):
     def handle_noargs(self, **options):
         # open mailbox
         
-        maildir_path = settings.get('maildir_path', None)
-        
-        if not maildir_path:
+        try:
+            maildir_path = settings.maildir_path
+        except:
             return "No maildir path set in your settings"
          
         inbox = mailbox.Maildir(maildir_path)
@@ -39,8 +39,8 @@ class Command(NoArgsCommand):
             for key, msg in inbox.iteritems():
                 parse_message(key, msg)
                 
-                break
-                #inbox.remove(key)
+                #break
+                inbox.remove(key)
                 
         finally:
             inbox.flush()
