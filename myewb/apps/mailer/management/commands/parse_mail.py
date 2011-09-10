@@ -89,9 +89,9 @@ def parse_message(key, msg):
             else:
                 raise BounceException("I don't know what to do...")
             
-        except BounceExceptione as e:
+        except BounceException as e:
             # bounce it!
-            pass
+            print "bouncing email", e
         
 # takes an email author, in the "Name <email>" format, and finds the associated user    
 def parse_author(author):
