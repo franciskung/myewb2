@@ -29,7 +29,7 @@ class Command(NoArgsCommand):
         except:
             return "No maildir path set in your settings"
          
-        inbox = mailbox.Maildir(maildir_path)
+        inbox = mailbox.Maildir(maildir_path, factory=None)
         #inbox = mailbox.mbox('/var/mail/francis')
         
         inbox.lock()
@@ -39,8 +39,9 @@ class Command(NoArgsCommand):
             for key, msg in inbox.iteritems():
                 parse_message(key, msg)
                 
+                print "processing", key, "--", msg['subject']
                 #break
-                inbox.remove(key)
+                #inbox.remove(key)
                 
         finally:
             inbox.flush()
