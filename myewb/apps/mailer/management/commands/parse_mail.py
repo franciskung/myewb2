@@ -61,7 +61,10 @@ def parse_message(key, msg):
         group = parse_recipient(msg['to'])
         
         # find parent message(s)
-        parent_object, parent_type = parse_references(msg['references'])
+        if 'references' in msg:
+            parent_object, parent_type = parse_references(msg['references'])
+        else:
+            parent_object, parent_type = None, None
         
         # parse body of message
         body = parse_body(msg)
