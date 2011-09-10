@@ -162,10 +162,11 @@ def parse_body(msg):
         if html:
             body = html
         elif txt:
-            body = txt
+            body = txt.replace("\n", "<br/>")
     
     else:
         body = msg.get_payload()
+        body = body.replace("\n", "<br/>")
         
     if not body:
         raise BounceError("I wasn't able to understand the email you sent; it was in a format that is not supported.")
