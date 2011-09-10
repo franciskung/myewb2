@@ -24,13 +24,14 @@ class Command(NoArgsCommand):
     def handle_noargs(self, **options):
         # open mailbox
         
-        #maildir_path = settings.get('maildir_path', None)
-        #
-        #if not maildir_path:
-        #    return None
-        # 
-        #inbox = mailbox.Maildir(maildir_path)
-        inbox = mailbox.mbox('/var/mail/francis')
+        maildir_path = settings.get('maildir_path', None)
+        
+        if not maildir_path:
+            return "No maildir path set in your settings"
+         
+        inbox = mailbox.Maildir(maildir_path)
+        #inbox = mailbox.mbox('/var/mail/francis')
+        
         inbox.lock()
         
         # iterate through all items in mailbox...
