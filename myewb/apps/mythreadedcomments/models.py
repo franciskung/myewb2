@@ -15,6 +15,7 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models.signals import post_save
 from threadedcomments.models import ThreadedComment, FreeThreadedComment
+from siteutils.helpers import fix_encoding
 
 from attachments.models import Attachment
 from group_topics.models import GroupTopic, Watchlist, wiki_convert
@@ -79,7 +80,7 @@ def send_to_watchlist(self):
 added it to your watchlist.  To change your email preferences, 
 <a href="http://my.ewb.ca%s">click here</a>.
 </p>
-""" % (self.user.visible_name(), topic.title, self.comment, reverse('profile_settings'))
+""" % (fix_encoding(self.user.visible_name()), fix_encoding(topic.title), fix_encoding(self.comment), reverse('profile_settings'))
       
     if len(recipients):
         send_mail(subject="Re: %s" % topic.title,
