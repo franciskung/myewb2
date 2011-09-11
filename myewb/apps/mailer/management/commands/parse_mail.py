@@ -184,11 +184,11 @@ def parse_body(msg):
         if html:
             body = html
         elif txt:
-            body = txt.replace("\n", "<br/>")
+            body = txt.replace("\n", "<br/>\n")
     
     else:
         body = msg.get_payload()
-        body = body.replace("\n", "<br/>")
+        body = body.replace("\n", "<br/>\n")
     
     # strip out reply text
     # http://stackoverflow.com/questions/278788/parse-email-content-from-quoted-reply may be a better way
@@ -201,7 +201,7 @@ def parse_body(msg):
     quoting_outlook = r'<(?:.*)style(?:.*)border-top: #B5C4DF(?:.*)>'   # outlook is just a pain
     body = re.split(quoting_outlook, body)[0]
     
-    quoting_text = r'\n(.*)\n(>(.*)\n)+\n*$'        # takes any block of end-of-message >-prefix lines, plus the one line preceeding it
+    quoting_text = r'<br/>\n*(.*)<br/>\n*(>(.*)<br/>\n*)+[(?:<br/>)\n]*$'        # takes any block of end-of-message >-prefix lines, plus the one line preceeding it
     body = re.sub(quoting_text, '', body)
     
     if not body:
