@@ -6,6 +6,7 @@ from base_groups.models import BaseGroup
 from group_topics.models import GroupTopic
 from threadedcomments.models import ThreadedComment
 from mailer.models import Email
+from mailer.sendmail import send_mail
 from messages.models import Message
 
 from siteutils.shortcuts import get_object_or_none
@@ -52,6 +53,7 @@ class BounceException(Exception):
     pass
         
 def parse_message(key, msg):
+    try:
         # parse subject
         subject = msg['subject']
         
@@ -72,26 +74,46 @@ def parse_message(key, msg):
             
         # ok, we now have enough info, between slug and parent_obj, to 
         # hopefully do something intelligent.
-        try:
-            if parent_object:
-                if parent_type == ContentType.objects.get_for_model(GroupTopic):
-                    add_reply(parent_object, group, author, body)
-                   
-                elif parent_type == ContentType.objects.get_for_model(ThreadedComment):
-                    add_reply(parent_object.content_object, group, author, body)
-                   
-                elif parent_type == ContentType.objects.get_for_model(Message):
-                    add_private_msg(parent_object, author, msg)
-                
-            elif group:
-                add_post(group, author, subject, body)
-                
-            else:
-                raise BounceException("I don't know what to do...")
+        if parent_object:
+            if parent_type == ContentType.objects.get_for_model(GroupTopic):
+                add_reply(parent_object, group, author, body)
+               
+            elif parent_type == ContentType.objects.get_for_model(ThreadedComment):
+                add_reply(parent_object.content_object, group, author, body)
+               
+            elif parent_type == ContentType.objects.get_for_model(Message):
+                add_private_msg(parent_object, author, msg)
             
-        except BounceException as e:
-            # bounce it!
-            print "bouncing email", e
+        elif group:
+            add_post(group, author, subject, body)
+            
+        else:
+            raise BounceException("I don't know what to do...")
+        
+    except BounceException as e:
+        print "bouncing email", e
+
+        # TODO: template-ize this
+        bounce_msg = """Hello,
+
+myEWB was unable to deliver your email:
+
+     From: %s
+     To: %s
+
+Details of the failure: 
+%s
+
+----- Original message -----
+
+%s
+
+""" % (msg['from'], msg['to'], e, msg)
+
+        send_mail(subject='Delivery Status Notification - failure',
+                  txtMessage=bounce_msg,
+                  fromemail=settings.DEFAULT_FROM_EMAIL,
+                  recipients=[msg['from'],])
         
 # takes an email author, in the "Name <email>" format, and finds the associated user    
 def parse_author(author):
@@ -106,7 +128,7 @@ def parse_author(author):
             # the same verified address to be apart of multiple accounts
             return users[0]
         else:
-            raise BounceException("I was unable to find a myEWB user with the email address %s" % email[0])
+            raise BounceException("I don't recognize your email address (%s).  You must add this address to your myEWB account and verify it first." % email[0])
 
     raise BounceException("I wasn't able to understand the email address %s" % author)
 
@@ -123,7 +145,7 @@ def parse_recipient(recipient):
             return group
         
     # TODO: modify to handle private-message replies
-    raise BounceException("I wasn't able to figure out which group you want to post to!")
+    raise BounceException("I wasn't able to figure out which group you want to post to! %s didn't make any sense to me." % recipient)
 
 # takes the References line in email headers, and looks for any parent emails in the thread
 # returns a 2-tuple of the parent object and object type (or None, None)

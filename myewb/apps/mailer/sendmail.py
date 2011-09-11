@@ -60,7 +60,7 @@ def send_mail(subject=None, txtMessage=None, htmlMessage=None,
             
     if shortname:
         shortname = shortname.lower()
-        Email.objects.create(recipients=recips,
+        e = Email.objects.create(recipients=recips,
                              shortName=shortname,
                              sender=fromemail,
                              subject=subject,
@@ -69,10 +69,9 @@ def send_mail(subject=None, txtMessage=None, htmlMessage=None,
                              lang=lang,
                              cc=cc_string,
                              bcc=bcc_string,
-                             message_id=message_id,
-                             content_object=content_object)
+                             message_id=message_id)
     else:
-        Email.objects.create(recipients=recips,
+        e = Email.objects.create(recipients=recips,
                              shortName=shortname,
                              sender=fromemail,
                              subject=subject,
@@ -81,5 +80,8 @@ def send_mail(subject=None, txtMessage=None, htmlMessage=None,
                              lang=lang,
                              cc=cc_string,
                              bcc=bcc_string,
-                             message_id=message_id,
-                             content_object=content_object)
+                             message_id=message_id)
+
+    if content_object:
+        e.content_object = content_object
+        e.save()
