@@ -167,7 +167,21 @@ def parse_body(msg):
     else:
         body = msg.get_payload()
         body = body.replace("\n", "<br/>")
-        
+    
+    # strip out reply text
+    # http://stackoverflow.com/questions/278788/parse-email-content-from-quoted-reply may be a better way
+    quoting_gmail = r'<div(?:.*)gmail_quote(?:.*)>'     # gmail puts their quotes in <div class="gmail_quote">
+    body = re.split(quoting_gmail, body)[0]
+    
+    quoting_thunderbird = r'<blockquote(?:.*)cite(?:.*)>'   # thunderbird uses <blockquote type="cite">
+    body = re.split(quoting_thunderbird, body)[0]
+    
+    quoting_outlook = r'<(?:.*)style(?:.*)border-top: #B5C4DF(?:.*)>'   # outlook is just a pain
+    body = re.split(quoting_outlook, body)[0]
+    
+    quoting_text = r'\n(.*)\n(>(.*)\n)+\n*$'        # takes any block of end-of-message >-prefix lines, plus the one line preceeding it
+    body = re.sub(quoting_text, '', body)
+    
     if not body:
         raise BounceError("I wasn't able to understand the email you sent; it was in a format that is not supported.")
     
