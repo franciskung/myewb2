@@ -532,7 +532,45 @@ $(document).ready(function(){
 
         
 {% endcomment %}
+		<br style="clear: both;"/>
+        <div id="footer2" style='width: 80%; margin: 0 auto;'>
+			{% block footer %}
+			<ul class="legal" style='width: 100%; margin: 0; background: #ffffff; border: 0;'>
+				<li><a href="{% url terms %}">Terms of Use</a></li>
+				<li><a href="{% url privacy %}">Privacy Policy</a></li>
+			    <li>&copy; 2005&ndash;{% now "y" %} <a href="http://www.ewb.ca/">{% trans "EWB-ISF Canada" %}</a></li>
+				{% if user.is_staff %}<li><a href="/admin/">{% trans "Admin" %}</a></li>{% endif %}
+				{% block locale_switcher %}
+					<li>
+				    <form action="{% if request.user.is_authenticated %}{% url acct_language_change %}{% else %}/i18n/setlang/{% endif %}" method="post" id="locale_switcher">
+				        <select name="language" onchange="$('#locale_switcher').submit()">
+				            {% for lang in LANGUAGES %}
+				                <option value="{{ lang.0 }}"{% ifequal lang.0 LANGUAGE_CODE %} selected="selected"{% endifequal %}>{{ lang.1 }}</option>
+				            {% endfor %}
+				        </select>
+				    </form>
+					</li>
+				{% endblock %}
+				
+				<li>timezone: 
+					<form action="{% url timezone_switch %}" method="post" id="language-switcher">
+						<select name="timezone" onchange="$('#language-switcher').submit()">
+							<option value="auto">auto-detect {% if detected_timezone %}({{detected_timezone}}){% endif %}</option>
+							{% for tz in timezones %}
+								<option value="{{tz}}" {% ifequal tz current_timezone %}selected="selected"{% endifequal %}>{{ tz }}</option>
+							{% endfor %}
+						</select>
+						<input type="hidden" name="redirect" value="{{ request.path }}"/>
+					</form>
+				</li>
+			</ul>
+			{% endblock %}
+		</div>
+
+
 		    {% block extra_body %}{% endblock %}
         
+	<br/>
+
     </body>
 </html>
