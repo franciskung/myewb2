@@ -97,11 +97,14 @@ class MktimeNode(template.Node):
                     d = d + delta
                 
             if d.date() == datetime.date.today():
-                return "today at %s" % defaultfilters.time(d)
+                #return "today at %s" % defaultfilters.time(d)
+                return "at %s" % defaultfilters.time(d)
             elif d.date() == (datetime.date.today() - datetime.timedelta(1)):
-                return "yesterday at %s" % defaultfilters.time(d)
+                #return "yesterday at %s" % defaultfilters.time(d)
+                return "yesterday"
             else:
-                return "on %s at %s" % (defaultfilters.date(d), defaultfilters.time(d))
+                #return "on %s at %s" % (defaultfilters.date(d), defaultfilters.time(d))
+                return "on %s" % defaultfilters.date(d)
 
 @register.tag
 def mktime(parser, token):

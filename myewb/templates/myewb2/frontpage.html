@@ -1,0 +1,599 @@
+{% extends "topics/base.html" %}
+
+{% load avatar_tags %}
+{% load i18n %}
+{% load uni_form_tags %}
+{% load pagination_tags %}
+{% load group_tags %}
+{% load tagging_tags %}
+{% load events_tags %}
+{% load cache %}
+{% load champ_tags %}
+{% load perspectives %}
+{% load networks_tags %}
+{% load fake_ads %}
+
+{% block extra_head %}
+    {{ block.super }}
+    
+    <link rel="alternate" type="application/rss+xml" title="myEWB Front Page" href="{% url topic_feed_all %}" />
+	<link rel="stylesheet" href="{{ STATIC_URL }}css/toolbars.css" />   
+	
+	<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.ba-bbq.min.js"></script>
+	
+	
+	{# JS here for the frontpage ajax updates #}
+<script type="text/javascript">
+// Frontpage Ajax updates
+
+	/*var currentURL = "";
+	
+	var shortPosts = false; */
+	// both covered by the hashstate
+
+var currentGroup = '';
+var currentPage = ''; // not the actual default of 1, so that it'll actually load the first time.
+var shortPosts = 0;
+
+var timeout_id = 0;
+
+$(window).bind( 'hashchange', function(e) {
+    rockAjaxPosts(0);
+});
+
+
+function rockAjaxPosts(forceReload) {
+    group = $.bbq.getState( 'group' ) || '';
+    
+    page = $.bbq.getState( 'page' ) || 1;
+    
+    short = $.bbq.getState( 'short' ) || 0;
+    
+    
+    if ( short !== shortPosts ) {
+        // turn on or off shortposts
+        if (short == 1) {
+            //console.log('short on');
+            
+                $('div.postcontent').slideUp(); $('div.postheader').addClass('shortpost'); $('#collapse-posts').hide(); $('#expand-posts').show(); 
+                shortPosts = true;
+            
+        } 
+        else {
+            //console.log('short off');
+            
+            $('div.postcontent').slideDown(); $('div.postheader').removeClass('shortpost'); $('#expand-posts').hide(); $('#collapse-posts').show(); 
+          	   
+            shortPosts = false;
+        }
+        shortPosts = short;
+        
+    }
+    
+    
+    if ( forceReload || (group !== currentGroup && page !== currentPage) ) {
+        // switching both at once; only likely to happen via curious people typing in the address bar
+        
+        //console.log('changegroup to ' + group + ' and page to ' + page);
+        
+        load_posts(group,page,short,false);
+        
+        currentGroup = group;
+        currentPage = page; // is this always intended? probably.
+        // make sure we don't get an endless loop of resetting the page number here.
+    }
+    
+    else if ( group !== currentGroup ) {
+        // load the new group
+        
+        //console.log('changegroup to ' + group);
+        
+        load_posts(group,1,short,false);
+        
+        currentGroup = group;
+        currentPage = 1; 
+    }
+    else if ( page !== currentPage ) {
+        // load the new page
+        
+        //console.log('changepage to ' + page);
+        
+        load_posts(group,page,short,false);
+        
+        currentPage = page;
+    }
+    
+
+
+}
+
+function load_posts(group,page,short,silent)   // now, this'll be a behind-the-scenes function that's only called by hashchanges.
+{
+	clearTimeout(timeout_id)
+    var url = '';
+
+	// no group yet; load default
+	if(group=='') {
+	   url = "/?ajax=1";
+	} else {
+	   url = '/groups/' + group + '/posts/?ajax=1';
+	}
+	
+	if(page && page!=0) {
+	   url = url + '&page=' + page;
+	}
+	if (short==1) {
+    	url += '&short=1';
+	}
+	
+	/* update highlighting in the groups listing */
+	if (group) {
+    	$('.frontpage-mygroups-actions').hide();
+    	$('.frontpage-mygroups-div').removeClass('bkgd-light');
+
+    	$('#frontpage-update-'+group).parent().addClass('bkgd-light');
+    	$('#frontpage-update-'+group).siblings('.frontpage-mygroups-actions').show();
+	} else {
+		$('.frontpage-mygroups-actions').hide();
+		$('.frontpage-mygroups-div').removeClass('bkgd-light');
+	}
+
+	{# if there is no current timezone selected, auto-detect one #}
+	{% if not current_timezone %}
+		var d = new Date();
+		url = url + "&tzoffset=" + d.getTimezoneOffset();
+	{% endif %}
+   
+    currentURL = url;
+
+    if (silent == false)
+    {
+    	// maybe bring this back...?  dunno...!
+    	//$('#topiclisting').hide();
+		$('.frontpage-loading').slideDown();  // @@@ this should be adjusted so it doesn't move everything around.
+    }
+    
+    $('#topiclisting').load(url,
+        function() {
+            $('.frontpage-loading').stop().hide();
+
+            // if hidden earlier, need to re-show here
+            //$('#topiclisting').show();
+
+            // catch pagination-related clicks and load via ajax
+            $('.pagination a').click(function() {
+               	targetPage =  $.deparam( $(this).attr('href') )['?page'] ;
+               	var state = {};
+               	state['page'] = targetPage;
+               	$.bbq.pushState( state );
+               	if(shortPosts!=true)
+                {
+                	$().scrollTo(0,600);
+                }
+                return false;
+            });
+		});
+
+	// and set a timer to auto-refresh... every half hour, let's say?
+    timeout_id = setTimeout('load_posts(\'' + group + '\',\'' + page + '\',\'' + short + '\')', 30 * 60 * 1000, true);
+}
+	
+$(document).ready(function() {
+	$('.frontpage-update').click(function() {
+	  
+	  // related actions take place in the updater function now.
+	  
+	  var groupSlug = $(this).attr("id").substring(17);
+	  //load_posts('/groups/' + groupSlug + '/posts/');
+	  //$('.frontpage-reset').show();
+	  
+      var state = {};
+      state['group'] = groupSlug;
+      state['page'] = 1;
+      $.bbq.pushState( state );
+        
+            
+            return false;
+	  
+	  
+	  return false;
+	});
+	
+	$('.frontpage-reset').click(function() {
+	  
+	  //load_posts('{{request.url}}');
+	  //$('.frontpage-reset').hide();
+	  
+      var state = {};
+      state['group'] = '';
+      state['page'] = 1;
+      $.bbq.pushState( state );
+	  
+	  return false;
+    });
+	
+    $('#frontpage-loading-refreshlink').click(function() {
+        rockAjaxPosts(1);
+        return false;
+    });
+	
+	// and the initial start trigger here! shazam!
+	$(window).trigger( 'hashchange' );
+});
+ 
+ </script>
+ 
+ 
+{% endblock %}
+
+{% block frontpagerightJS %}
+            function toggleFrontpageToolbar() {
+                $('#toolbarcolumn_right_container').toggle();
+                $('#toolbarcolumn_right_show').toggle();
+                
+                {% if user.is_authenticated %}
+                    
+                    var action = "";
+                    if (! $('#toolbarcolumn_right_container').is(':visible'))
+                        action = "close";
+                    else
+                        action = "show";
+                    
+                    $.ajax({
+                      url: "{% url profile_toolbar_action %}" + action + "/" + "toolbarcolumn_right_container" + "/",
+                      cache: false,  // this prepends another query onto the end with a timestamp - make sure it doesn't mix up the handler page?
+                    });
+                {% endif %}
+                {# state saving only works if youre logged in, so only really try then #}
+
+                                
+
+            }
+            
+            $('.frontpagetoolbarToggles').click(function(){	
+                toggleFrontpageToolbar();
+
+          	  });
+          	  
+{% endblock %}
+
+
+{% block head_title %}{% trans "Discussion Board" %}{% endblock %}
+
+{% block subnav_base %}{% endblock %}
+
+{% block body_base %}
+
+	{#<div style="float: right; width: 260px;	padding: 10px; border: 1px solid #ffb90f; border-right: 0; -moz-border-radius-topleft: 0.5em; -moz-border-radius-bottomleft: 0.5em; -webkit-border-top-left-radius: 0.5em; -webkit-border-bottom-left-radius: 0.5em; background: #f0f0f0;">#}
+	<div style="float: right; width: 260px;	margin-right: 15px;"> 
+	<div style="padding: 10px; border: 1px solid #ffb90f; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; background: #f0f0f0; margin-bottom: 15px;">
+		<strong>Wine Down!</strong>
+		<br/><br/>
+		
+		<a href="#" class="cheers">Blah blah blah</a><br/>
+		<span style="color: #a0a0a0; font-size: 10px;">cheers'ed by 12 people</span>
+		<br/><br/>
+
+		<a href="#" class="cheers">Blah blah blah</a><br/>
+		<span style="color: #a0a0a0; font-size: 10px;">cheers'ed by 12 people</span>
+		<br/><br/>
+		
+		<a href="#" class="cheers">Blah blah blah</a><br/>
+		<span style="color: #a0a0a0; font-size: 10px;">cheers'ed by 12 people</span>
+		<br/><br/>
+		
+		<a href="#" class="cheers">Blah blah blah</a><br/>
+		<span style="color: #a0a0a0; font-size: 10px;">cheers'ed by 12 people</span>
+		<br/><br/>
+		
+		<a href="#" class="cheers">Blah blah blah</a><br/>
+		<span style="color: #a0a0a0; font-size: 10px;">cheers'ed by 12 people</span>
+		<br/><br/>
+
+		<a href="#" class="cheers">Blah blah blah</a><br/>
+		<span style="color: #a0a0a0; font-size: 10px;">cheers'ed by 12 people</span>
+		<br/><br/>
+
+		<a href="#" class="cheers">Blah blah blah</a><br/>
+		<span style="color: #a0a0a0; font-size: 10px;">cheers'ed by 12 people</span>
+		<br/><br/>
+
+		<a href="#" class="cheers">Blah blah blah</a><br/>
+		<span style="color: #a0a0a0; font-size: 10px;">cheers'ed by 12 people</span>
+		<br/><br/>
+
+		<a href="#" class="cheers">Blah blah blah</a><br/>
+		<span style="color: #a0a0a0; font-size: 10px;">cheers'ed by 12 people</span>
+		<br/><br/>
+
+		<a href="#" class="cheers">Blah blah blah</a><br/>
+		<span style="color: #a0a0a0; font-size: 10px;">cheers'ed by 12 people</span>
+		<br/><br/>
+		</div>
+
+		<div style="padding: 10px; border: 1px solid #ffb90f; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; background: #f0f0f0;">
+		<div style="padding: 5px 10px; font-size: 14px; background: #f0f0f0; font-weight: bold;">
+			Latest Blogs
+		</div>
+		<br/>
+
+		<img style="height: 20px; width: 35px; margin: 0 10px; float: left;" src="http://t1.gstatic.com/images?q=tbn:ANd9GcQOBIkab60eXq3i3mL2QO5Ww3rmtavpaqWi625siCNGQFXTYkjo"/>
+		<a href="http://fraserinmalawi.wordpress.com/2011/08/13/relocation/" title="I&#8217;ve officially changed countries.  Check out the new post at www.fraserinzambia.wordpress.com!" target="_blank">Relocation</a>
+		<br/>
+		<span style="font-size: 10px; color: #a0a0a0;">
+		Fraser &ndash; <em title="Just another EWB JF Blog"><a href="http://fraserinmalawi.wordpress.com/" target="_blank">Tales From the Heart</a></em>
+		</span> 
+
+		<br/><br/>                
+                
+		<img style="height: 20px; width: 35px; margin: 0 10px; float: left;" src="http://t2.gstatic.com/images?q=tbn:ANd9GcRnu3SsfvlzsCuwUrBAcCsmSTJ-jZBJehKgB1ZB2qezuko2d2Nv"/>
+		<a href="http://vivianmau.wordpress.com/2011/08/13/seasons-for-food/" title="In rural communities weather shapes a lot the day to day lives. Seasons have great impact on the activities that you do: right before..." target="_blank">Seasons for food</a>
+		<br/><span style="font-size: 10px; color: #a0a0a0;">
+                                        Vivian &ndash;
+                                        
+                                            <em title="ideas about a summer in Malawi"><a href="http://vivianmau.wordpress.com/" target="_blank">Malawi thoughts</a></em> 
+                                            </span> 
+		<br/><br/>
+
+		<img style="height: 20px; width: 35px; margin: 0 10px; float: left;" src="http://t2.gstatic.com/images?q=tbn:ANd9GcRnu3SsfvlzsCuwUrBAcCsmSTJ-jZBJehKgB1ZB2qezuko2d2Nv"/>
+		<a href="http://markeveryware.wordpress.com/2011/08/12/training-day/" title="I spent much of today with my colleague Spencer Weber at a training he was helping run for agrodealer agents (commission sales people) to..." target="_blank">Training day.</a> 
+		<br/><span style="font-size: 10px; color: #a0a0a0;">
+                                        Mark &ndash;
+                                        
+                                            <em title="You cannot pick up a pebble with one finger ~Malawi Proverb"><a href="http://markeveryware.wordpress.com/" target="_blank">Picking Up Pebbles</a></em> 
+                                            </span>
+        <br/><br/>
+        
+		<img style="height: 20px; width: 35px; margin: 0 10px; float: left;" src="http://t1.gstatic.com/images?q=tbn:ANd9GcQOBIkab60eXq3i3mL2QO5Ww3rmtavpaqWi625siCNGQFXTYkjo"/>
+                    <a href="http://whisperstovoices.wordpress.com/2011/08/12/something-to-aspire-to/" title="It&#8217;s International Youth Day today &#8211; a day to celebrate the potential of youth and discuss with critical minds the..." target="_blank">something to aspire to</a></h3> 
+		<br/><span style="font-size: 10px; color: #a0a0a0;">
+                                            <em title="connecting Canadians to Africa!"><a href="http://whisperstovoices.wordpress.com/" target="_blank">from a whisper to a voice of hope</a></em> 
+                                            </span> 
+		<br/><br/>            
+                                    
+		<img style="height: 20px; width: 35px; margin: 0 10px; float: left;" src="http://74.54.19.227/GHP/img/pics/79307655.jpg"/>
+                    <a href="http://africashmafrica.wordpress.com/2011/08/12/africa-shmafrica-perspectives-n-shit/" title="In EWB, IDS and African Studies the one conversation is always the same. In all the intellectual circles I run in, &#8220;perspectives..." target="_blank">Turning the table: Perspectives of Canada</a></h3> 
+		<br/><span style="font-size: 10px; color: #a0a0a0;">
+                                        Bailey &ndash;
+                                        
+                                            <em title="I will be blogging during summer 2011 about my experience living in Tamale, Ghana and working at the Network for Youth Action."><a href="http://africashmafrica.wordpress.com/" target="_blank">Africa, Shmafrica: Rants of a JF in Ghana</a></em> 
+                                            </span>
+                                            
+		<br/><br/>                                            
+                                             
+		<img style="height: 20px; width: 35px; margin: 0 10px; float: left;" src="http://t1.gstatic.com/images?q=tbn:ANd9GcQOBIkab60eXq3i3mL2QO5Ww3rmtavpaqWi625siCNGQFXTYkjo"/>
+                    <a href="http://elliotcudmore.wordpress.com/2011/08/12/the-origin-of-roads/" title="My  cousin once told me that this road, yes, this one which links my driveway to the city, can leads me to South America. Follow it..." target="_blank">The Origin of Roads</a></h3> 
+		<br/><span style="font-size: 10px; color: #a0a0a0;">
+                                        Elliot &ndash;
+                                        
+                                            <em title="4 months in Zambia, learning the basics of connecting farmers to seeds"><a href="http://elliotcudmore.wordpress.com/" target="_blank">Elliot's Elementary Learnings</a></em> 
+                                            </span>
+                                            
+		<br/><br/>                                             
+		<img style="height: 20px; width: 35px; margin: 0 10px; float: left;" src="http://t2.gstatic.com/images?q=tbn:ANd9GcRnu3SsfvlzsCuwUrBAcCsmSTJ-jZBJehKgB1ZB2qezuko2d2Nv"/>
+                    <a href="http://markeveryware.wordpress.com/2011/08/11/election-campaign-in-chipata/" title="A convoy of blue trucks passed me today while I acquainted myself with my new home base in Chipata, Zambia. It is a large town close to..." target="_blank">Election campaign in Chipata</a> 
+                    <br/><span style="font-size: 10px; color: #a0a0a0;">
+                                        Mark &ndash;
+                                        
+                                            <em title="You cannot pick up a pebble with one finger ~Malawi Proverb"><a href="http://markeveryware.wordpress.com/" target="_blank">Picking Up Pebbles</a></em> 
+                                            </span> 
+	</div>
+	<br/><br/>
+	</div>
+
+	<div style="margin-left: 280px; margin-right: 300px;">
+		<div style="padding: 10px; padding-left: 0; font-size: 20px; {#background: #f0f0f0; #}font-weight: bold;">
+			Recent Discussions
+		</div>
+		<a href="{% groupurl topic_new group %}">start a new discussion</a> |
+		<a href="#" class="switch_discussions" style="font-weight: normal; font-size: 12px;">
+			customize my discussions
+		</a> 
+		
+		
+		<br/><br/>
+		<div>
+			<strong>Showing relevant discussions</strong><br/>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<a href="#" class="switch_discussions">switch to latest</a> | 
+			<a href="#" class="switch_discussions">switch to most active</a> |
+			<a href="#" class="switch_discussions">my watchlist</a>
+		</div>
+
+		<div class="frontpage-loading"><a href="#" id="frontpage-loading-refreshlink">[refresh]</a>Loading...</div>     
+	 
+	 	<div id="topiclisting">
+	    </div>
+	    
+	</div> 
+
+{% endblock %}
+
+{% block toolbar_left %}
+    {{ block.super }}
+        
+    {% if user.is_authenticated %}
+    
+        <div class="toolbarcontent">
+				<a href="#" class="frontpage-reset" style='text-decoration: none;'>
+                    <img src="{{ STATIC_URL }}images/fb/feed.png" style="position: relative; top: 6px; margin-top: -6px;"/>
+    				Latest posts
+				</a>
+                <div class="frontpage-mygroups-div">
+					<a href="#" class="frontpage-update" id="frontpage-update-featured" style='text-decoration: none;'>
+                        <img src="{{ STATIC_URL }}images/fb/feed.png" style="position: relative; top: 6px; margin-top: -6px;"/>
+					    Featured posts
+					</a><br/>
+				</div>
+				
+                <div class="frontpage-mygroups-div">
+					<a href="#" class="frontpage-update" id="frontpage-update-ewb" style='text-decoration: none;'>
+                        <img src="{{ STATIC_URL }}images/fb/feed.png" style="position: relative; top: 6px; margin-top: -6px;"/>
+					    Front-page only
+					</a><br/>
+				</div>
+             	{% for group in user.get_groups %}
+             		{% if not group.recent_topic_count %}
+             		<div class="frontpage-mygroups-nonew" style="display: none;">
+             		{% endif %}
+	                <div class="frontpage-mygroups-div">
+	                	<a href="#" class="frontpage-update" id="frontpage-update-{{ group.slug }}" style='text-decoration: none;'>
+                            <img src="{{ STATIC_URL }}images/fb/feed.png" style="position: relative; top: 6px; margin-top: -6px;"/>
+	                	    {{ group.name }}
+	                	</a><br/>
+	                	{% if group.recent_topic_count %}<small style="padding-left: 10px;">({{group.recent_topic_count}} recent)</small>{% endif %}
+
+		                <div class="frontpage-mygroups-actions">
+		                	{# {{group.recent_topic_count}} recent posts<br/> #}
+		                	<a href="{% groupurl topic_new group %}">New post &raquo;</a><br/>
+		                	<a href="{% url group_detail group.slug %}">View group info &raquo;</a>
+		                </div>
+		            </div>
+             		{% if not group.recent_topic_count %}
+             		</div>
+             		{% endif %}
+            	{% endfor %}
+            	<div style="text-align: right;">
+            		<a href="#" onclick="$('.frontpage-mygroups-nonew').slideToggle(); {#$(this).hide();#} return false;">show all</a>
+            		
+            		{% if can_adminovision %}
+                    {% spaceless %}
+                        <br/><a href="{% url topic_adminovision %}">
+                            {% if adminovision %}
+                    			Turn off adminovision
+                    		{% else %}
+                    			Turn on adminovision
+                    		{% endif %}
+                    	</a>
+                    {% endspaceless %}
+           	{% else %}
+               	{% if can_execovision %}
+               		{% spaceless %}
+               			<br/><a href="{% url topic_adminovision %}">
+                		{% if adminovision %}
+                			Turn off execovision
+                		{% else %}
+                			Turn on execovision
+                		{% endif %}
+                		</a>
+                	{% endspaceless %}
+                {% endif %}
+           	{% endif %}
+            		
+            	</div>
+        </div>
+{#        {% endcache %} #}
+        
+        {% if is_exec and request.user.get_profile.get_chapter %}
+            <hr/>
+	        <div class="toolbarcontent" style="line-height: 1.5em;">
+	        <strong>CHAMP summary</strong><br/>
+      			<a href="{% link_to_current_champ request.user %}">{% champ_activities request.user.get_profile.get_chapter %} {% month %} activities<a/><br/> 
+                &nbsp;&nbsp;
+                (<a href="{% url champ_unconfirmed_activities request.user.get_profile.get_chapter.slug %}">{% champ_unconfirmed request.user.get_profile.get_chapter %} unconfirmed<a/>)<br/>
+                &nbsp;&nbsp;
+                <a href="{% url champ_new_activity request.user.get_profile.get_chapter.slug %}">record an activity</a><br/>
+	        </div>
+        {% endif %}
+        
+        
+    {% endif %}
+            
+    <hr/>
+    <div class="toolbarcontent" style='line-height: 1.5em;'>
+        <strong>Navigation</strong><br/>
+        <a href="{% if user.get_profile.get_chapter %}{% url network_detail user.get_profile.get_chapter.slug %}{% else %}{% url networks_index %}{% endif %}">Chapters</a><br/>
+        
+        <a href="{% url communities_index %}">Communities</a><br/>
+        
+        <a href="{% url events_all %}">Events</a><br/>
+        
+        <a href="{% url applications %}">Get Involved</a>
+    </div>
+    
+    <hr/>
+    <div class="toolbarcontent" id="box-online-contents">
+        {#<strong>Who's Online</strong><br/>#}
+        {% include "whosonline.html" %}
+    </div>
+    
+{% endblock %}
+
+{% block toolbar_right %}
+    <div class="toolbarcontent" style="padding: 2px; overflow: none;">
+        <div style='background: #f2f2f2; padding: 5px; font-weight: bold;'>Upcoming Events</div>
+        <br/>
+        {% events_widget user %}
+        <div style="text-align: right;">
+            <a href="{% url events_all %}">{% trans "more events" %} &raquo;</a>
+        </div>
+    </div>
+    
+    <div class="toolbarcontent" style="padding: 2px; overflow: none;">
+        <div style='background: #f2f2f2; padding: 5px; font-weight: bold;'>Sponsored</div>
+        <br/>
+        {% fake_ad %}
+        <hr/>
+        {% fake_ad %}
+        <hr/>
+        {% fake_ad %}
+    </div>
+    
+{% endblock %}      
+
+{% block extra_body %}
+<div style="display: none;">
+<div id="div_cheers">
+	<h1>We haven't built this yet...</h1>
+	
+	<p>
+		But this would be recent activities that people "like".  Posts, articles, 
+		events, CHAMP activities, any kind of content that is on myEWB would be 
+		"cheers"-able.  
+	</p>
+</div>
+
+<div id="div_switch_discussions">
+	<h1>We haven't built this yet...</h1>
+	
+	<p>
+		But we want to know what you find relevant.  This will be a list of topics:
+		fair trade, advocacy, youth engagement, water & sanitation, agricultural value chains, 
+		etc, that you can choose multiple topics from.
+	</p>
+	
+	<p>
+		We'll then offer to pick content that specifically matches your interests -
+		letting you build your own niche within EWB.
+	</p>
+	
+	<p>
+		Of course, you'll still be able to see all recent posts, like the current myEWB -
+		and we also want to add an option for the most viewed/active posts too.
+	</p>
+	
+	<p>
+		Viva la choix!  (as long as it's not confusing!)
+	</p>
+	
+</div>
+</div>
+	
+<script type="text/javascript">
+	$().ready(function() {
+
+		$('.cheers').colorbox({width: '50%',
+									height: '50%',
+									opacity: '0.5',
+									inline: true,
+									href: '#div_cheers'
+								   });
+		$('.switch_discussions').colorbox({width: '50%',
+										   height: '50%',
+										   opacity: '0.5',
+										   inline: true,
+										   href: '#div_switch_discussions'
+										  });
+	});
+</script>
+{% endblock %}

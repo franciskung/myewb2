@@ -37,14 +37,23 @@ It should take no more than 10 minutes!</p>
 
 <br/>
 
-<div style="width: 50%; margin: 0 auto;">
+<div style="float: left; width: 40%;">
+	<img src="{{ STATIC_URL }}images/themes/myewb2.png" style="float: left; width: 75px; height: 75px; padding-right: 15px;"/>
+	<a href="{% url themeswitch_select 'myewb2' %}"><strong>New layout</strong></a><br/>
+	Final candidate!
+	
+	<div style="clear: left;"></div>
+</div>
+
+<div style="margin-left: 50%;">
+{#<div style="width: 50%; margin: 0 auto;"> #}
 	<img src="{{ STATIC_URL }}images/themes/myewb1.png" style="float: left; width: 75px; height: 75px; padding-right: 15px;"/>
 	<a href="{% url themeswitch_select 'myewb1' %}"><strong>The original myEWB</strong></a><br/>
 	Back to the original myEWB
 	
 	<div style="clear: left;"></div>
 </div>
-<br/><br/>
+<br/><hr/><br/>
 
 <div style="float: left; width: 40%;">
 	<img src="{{ STATIC_URL }}images/themes/myhome.png" style="float: left; width: 75px; height: 75px; padding-right: 15px;"/>

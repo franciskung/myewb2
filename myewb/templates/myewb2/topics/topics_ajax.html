@@ -1,0 +1,14 @@
+{% load i18n %}
+{% load pagination_tags %}
+{% load group_tags %}
+{% load cache %}
+
+{% autopaginate topics 10 %}
+
+{% for topic in topics %}
+	{% include "topics/topic_item.html" %}
+{% endfor %}
+
+<div style="border-top: 1px solid #e0e0e0;">
+	<a href="#">See more discussions &raquo;</a>
+</div>

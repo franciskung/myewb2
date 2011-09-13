@@ -9,7 +9,7 @@ from themeswitch.models import RequestLog
 
 class ThemeSwitchMiddleware(object):
     def process_request(self, request):
-        theme = request.session.get("theme", "myewb1")
+        theme = request.session.get("theme", "myewb2")
         
         if not hasattr(settings, 'TEMPLATE_DIRS_ORIGINAL'):
             settings.TEMPLATE_DIRS_ORIGINAL = settings.TEMPLATE_DIRS
@@ -24,7 +24,7 @@ class ThemeSwitchMiddleware(object):
 
 class ThemeSwitchTrackingMiddleware(object):
     def process_request(self, request):
-        theme = request.session.get("theme", "myewb1")
+        theme = request.session.get("theme", "myewb2")
         
         if request.user.is_authenticated():
             user = request.user
