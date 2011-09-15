@@ -56,7 +56,7 @@ def login_facebook(request):
                                   {},
                                   context_instance=RequestContext(request))
     
-    elif request.GET.get('stage', None):
+    elif request.GET.get('stage', None) and request.session.get('fb_code'):
         code = request.session['fb_code']
         del(request.session['fb_code'])
         

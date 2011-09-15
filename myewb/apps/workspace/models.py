@@ -11,6 +11,8 @@ from django.db import models
 
 import settings, os, shutil, datetime, re
 
+from siteutils.helpers import fix_encoding
+
 # TODO: regex to use for validating filenames.  For now, anything not alpha-numeric-
 # dash-underscore-period-space gets stripped, but would be good to allow accents eventually.
 re_filename = re.compile(r'[^A-Za-z0-9\-_. ]')
@@ -283,6 +285,7 @@ class WorkspaceFileManager(models.Manager):
         if path[-1:] != '/':
             path = path + '/'
         relpath = path + filename
+        relpath = fix_encoding(relpath)
         
         # see if this file already exists (update, not create)
         workfile = self.load(workspace, relpath)
