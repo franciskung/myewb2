@@ -39,12 +39,22 @@ It should take no more than 10 minutes!</p>
 
 <div style="float: left; width: 40%;">
 	<img src="{{ STATIC_URL }}images/themes/myewb2.png" style="float: left; width: 75px; height: 75px; padding-right: 15px;"/>
-	<a href="{% url themeswitch_select 'myewb2' %}"><strong>New layout</strong></a><br/>
-	Final candidate!
+	<a href="{% url themeswitch_select 'myewb2' %}"><strong>New layout 1</strong></a><br/>
+	Final candidate 1...
 	
 	<div style="clear: left;"></div>
 </div>
 
+<div style="margin-left: 50%;">
+	<img src="{{ STATIC_URL }}images/themes/myewb2b.png" style="float: left; width: 75px; height: 75px; padding-right: 15px;"/>
+	<a href="{% url themeswitch_select 'myewb2b' %}"><strong>New layout 2</strong></a><br/>
+	Final candidate 2...
+	
+	<div style="clear: left;"></div>
+</div>
+<br/><hr/><br/>
+
+{% comment %}
 <div style="margin-left: 50%;">
 {#<div style="width: 50%; margin: 0 auto;"> #}
 	<img src="{{ STATIC_URL }}images/themes/myewb1.png" style="float: left; width: 75px; height: 75px; padding-right: 15px;"/>
@@ -54,6 +64,7 @@ It should take no more than 10 minutes!</p>
 	<div style="clear: left;"></div>
 </div>
 <br/><hr/><br/>
+{% endcomment %}
 
 <div style="float: left; width: 40%;">
 	<img src="{{ STATIC_URL }}images/themes/myhome.png" style="float: left; width: 75px; height: 75px; padding-right: 15px;"/>
