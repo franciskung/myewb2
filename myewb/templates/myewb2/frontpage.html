@@ -382,6 +382,84 @@ $(document).ready(function() {
 	</div>
 
 	<div style="margin-left: 280px; margin-right: 300px;">
+	{% if user.is_authenticated and user.get_profile.get_chapter %}
+	<div style="margin: 0 -10px; padding: 10px; border: 1px solid #d0d0d0; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em;">
+		<div style="padding: 10px; font-size: 14px; background: #f0f0f0; font-weight: bold;">
+			<span style="float: right; font-weight: normal; font-size: 12px;" id="home_controls">
+			<a href="#" id="switch_home">
+				switch
+			</a> - 
+			<a href="#" id="hide_home">
+				hide
+			</a>
+			</span> 
+			<span style="float: right; font-weight: normal; font-size: 12px; display: none;" id="home_controls2">
+			<a href="#" id="expand_home">
+				expand
+			</a>
+			</span>
+			{{ user.get_profile.get_chapter.name }}
+		</div>
+		<br/>
+		
+		<style>
+		    .chapter_hover {
+		        padding: 3px 0;
+		        display: block;
+		    }
+		</style>
+		<div id="home_dashboard">
+		<div style="padding-right: 20px; border-right: 1px solid #d0d0d0; display: inline-block;">
+		    <a href="#" class="chapter_hover" id="chapter_posts">5 new posts</a>
+		    <a href="#" class="chapter_hover" id="chapter_champ">8 new CHAMP entries</a>
+		    <a href="#" class="chapter_hover" id="chapter_files">12 files recently updated</a>
+		    <a href="#" class="chapter_hover" id="chapter_events">2 events this week</a>
+		    <a href="#" class="chapter_hover" id="chapter_members">23 new members</a>
+		</div>
+		<div style="display: inline-block; vertical-align: top; padding-left: 20px;" id="chapter_hover_content">
+        </div>
+        
+        <script type="text/javascript">
+            $().ready(function() {
+                $('.chapter_hover').mouseover(function() {
+                    $('.chapter_hover').css('background', '#ffffff');
+                    $(this).css('background', '#f0f0f0');
+                    var myself = $(this);
+                    $('#chapter_hover_content').fadeOut(function() {
+                        $('#chapter_hover_content').html('Sample content<br/>for the<br/>' + myself.attr('id') + '<br/>type...<br/><div style="text-align: right;"><a href="#">see more &raquo;</a></div>');
+                        $('#chapter_hover_content').fadeIn();
+                    });
+                });
+                $('#chapter_posts').mouseover();
+            });
+        </script>
+		</div>
+	</div>
+	{% else %}
+		{% if login_form %}
+	        <div style="margin: 0 -10px; padding: 10px; border: 1px solid #d0d0d0; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em;">
+		        <div style="padding: 10px; font-size: 14px; background: #f0f0f0; font-weight: bold;">
+		            Sign in to myEWB
+		        </div>
+		        <br/>
+                <div style="text-align: center;">
+	                <form class="toolbarlogin" method="POST" action="{% url acct_login %}">
+	                    {% for field in login_form %}
+	                        <div style="padding-bottom: 7px;">
+	                            {{ field.label_tag }}
+	                            {{ field }}
+	                            <br/>
+	                        </div>
+	                    {% endfor %}
+					    <a href="{% url acct_signup %}">{% trans "Sign up" %}</a> --
+	                    <input type="submit" value="{% trans "sign in" %} &raquo;" /> -- 
+	                    <a href="{% url acct_passwd_reset %}">{% trans "Forgot password?" %}</a>
+    	            </form>
+                </div>
+	        </div>
+	    {% endif %}
+	{% endif %}
+
 		<div style="padding: 10px; padding-left: 0; font-size: 20px; {#background: #f0f0f0; #}font-weight: bold;">
 			Recent Discussions
 		</div>
