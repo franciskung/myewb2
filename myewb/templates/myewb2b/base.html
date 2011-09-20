@@ -124,15 +124,22 @@ $(document).ready(function(){
    	<div style='height: 65px; padding: 4px 0 0 0; font-size: 14px; line-height: 2em; display: inline-block; text-align: left;'>
    		<input type="text" style="width: 60%; color: #d0d0d0; margin-top: 3px; float: right;" value="search"/>
    		<div>Go to my...</div>
-   		<div style='border: 1px solid #ff7200; background: #ffb90f; height: 2em; display: inline-block; -moz-border-radius: 1em; -webkit-border-radius: 1em; padding: 0 5px;'>
-   		<a style='border-right: 1px solid #ff7200; padding: 0px 10px;'>Home</a> 
-   		<a style='border-right: 1px solid #ff7200; padding: 0px 10px;'>Discussions</a> 
-   		<a style='border-right: 1px solid #ff7200; padding: 0px 10px;'>Groups</a> 
-   		<a style='border-right: 1px solid #ff7200; padding: 0px 10px;'>Events</a> 
-   		<a style='padding: 0px 10px;'>Volunteer &amp; Apply</a> 
+   		<div style='border: 1px solid #ff7200; background: #ffb90f; height: 2em; display: inline-block; -moz-border-radius: 1em; -webkit-border-radius: 1em; padding: 0 5px;' id="menubar">
+   		<a href="{% url home %}" style='border-right: 1px solid #ff7200; padding: 0px 10px;'>Home</a> 
+   		<a href="{% url topic_list %}" style='border-right: 1px solid #ff7200; padding: 0px 10px;'>Discussions</a> 
+   		<a href="{% url communities_index %}" style='border-right: 1px solid #ff7200; padding: 0px 10px;'>Groups</a> 
+   		<a href="{% url events_all %}" style='border-right: 1px solid #ff7200; padding: 0px 10px;'>Events</a> 
+   		<a href="{% url applications %}" style='padding: 0px 10px;'>Volunteer &amp; Apply</a> 
    		</div> 
    	</div>
    	</div>
+   	<style>
+   	/*
+   		#menubar a {
+   			font-weight: bold;
+   		}
+   		*/
+   	</style>
    	
    	{% comment %}
     <div style='{#float: left; #}height: 65px; width: 300px; text-align: center;'>
