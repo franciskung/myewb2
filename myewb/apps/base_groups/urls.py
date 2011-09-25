@@ -61,6 +61,9 @@ urlpatterns += patterns('base_groups.views.members',
     url(r'^(?P<group_slug>[-\w]+)/members/(?P<username>[\w\._-]+)/edit/$', 'edit_member', name='edit_member',),
     # POST - delete member
     url(r'^(?P<group_slug>[-\w]+)/members/(?P<username>[\w\._-]+)/delete/$', 'delete_member', name='delete_member',),
+    
+    url(r'^(?P<group_slug>[-\w]+)/members/(?P<username>[\w\._-]+)/email/on/$', 'enable_email', name='group_member_enable_email',),
+    url(r'^(?P<group_slug>[-\w]+)/members/(?P<username>[\w\._-]+)/email/off/$', 'disable_email', name='group_member_disable_email',),
 )
 
 urlpatterns += bridge.include_urls('whiteboard.urls', r'^(?P<group_slug>[-\w]+)/whiteboard/')

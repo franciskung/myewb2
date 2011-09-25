@@ -483,3 +483,26 @@ def accept_request(request, group_slug, username, group_model=BaseGroup):
         return HttpResponseRedirect(reverse('%s_member_detail' % group.model.lower(), kwargs={'group_slug': group_slug, 'username': username}))
     else:
         return HttpResponseNotFound()
+        
+def enable_email(request, group_slug, username):
+    group = get_object_or_404(BaseGroup, slug=group_slug)
+    user = get_object_or_404(User, username=username)
+    group_member = get_object_or_404(GroupMember, group=group, user=user)
+    
+    group_member.emails_enabled = True
+    group_member.save()
+
+    request.user.message_set.create(message="Emails enabled.")
+    return HttpResponseRedirect(reverse('%s_detail' % group.model.lower(), kwargs={'group_slug': group_slug}))
+    
+def disable_email(request, group_slug, username):
+    group = get_object_or_404(BaseGroup, slug=group_slug)
+    user = get_object_or_404(User, username=username)
+    group_member = get_object_or_404(GroupMember, group=group, user=user)
+    
+    group_member.emails_enabled = False
+    group_member.save()
+
+    request.user.message_set.create(message="Emails disabled.")
+    return HttpResponseRedirect(reverse('%s_detail' % group.model.lower(), kwargs={'group_slug': group_slug}))
+

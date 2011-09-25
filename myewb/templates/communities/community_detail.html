@@ -87,7 +87,24 @@
         {% endif %}
         {# @@@ currently not used. #}
         
-   
+        {% if member %}
+            <tr>
+                <th>My email settings</th>
+                <td><p>
+                    {% if member.emails_enabled %}
+                        {% ifequal group.group_type 'a' %}
+                            I receive emails that are marked as announcements.
+                        {% else %}
+                            I receive emails for all posts.
+                        {% endifequal %}
+                        <br/>
+                        <a href="{% url group_member_disable_email group.slug request.user.username %}">Disable emails from this group.</a>
+                    {% else %}
+                        I do not receive emails from this group.<br/>
+                        <a href="{% url group_member_enable_email group.slug request.user.username %}">Enable emails from this group.</a>
+                    {% endif %}
+                </p></td>
+        {% endif %}
         
     </tbody>
 </table>
