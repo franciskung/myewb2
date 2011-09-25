@@ -24,6 +24,7 @@ class Email(models.Model):
 
     cc = models.TextField(blank=True, null=True)
     bcc = models.TextField(blank=True, null=True)
+    reply_to = models.TextField(blank=True, null=True)
     message_id = models.CharField(max_length=255)
 
     content_type = models.ForeignKey(ContentType, blank=True, null=True)

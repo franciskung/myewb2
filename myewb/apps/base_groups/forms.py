@@ -23,6 +23,9 @@ class BaseGroupForm(forms.ModelForm):
         help_text = _("a short version of the name consisting only of letters, numbers, underscores and hyphens."),
         error_message = _("This value must contain only letters, numbers, underscores and hyphens."))
         
+    group_type = forms.ChoiceField(label='Group type',
+                                          widget=forms.RadioSelect,
+                                          choices=BaseGroup.GROUP_TYPES)
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)     # pop off user arg, in case subclass doesn't use it
         super(BaseGroupForm, self).__init__(*args, **kwargs)

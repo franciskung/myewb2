@@ -23,9 +23,14 @@ class GroupTopicForm(forms.ModelForm):
     sender = forms.ChoiceField(label=_('Sender'),
                                choices=(),
                                required=False)
+                               
+    reply_to = forms.ChoiceField(widget=forms.RadioSelect,
+                                 choices=GroupTopic.REPLY_OPTIONS,
+                                 initial='myewb')
+
     class Meta:
         model = GroupTopic
-        fields = ('title', 'body', 'tags', 'send_as_email')
+        fields = ('title', 'body', 'tags', 'send_as_email', 'reply_to')
         
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
@@ -33,7 +38,7 @@ class GroupTopicForm(forms.ModelForm):
         super(GroupTopicForm, self).__init__(*args, **kwargs)
 
         # build list of potential "from" addresses
-        if user and group and group.user_is_admin(user) and group.slug != "ewb":
+        if user and group and group.user_is_admin(user) and group.slug != "ewb" and group.group_type == 'a':
             emaillist = user.get_profile().email_addresses()
             emails = []
             for email in emaillist:
@@ -55,6 +60,9 @@ class GroupTopicForm(forms.ModelForm):
         else:
             del self.fields['send_as_email']
             del self.fields['sender']
+            
+            if group.group_type == 'a':
+                del self.fields['reply_to']
 
         #self.fields['parent_group'].initial = group
         

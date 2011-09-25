@@ -141,8 +141,12 @@ class GroupTopic(Topic):
     a discussion topic for a BaseGroup.
     """
     
+    REPLY_OPTIONS = (("myewb", "myEWB - emailed replies are posted to the myEWB "),
+                     ("author", "myself - email replies directly to me"))
+
     parent_group = models.ForeignKey(BaseGroup, related_name="topics", verbose_name=_('parent'))
-    send_as_email = models.BooleanField(_('send as email'), default=False)
+    send_as_email = models.BooleanField(_('Announcement (send as email)'), default=False)
+    reply_to = models.CharField(_('Send replies to'), max_length=10, choices=REPLY_OPTIONS, default='myewb')
     whiteboard = models.ForeignKey(Whiteboard, related_name="topic", verbose_name=_('whiteboard'), null=True)
     
     last_reply = models.DateTimeField(_('last reply'), editable=False, null=True, default=datetime.now())
@@ -192,7 +196,7 @@ class GroupTopic(Topic):
         super(GroupTopic, self).save(force_insert, force_update)
         post_save.send(sender=Topic, instance=GroupTopic.objects.get(id=self.id))
     
-    def send_email(self, sender=None):
+    def send_email(self, sender=None, sender_email=None):
         attachments = Attachment.objects.attachments_for_object(self)
         
         c = {'group': self.group,
@@ -202,8 +206,16 @@ class GroupTopic(Topic):
              'attachments': attachments
             }
             
-        if self.send_as_email:
-            self.group.send_mail_to_members(self.title, self.body, sender=sender, context=c, content_object=self)
+        if self.reply_to == 'myewb':
+            reply_to = "%s@my.ewb.ca" % self.group.slug
+        #elif self.reply_to == '':
+        else:
+            reply_to = sender_email
+            
+        if self.send_as_email or self.group.group_type == 'd':
+            self.group.send_mail_to_members(self.title, self.body, sender=sender,
+                                            context=c, content_object=self,
+                                            reply_to=reply_to)
         
         for list in self.watchlists.all():
             user = list.owner
@@ -218,7 +230,8 @@ class GroupTopic(Topic):
                           fromemail=sender,
                           recipients=[user.email],
                           context=c,
-                          content_object=self)
+                          content_object=self,
+                          reply_to=reply_to)
         
     def num_whiteboard_edits(self):
         if self.whiteboard:

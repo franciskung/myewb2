@@ -16,8 +16,16 @@
 {% block head_title %}{{ group.name }}{% endblock %}
 
 {% block groupbody %}
+<style>
+    .groupdetail th, .groupdetail td {
+        vertical-align: top;
+    }
+    .groupdetail p {
+        margin-top: 0;
+    }
+</style>
     
-<table class="standard standard-right search-form">
+<table class="standard standard-right search-form groupdetail">
     <tbody>
 
         {% comment %}<tr>
@@ -31,7 +39,31 @@
             <td>
                 <p>{{ group.description }}</p>
             </td>
-        </tr> 
+        </tr>
+        
+        <tr>
+            <th>Group type</th>
+            <td>
+                <p>
+                    {% ifequal group.visibility 'E' %}
+                        {% if group.invite_only %}
+                            Invite-only group: shows up in listings, but membership must be approved
+                        {% else %}
+                            Public group: shows up in listings, and anyone can join
+                        {% endif %}
+                    {% else %}
+                        Private group: does not show up in listings, and membership must be approved
+                    {% endifequal %}
+                </p>
+                <p>
+                    {% ifequal group.group_type 'd' %}
+                        Discussion group: anyone can post, and all posts are emailed to the group
+                    {% else %}
+                        Announcement-only: anyone can post, but only admins can can send emails to the group
+                    {% endifequal %}
+                </p>
+            </td>
+        </tr>
   
         <tr>
             <th>{% trans "Date created" %}</th>

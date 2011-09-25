@@ -33,7 +33,7 @@ if(!(-e "$path/running.txt"))
 
 	# get emails that need sending
 	$result = $dbh->query("SELECT id, recipients, shortname,
-		sender, subject, textMessage, htmlMessage, lang, cc, bcc, message_id
+		sender, subject, textMessage, htmlMessage, lang, cc, bcc, reply_to, message_id
 		FROM mailer_email WHERE progress='waiting'");
 #	$result = $dbh->query('SELECT id, recipients, shortname,
 #		sender, subject, textMessage, htmlMessage
@@ -57,7 +57,8 @@ if(!(-e "$path/running.txt"))
 		$lang = $emails[7];
 		$cc = $emails[8];
 		$bcc = $emails[9];
-		$message_id = $emails[10];
+		$reply_to = $emails[10];
+		$message_id = $emails[11];
 
 		#print STDOUT "Processing email #$ id \n";
 	
@@ -190,6 +191,11 @@ if(!(-e "$path/running.txt"))
 
 		# add our own custom message-id
 		$bulk->header('Message-ID', $message_id);
+		
+		if ($reply_to)
+		{
+		    $bulk->header('Reply-to', $reply_to);
+		}
 		
 		# send the thing!
 		$bulk->bulkmail || die 'Problem sending: ' . $bulk->error;

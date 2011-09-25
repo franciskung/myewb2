@@ -66,6 +66,12 @@ class BaseGroup(Group):
     welcome_email = models.TextField(_('Welcome email'), blank=True, null=True,
                                      help_text='Welcome email to send when someone joins or is added to this group (leave blank for none)')
     
+    GROUP_TYPES = (
+        ('d', "Discussion (anyone can post, and all posts & replies are emailed to the group)"),
+        ('a', "Announcement-only (anyone can post, but only admins can can send emails to the group)")
+    )
+    group_type = models.CharField("Group type", max_length=1, choices=GROUP_TYPES, default='d')
+    
     secret_key = models.CharField(max_length=255, blank=True, null=True, default=None, editable=False)
     is_project = models.NullBooleanField(blank=True, null=True, editable=False) # to save info during migration. not really used.
     is_active = models.BooleanField(_("Is active? (false means deleted group"),
@@ -184,7 +190,8 @@ class BaseGroup(Group):
             
     def send_mail_to_members(self, subject, htmlBody,
                              fail_silently=False, sender=None,
-                             context={}, content_object=None):
+                             context={}, content_object=None,
+                             reply_to=None):
         """
         Creates and sends an email to all members of a network using Django's
         EmailMessage.
@@ -198,6 +205,9 @@ class BaseGroup(Group):
         
         if sender == None:
             sender = '%s <%s@ewb.ca>' % (self.name, self.slug)
+            
+        if not reply_to:
+            reply_to = "%s@my.ewb.ca" % self.slug
             
         lang = 'en'
         try:
@@ -215,7 +225,8 @@ class BaseGroup(Group):
                   context=context,
                   shortname=self.slug,
                   lang=lang,
-                  content_object=content_object)
+                  content_object=content_object,
+                  reply_to=reply_to)
     
     def save(self, force_insert=False, force_update=False):
         # if we are updating a group, don't change the slug (for consistency)

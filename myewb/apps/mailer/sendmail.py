@@ -9,7 +9,7 @@ def send_mail(subject=None, txtMessage=None, htmlMessage=None,
               fromemail=None, recipients=None, shortname=None,
               priority=None, context={}, use_template=True,
               lang='en', cc=None, bcc=None,
-              content_object=None):
+              content_object=None, reply_to=None):
 
     # try to be backwards-compatible
     if htmlMessage and recipients == None:
@@ -69,6 +69,7 @@ def send_mail(subject=None, txtMessage=None, htmlMessage=None,
                              lang=lang,
                              cc=cc_string,
                              bcc=bcc_string,
+                             reply_to=reply_to,
                              message_id=message_id)
     else:
         e = Email.objects.create(recipients=recips,
@@ -80,6 +81,7 @@ def send_mail(subject=None, txtMessage=None, htmlMessage=None,
                              lang=lang,
                              cc=cc_string,
                              bcc=bcc_string,
+                             reply_to=reply_to,
                              message_id=message_id)
 
     if content_object:
