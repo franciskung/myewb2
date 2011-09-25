@@ -43,6 +43,9 @@ urlpatterns = patterns('profiles.views.profile',
     url(r'^(?P<username>[\w\._-]+)/work/$', 'work_records_index', name='work_records_index'),
     url(r'^(?P<username>[\w\._-]+)/work/new/$', 'new_work_record', name='new_work_record'),
     url(r'^(?P<username>[\w\._-]+)/work/(?P<work_record_id>\d+)/edit/$', 'edit_work_record', name='edit_work_record'),
+    
+    url(r'^(?P<username>[\w\._-]+)/groupemails/(?P<group_slug>[-\w]+)/on/$', 'enable_email', name='profile_group_enable_email',),
+    url(r'^(?P<username>[\w\._-]+)/groupemails/(?P<group_slug>[-\w]+)/off/$', 'disable_email', name='profile_group_disable_email',),
 
     url(r'^toolbar/(?P<action>[-\w]+)/(?P<toolbar_id>[-\w]+)/$', 'toolbar_action', name='profile_toolbar_action'),
     url(r'^toolbar/$', 'toolbar_action', name='profile_toolbar_action'), # never called. but needed to hack up with javascript later.
