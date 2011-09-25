@@ -51,6 +51,17 @@ class BaseGroupForm(forms.ModelForm):
     def clean_welcome_email(self):
         self.cleaned_data['welcome_email'] = self.cleaned_data['welcome_email'].strip()
         return self.cleaned_data['welcome_email']
+        
+    def clean_group_type(self):
+        if self.instance:
+            members = self.instance.members.count()
+        else:
+            members = 0
+        
+        if members > 150 and self.cleaned_data['group_type'] == 'd':
+            raise forms.ValidationError("Discussion groups cannot have more than 150 members; this group has %d members." % members)
+            
+        return self.cleaned_data['group_type']
     
     class Meta:
         abstract = True
