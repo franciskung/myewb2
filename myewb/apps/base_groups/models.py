@@ -157,8 +157,9 @@ class BaseGroup(Group):
     def get_absolute_url(self):
         return reverse('group_detail', kwargs={'group_slug': self.slug})
 
+    # returns list of member emails who have opted to receive emails from this list
     def get_member_emails(self):
-        members_with_emails = self.members.all().select_related(depth=1)
+        members_with_emails = self.members.filter(emails_enabled=True).select_related(depth=1)
         return [member.user.email for member in members_with_emails if member.user.email and not member.user.nomail]
 
     def add_member(self, user):
@@ -193,8 +194,8 @@ class BaseGroup(Group):
                              context={}, content_object=None,
                              reply_to=None):
         """
-        Creates and sends an email to all members of a network using Django's
-        EmailMessage.
+        Creates and sends an email to all members of a group who have opted to 
+        receive group emails.
         Takes in a a subject and a message and an optional fail_silently flag.
         Automatically sets:
         from_email: the sender param, or group_name <group_slug@ewb.ca>
@@ -378,6 +379,8 @@ class GroupMember(BaseGroupMember):
     # away = models.BooleanField(_('away'), default=False)
     # away_message = models.CharField(_('away_message'), max_length=500)
     # away_since = models.DateTimeField(_('away since'), default=datetime.now)
+
+    emails_enabled = models.BooleanField(default=True)
 
     objects = GroupMemberManager()
 
