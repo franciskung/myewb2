@@ -41,6 +41,17 @@ def send_to_watchlist(self):
            'event': None,
            'attachments': attachments
           }
+          
+    if topic.group.group_type == 'd':
+        sender = '"%s %s" <%s>' % (self.user.get_profile().first_name,
+                                   self.user.get_profile().last_name,
+                                   self.user.email)
+        reply_to = self.user.email
+            
+        topic.group.send_mail_to_members(topic.title, self.comment, sender=sender,
+                                        context=ctx, content_object=self,
+                                        reply_to=reply_to)
+        
     sender = 'myEWB <notices@my.ewb.ca>'
     recipients = set()
     
@@ -65,6 +76,9 @@ def send_to_watchlist(self):
     # but remove original poster
     if self.user.email in recipients:
         recipients.remove(self.user.email)
+    # also remove all people who've already been emailed (can this be more efficient?)
+    groupmembers = set(topic.group.get_member_emails())
+    recipients -= groupmembers
         
     messagebody = """<p>Hello</p>        
 
