@@ -194,7 +194,7 @@ if(!(-e "$path/running.txt"))
 		
 		if ($reply_to)
 		{
-		    $bulk->header('Reply-to', $reply_to);
+		    $bulk->ReplyTo($reply_to);
 		}
 		
 		# send the thing!
