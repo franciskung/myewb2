@@ -145,36 +145,37 @@ def revert_to_revision(request, title,
 
     if request.method == 'POST':
 
-        revision = int(request.POST['revision'])
+        if request.POST.get('revision', None):
+            revision = int(request.POST['revision'])
 
-        article_args = {'title': title}
-
-        group = None
-        if group_slug is not None:
-            try:
-                group = bridge.get_group(group_slug)
-            except ObjectDoesNotExist:
-                raise Http404
+            article_args = {'title': title}
+    
+            group = None
+            if group_slug is not None:
+                try:
+                    group = bridge.get_group(group_slug)
+                except ObjectDoesNotExist:
+                    raise Http404
+                
+                # permissions check
+                if not group.user_is_member(request.user, admin_override=True):
+                    return HttpResponseForbidden()
             
-            # permissions check
-            if not group.user_is_member(request.user, admin_override=True):
-                return HttpResponseForbidden()
-        
-            # @@@ use bridge instead
-            article_args.update({'content_type': get_ct(group),
-                                 'object_id': group.id})
-            
-        article = get_object_or_404(article_qs, **article_args)
-
-        if request.user.is_authenticated():
-            article.revert_to(revision, get_real_ip(request), request.user)
-        else:
-            article.revert_to(revision, get_real_ip(request))
-
-
-        if request.user.is_authenticated():
-            request.user.message_set.create(
-                message=u"The article was reverted successfully.")
+                # @@@ use bridge instead
+                article_args.update({'content_type': get_ct(group),
+                                     'object_id': group.id})
+                
+            article = get_object_or_404(article_qs, **article_args)
+    
+            if request.user.is_authenticated():
+                article.revert_to(revision, get_real_ip(request), request.user)
+            else:
+                article.revert_to(revision, get_real_ip(request))
+    
+    
+            if request.user.is_authenticated():
+                request.user.message_set.create(
+                    message=u"The article was reverted successfully.")
                 
         url = group.get_absolute_url()
         return redirect_to(request, url)
