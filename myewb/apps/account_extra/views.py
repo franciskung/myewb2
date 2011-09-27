@@ -75,7 +75,7 @@ def login_facebook(request):
         json = f.read()
         info = simplejson.loads(json)
         
-        if not info['verified']:
+        if not info.get('verified', None):
             return HttpResponse("sorry, your facebook account is not confirmed")
         
         user = User.extras.create_silent_user(info['email'])
