@@ -221,8 +221,11 @@ def add_post(group, author, subject, body):
     if not group.user_is_member(author):
         raise BounceException("You are not a member of this group; you can't post to it.")
     
+    if group.group_type != 'd':
+        raise BounceException("You can only post by email to discussion groups; this group is an announcement group.")
+    
     if group.members.count() > 50:
-        raise BounceException("You can only reply by email to small discussion groups (less than 50 people); this prevents mistaken emails or spam from being sent to our larger mailing lists.")
+        raise BounceException("You can only post by email to small discussion groups (less than 50 people); this prevents mistaken emails or spam from being sent to our larger mailing lists.")
 
     topic = GroupTopic.objects.create(group=group,
                                       send_as_email=True,
@@ -240,6 +243,9 @@ def add_post(group, author, subject, body):
 def add_reply(parent_object, group, author, body):
     if not group.user_is_member(author):
         raise BounceException("You are not a member of this group; you can't post to it.")
+    
+    if group.group_type != 'd':
+        raise BounceException("You can only reply by email to discussion groups; this group is an announcement group.")
     
     if group.members.count() > 50:
         raise BounceException("You can only reply by email to small discussion groups (less than 50 people); this prevents mistaken emails or spam from being sent to our larger mailing lists.")
