@@ -199,13 +199,13 @@ class TransactionForm(ModelForm):
     def clean_bank_date(self):
         bank_date = self.cleaned_data['bank_date']
         tdate = datetime.date.today()
-        pdate = tdate.month - 2
+#        pdate = tdate.month - 2
         
         if bank_date:
             if tdate < bank_date:
                 raise forms.ValidationError ("Cannot enter in a bank date in the future.")
-            if bank_date.month < pdate:
-                raise forms.ValidationError ("Cannot enter in a bank date from two months ago.")
+#            if bank_date.month < pdate:
+#                raise forms.ValidationError ("Cannot enter in a bank date from two months ago.")
         return bank_date
     
 #=======================================================================================
@@ -224,13 +224,13 @@ class IncomeForm(ModelForm):
     def clean_bank_date(self):
         bank_date = self.cleaned_data['bank_date']
         tdate = datetime.date.today()
-        pdate = tdate.month - 2
+#        pdate = tdate.month - 2
         
         if bank_date:
             if tdate < bank_date:
                 raise forms.ValidationError ("Cannot enter in a bank date in the future.")
-            if bank_date.month < pdate:
-                raise forms.ValidationError ("Cannot enter in a bank date from two months ago.")
+#            if bank_date.month < pdate:
+#                raise forms.ValidationError ("Cannot enter in a bank date from two months ago.")
         return bank_date
     
     def clean_category(self):
@@ -260,13 +260,13 @@ class IncomeEditForm(ModelForm):
     def clean_bank_date(self):
         bank_date = self.cleaned_data['bank_date']
         tdate = datetime.date.today()
-        pdate = tdate.month - 2
+#        pdate = tdate.month - 2
         
         if bank_date:
             if tdate < bank_date:
                 raise forms.ValidationError ("Cannot enter in a bank date in the future.")
-            if bank_date.month < pdate:
-                raise forms.ValidationError ("Cannot enter in a bank date from two months ago.")
+#            if bank_date.month < pdate:
+#                raise forms.ValidationError ("Cannot enter in a bank date from two months ago.")
         return bank_date
     
     def clean_category(self):
@@ -335,13 +335,13 @@ class ExpenditureForm(ModelForm):
     def clean_bank_date(self):
         bank_date = self.cleaned_data['bank_date']
         tdate = datetime.date.today()
-        pdate = tdate.month - 2
+#        pdate = tdate.month - 2
         
         if bank_date:
             if tdate < bank_date:
                 raise forms.ValidationError ("Cannot enter in a bank date in the future.")
-            if bank_date.month < pdate:
-                raise forms.ValidationError ("Cannot enter in a bank date from two months ago.")
+#            if bank_date.month < pdate:
+#                raise forms.ValidationError ("Cannot enter in a bank date from two months ago.")
         return bank_date
     
     def clean_category(self):
@@ -370,12 +370,12 @@ class ExpenditureEditForm(ModelForm):
     def clean_bank_date(self):
         bank_date = self.cleaned_data['bank_date']
         tdate = datetime.date.today()
-        pdate = tdate.month - 2
+#        pdate = tdate.month - 2
 
         if tdate < bank_date:
             raise forms.ValidationError ("Cannot enter in a bank date in the future.")
-        if bank_date.month < pdate:
-            raise forms.ValidationError ("Cannot enter in a bank date from two months ago.")
+#        if bank_date.month < pdate:
+#            raise forms.ValidationError ("Cannot enter in a bank date from two months ago.")
         return bank_date
     
     def clean_category(self):
@@ -435,12 +435,12 @@ class DonationEditForm(ModelForm):
     def clean_bank_date(self):
         bank_date = self.cleaned_data['bank_date']
         tdate = datetime.date.today()
-        pdate = tdate.month - 2
+#        pdate = tdate.month - 2
 
         if tdate < bank_date:
             raise forms.ValidationError ("Cannot enter in a bank date in the future.")
-        if bank_date.month < pdate:
-            raise forms.ValidationError ("Cannot enter in a bank date from two months ago.")
+#        if bank_date.month < pdate:
+#            raise forms.ValidationError ("Cannot enter in a bank date from two months ago.")
         return bank_date
 
 
@@ -455,12 +455,12 @@ class DonationForm(ModelForm):
     def clean_bank_date(self):
         bank_date = self.cleaned_data['bank_date']
         tdate = datetime.date.today()
-        pdate = tdate.month - 2
+#        pdate = tdate.month - 2
 
         if tdate < bank_date:
             raise forms.ValidationError ("Cannot enter in a bank date in the future.")
-        if bank_date.month < pdate:
-            raise forms.ValidationError ("Cannot enter in a bank date from two months ago.")
+#        if bank_date.month < pdate:
+#            raise forms.ValidationError ("Cannot enter in a bank date from two months ago.")
         return bank_date
     
 #=======================================================================================
