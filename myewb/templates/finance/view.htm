@@ -15,7 +15,7 @@
 	<br /><br />
 	<table class="cellpadding8 standard" width="900" style="margin: 0 auto;">
 		<tr>
-		<th>Account</th>
+		<th>Location</th>
 		<th>Bank Date</th>
 		<th>Category</th>
 		<th>Description</th>
@@ -27,7 +27,7 @@
 		</tr>
 	{% for t in trans %}
 		<tr>
-		<td>{% ifequal t.account "CH" %}Chapter{% else %}National{% endifequal %}</td>
+		<td>{% ifequal t.account "CH" %}Chapter{% else %}National Office{% endifequal %}</td>
 		<td>{{t.bank_date}}</td>
 		<td>{{t.category.name}}</td>
 		<td>{{t.description}}</td>
