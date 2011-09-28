@@ -164,15 +164,22 @@ class BaseGroup(Group):
 
     def add_member(self, user):
         """
-        Adds a member to a group.
-        Retained for backwards compatibility with request_status days.
-        Wait, should I not be actively using this?  Because it's a very useful function =)
+        Adds a member to a group.  If the the user is already a member, doesn't do anything.
         """
-        member = GroupMember.objects.filter(user=user, group=self)
-        if member.count() > 0:
-            return member[0]
+        members = GroupMember.objects.filter(user=user, group=self)
+        if members.count() > 0:
+            member = members[0]
         else:
-            return GroupMember.objects.create(user=user, group=self)
+            member = GroupMember.objects.create(user=user, group=self)
+            
+        # this check assumes the *only* way to ever add a member to a group 
+        # is to call this method...! otherwise it would be better implemented
+        # as a listener on GroupMember object creation.
+        if self.group_type == 'd' and self.member_users.count() > 150:
+            self.group_type = 'a'
+            self.save()
+            
+        return member
     
     def add_email(self, email):
         """
