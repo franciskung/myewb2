@@ -221,7 +221,7 @@ def add_post(group, author, subject, body):
     if not group.user_is_member(author):
         raise BounceException("You are not a member of this group; you can't post to it.")
     
-    if group.group_type != 'd':
+    if not group.user_can_email(author):
         raise BounceException("You can only post by email to discussion groups; this group is an announcement group.")
     
     if group.members.count() > 50:
@@ -244,7 +244,7 @@ def add_reply(parent_object, group, author, body):
     if not group.user_is_member(author):
         raise BounceException("You are not a member of this group; you can't post to it.")
     
-    if group.group_type != 'd':
+    if not group.user_can_email(author):
         raise BounceException("You can only reply by email to discussion groups; this group is an announcement group.")
     
     if group.members.count() > 50:

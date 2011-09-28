@@ -149,6 +149,18 @@ class BaseGroup(Group):
                 return True
         
         return False
+ 
+    # returns whether this user can email the discussion group
+    # (does not check for admins emailing an announcement group)
+    def user_can_email(self, user):
+        if self.user_is_member(user) :
+            if self.group_type == 'd':
+                return True
+            
+#            if self.group_type == 'a' and self.user_is_admin(user):
+#                return True
+        
+        return False
     
     # subclasses should override this...
     def can_bulk_add(self, user):

@@ -227,14 +227,14 @@ def new_topic(request, group_slug=None, bridge=None):
                             sender = '"EWB-ISF Canada" <info@ewb.ca>'
                             sender_email = 'info@ewb.ca'
                     
-                    if group.group_type == 'd' and not sender_valid:
+                    if group.user_can_email(request.user) and not sender_valid:
                         sender_valid = True
                         sender = '"%s %s" <%s>' % (request.user.get_profile().first_name,
                                                    request.user.get_profile().last_name,
                                                    request.user.email)
                         sender_email = request.user.email
                     
-                    if topic.send_as_email or group.group_type == 'd':
+                    if topic.send_as_email or group.user_can_email(request.user):
                         if sender_valid:
                             request.user.message_set.create(message=escape("Sent as %s" % sender))
                             topic.send_email(sender=sender, sender_email=sender_email)
