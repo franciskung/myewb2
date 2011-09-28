@@ -177,9 +177,9 @@ def parse_body(msg):
         
         for part in msg.get_payload():
             if part.get_content_type() == 'text/html':
-                html = part.get_payload()
+                html = part.get_payload(decode=True)
             elif part.get_content_type() == 'text/plain':
-                txt = part.get_payload()
+                txt = part.get_payload(decode=True)
                 
         if html:
             body = html
