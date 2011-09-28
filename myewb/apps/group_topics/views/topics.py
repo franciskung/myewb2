@@ -404,6 +404,7 @@ def topics_by_user(request, username):
                               {"topics": topics,
                                "group": None,
                                "mode": "byuser-%s" % username,
+                               "adminovision": False,
                                "hideheader": True},
                               context_instance=RequestContext(request)
                              )
@@ -435,6 +436,7 @@ def watchlist(request, list_id):
                               {"topics": topics,
                                "group": None,
                                "mode": "watchlist-%s" % list_id,
+                               "adminovision": False,
                                "hideheader": True},
                               context_instance=RequestContext(request)
                              )
