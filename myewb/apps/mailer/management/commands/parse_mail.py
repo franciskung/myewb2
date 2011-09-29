@@ -16,6 +16,7 @@ from lxml.html.clean import clean_html, autolink_html
 import settings
 import mailbox
 import re
+import codecs
 
 class Command(NoArgsCommand):
     help = "Parses all incoming mail"
@@ -187,8 +188,14 @@ def parse_body(msg):
             body = txt.replace("\n", "<br/>\n")
     
     else:
-        body = msg.get_payload()
+        body = msg.get_payload(decode=True)
         body = body.replace("\n", "<br/>\n")
+
+    try:
+        decoder = codecs.getdecoder(msg.get_content_charset())
+        body = decoder(body)[0]
+    except:
+        pass
     
     # strip out reply text
     # http://stackoverflow.com/questions/278788/parse-email-content-from-quoted-reply may be a better way
