@@ -75,10 +75,8 @@ def events_upcoming(user, model_instance):
     if not helpers.is_visible(user, model_instance):
         return render_to_response('denied.html', context_instance=RequestContext(request))
         
-    events = Event.objects.filter(content_type = ContentType.objects.get_for_model(model_instance),
-                                  object_id = model_instance.id)
-    events = events.filter(start__gte=datetime.today())
-    events = events.order_by('start', 'end')
+    events = Event.objects.upcoming_for(model_instance)
+        
     events = events[:5]  # TODO: non-hard-code?
 
     return {"events": events}

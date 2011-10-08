@@ -15,7 +15,6 @@ class ThemeSwitchMiddleware(object):
             settings.TEMPLATE_DIRS_ORIGINAL = settings.TEMPLATE_DIRS
         
         dirs = list(settings.TEMPLATE_DIRS_ORIGINAL)
-        print "inserting", theme
         dirs.insert(0, os.path.join(settings.THEMESWITCH_BASE_DIR, theme))
         settings.TEMPLATE_DIRS = tuple(dirs)
         

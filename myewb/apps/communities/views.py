@@ -58,6 +58,9 @@ def community_detail(request, group_slug, form_class=CommunityForm, template_nam
         edit_template_name=EDIT_TEMPLATE):
     return group_detail(request, group_slug, Community, GroupMember, form_class, template_name, edit_template_name, DEFAULT_OPTIONS)
 
+def community_summary(request, group_slug):
+    return group_summary(request, group_slug, Community)
+
 @group_admin_required()
 def edit_community(request, group_slug, form_class=CommunityForm, template_name=EDIT_TEMPLATE,
         detail_template_name=DETAIL_TEMPLATE):

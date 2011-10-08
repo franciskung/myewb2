@@ -61,6 +61,9 @@ def network_detail(request, group_slug, form_class=NetworkForm, template_name=DE
     network = get_object_or_404(Network, slug=group_slug)
     return group_detail(request, group_slug, Network, GroupMember, form_class, template_name, edit_template_name, DEFAULT_OPTIONS)
 
+def network_summary(request, group_slug):
+    return group_summary(request, group_slug, Network)
+
 @group_admin_required()
 def edit_network(request, group_slug, form_class=NetworkForm, template_name=EDIT_TEMPLATE,
         detail_template_name=DETAIL_TEMPLATE):

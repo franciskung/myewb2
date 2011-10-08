@@ -7,6 +7,7 @@ from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 
 from lxml.html.clean import clean_html, autolink_html, Cleaner
+from datetime import datetime
 
 from base_groups.helpers import user_can_adminovision, user_can_execovision
 from base_groups.models import BaseGroup
@@ -49,6 +50,13 @@ class EventManager(models.Manager):
         Returns all posts belonging to a given group
         """
         return self.get_query_set().filter(parent_group=group)
+
+    def upcoming_for(self, obj):
+        events = self.get_query_set().filter(content_type = ContentType.objects.get_for_model(obj),
+                                             object_id = obj.id)
+        events = events.filter(start__gte=datetime.today())
+        events = events.order_by('start', 'end')
+        return events
     
 class Event(models.Model):
     ''' Simple event-tag with owner and content_object + meta_data '''

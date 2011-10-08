@@ -8,6 +8,8 @@ Last modified on 2009-12-09
 @author Joshua Gorner, Benjamin Best, Francis Kung
 """
 
+from datetime import datetime, timedelta
+
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
@@ -207,7 +209,45 @@ def group_detail(request, group_slug, model=None, member_model=None,
         },
         context_instance=RequestContext(request)
     )
+
+# meant to be an ajax call...!
+@visibility_required()
+def group_summary(request, group_slug, model=None):
+    if model is None:
+        # find group type and redirect
+        group = get_object_or_404(BaseGroup, slug=group_slug)
+        return HttpResponseRedirect(reverse("%s_summary" % group.model.lower(), kwargs={'group_slug': group_slug}))
+
+    group = get_object_or_404(model, slug=group_slug)
     
+    twoweeks = datetime.now() - timedelta(weeks=2)
+    activity_since = request.user.last_login
+    if activity_since < twoweeks:
+        activity_since = twoweeks
+        
+    nextweek = datetime.now() + timedelta(weeks=1)
+    
+    recent_posts = group.topics.filter(last_reply__gt=activity_since)
+    champ_entries = group.activity_set.filter(modified_date__gt=activity_since)
+    new_members = group.members.filter(joined__gt=activity_since)
+    
+    # ugly dependency.
+    from workspace.models import Workspace, WorkspaceFile
+    workspace = Workspace.objects.get_for_object(group)
+    files_uploaded = WorkspaceFile.objects.filter(workspace=workspace, modified__gt=activity_since)
+    
+    from events.models import Event
+    events = Event.objects.upcoming_for(group).filter(start__lt=nextweek)
+    
+    return render_to_response('base_groups/group_summary.html',
+                              {'group': group,
+                               'recent_posts': recent_posts,
+                               'champ_entries': champ_entries,
+                               'new_members': new_members,
+                               'files_uploaded': files_uploaded,
+                               'events': events},
+                              context_instance=RequestContext(request))
+
 @group_admin_required()
 def edit_group(request, group_slug, model=None, member_model=None,
                form_class=None, template_name=None, detail_template_name=None,

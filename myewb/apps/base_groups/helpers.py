@@ -57,6 +57,8 @@ def group_url_patterns(model, *args):
         # POST - delete group
         url(r'^(?P<group_slug>[-\w]+)/delete/$', 'delete_%s' % name, name='delete_%s' % name,),
 
+        url(r'^(?P<group_slug>[-\w]+)/summary/$', '%s_summary' % name, name='%s_summary' % name,),
+
         # GET - members index
         # POST - create member
         url(r'^(?P<group_slug>[-\w]+)/members/$', 'members_index', name='%s_members_index' % name,),

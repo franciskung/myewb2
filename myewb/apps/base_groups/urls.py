@@ -36,6 +36,8 @@ urlpatterns = patterns('base_groups.views.groups',
     url(r'^(?P<group_slug>[-\w]+)/edit/$', 'edit_group', name='edit_group',),
     # POST - delete group
     url(r'^(?P<group_slug>[-\w]+)/delete/$', 'delete_group', name='delete_group',),
+    
+    url(r'^(?P<group_slug>[-\w]+)/summary/$', 'group_summary', name='group_summary',),
 )
 
 urlpatterns += patterns('base_groups.views.members', 
