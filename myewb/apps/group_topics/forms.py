@@ -61,7 +61,7 @@ class GroupTopicForm(forms.ModelForm):
             del self.fields['send_as_email']
             del self.fields['sender']
             
-            if group.group_type == 'a':
+            if not group or group.group_type == 'a':
                 del self.fields['reply_to']
 
         #self.fields['parent_group'].initial = group
