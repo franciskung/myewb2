@@ -102,6 +102,8 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.transaction.TransactionMiddleware',
     'siteutils.online_middleware.OnlineUsers',
     'siteutils.mobile_detection.MobileDetectionMiddleware',
+    'themeswitch.middleware.ThemeSwitchMiddleware',
+#    'themeswitch.middleware.ThemeSwitchTrackingMiddleware',
     # 'djangologging.middleware.LoggingMiddleware',
     #'siteutils.helpers.SQLLogToConsoleMiddleware',
     #'siteutils.profile_middleware.ProfileMiddleware',
@@ -112,6 +114,7 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'urls'
 
 TEMPLATE_DIRS = (
+    os.path.join(PROJECT_ROOT, "templates/legacy"),
     os.path.join(PROJECT_ROOT, "templates"),
     os.path.join(PINAX_ROOT, "templates", PINAX_THEME),
 )
@@ -223,6 +226,7 @@ INSTALLED_APPS = (
     'events',
     'whiteboard',
     'siteutils',
+    'themeswitch',
     
     # MyEWB apps
     'apply',
@@ -273,6 +277,9 @@ CONTACT_EMAIL = "info@my.ewb.ca"
 SITE_NAME = "myEWB"
 LOGIN_URL = "/account/login/"
 LOGIN_REDIRECT_URLNAME = "home"
+
+THEMESWITCH_BASE_DIR = os.path.join(PROJECT_ROOT, "templates")
+THEMESWITCH_DEFAULT_THEME = 'myewb2'
 
 # probably want to make this memcached in local_settings for production use =) 
 CACHE_BACKEND = 'dummy://'
