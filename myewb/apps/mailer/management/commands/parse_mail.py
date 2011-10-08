@@ -16,6 +16,7 @@ from lxml.html.clean import clean_html, autolink_html
 import settings
 import mailbox
 import re
+import codecs
 
 class Command(NoArgsCommand):
     help = "Parses all incoming mail"
@@ -177,9 +178,9 @@ def parse_body(msg):
         
         for part in msg.get_payload():
             if part.get_content_type() == 'text/html':
-                html = part.get_payload()
+                html = part.get_payload(decode=True)
             elif part.get_content_type() == 'text/plain':
-                txt = part.get_payload()
+                txt = part.get_payload(decode=True)
                 
         if html:
             body = html
@@ -187,8 +188,14 @@ def parse_body(msg):
             body = txt.replace("\n", "<br/>\n")
     
     else:
-        body = msg.get_payload()
+        body = msg.get_payload(decode=True)
         body = body.replace("\n", "<br/>\n")
+
+    try:
+        decoder = codecs.getdecoder(msg.get_content_charset())
+        body = decoder(body)[0]
+    except:
+        pass
     
     # strip out reply text
     # http://stackoverflow.com/questions/278788/parse-email-content-from-quoted-reply may be a better way
@@ -221,8 +228,11 @@ def add_post(group, author, subject, body):
     if not group.user_is_member(author):
         raise BounceException("You are not a member of this group; you can't post to it.")
     
+    if not group.user_can_email(author):
+        raise BounceException("You can only post by email to discussion groups; this group is an announcement group.")
+    
     if group.members.count() > 50:
-        raise BounceException("You can only reply by email to small discussion groups (less than 50 people); this prevents mistaken emails or spam from being sent to our larger mailing lists.")
+        raise BounceException("You can only post by email to small discussion groups (less than 50 people); this prevents mistaken emails or spam from being sent to our larger mailing lists.")
 
     topic = GroupTopic.objects.create(group=group,
                                       send_as_email=True,
@@ -240,6 +250,9 @@ def add_post(group, author, subject, body):
 def add_reply(parent_object, group, author, body):
     if not group.user_is_member(author):
         raise BounceException("You are not a member of this group; you can't post to it.")
+    
+    if not group.user_can_email(author):
+        raise BounceException("You can only reply by email to discussion groups; this group is an announcement group.")
     
     if group.members.count() > 50:
         raise BounceException("You can only reply by email to small discussion groups (less than 50 people); this prevents mistaken emails or spam from being sent to our larger mailing lists.")

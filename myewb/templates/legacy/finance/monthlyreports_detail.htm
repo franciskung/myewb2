@@ -19,9 +19,9 @@
 	</table>
 	<br /><br />
 	{% if current %}
-		Account: Chapter Account<br /><br />
+		Location: Chapter Bank Account<br /><br />
 	{% else %}
-		Account: {% ifequal monthly_report.type "CH" %} Chapter Account {% else %} National Office Account {% endifequal %}<br /><br />
+		Location: {% ifequal monthly_report.type "CH" %} Chapter Bank Account {% else %} National Office {% endifequal %}<br /><br />
 		Submitted by: {{monthly_report.creator}}<br />
 		Submitted on: {{monthly_report.enter_date}}<br /><br />
 	{% endif %}

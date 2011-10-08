@@ -149,6 +149,18 @@ class BaseGroup(Group):
                 return True
         
         return False
+ 
+    # returns whether this user can email the discussion group
+    # (does not check for admins emailing an announcement group)
+    def user_can_email(self, user):
+        if self.user_is_member(user) :
+            if self.group_type == 'd':
+                return True
+            
+#            if self.group_type == 'a' and self.user_is_admin(user):
+#                return True
+        
+        return False
     
     # subclasses should override this...
     def can_bulk_add(self, user):
@@ -164,15 +176,22 @@ class BaseGroup(Group):
 
     def add_member(self, user):
         """
-        Adds a member to a group.
-        Retained for backwards compatibility with request_status days.
-        Wait, should I not be actively using this?  Because it's a very useful function =)
+        Adds a member to a group.  If the the user is already a member, doesn't do anything.
         """
-        member = GroupMember.objects.filter(user=user, group=self)
-        if member.count() > 0:
-            return member[0]
+        members = GroupMember.objects.filter(user=user, group=self)
+        if members.count() > 0:
+            member = members[0]
         else:
-            return GroupMember.objects.create(user=user, group=self)
+            member = GroupMember.objects.create(user=user, group=self)
+            
+        # this check assumes the *only* way to ever add a member to a group 
+        # is to call this method...! otherwise it would be better implemented
+        # as a listener on GroupMember object creation.
+        if self.group_type == 'd' and self.member_users.count() > 150:
+            self.group_type = 'a'
+            self.save()
+            
+        return member
     
     def add_email(self, email):
         """

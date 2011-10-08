@@ -190,11 +190,11 @@ if(!(-e "$path/running.txt"))
 		}
 
 		# add our own custom message-id
-		$bulk->header('Message-ID', $message_id);
+		$bulk->header('Message-ID', '<' . $message_id . '>');
 		
 		if ($reply_to)
 		{
-		    $bulk->header('Reply-to', $reply_to);
+		    $bulk->ReplyTo($reply_to);
 		}
 		
 		# send the thing!
@@ -229,11 +229,12 @@ else
 	
 	open(FILEHANDLE, "< $path/running.txt");
 	@info = stat FILEHANDLE;
-	@moddate = localtime($info[9]);
-	@nowdate = localtime();
+#	@moddate = localtime($info[9]);
+#	@nowdate = localtime();
 	
 	# Deal with stale instances (ie, running for over an hour)
-	if(($nowdate[2] - $moddate[2]) >= 2)
+#	if(($nowdate[2] - $moddate[2]) >= 2)
+        if (time() - $info[9] > 900)
 	{
 		# remove the marker, so the next time this script is called it will run
 		rename "$path/running.txt", "$path/notrunning.txt";
