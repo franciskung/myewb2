@@ -1,0 +1,56 @@
+<style>
+	.dashboard-detail { display: none; }
+</style>
+
+<h2 class="chapterspecific-title h2bold">{{ group.name }} aa</h2>
+
+<div class="grid_3 alpha">
+	<div class="chapterspecific-branch border-right">
+
+	<ul id="dashboard_links">
+		<li><a href="#" id="dashboard_new_posts" class="current">New posts <span class="numero">{{ recent_posts.count }}</span></a></li>
+                <li><a href="#" id="dashboard_champ_entries">New champ entries <span class="numero">{{ champ_entries.count }}</span></a></li>
+                <li><a href="#" id="dashboard_files_uploaded">Updated files <span class="numero">{{ files_uploaded.count }}</span></a></li>
+                <li><a href="#" id="dashboard_events">Events this week <span class="numero">{{ events.count }}</span></a></li>
+                <li><a href="#" id="dashboard_new_members">New members <span class="numero">{{ new_members.count }}</span></a></li>
+	</ul>
+	</div>
+
+</div>
+
+<div class="grad_6 omega">
+<div id="new_posts" class="dashboard-detail" style="display: block;">
+    {% for p in recent_posts|slice:":5" %}
+        <a href="{{ p.get_absolute_url }}">{{ p }}</a> ({{ p.creator.visible_name }})<br/>
+    {% endfor %}
+</div>
+
+<div id="champ_entries" class="dashboard-detail">
+    {% for p in champ_entries|slice:":5" %}
+        <a href="{{ p.get_absolute_url }}">{{ p.name }}</a><br/>
+    {% endfor %}
+</div>
+
+<div id="new_members" class="dashboard-detail">
+    {% for p in new_members|slice:":5" %}
+        <a href="{{ p.user.get_absolute_url }}">{{ p.user.visible_name }}</a><br/>
+    {% endfor %}
+</div>
+
+<div id="files_uploaded" class="dashboard-detail">
+    {% for p in files_uploaded|slice:":5" %}
+        <a href="{% url workspace_browse p.workspace.id %}">{{ p.get_filename }}</a><br/>
+    {% endfor %}
+</div>
+
+<div id="events" class="dashboard-detail">
+    {% for p in events|slice:":5" %}
+        <a href="{{ p.get_absolute_url }}">{{ p.title }}</a><br/>
+    {% endfor %}
+</div>
+
+
+
+</div>
+<div class="clear"></div>
+

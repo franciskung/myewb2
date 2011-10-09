@@ -1,0 +1,49 @@
+<div class="container_12 fourth-container">
+
+    <div class="grid_4">
+    
+
+      <h3>Essential EWB</h3>
+      
+      
+      {% include "components/essentialewb.html" %}
+        
+      
+      </ul>
+
+
+    
+    </div>
+
+    <div class="grid_4">
+    
+      <h3>Who's Online</h3>
+    
+
+    
+      {% include "whosonline.html" %}
+    
+    </div>
+    
+    <div class="grid_4">
+    
+      <h3>Meta</h3>
+
+      <ul>
+        <li>Logged in as <a href="{% url profile_detail user %}" >{{ user.visible_name }}</a> &mdash; <a href="{% url acct_logout %}">Logout</a></li>
+        <br/>
+        <li><a href="#">Fran&ccedil;ais</a></li>
+        <li><a href="#">Change time zone ({% if detected_timezone %}{{detected_timezone}}{% endif %})</a></li>
+        <br/>
+        <li><a href="#">Terms of Use</a></li>
+        <li><a href="#">Privacy Policy</a></li>
+        <li>&copy; 2005-11 <a href="#">EWB-ISF Canada</a></li>
+        
+      
+      </ul>
+
+    
+    </div>
+
+
+  </div>

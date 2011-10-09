@@ -1,524 +1,229 @@
 {% load i18n %}
 {% load git_revision %}
 {% load avatar_tags %}
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}" xml:lang="{{ LANGUAGE_CODE }}" lang="{{ LANGUAGE_CODE }}">
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-        <title>{% if SITE_NAME %}{{ SITE_NAME }} &raquo; {% endif %}{% block head_title %}{% endblock %}</title>
-
-        <link rel="stylesheet" href="{{ STATIC_URL }}css/uni-form/uni-form.css" />    
-        <link rel="stylesheet" href="{{ STATIC_URL }}css/uni-form/default.uni-form.css" />            
-
-		<link rel="stylesheet" href="{{ STATIC_URL }}pinax/css/facebox.css" />
-		<link rel="stylesheet" href="{{ STATIC_URL }}pinax/css/accounts.css" />
-        <link rel="stylesheet" href="{{ STATIC_URL }}css/toolbars.css" />    
-		<script src="{{ STATIC_URL }}/js/jquery.js" type="text/javascript"></script>
-		<script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}pinax/js/facebox.js"></script>
-		
-		{% block extra_head_base %}
-		<link rel="SHORTCUT ICON" href="{{ STATIC_URL}}favicon.ico" />
-		<link rel="stylesheet" href="{{ STATIC_URL }}pinax/css/topics.css" />
-		<link rel="stylesheet" href="{{ STATIC_URL }}/css/social_project.css" />
-		<script type="text/javascript" src="{{ STATIC_URL }}pinax/js/topics.js"></script>
-		<script type="text/javascript" src="{{ STATIC_URL }}base.js"></script>
-		{% block extra_head %}{% endblock %}
-		<link rel="stylesheet" href="{{ STATIC_URL }}templates/myewb2/css/myewb2.css?d=20100629" />
-
-		<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.scrollTo-min.js"></script>		
-		
-		<script type="text/javascript" src="{{ STATIC_URL }}js/jquery-ui.js"></script>
-        <link rel="stylesheet" href="{{ STATIC_URL }}css/jquery-ui.css" />
+<!doctype html>
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
 
 
-		<link rel="stylesheet" href="{{ STATIC_URL }}css/myewb2-posts.css?d=20100629" /> 
-		<link rel="stylesheet" href="{{ STATIC_URL }}css/segmented_control.css" />
-		
-		
-		<script type="text/javascript">
-		
-//  External links in posts, etc., should open in a new window    
-$(document).ready(function(){
-	$(".textbody a[ href^='http']").attr('target','_blank');
-	
-	$(".openlinks a").attr('target','_blank');
-});
-		
-		
-        $(document).ready(function() {
-        {% block frontpagerightJS %}
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-          	  
-        {% endblock frontpagerightJS %}
-        });
-        
-	$(document).ready(function() {
-        if (jQuery.browser.msie) {
-           if(parseInt(jQuery.browser.version) == 6) {
-                $('#ie6alert').html('<div>        <span>Uhoh.</span> Looks like you\'re using Internet Explorer 6. It\'s pretty sketchy with myEWB, so we\'d suggest upgrading to <a href="http://getfirefox.com" target="_blank" title="It\'s great.">Firefox</a>, <a href="http://www.google.com/chrome" target="_blank" title="It\'s great too.">Chrome</a>, or <a href="http://www.microsoft.com/windows/internet-explorer/default.aspx" target="_blank" title="...but preferably, one of the first two. :)">Internet Explorer 8</a>. Sorry!    </div>');
-                $('#ie6alert').show();
-           }
-        }
-    });
-        
-        
-            function install_cheers() {
-                $('.cheers').unbind('click');
-                
-                $('.cheers').click(function() {
-                    var cheerslink = $(this);
-                    $.get($(this).attr('href'), function(data) {
-                        $('.cheerscount', cheerslink.parent()).html(data);
-                        cheerslink.hide();
-                    });
-                    return false;
-                });
-            }
-            $().ready(function() {
-                install_cheers();
-            });
+	<title>{% if SITE_NAME %}{{ SITE_NAME }} &raquo; {% endif %}{% block head_title %}{% endblock %}</title>
+	<meta name="description" content="">
+	<meta name="author" content="">
 
-		</script>
-		{% endblock %}
-		
-		
-		<script type="text/javascript" src="{{ STATIC_URL }}tiny_mce/jquery.tinymce.js"></script> 
-		{# didn't seem to work well with browser caching when added down the page #}
+	<meta name="viewport" content="width=device-width,initial-scale=1">
 
-		<script type="text/javascript" src="{{ STATIC_URL }}tiny_mce/tiny_mce.js"></script> 
-		{# doubledeclaration re: http://tinymce.moxiecode.com/punbb/viewtopic.php?id=21343 #}
-		{# TODO: this should be specifically loaded only when needed #}
-    </head>
+	<link rel="stylesheet" href="{{ STATIC_URL }}templates/myewb2/css/newstyle.css">
+	<link rel="stylesheet" href="{{ STATIC_URL }}templates/myewb2/css/960.css">
 
-    <body id="bodybackground" class="{% block body_class %}{% endblock %}" style='background: #ffffff; padding: 0px; margin: 0;'>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="{{ STATIC_URL }}templates/myewb2/js/libs/jquery-1.6.2.min.js"><\/script>')</script>
+	<script src="{{ STATIC_URL }}templates/myewb2/js/libs/modernizr-2.0.6.min.js"></script>
 
-    {% include "themeswitch/themeswitch.html" %}
-    
-{% comment %}
-	   	<div style='margin-left: {#280px#}380px; {#margin-right: 295px; #}height: 55px; padding: 8px 0 0 0; font-size: 14px; {#text-align: center;#}line-height: 2em;'> 
-{% endcomment %}
-    <div style='float: left; height: 65px; width: 230px; text-align: center; text-align: center;'>
-		<a href="{% url home %}"><img src="{{ STATIC_URL }}images/logos/myewb.png" alt="Engineers Without Borders" border="0" /></a>
-   	</div>
-    <div style='float: right; height: 65px; width: 230px; margin-right: 15px; text-align: center;'>
-		{#<a href="{% url home %}"><img src="{{ STATIC_URL }}images/logos/ewb.png" alt="Engineers Without Borders" border="0" /></a>#}
-    	{% if not user.is_authenticated %}
-    	    <div style="padding: 20px 0;">
-		        <a href="{% url acct_login %}?url={{request.path}}">{% trans "Login" %}</a> or 
-			    <a href="{% url acct_signup %}">{% trans "Sign up" %}</a>
-			</div>
-		{% else %}
-	   		<div style="padding-top: 5px; text-align: left; display: inline-block;">
-		        <div style='height: 60px; width: 60px; float: left;'>
-		            {% avatar user 60 %}
-		        </div>
-	        
-		        <div style='margin-left: 70px;'>
-		            <div style="height: 1.3em; overflow: hidden;">
-			        <a href="{% url profile_detail user %}" style='text-decoration: none; font-weight: bold;'>
-			            {{ user.visible_name }}
-			        </a>
-			        </div>
-	
-			        <div style='height: 5px;'>&nbsp;</div>
-			        <a href="{% url profile_detail user %}" style='text-decoration: none; font-size: 12px;'>
-			            Edit My Profile
-			        </a><br/>
-			        <a href="{% url acct_logout %}" style='text-decoration: none; font-size: 12px;'>
-			            Sign Out
-			        </a><br/>
-		        </div>
-		        <br style='clear: left;'/>
-			</div>
-		{% endif %}
-		
-   	</div>
-   	
-   	<div style='height: 65px; margin: 0 250px 0 265px; text-align: center;'>
-   	<div style='height: 65px; padding: 4px 0 0 0; font-size: 14px; line-height: 2em; display: inline-block; text-align: left;'>
-   		<input type="text" style="width: 60%; color: #d0d0d0; margin-top: 3px; float: right;" value="search"/>
-   		<div>Go to my...</div>
-   		<div style='border: 1px solid #ff7200; background: #ffb90f; height: 2em; display: inline-block; -moz-border-radius: 1em; -webkit-border-radius: 1em; padding: 0 5px;' id="menubar">
-   		<a href="{% url home %}" style='border-right: 1px solid #ff7200; padding: 0px 10px;'>Home</a> 
-   		<a href="{% url topic_list %}" style='border-right: 1px solid #ff7200; padding: 0px 10px;'>Discussions</a> 
-   		<a href="{% url communities_index %}" style='border-right: 1px solid #ff7200; padding: 0px 10px;'>Groups</a> 
-   		<a href="{% url events_all %}" style='border-right: 1px solid #ff7200; padding: 0px 10px;'>Events</a> 
-   		<a href="{% url applications %}" style='padding: 0px 10px;'>Volunteer &amp; Apply</a> 
-   		</div> 
-   	</div>
-   	</div>
-   	<style>
-   	/*
-   		#menubar a {
-   			font-weight: bold;
-   		}
-   		*/
-   	</style>
-   	
-   	{% comment %}
-    <div style='{#float: left; #}height: 65px; width: 300px; text-align: center;'>
-		<a href="{% url home %}"><img src="{{ STATIC_URL }}images/logos/title-graphic.png" alt="Engineers Without Borders" border="0" /></a>
-   	</div>
-   	{% endcomment %}
-   	
-   	<br style="clear: both;"/>
-   	
-   	<div style='float: left; width: 250px; margin-left: 10px;' id="toolbarcolumn_left">
-			
-    	<div style="padding: 10px; border: 1px solid #ffb90f; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; background: #f0f0f0; margin-bottom: 15px;">
-                {% block toolbar_left %}
-                {% endblock %}
-			</div>
-	</div>
-	
-	        	{% block subnav_base %}
-		<div style="margin: 0px 0px 0px 315px; padding: -1em;">
-	        	
-	        	{% block subnav %}&nbsp;{% endblock %}
-	        	
-	        </div>
-	        	{% endblock %}
-	{% block body_base %}
-	<div style="margin: 5px 0px 20px 280px; padding: 10px; border: 1px solid #d0d0d0; border-right: 0; -moz-border-radius-topleft: 0.5em; -moz-border-radius-bottomleft: 0.5em; -webkit-border-top-left-radius: 0.5em; -webkit-border-bottom-left-radius: 0.5em;">
-		{% block body %}
-		{% endblock %}		
-	</div>
+	{% block extra_head %}
 	{% endblock %}
-	
-   	
-{% comment %}
-    	<div style='width: 80%; margin: 0 auto;'>
-    		<div style=
-    	
-    		<div style='width: 20%; float: left; padding-top: 10px; color: #ffffff; font-weight: bold; font-size: 1.5em; font-family: verdana, sans serif;'>
-    			<a href="{% url home %}" style='color: #ffffff; text-decoration: none;'>ewbbook</a>
-{#    			[fr] [msg] [not] #}
-    		</div>
-    		<div style='margin-left: 20%; width: 80%; background: #627aad; border: 1px solid #1d4088; border-bottom: 0; height: 30px; position: relative; top: 4px;'>
-					<div style='width: 220px; float: right; padding-top: 10px; color: #ffffff; font-weight: bold; font-size: 0.75em; font-family: verdana, sans serif;'>
-					    {% if user.is_authenticated %}
-					    	<a href="{% url home %}" style='margin-right: 15px; color: #ffffff; text-decoration: none;'>Home</a>
-					    	<a href="{% url profile_detail user %}" style='margin-right: 15px; color: #ffffff; text-decoration: none;'>Profile</a>
-        
-            <a id="tab_networks" href="{% if user.get_profile.get_chapter %}{% url network_detail user.get_profile.get_chapter.slug %}{% else %}{% url networks_index %}{% endif %}" style='margin-right: 15px; color: #ffffff; text-decoration: none;'>Chapters</a>
+</head>
+<body>
 
-							{# <a class="signout" href="{% url acct_logout %}">{% trans "sign out" %}</a> #}
-					    {% else %}
-					        <a href="{% url acct_login %}?url={{request.path}}" style='margin-right: 15px; color: #ffffff; text-decoration: none;'>{% trans "Login" %}</a>
-						    <a href="{% url acct_signup %}" style='margin-right: 15px; color: #ffffff; text-decoration: none;'><strong>{% trans "Sign up" %}</strong></a>
-					    {% endif %}
-					</div>
-					
-					<form method="get" action="{% url search %}" id="mainsearchform">
-						<input type="text" value="search" style="width: 350px; color: #a0a0a0; margin-left: 10px; margin-top: 5px;" id="global_search_box" name="q"/>
-						{# <input type="submit" value="search" class="bkgd-light" /> #}
-					</form>
-					
-    		</div>
-    	</div>
+
+<div class="grey-background">
+  <div class="container_12">
+  
+    <div class="grid_12">
+      <!-- Heading -->
+      
+      <div class="myewb-header">
+        <div class="myewb-logo"><a href="#" class="border-orange">my<strong>EWB</strong></a></div>
+        <ul class="myewb-top-links inliner">
+          <li><a href="#" class="current border-orange">Home</a></li>
+          <li><a href="#" class="border-purple">Discussions</a></li>
+          <li><a href="#" class="border-lightblue">Groups</a></li>
+          <li><a href="#" class="border-red">Events</a></li>
+          <li><a href="#" class="border-green">Volunteer</a></li>
+        
+        </ul>
+        <div class="myewb-header-right">
+          <div class="searchbox">Search...</div>
+          <div class="profile-pic"><a href="#"><img src="http://preview.ewb.ca/site_media/static/avatars/.1197516735582/resized/60/avatars/.1197516735582/IMGP1514_2.JPG" class="profile-pic-image" /></a></div>
+        </div>
+        
+      </div>
+      
+      
     </div>
-        
-    <div id="maincontainer" style='width: 80%; margin: 0 auto;'>
-        
-        {% block body_outer %}
-        <div id="body" style='margin: 0; border: 0;'>
-			<div id="content" style='padding: 0;'>
-	
-            {% for announcement in site_wide_announcements %}
-                <div id="site_wide_announcements_{{announcement.pk}}" class="site_wide_announcements roundtop">
-                    <div class="message-close"><a href="#" onclick="$.get('{% url announcement_hide announcement.pk %}'); $('#site_wide_announcements_{{announcement.pk}}').slideUp(); return false;">x</a></div>
-                    <div class="message-header">{{announcement.title}}</div>
-                    <div class="message">
-                        {{ announcement.content|safe }}
-                    </div>
-                </div>
-            {% endfor %}
-            
-            {% if messages %}
-                <div id="messages" class="roundtop">
-                    <div class="message-header">Messages</div>
-                    <div class="message-close"><a href="#" onclick="$('#messages').slideUp(); return false;">x</a></div>
-                    <div class="message">
-                        {% for message in messages %}
-                            <div class="message">{{ message|safe }}</div>
-                            {% if not forloop.last %}<hr/>{% endif %}
-                        {% endfor %}
-                    </div>
-                </div>
-            {% endif %}
-            
-            <div id="toolbarcolumn_left" style='width: 20%;'>{% spaceless %}
-                {% block toolbar_left %}
-    {% if user.is_authenticated %}
+    <!-- end .grid_12 -->
+  
+    <div class="clear"></div>
+
+  </div>
+</div>
+<!-- End of header menu -->
+
+
+{% block body_base %}
+{% block body %} 
     
-        {# my groups #}
-        {#{% cache CACHE_TIMEOUT "frontpagegroups" user.username LATEST_POST CACHE_STAMP adminovision %}  #}
-        <div class="toolbarcontent">
-        
-        <div style='height: 50px; width: 50px; float: left;'>
-            {% avatar user 50 %}
-        </div>
-        
-        <div style='margin-left: 55px;'>
-        <a href="{% url profile_detail user %}" style='text-decoration: none; font-weight: bold;'>
-            {{ user.visible_name }}
-        </a>
-        <div style='height: 5px;'>&nbsp;</div>
-        <a href="{% url profile_detail user %}" style='text-decoration: none;'>
-            Edit My Profile
-        </a><br/>
-        <a href="{% url acct_logout %}" style='text-decoration: none;'>
-            Sign Out
-        </a><br/>
-        </div>
-        <br style='clear: left;'/>
-        </div>
-    {% else %}
-{% if login_form %}
-        <div class="toolbarcontent">
-            <form class="toolbarlogin" method="POST" action="{% url acct_login %}">
-                {% for field in login_form %}
-                    <div style="padding-bottom: 7px;">
-                        {{ field.label_tag }} &nbsp;&nbsp;&nbsp;
-                        {{ field }}
-                    </div>
-                {% endfor %}
-                <div style="text-align: center;">
-                    <input type="submit" value="{% trans "sign in" %} &raquo;" /><br/>
-                    <a href="{% url acct_passwd_reset %}">{% trans "Forgot password?" %}</a>
-                </div>
-            </form>
-        </div>
-{% endif %}
-    {% endif %}
-                {% endblock %}
-            {% endspaceless %}</div>
-
-
-            <div style='border: 1px solid #B3B3B3; border-top: 0px; margin-left: 20%;'>
-	        <div id="subnav" class="clearfix bkgd-light" style='font-size: 0.75em; padding: 0; margin: 0;'>
-	        	{% block subnav_base %}
-	        	
-	        	{% block subnav %}&nbsp;{% endblock %}
-	        	
-	        	{% endblock %}
-	        </div>
-	
-            {% block toolbarcolumn_right_top %}{% endblock %}
-                
-                <div id="toolbarcolumn_right" style='margin-right: 5px;'>{% spaceless %}
-                    {% block toolbar_right %}
-                        {# same scheme as toolbarcolumn_left #}
-                    {% endblock %}            
-                {% endspaceless %}</div>
-            
-            
-            {% block toolbarcolumn_right_bottom %}{% endblock %}
-
-            <div id="maincolumn" style="overflow-x: hidden; padding: 5px;">
-
-	            {% if user.is_authenticated and user.nomail %}
-	            	<div id="nomail" class="round" style="background: #ff0000; color: #ffffff; font-weight: bold;">
-	            		 
-		            	{% if user.bouncing %}
-		            		Your email address is bouncing	
-		            	{% else %}
-		            		myEWB emails to your account are disabled 
-		            	{% endif %}
-		            	- <a href="{% url acct_email %}">click here to resume email delivery</a>
-		            </div>
-	            {% endif %}
-	            
-                {% block body %}
-
-                {% endblock %}
-            </div>
-            </div>
     
-			<div class="clear"></div>
-			</div>
-        </div>
-        {% endblock %}
-        
-        <div id="footer2" style='width: 80%; margin-left: 20%;'>
-			{% block footer %}
-			<ul class="legal" style='width: 100%; margin: 0; background: #ffffff; border: 0;'>
-				<li><a href="{% url terms %}">Terms of Use</a></li>
-				<li><a href="{% url privacy %}">Privacy Policy</a></li>
-			    <li>&copy; 2005&ndash;{% now "y" %} <a href="http://www.ewb.ca/">{% trans "EWB-ISF Canada" %}</a></li>
-				{% if user.is_staff %}<li><a href="/admin/">{% trans "Admin" %}</a></li>{% endif %}
-				{% block locale_switcher %}
-					<li>
-				    <form action="{% if request.user.is_authenticated %}{% url acct_language_change %}{% else %}/i18n/setlang/{% endif %}" method="post" id="locale_switcher">
-				        <select name="language" onchange="$('#locale_switcher').submit()">
-				            {% for lang in LANGUAGES %}
-				                <option value="{{ lang.0 }}"{% ifequal lang.0 LANGUAGE_CODE %} selected="selected"{% endifequal %}>{{ lang.1 }}</option>
-				            {% endfor %}
-				        </select>
-				    </form>
-					</li>
-				{% endblock %}
-				
-				<li>timezone: 
-					<form action="{% url timezone_switch %}" method="post" id="language-switcher">
-						<select name="timezone" onchange="$('#language-switcher').submit()">
-							<option value="auto">auto-detect {% if detected_timezone %}({{detected_timezone}}){% endif %}</option>
-							{% for tz in timezones %}
-								<option value="{{tz}}" {% ifequal tz current_timezone %}selected="selected"{% endifequal %}>{{ tz }}</option>
-							{% endfor %}
-						</select>
-						<input type="hidden" name="redirect" value="{{ request.path }}"/>
-					</form>
-				</li>
-			</ul>
-			
-			{% include "feedbackform.html" %}
-			
-			<script type="text/javascript">
-			
-			  var _gaq = _gaq || [];
-			  _gaq.push(['_setAccount', 'UA-907833-2']);
-			  
-			  {% if role_is_office %}
-			    _gaq.push(['_setCustomVar', 1, 'Role', 'National Office', 1]);
-			  {% else %}
-			    {% if role_is_president %}
-				  _gaq.push(['_setCustomVar', 1, 'Role', 'Chapter president', 1]);
-			    {% else %}
-			      {% if role_is_exec %}
-				    _gaq.push(['_setCustomVar', 1, 'Role', 'Chapter exec', 1]);
-			      {% else %}
-			        {% if role_is_alumni %}
-			  	      _gaq.push(['_setCustomVar', 1, 'Role', 'Alumni', 1]);
-			        {% else %}
-			          {% if role_chapter_member %}
-			      	    _gaq.push(['_setCustomVar', 1, 'Role', 'Chapter member', 1]);
-			          {% endif %}
-			        {% endif %}  
-			      {% endif %}  
-			    {% endif %}
-			  {% endif %}
-			
-			  {% if usage_profile %}
-			    _gaq.push(['_setCustomVar', 2, 'Usage profile', '{{ usage_profile }}', 1]);
-			  {% endif %} 
-			
-			  {% if user.is_authenticated %}
-			    _gaq.push(['_setCustomVar', 3, 'Is Guest', 'No', 3]);
-			  {% else %}
-			    _gaq.push(['_setCustomVar', 3, 'Is Guest', 'Yes', 3]);
-			  {% endif %}
-			  
-			  _gaq.push(['_trackPageview']);
-			
-			  (function() {
-			    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-			    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-			    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-			  })();
-			
-			</script>
-			
-			{% endblock %}
-        </div>
-        
-        {% block extra_body_base %}
-		    {#{% urchin %}    #}
-		    
-		    {# javascript keepalive for who's online counter #}
-		    <script type="text/javascript">
-		    function keepalive()
-		    {
-		        jQuery.get('{% url whosonline_refresh %}',
-		                function(data)
-		                {
-		            		$('#box-online-contents').html(data);
-		            		var new_inbox = $('#box-online-contents div#inbox_count_ajax').html()
-//		               		$('#inbox_count').html(new_inbox);
-		                });
-		        setTimeout('keepalive()', 5 * 60 * 1000);
-		    }
-		                        
-		    $(document).ready(function() {
-		        setTimeout('keepalive()', 5 * 60 * 1000);
-		    });
-		    
-		    </script>
-		    
-		    {% block extra_body %}{% endblock %}
-		    
-		<div id="ie6alert" style="display:none;">
-		    
-		</div>
-		
-        {% endblock %}
-        
-        <script type="text/javascript">
-        	var is_searching = false;
-        	var is_focused = false;
-        	
-        	$('#global_search_box').focus(function() {
-        		if ($(this).val() == "search")
-        		{
-        			$(this).css("color", "#000000");
-        			$(this).val("")
-        		}
-        		is_focused = true;
-        	});
-        	$('#global_search_box').blur(function() {
-        		if ($(this).val() == "")
-        		{
-        			$(this).css("color", "#a0a0a0");
-        			$(this).val("search")
-        		}
-    			is_focused = false;
-        	});
+{%comment%}
+    
+    
+<?php
 
-        </script>
+foreach($posts as $post) {
+
+?>
+    
+    <div class="minipost">
+      
+      <div class="minipostcontents">
+
+        <div class="minipost-thumb">
+          <img src="<?php echo $post['thumb']; ?>"/>
+        </div>
         
+        <div class="minipost-inside">
+        
+        
+        
+          <div class="minipost-heading border-bottom">
+          
+  
+          
+  
+  
+            <div class="minipost-rightcontainer">
+              <div class="minipost-replydetails">
+                <?php echo $post['latestreply']; ?>
+              </div>
+  
+  
+  
+  
+  
+              <div class="minipost-replycount">
+              
+                  <a class="spch-bub-inside" href="#">
+        <span class="point"></span>  
+        <em><?php echo $post['replycount']; ?></em>
+    </a>
+              
+<!--                 <span class="numero"><?php echo $post['replycount']; ?></span> -->
+              </div>
+              <div class="minipost-star">
+                <span class="starstar">
+                  &star;
+                </span>
+              
+              </div>
+  
+            </div>
+  
+          
+            <div class="minipost-title">
+              <h3><?php echo $post['title']; ?></h3>
+            </div>
+            <div class="minipost-authortime">
+              <?php echo $post['authortime']; ?>
+            </div>
+            
+            
+  
+  
+          
+          </div>
+          
+          <div class="minipost-text">
+           <?php echo $post['text']; ?>
+          </div>
+        
+        </div>
+        
+        
+
+    
+      </div>
+    
+    
+      
+    
+      <div class="dividerstyle minidivider">
+        <div class="ds1"></div>
+        <div class="ds2"></div>
+        <div class="ds3"></div>
+        <div class="ds4"></div>
+        <div class="ds5"></div>
+        <div class="ds6"></div>
+      
+      </div>
+    
     </div>
+    
 
-        
+<?php
+
+}
+
+?>
 {% endcomment %}
-		<br style="clear: both;"/>
-        <div id="footer2" style='width: 80%; margin: 0 auto;'>
-			{% block footer %}
-			<ul class="legal" style='width: 100%; margin: 0; background: #ffffff; border: 0;'>
-				<li><a href="{% url terms %}">Terms of Use</a></li>
-				<li><a href="{% url privacy %}">Privacy Policy</a></li>
-			    <li>&copy; 2005&ndash;{% now "y" %} <a href="http://www.ewb.ca/">{% trans "EWB-ISF Canada" %}</a></li>
-				{% if user.is_staff %}<li><a href="/admin/">{% trans "Admin" %}</a></li>{% endif %}
-				{% block locale_switcher %}
-					<li>
-				    <form action="{% if request.user.is_authenticated %}{% url acct_language_change %}{% else %}/i18n/setlang/{% endif %}" method="post" id="locale_switcher">
-				        <select name="language" onchange="$('#locale_switcher').submit()">
-				            {% for lang in LANGUAGES %}
-				                <option value="{{ lang.0 }}"{% ifequal lang.0 LANGUAGE_CODE %} selected="selected"{% endifequal %}>{{ lang.1 }}</option>
-				            {% endfor %}
-				        </select>
-				    </form>
-					</li>
-				{% endblock %}
-				
-				<li>timezone: 
-					<form action="{% url timezone_switch %}" method="post" id="language-switcher">
-						<select name="timezone" onchange="$('#language-switcher').submit()">
-							<option value="auto">auto-detect {% if detected_timezone %}({{detected_timezone}}){% endif %}</option>
-							{% for tz in timezones %}
-								<option value="{{tz}}" {% ifequal tz current_timezone %}selected="selected"{% endifequal %}>{{ tz }}</option>
-							{% endfor %}
-						</select>
-						<input type="hidden" name="redirect" value="{{ request.path }}"/>
-					</form>
-				</li>
-			</ul>
-			{% endblock %}
-		</div>
+ 
+{% endblock %}
+{% endblock %}   
+  
+</div>
 
 
-		    {% block extra_body %}{% endblock %}
-        
-	<br/>
+<div class="bigfooter-background">
 
-    </body>
+
+  {% include "components/bigfooter.html" %}
+
+</div>
+
+
+{% include "components/divider.html" %}
+
+
+
+<div class="smallfooter-background">
+
+  {% include "components/smallfooter.html" %}
+
+
+  
+  
+</div>
+
+
+<div class="clear"></div>
+<br/>
+
+
+
+
+
+
+
+<!-- scripts concatenated and minified via ant build script-->
+<script src="{{ STATIC_URL }}templates/myewb2/js/plugins.js"></script>
+<script src="{{ STATIC_URL }}templates/myewb2/js/script.js"></script>
+<!-- end scripts-->
+
+<script>
+	var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']]; // Change UA-XXXXX-X to be your site's ID
+	(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];g.async=1;
+	g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+	s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+<!--[if lt IE 7 ]>
+	<script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.2/CFInstall.min.js"></script>
+	<script>window.attachEvent("onload",function(){CFInstall.check({mode:"overlay"})})</script>
+<![endif]-->
+
+</body>
 </html>

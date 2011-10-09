@@ -179,8 +179,36 @@ function load_posts(group,page,short,silent)   // now, this'll be a behind-the-s
 	// and set a timer to auto-refresh... every half hour, let's say?
     timeout_id = setTimeout('load_posts(\'' + group + '\',\'' + page + '\',\'' + short + '\')', 30 * 60 * 1000, true);
 }
+
+function chapter_dashboard()
+{
+	{% if request.user.is_authenticated %}
+		{% if request.user.get_profile.get_chapter %}
+			$('#chapter_dashboard').load('{% url group_summary request.user.get_profile.get_chapter.slug %}',
+				function() {
+					$('#dashboard_links a').mouseover(function() {
+						var myname = $(this).attr('id').substr(10);
+						$('.dashboard-detail').hide();
+						$('#' + myname).show();
+
+						$('#dashboard_links a').removeClass('current');
+						$(this).addClass('current');
+					});
+				});
+		
+		{% else %}
+{#			$('#chapter_dashboard').html("You aren't in a chapter.  We should prompt you to join one, or pick some other default group."); #}
+			return false;
+		{% endif %}
+	{% else %}
+{# 		$('#chapter_dashboard').html("You aren't signed in. We shoudl display some generic static content here, or a big sign-in box.");#}
+		return false;
+	{% endif %}
+}
 	
 $(document).ready(function() {
+	chapter_dashboard();
+
 	$('.frontpage-update').click(function() {
 	  
 	  // related actions take place in the updater function now.
@@ -266,450 +294,133 @@ $(document).ready(function() {
 
 {% block body_base %}
 
-	{#<div style="float: right; width: 260px;	padding: 10px; border: 1px solid #ffb90f; border-right: 0; -moz-border-radius-topleft: 0.5em; -moz-border-radius-bottomleft: 0.5em; -webkit-border-top-left-radius: 0.5em; -webkit-border-bottom-left-radius: 0.5em; background: #f0f0f0;">#}
-	<div style="float: right; width: 260px;	margin-right: 15px;"> 
-	<div style="padding: 10px; border: 1px solid #ffb90f; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; background: #f0f0f0; margin-bottom: 15px;">
-		<strong>Wine Down!</strong>
-		<br/><br/>
-		
-		<a href="#" class="cheers">Blah blah blah</a><br/>
-		<span style="color: #a0a0a0; font-size: 10px;">cheers'ed by 12 people</span>
-		<br/><br/>
+<div class="chapterdash-background">
+  <div class="container_12 second-container">
 
-		<a href="#" class="cheers">Blah blah blah</a><br/>
-		<span style="color: #a0a0a0; font-size: 10px;">cheers'ed by 12 people</span>
-		<br/><br/>
-		
-		<a href="#" class="cheers">Blah blah blah</a><br/>
-		<span style="color: #a0a0a0; font-size: 10px;">cheers'ed by 12 people</span>
-		<br/><br/>
-		
-		<a href="#" class="cheers">Blah blah blah</a><br/>
-		<span style="color: #a0a0a0; font-size: 10px;">cheers'ed by 12 people</span>
-		<br/><br/>
-		
-		<a href="#" class="cheers">Blah blah blah</a><br/>
-		<span style="color: #a0a0a0; font-size: 10px;">cheers'ed by 12 people</span>
-		<br/><br/>
+    <div class="grid_9">
 
-		<a href="#" class="cheers">Blah blah blah</a><br/>
-		<span style="color: #a0a0a0; font-size: 10px;">cheers'ed by 12 people</span>
-		<br/><br/>
-
-		<a href="#" class="cheers">Blah blah blah</a><br/>
-		<span style="color: #a0a0a0; font-size: 10px;">cheers'ed by 12 people</span>
-		<br/><br/>
-
-		<a href="#" class="cheers">Blah blah blah</a><br/>
-		<span style="color: #a0a0a0; font-size: 10px;">cheers'ed by 12 people</span>
-		<br/><br/>
-
-		<a href="#" class="cheers">Blah blah blah</a><br/>
-		<span style="color: #a0a0a0; font-size: 10px;">cheers'ed by 12 people</span>
-		<br/><br/>
-
-		<a href="#" class="cheers">Blah blah blah</a><br/>
-		<span style="color: #a0a0a0; font-size: 10px;">cheers'ed by 12 people</span>
-		<br/><br/>
-		
-		<div style="text-align: right;">
-		    <a href="#">see more &raquo;</a>
-		</div>
-		</div>
-
-		<div style="padding: 10px; border: 1px solid #ffb90f; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; background: #f0f0f0;">
-		<div style="padding: 5px 10px; font-size: 14px; background: #f0f0f0; font-weight: bold;">
-			Latest Blogs
-		</div>
-		<br/>
-
-		<img style="height: 20px; width: 35px; margin: 0 10px; float: left;" src="http://t1.gstatic.com/images?q=tbn:ANd9GcQOBIkab60eXq3i3mL2QO5Ww3rmtavpaqWi625siCNGQFXTYkjo"/>
-		<a href="http://fraserinmalawi.wordpress.com/2011/08/13/relocation/" title="I&#8217;ve officially changed countries.  Check out the new post at www.fraserinzambia.wordpress.com!" target="_blank">Relocation</a>
-		<br/>
-		<span style="font-size: 10px; color: #a0a0a0;">
-		Fraser &ndash; <em title="Just another EWB JF Blog"><a href="http://fraserinmalawi.wordpress.com/" target="_blank">Tales From the Heart</a></em>
-		</span> 
-
-		<br/><br/>                
-                
-		<img style="height: 20px; width: 35px; margin: 0 10px; float: left;" src="http://t2.gstatic.com/images?q=tbn:ANd9GcRnu3SsfvlzsCuwUrBAcCsmSTJ-jZBJehKgB1ZB2qezuko2d2Nv"/>
-		<a href="http://vivianmau.wordpress.com/2011/08/13/seasons-for-food/" title="In rural communities weather shapes a lot the day to day lives. Seasons have great impact on the activities that you do: right before..." target="_blank">Seasons for food</a>
-		<br/><span style="font-size: 10px; color: #a0a0a0;">
-                                        Vivian &ndash;
-                                        
-                                            <em title="ideas about a summer in Malawi"><a href="http://vivianmau.wordpress.com/" target="_blank">Malawi thoughts</a></em> 
-                                            </span> 
-		<br/><br/>
-
-		<img style="height: 20px; width: 35px; margin: 0 10px; float: left;" src="http://t2.gstatic.com/images?q=tbn:ANd9GcRnu3SsfvlzsCuwUrBAcCsmSTJ-jZBJehKgB1ZB2qezuko2d2Nv"/>
-		<a href="http://markeveryware.wordpress.com/2011/08/12/training-day/" title="I spent much of today with my colleague Spencer Weber at a training he was helping run for agrodealer agents (commission sales people) to..." target="_blank">Training day.</a> 
-		<br/><span style="font-size: 10px; color: #a0a0a0;">
-                                        Mark &ndash;
-                                        
-                                            <em title="You cannot pick up a pebble with one finger ~Malawi Proverb"><a href="http://markeveryware.wordpress.com/" target="_blank">Picking Up Pebbles</a></em> 
-                                            </span>
-        <br/><br/>
-        
-		<img style="height: 20px; width: 35px; margin: 0 10px; float: left;" src="http://t1.gstatic.com/images?q=tbn:ANd9GcQOBIkab60eXq3i3mL2QO5Ww3rmtavpaqWi625siCNGQFXTYkjo"/>
-                    <a href="http://whisperstovoices.wordpress.com/2011/08/12/something-to-aspire-to/" title="It&#8217;s International Youth Day today &#8211; a day to celebrate the potential of youth and discuss with critical minds the..." target="_blank">something to aspire to</a></h3> 
-		<br/><span style="font-size: 10px; color: #a0a0a0;">
-                                            <em title="connecting Canadians to Africa!"><a href="http://whisperstovoices.wordpress.com/" target="_blank">from a whisper to a voice of hope</a></em> 
-                                            </span> 
-		<br/><br/>            
-                                    
-		<img style="height: 20px; width: 35px; margin: 0 10px; float: left;" src="http://74.54.19.227/GHP/img/pics/79307655.jpg"/>
-                    <a href="http://africashmafrica.wordpress.com/2011/08/12/africa-shmafrica-perspectives-n-shit/" title="In EWB, IDS and African Studies the one conversation is always the same. In all the intellectual circles I run in, &#8220;perspectives..." target="_blank">Turning the table: Perspectives of Canada</a></h3> 
-		<br/><span style="font-size: 10px; color: #a0a0a0;">
-                                        Bailey &ndash;
-                                        
-                                            <em title="I will be blogging during summer 2011 about my experience living in Tamale, Ghana and working at the Network for Youth Action."><a href="http://africashmafrica.wordpress.com/" target="_blank">Africa, Shmafrica: Rants of a JF in Ghana</a></em> 
-                                            </span>
-                                            
-		<br/><br/>                                            
-                                             
-		<img style="height: 20px; width: 35px; margin: 0 10px; float: left;" src="http://t1.gstatic.com/images?q=tbn:ANd9GcQOBIkab60eXq3i3mL2QO5Ww3rmtavpaqWi625siCNGQFXTYkjo"/>
-                    <a href="http://elliotcudmore.wordpress.com/2011/08/12/the-origin-of-roads/" title="My  cousin once told me that this road, yes, this one which links my driveway to the city, can leads me to South America. Follow it..." target="_blank">The Origin of Roads</a></h3> 
-		<br/><span style="font-size: 10px; color: #a0a0a0;">
-                                        Elliot &ndash;
-                                        
-                                            <em title="4 months in Zambia, learning the basics of connecting farmers to seeds"><a href="http://elliotcudmore.wordpress.com/" target="_blank">Elliot's Elementary Learnings</a></em> 
-                                            </span>
-                                            
-		<br/><br/>                                             
-		<img style="height: 20px; width: 35px; margin: 0 10px; float: left;" src="http://t2.gstatic.com/images?q=tbn:ANd9GcRnu3SsfvlzsCuwUrBAcCsmSTJ-jZBJehKgB1ZB2qezuko2d2Nv"/>
-                    <a href="http://markeveryware.wordpress.com/2011/08/11/election-campaign-in-chipata/" title="A convoy of blue trucks passed me today while I acquainted myself with my new home base in Chipata, Zambia. It is a large town close to..." target="_blank">Election campaign in Chipata</a> 
-                    <br/><span style="font-size: 10px; color: #a0a0a0;">
-                                        Mark &ndash;
-                                        
-                                            <em title="You cannot pick up a pebble with one finger ~Malawi Proverb"><a href="http://markeveryware.wordpress.com/" target="_blank">Picking Up Pebbles</a></em> 
-                                            </span> 
-
-		<div style="text-align: right;">
-		    <a href="#">see more &raquo;</a>
-		</div>
-	</div>
-	<br/><br/>
-	</div>
-
-	<div style="margin-left: 280px; margin-right: 300px;">
-	{% if user.is_authenticated and user.get_profile.get_chapter %}
-	<div style="margin: 0 -10px; padding: 10px; border: 1px solid #d0d0d0; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em;">
-		<div style="padding: 10px; font-size: 14px; background: #f0f0f0; font-weight: bold;">
-			<span style="float: right; font-weight: normal; font-size: 12px;" id="home_controls">
-			<a href="#" id="switch_home">
-				switch
-			</a> - 
-			<a href="#" id="hide_home">
-				hide
-			</a>
-			</span> 
-			<span style="float: right; font-weight: normal; font-size: 12px; display: none;" id="home_controls2">
-			<a href="#" id="expand_home">
-				expand
-			</a>
-			</span>
-			{{ user.get_profile.get_chapter.name }}
-		</div>
-		<br/>
-		
-		<style>
-		    .chapter_hover {
-		        padding: 3px 0;
-		        display: block;
-		    }
-		</style>
-		<div id="home_dashboard">
-		<div style="padding-right: 20px; border-right: 1px solid #d0d0d0; display: inline-block;">
-		    <a href="#" class="chapter_hover" id="chapter_posts">5 new posts</a>
-		    <a href="#" class="chapter_hover" id="chapter_champ">8 new CHAMP entries</a>
-		    <a href="#" class="chapter_hover" id="chapter_files">12 files recently updated</a>
-		    <a href="#" class="chapter_hover" id="chapter_events">2 events this week</a>
-		    <a href="#" class="chapter_hover" id="chapter_members">23 new members</a>
-		</div>
-		<div style="display: inline-block; vertical-align: top; padding-left: 20px;" id="chapter_hover_content">
-        </div>
-        
-        <script type="text/javascript">
-            $().ready(function() {
-                $('.chapter_hover').mouseover(function() {
-                    $('.chapter_hover').css('background', '#ffffff');
-                    $(this).css('background', '#f0f0f0');
-                    var myself = $(this);
-                    $('#chapter_hover_content').fadeOut(function() {
-                        $('#chapter_hover_content').html('Sample content<br/>for the<br/>' + myself.attr('id') + '<br/>type...<br/><div style="text-align: right;"><a href="#">see more &raquo;</a></div>');
-                        $('#chapter_hover_content').fadeIn();
-                    });
-                });
-                $('#chapter_posts').mouseover();
-            });
-        </script>
-		</div>
-	</div>
-	{% else %}
-		{% if login_form %}
-	        <div style="margin: 0 -10px; padding: 10px; border: 1px solid #d0d0d0; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em;">
-		        <div style="padding: 10px; font-size: 14px; background: #f0f0f0; font-weight: bold;">
-		            Sign in to myEWB
-		        </div>
-		        <br/>
-                <div style="text-align: center;">
-	                <form class="toolbarlogin" method="POST" action="{% url acct_login %}">
-	                    {% for field in login_form %}
-	                        <div style="padding-bottom: 7px;">
-	                            {{ field.label_tag }}
-	                            {{ field }}
-	                            <br/>
-	                        </div>
-	                    {% endfor %}
-					    <a href="{% url acct_signup %}">{% trans "Sign up" %}</a> --
-	                    <input type="submit" value="{% trans "sign in" %} &raquo;" /> -- 
-	                    <a href="{% url acct_passwd_reset %}">{% trans "Forgot password?" %}</a>
-    	            </form>
-                </div>
-	        </div>
-	    {% endif %}
-	{% endif %}
-   	
-
-
-		<div style="padding: 10px; padding-left: 0; font-size: 20px; {#background: #f0f0f0; #}font-weight: bold;">
-			Recent Discussions
-		</div>
-		<a href="{% groupurl topic_new group %}">start a new discussion</a> |
-		<a href="#" class="switch_discussions" style="font-weight: normal; font-size: 12px;">
-			customize my discussions
-		</a> 
-		
-		
-		<br/><br/>
-		<div>
-			<strong>Showing relevant discussions</strong><br/>
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			<a href="#" class="switch_discussions">switch to latest</a> | 
-			<a href="#" class="switch_discussions">switch to most active</a> |
-			<a href="#" class="switch_discussions">my watchlist</a>
-		</div>
-
-		<div class="frontpage-loading"><a href="#" id="frontpage-loading-refreshlink">[refresh]</a>Loading...</div>     
-	 
-	 	<div id="topiclisting">
-	    </div>
-	    
-	</div> 
-
-{% endblock %}
-
-{% block toolbar_left %}
-            <strong>EWB News</strong><br/><br/>
-            or "EWB at-a-glance"<br/><br/>
-            Very quick summary of cool stuff happening around the organization!
-            <br/><br/><br/>
-			<iframe width="200" height="135" src="http://www.youtube.com/embed/U1Ni9nvtYhE?controls=0" frameborder="0" allowfullscreen></iframe>
-        </div>
-        
-    	<div style="padding: 10px; border: 1px solid #ffb90f; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; background: #f0f0f0; margin-bottom: 15px;">
-   		    <strong>Essential EWB</strong><br/><br/>
-	   		<a href="#">EWB Canada</a> <br/>
-	   		<a href="#">Chapter Resrouces</a> <br/> 
-	   		<a href="#">Overseas Library</a> <br/>
-	   		<a href="#">Orange Wiki</a> <br/>
-	   		<a href="#">Board of Directors</a> <br/>
-	   		<br/>
-	   		
-		</div>
-
-    	<div style="padding: 10px; border: 1px solid #ffb90f; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; background: #f0f0f0; margin-bottom: 15px;">
-	        <strong>EWBers Currently Online</strong><br/><br/>
-	        {% include "whosonline.html" %}
-{% endblock %}
-
-{% comment %}
-{% block toolbar_left %}
-    {{ block.super }}
-        
-    {% if user.is_authenticated %}
-    
-        <div class="toolbarcontent">
-				<a href="#" class="frontpage-reset" style='text-decoration: none;'>
-                    <img src="{{ STATIC_URL }}images/fb/feed.png" style="position: relative; top: 6px; margin-top: -6px;"/>
-    				Latest posts
-				</a>
-                <div class="frontpage-mygroups-div">
-					<a href="#" class="frontpage-update" id="frontpage-update-featured" style='text-decoration: none;'>
-                        <img src="{{ STATIC_URL }}images/fb/feed.png" style="position: relative; top: 6px; margin-top: -6px;"/>
-					    Featured posts
-					</a><br/>
-				</div>
-				
-                <div class="frontpage-mygroups-div">
-					<a href="#" class="frontpage-update" id="frontpage-update-ewb" style='text-decoration: none;'>
-                        <img src="{{ STATIC_URL }}images/fb/feed.png" style="position: relative; top: 6px; margin-top: -6px;"/>
-					    Front-page only
-					</a><br/>
-				</div>
-             	{% for group in user.get_groups %}
-             		{% if not group.recent_topic_count %}
-             		<div class="frontpage-mygroups-nonew" style="display: none;">
-             		{% endif %}
-	                <div class="frontpage-mygroups-div">
-	                	<a href="#" class="frontpage-update" id="frontpage-update-{{ group.slug }}" style='text-decoration: none;'>
-                            <img src="{{ STATIC_URL }}images/fb/feed.png" style="position: relative; top: 6px; margin-top: -6px;"/>
-	                	    {{ group.name }}
-	                	</a><br/>
-	                	{% if group.recent_topic_count %}<small style="padding-left: 10px;">({{group.recent_topic_count}} recent)</small>{% endif %}
-
-		                <div class="frontpage-mygroups-actions">
-		                	{# {{group.recent_topic_count}} recent posts<br/> #}
-		                	<a href="{% groupurl topic_new group %}">New post &raquo;</a><br/>
-		                	<a href="{% url group_detail group.slug %}">View group info &raquo;</a>
-		                </div>
-		            </div>
-             		{% if not group.recent_topic_count %}
-             		</div>
-             		{% endif %}
-            	{% endfor %}
-            	<div style="text-align: right;">
-            		<a href="#" onclick="$('.frontpage-mygroups-nonew').slideToggle(); {#$(this).hide();#} return false;">show all</a>
-            		
-            		{% if can_adminovision %}
-                    {% spaceless %}
-                        <br/><a href="{% url topic_adminovision %}">
-                            {% if adminovision %}
-                    			Turn off adminovision
-                    		{% else %}
-                    			Turn on adminovision
-                    		{% endif %}
-                    	</a>
-                    {% endspaceless %}
-           	{% else %}
-               	{% if can_execovision %}
-               		{% spaceless %}
-               			<br/><a href="{% url topic_adminovision %}">
-                		{% if adminovision %}
-                			Turn off execovision
-                		{% else %}
-                			Turn on execovision
-                		{% endif %}
-                		</a>
-                	{% endspaceless %}
+      <div class="border-right" id="chapter_dashboard">
+        {% if request.user.is_authenticated %}
+                {% if request.user.get_profile.get_chapter %}
+			&nbsp;
+                {% else %}
+                        You aren't in a chapter.  We should prompt you to join one, or pick some other default group.
                 {% endif %}
-           	{% endif %}
-            		
-            	</div>
-        </div>
-{#        {% endcache %} #}
-        
-        {% if is_exec and request.user.get_profile.get_chapter %}
-            <hr/>
-	        <div class="toolbarcontent" style="line-height: 1.5em;">
-	        <strong>CHAMP summary</strong><br/>
-      			<a href="{% link_to_current_champ request.user %}">{% champ_activities request.user.get_profile.get_chapter %} {% month %} activities<a/><br/> 
-                &nbsp;&nbsp;
-                (<a href="{% url champ_unconfirmed_activities request.user.get_profile.get_chapter.slug %}">{% champ_unconfirmed request.user.get_profile.get_chapter %} unconfirmed<a/>)<br/>
-                &nbsp;&nbsp;
-                <a href="{% url champ_new_activity request.user.get_profile.get_chapter.slug %}">record an activity</a><br/>
-	        </div>
-        {% endif %}
-        
-        
-    {% endif %}
-            
-    <hr/>
-    <div class="toolbarcontent" style='line-height: 1.5em;'>
-        <strong>Navigation</strong><br/>
-        <a href="{% if user.get_profile.get_chapter %}{% url network_detail user.get_profile.get_chapter.slug %}{% else %}{% url networks_index %}{% endif %}">Chapters</a><br/>
-        
-        <a href="{% url communities_index %}">Communities</a><br/>
-        
-        <a href="{% url events_all %}">Events</a><br/>
-        
-        <a href="{% url applications %}">Get Involved</a>
-    </div>
-    
-    <hr/>
-    <div class="toolbarcontent" id="box-online-contents">
-        {#<strong>Who's Online</strong><br/>#}
-        {% include "whosonline.html" %}
-    </div>
-    
-{% endblock %}
+        {% else %}
+                <p>Welcome to myEWB, the online community for Engineers Without Borders Canada!</p>
 
-{% block toolbar_right %}
-    <div class="toolbarcontent" style="padding: 2px; overflow: none;">
-        <div style='background: #f2f2f2; padding: 5px; font-weight: bold;'>Upcoming Events</div>
-        <br/>
-        {% events_widget user %}
-        <div style="text-align: right;">
-            <a href="{% url events_all %}">{% trans "more events" %} &raquo;</a>
-        </div>
-    </div>
-    
-    <div class="toolbarcontent" style="padding: 2px; overflow: none;">
-        <div style='background: #f2f2f2; padding: 5px; font-weight: bold;'>Sponsored</div>
-        <br/>
-        {% fake_ad %}
-        <hr/>
-        {% fake_ad %}
-        <hr/>
-        {% fake_ad %}
-    </div>
-    
-{% endblock %}
-{% endcomment %}      
+		<p>You're a guest, you're a guest, and we encourage you to sign in or create an account.  We won't bite... promise!
+		</p>
 
-{% block extra_body %}
-<div style="display: none;">
-<div id="div_cheers">
-	<h1>We haven't built this yet...</h1>
-	
-	<p>
-		But this would be recent activities that people "like".  Posts, articles, 
-		events, CHAMP activities, any kind of content that is on myEWB would be 
-		"cheers"-able.  
-	</p>
+                {% if login_form %}
+			<p>
+                            <strong>Sign in to myEWB</strong> (ok, we really need to clean up this formatting)
+                        <form class="toolbarlogin" method="POST" action="{% url acct_login %}">
+                            {% for field in login_form %}
+                                    {{ field.label_tag }}:
+                                    {{ field }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            {% endfor %}<br/>
+                            <input type="submit" value="{% trans "sign in" %} &raquo;" /> --
+                                            <a href="{% url acct_signup %}">{% trans "Sign up" %}</a> --
+                            <a href="{% url acct_passwd_reset %}">{% trans "Forgot password?" %}</a>
+                    </form>
+</p>
+            {% endif %}
+
+	{% endif %}
+      </div>
+
+    </div>
+
+    <div class="grid_3">
+        <h2 class="chapterspecific-title h2bold">EWB Canada</h2>
+
+        <div class="youtube-preview" style="background-image:url(http://i3.ytimg.com/vi/U1Ni9nvtYhE/default.jpg);"></div>
+
+    </div>
+
+
+  </div>
 </div>
 
-<div id="div_switch_discussions">
-	<h1>We haven't built this yet...</h1>
-	
-	<p>
-		But we want to know what you find relevant.  This will be a list of topics:
-		fair trade, advocacy, youth engagement, water & sanitation, agricultural value chains, 
-		etc, that you can choose multiple topics from.
-	</p>
-	
-	<p>
-		We'll then offer to pick content that specifically matches your interests -
-		letting you build your own niche within EWB.
-	</p>
-	
-	<p>
-		Of course, you'll still be able to see all recent posts, like the current myEWB -
-		and we also want to add an option for the most viewed/active posts too.
-	</p>
-	
-	<p>
-		Viva la choix!  (as long as it's not confusing!)
-	</p>
-	
-</div>
-</div>
-	
-<script type="text/javascript">
-	$().ready(function() {
 
-		$('.cheers').colorbox({width: '50%',
-									height: '50%',
-									opacity: '0.5',
-									inline: true,
-									href: '#div_cheers'
-								   });
-		$('.switch_discussions').colorbox({width: '50%',
-										   height: '50%',
-										   opacity: '0.5',
-										   inline: true,
-										   href: '#div_switch_discussions'
-										  });
-	});
-</script>
+<div class="dividerstyle">
+  <div class="ds1"></div>
+  <div class="ds2"></div>
+  <div class="ds3"></div>
+  <div class="ds4"></div>
+  <div class="ds5"></div>
+  <div class="ds6"></div>
+
+</div>
+
+
+<div class="container_12 third-container">
+
+
+  <div class="grid_12">
+    <h2 class="h2bold">Latest Discussions</h2>
+  </div>
+
+  <div class="grid_9">
+    <!-- Left column. Chapterspecific, followed by latest posts. -->
+
+
+        <div class="frontpage-loading"><a href="#" id="frontpage-loading-refreshlink">[refresh]</a>Loading...</div>
+	<div id="topiclisting">
+		<img src="{{STATIC_URL}}images/ajax-loader2.gif"/>
+	</div>
+
+
+  </div>
+  <!-- end .grid_9 -->
+
+  <div class="grid_3">
+
+
+
+
+    <div class="standardbox ewb-latest">
+      <div class="standardbox-title">Wine Down!</div>
+      <div class="standardbox-content">
+
+        <p>
+
+        <a class="cheers cboxElement" href="#">Blah blah blah</a><br>
+                <span style="color: #a0a0a0; font-size: 10px;">cheers'ed by 12 people</span>
+                <br><br>
+
+                <a class="cheers cboxElement" href="#">Blah blah blah</a><br>
+                <span style="color: #a0a0a0; font-size: 10px;">cheers'ed by 12 people</span>
+                <br><br>
+
+                <a class="cheers cboxElement" href="#">Blah blah blah</a><br>
+                <span style="color: #a0a0a0; font-size: 10px;">cheers'ed by 12 people</span>
+                <br><br>
+
+                <a class="cheers cboxElement" href="#">Blah blah blah</a><br>
+                <span style="color: #a0a0a0; font-size: 10px;">cheers'ed by 12 people</span>
+                <br><br>
+
+                <a class="cheers cboxElement" href="#">Blah blah blah</a><br>
+                <span style="color: #a0a0a0; font-size: 10px;">cheers'ed by 12 people</span>
+
+
+        </p>
+
+      </div>
+    </div>
+  </div>
+  <!-- end .grid_3 -->
+
+
+
+</div>
+
+
+
+
+
+
+
 {% endblock %}

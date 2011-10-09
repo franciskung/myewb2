@@ -220,10 +220,11 @@ def group_summary(request, group_slug, model=None):
 
     group = get_object_or_404(model, slug=group_slug)
     
-    twoweeks = datetime.now() - timedelta(weeks=2)
-    activity_since = request.user.last_login
-    if activity_since < twoweeks:
-        activity_since = twoweeks
+    twoweeks = datetime.now() - timedelta(weeks=4)
+#    activity_since = request.user.last_login
+#    if activity_since < twoweeks:
+#        activity_since = twoweeks
+    activity_since = twoweeks
         
     nextweek = datetime.now() + timedelta(weeks=1)
     

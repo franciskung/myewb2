@@ -12,51 +12,126 @@
 {% load winedown_tags %}
 
 
-<div style='border-top: 1px solid #e0e0e0;'>
-	<a href="{% url profile_detail topic.creator.username %}">
-	    {# {% avatar topic.creator 40 %} #}
-	    <img src="{% avatar_url topic.creator 50 %}" title="{{topic.creator.visible_name}}" alt="{{topic.creator.visible_name}}" style='float: left; height: 50px; width: 50px; padding: 10px;'/>
-	</a>
 
-    <div style='margin-left: 75px; padding-top: 10px; height: 55px;'>       
-	    {% get_comment_count for topic as num_comments %}
-        {% get_latest_comments_for 1 as latest for topic %}
-	
-    	<div style='float: right; padding-right: 25px; width: auto; background: #edeff4; padding: 5px; text-align: right;'>
-	   		<a href="{{ topic.get_absolute_url }}" class="nodeco">
-	   			<img src="{{ STATIC_URL }}images/fb/comments.gif" style="position: relative; top: 6px; margin-top: -6px;"/>
-			    {% if num_comments %}
-	    			{% ifnotequal num_comments 1 %}
-	    				{{ num_comments }} replies
-	    			{% else %}
-	    				1 reply
-	    			{% endifnotequal %}
-	    		{% else %}
-	    			Add a reply
-	    		{% endif %}
-    		</a><br/>
-    		{% if latest %}
-				<span style='color: #707070; font-size: 10px;'>{% mktime latest.0.date_submitted %}</span>
-			{% else %}
-				<span style='color: #707070; font-size: 10px;'>{% mktime topic.created %}</span>
-        	{% endif %}	    		
-    	</div>
-    	
-    	<div style="float: right; padding-right: 5px; width: auto; padding: 5px;">
-    	    {% show_cheers_widget topic %}
-    	</div>
+<div class="minipost">
+  
+  <div class="minipostcontents">
 
-        <a href="{{ topic.get_absolute_url }}" style='font-weight: bold; font-size: 14px;'>{{ topic.title }}</a><br/>
-        <a href="{% url profile_detail topic.creator %}">{{ topic.creator.visible_name }}</a>
-        {% comment %}
-        <br/>
-        <span style='color: #707070;'>
-        	{% mktime topic.created %}
-		</span>
-		{% endcomment %}
+    <div class="minipost-thumb">
+      
+      <img src="{% avatar_url topic.creator 60 %}" title="{{topic.creator.visible_name}}" alt="{{topic.creator.visible_name}}" />
+      
+    </div>
+    
+    <div class="minipost-inside">
+    
+    
+      {% get_comment_count for topic as num_comments %}
+      {% get_latest_comments_for 1 as latest for topic %}
+    
+    
+    
+      <div class="minipost-heading border-bottom">
+      
+
+      
+
+
+        <div class="minipost-rightcontainer">
+
+{% comment %}
+          <div class="minipost-replydetails">
+        		{% if latest %}
+              Latest reply</a> by <a href="{% url profile_detail latest.0.user.username %}" class="nodeco">{{ latest.0.user.visible_name }}</a><br/> {% mktime latest.0.date_submitted %}
+            {% endif %}
+          </div>
+{% endcomment %}
+
+
+
+
+          <div class="minipost-replycount">
+          
+              <a class="spch-bub-inside" href="#">
+    <span class="point"></span>  
+    <em>{{ num_comments }}</em>
+</a>
+          
+<!--                 <span class="numero">{{ num_comments }}</span> -->
+          </div>
+
+	<div class="minipost-replydetails">
+		{% if latest %}
+			<a href="{% url profile_detail latest.0.user.username %}" class="nodeco">{{ latest.0.user.visible_name }}</a><br/>
+			{% mktime latest.0.date_submitted %}
+		{% else %}
+			&nbsp;
+		{% endif %}
 	</div>
 
-    <p style='color: #606060;'>
-    	{{ topic.intro|striptags }}
-    </p>
+
+          <div class="minipost-star">
+            <span class="starstar">
+<!--               &star; -->
+<!--     	    {% show_cheers_widget topic %} -->
+            </span>
+          
+          </div>
+
+        </div>
+
+      
+        <div class="minipost-title">
+          <h3><a href="{{ topic.get_absolute_url }}">{{ topic.title }}</a></h3>
+        </div>
+        <div class="minipost-authortime">
+
+          <a href="{% url profile_detail topic.creator %}">{{ topic.creator.visible_name }}</a>
+          {% mktime topic.created %}
+          
+          					{% ifnotequal topic.group.slug "ewb" %} to
+				    	<a href="{{ topic.group.get_absolute_url }}#group-posts">{{ topic.group }}</a>
+				    {% endifnotequal %}
+          
+        </div>
+        
+        
+
+
+      
+      </div>
+      
+      <div class="minipost-text">
+        <a href="{{ topic.get_absolute_url }}" class="quietlink">
+        	{{ topic.intro|striptags }}
+      	</a>
+      </div>
+    
+    </div>
+    
+    
+
+
+  </div>
+
+
+  
+
+  <div class="dividerstyle minidivider">
+    <div class="ds1"></div>
+    <div class="ds2"></div>
+    <div class="ds3"></div>
+    <div class="ds4"></div>
+    <div class="ds5"></div>
+    <div class="ds6"></div>
+  
+  </div>
+
 </div>
+
+
+
+
+
+
+
