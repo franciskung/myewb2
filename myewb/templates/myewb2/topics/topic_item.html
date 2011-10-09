@@ -9,6 +9,7 @@
 {% load helpers %}
 {% load cache %}
 {% load time_filters %}
+{% load winedown_tags %}
 
 
 <div style='border-top: 1px solid #e0e0e0;'>
@@ -39,6 +40,10 @@
 			{% else %}
 				<span style='color: #707070; font-size: 10px;'>{% mktime topic.created %}</span>
         	{% endif %}	    		
+    	</div>
+    	
+    	<div style="float: right; padding-right: 5px; width: auto; padding: 5px;">
+    	    {% show_cheers_widget topic %}
     	</div>
 
         <a href="{{ topic.get_absolute_url }}" style='font-weight: bold; font-size: 14px;'>{{ topic.title }}</a><br/>

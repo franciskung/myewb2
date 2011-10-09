@@ -242,6 +242,7 @@ INSTALLED_APPS = (
     'finance',
     'confcomm',
     'jobboard',
+    'winedown',
 
     # our own third-party libs
     'contrib.django_evolution',

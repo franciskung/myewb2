@@ -1,0 +1,12 @@
+{% extends 'site_base.html' %}
+
+{% block body %}
+
+{% for c in cheers %}
+    <div>
+        <a href="{{ c.content_object.absolute_url }}">{{ c.guess_title }}</a><br/>
+        <a href="#" style='color: #d0d0d0;'>cheers'ed by {{ c.count }} people!</a>
+    </div>
+{% endfor %}
+
+{% endblock %}

@@ -62,8 +62,22 @@ $(document).ready(function(){
     });
         
         
-        
-        
+            function install_cheers() {
+                $('.cheers').unbind('click');
+                
+                $('.cheers').click(function() {
+                    var cheerslink = $(this);
+                    $.get($(this).attr('href'), function(data) {
+                        $('.cheerscount', cheerslink.parent()).html(data);
+                        cheerslink.hide();
+                    });
+                    return false;
+                });
+            }
+            $().ready(function() {
+                install_cheers();
+            });
+
 		</script>
 		{% endblock %}
 		
@@ -459,6 +473,7 @@ $(document).ready(function(){
         		}
     			is_focused = false;
         	});
+
         </script>
         
     </div>
