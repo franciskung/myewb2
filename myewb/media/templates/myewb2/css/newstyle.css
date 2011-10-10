@@ -219,7 +219,7 @@ color: #CB5E00;
 }
 
 
-/* Shared components */
+/* === Shared components === */
 
 ul.inliner {
 margin:0;
@@ -276,7 +276,7 @@ text-shadow: 0 1px 0 #FFFFFF;
 
 
 
-
+/* === Primary layout and colour setup === */
 
 
 body {
@@ -290,7 +290,7 @@ font-family: "Lucida Grande", sans-serif;
 
 
 .grey-background {
-    background-color: #DB7403;
+    background-color: #FD9200;
     background-image: -moz-linear-gradient(center bottom , #FD9200, #DB7403);
     color: #FFFFFF;
     text-shadow: 0 -1px 0 #CF6904;
@@ -344,9 +344,11 @@ height: 44px;
 padding-bottom: 1px;
 }
 
-.myewb-header-right .profile-pic img {
+.myewb-header-right .profile-pic span {
 width: 30px;
 height: 30px;
+
+display: block;
 
 box-shadow: 0px 0px 1px #CF6904;
 }
@@ -401,10 +403,12 @@ font-weight: bold;
 
 
 
+/* === Chapter Dashboard === */
 
 .second-container {
 
 }
+
 
 /* Chapterspecific boxes */
 
@@ -512,6 +516,8 @@ background: no-repeat center center #000;
 
 
 
+/* === Colourful Divider dealio === */
+
 /* Divider style */
 
 .dividerstyle {
@@ -558,7 +564,7 @@ background-color: #cb5e00;
 
 
 
-/* Standard sidemenu boxes */
+/* === Standard sidemenu boxes === */
 
 .standardbox {
     background-color: #fcfaf5;
@@ -640,6 +646,13 @@ border-color: #C0CC4C; /* C0CC4C */
 
 
 
+/* === Posts on homepage and search results === */
+
+.frontpage-loading {
+text-align: center;
+}
+
+
 .minipost {
 
     background-color: #fcfaf5;
@@ -668,19 +681,45 @@ border-color: #C0CC4C; /* C0CC4C */
 
 .minipostcontents {
     padding: 10px;
+    
+    
+/*    border-bottom: 1px solid #CB5E00; */
 }
 
 .minipost-thumb {
 float: left;
 
-padding-right: 8px;
+/*padding-right: 8px;*/
+padding: 0 6px 2px 14px;
+margin-top: -3px;
+
+/* background: url('../images/thumb-shadow.png') no-repeat right bottom; */
 
 }
 .minipost-thumb img {
- box-shadow: 0 0 1px #777;
- padding: 2px;
- background-color: #ffffff;
+    background-color: #FFFFFF;
+    border: 1px solid #CCCCCC;
+    box-shadow: 2px 2px 2px #777777;  /* replaces the PNG image above :) */
+    padding: 2px;
 }
+
+.avatar-40 {
+height: 44px;
+width: 44px;
+
+
+    border: 1px solid #CCCCCC;
+    box-shadow: 2px 2px 2px #777777;  /* replaces the PNG image above :) */
+    padding: 2px;
+display: block;
+
+background: no-repeat center center #ffffff;
+
+
+/*     -moz-transition: all 3.1s ease-in-out 0s;  -- doesn't seem to work */
+}
+
+
 
 .minipost-inside {
 margin-left: 74px;
@@ -699,7 +738,7 @@ margin-left: 74px;
     background-color: #CB5E00;
     color: #FFFFFF;
 */
-    margin-bottom: 4px;
+/*    margin-bottom: 4px; */
     padding: 0 0 4px;
  
 /*      box-shadow: 0 -2px 0 rgba(0, 0, 0, 0.2) inset; */
@@ -716,6 +755,7 @@ padding: 0;
 }
 
 .minipost-authortime {
+    color: #666666;
 
 }
 
@@ -723,6 +763,7 @@ padding: 0;
 /*   color: #A38337; */
 
     color: #333333;
+    clear: left;
 /*
     padding: 5px;
     padding-top: 0;
@@ -747,7 +788,7 @@ float: left;
 
   padding-left: 10px;
   font-size: 10px;
-
+  color: #666666;
 }
 .minipost-replycount {
     text-align: center;
@@ -812,6 +853,36 @@ padding: 0;
 }
 
 
+
+.avatar-whos-online {
+
+    border: 1px solid #CCCCCC;
+    box-shadow: 1px 1px 1px #777777;
+    display: block;
+    float: left;
+    height: 27px;
+    margin-bottom: 5px;
+    margin-right: 5px;
+    padding: 1px;
+    width: 27px;
+
+background: no-repeat center center #ffffff;
+
+
+/* option 2 */
+/*
+    box-shadow: 0 0 2px #777777;
+    display: block;
+    float: left;
+    height: 25px;
+    margin-bottom: 5px;
+    margin-right: 5px;
+    padding: 0;
+    width: 25px;
+*/
+
+
+}
 
 
 

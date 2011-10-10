@@ -49,7 +49,16 @@
         </ul>
         <div class="myewb-header-right">
           <div class="searchbox">Search...</div>
-          <div class="profile-pic"><a href="#"><img src="http://preview.ewb.ca/site_media/static/avatars/.1197516735582/resized/60/avatars/.1197516735582/IMGP1514_2.JPG" class="profile-pic-image" /></a></div>
+          <div class="profile-pic">
+            
+            <a class="" title="Logged in as {{user.visible_name}}" href="{% url profile_detail user %}">
+              <span data-background-src="{% avatar_url user 30 %}" class="avatar-30"></span>
+            </a>
+            
+            
+            
+            
+          </div>
         </div>
         
       </div>
