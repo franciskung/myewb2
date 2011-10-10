@@ -12,7 +12,7 @@ function runDelayedAvatarLoad() {
 
   $('[data-background-src]').css("background-image", function(index){
     console.log($(this).attr('data-background-src'));
-    return "url(" + $(this).attr('data-background-src') + ")";
+    return "url('" + $(this).attr('data-background-src') + "')";
 
   });  
 

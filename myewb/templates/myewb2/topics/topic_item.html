@@ -73,14 +73,6 @@
 	</div>
 
 
-          <div class="minipost-star">
-            <span class="starstar">
-<!--               &star; -->
-<!--     	    {% show_cheers_widget topic %} -->
-            </span>
-          
-          </div>
-
         </div>
 
       
@@ -107,9 +99,32 @@
     </div>
       
     <div class="minipost-text">
+{#          <div class="minipost-star" style='float: right;'> #}
+<div style="float: right; width: auto;">
+{#            <span class="starstar">#}
+            {# sean's gonna hate me for introducing another image!  we'll optimize this later... #}
+            
+            {% if user.is_authenticated %}
+                {% topic_on_watchlist user topic as on_list %}
+                {% if on_list %}
+                    <a href="#" id="toggle_watchlist-{{ topic.pk }}" class="more watchlist-toggle toggle-remove">
+                {% else %}
+                    <a href="#" id="toggle_watchlist-{{ topic.pk }}" class="more watchlist-toggle toggle-add faded">
+                {% endif %}
+                <img src="{{STATIC_URL}}images/icons3/Favorite.png" style="height: 30px; width: 30px;"/>
+                </a>
+            {% endif %}
+{#            </span>#}
+     	    {% show_cheers_widget topic %}
+          
+          </div>
+
+
       <a href="{{ topic.get_absolute_url }}" class="quietlink">
       	{{ topic.intro|striptags }}
       </a>
+
+    <div style='clear: right;'></div>
     </div>
     
 

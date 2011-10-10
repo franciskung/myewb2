@@ -27,11 +27,11 @@ class CheersManager(models.Manager):
         return c
         
     def latest(self):
-        c = CheersContainer.objects.all().order_by('-latest')
+        c = CheersContainer.objects.filter(count__gt=0).order_by('-latest')
         return c
         
     def popular(self):
-        c = CheersContainer.objects.all().order_by('-count')
+        c = CheersContainer.objects.filter(count__gt=0).order_by('-count')
         return 
         
     def create_link(self, obj):

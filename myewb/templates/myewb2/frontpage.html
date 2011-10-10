@@ -11,6 +11,7 @@
 {% load champ_tags %}
 {% load perspectives %}
 {% load networks_tags %}
+{% load winedown_tags %}
 {#{% load fake_ads %}#}
 
 {% block extra_head %}
@@ -32,7 +33,50 @@
 
 var timeout_id = 0;
 
+// this goes into the external javascript file later
+function install_cheers() {
+    $('.cheers').unbind('click');
+    
+    $('.cheers').click(function() {
+        var cheerslink = $(this);
+        $.get($(this).attr('href'), function(data) {
+            $('.cheerscount', cheerslink.parent()).html(data);
+            cheerslink.hide();
+        });
+        return false;
+    });
+}
 
+// so does this
+function install_watchlists() {
+    $('.watchlist-toggle').unbind('click');
+    
+    $('.watchlist-toggle').click(function() {
+        {% if user.is_authenticated %}
+        var my_id = $(this).attr('id').substr(17);
+
+        if($(this).hasClass('toggle-remove')) {
+            // remove it from the watchlist when clicked
+            var my_obj = $(this);
+            $.get('{% url topic_watchlist_remove user.pk %}' + my_id + '/',
+                function() {
+                    my_obj.removeClass('toggle-remove');
+                    my_obj.addClass('toggle-add');
+                    my_obj.addClass('faded');
+                });
+        } else {
+            var my_obj = $(this);
+            $.get('{% url topic_watchlist_add user.pk %}' + my_id + '/',
+                function() {
+                    my_obj.removeClass('toggle-add');
+                    my_obj.addClass('toggle-remove');
+                    my_obj.removeClass('faded');
+                });
+        }
+        {% endif %}
+        return false;
+    });
+}
 
 function load_homepage_posts()   // now, this'll be a behind-the-scenes function that's only called by hashchanges.
 {
@@ -67,6 +111,8 @@ function load_homepage_posts()   // now, this'll be a behind-the-scenes function
         
         runDelayedAvatarLoad();
 
+        install_watchlists();
+        install_cheers();
         
         
       });
@@ -311,30 +357,14 @@ $(document).ready(function() {
     <div class="standardbox ewb-latest">
       <div class="standardbox-title">Wine Down!</div>
       <div class="standardbox-content">
-
+        {% show_latest_cheers %}
+        {% comment %}
         <p>
-
         <a class="cheers cboxElement" href="#">Blah blah blah</a><br>
                 <span style="color: #a0a0a0; font-size: 10px;">cheers'ed by 12 people</span>
                 <br><br>
-
-                <a class="cheers cboxElement" href="#">Blah blah blah</a><br>
-                <span style="color: #a0a0a0; font-size: 10px;">cheers'ed by 12 people</span>
-                <br><br>
-
-                <a class="cheers cboxElement" href="#">Blah blah blah</a><br>
-                <span style="color: #a0a0a0; font-size: 10px;">cheers'ed by 12 people</span>
-                <br><br>
-
-                <a class="cheers cboxElement" href="#">Blah blah blah</a><br>
-                <span style="color: #a0a0a0; font-size: 10px;">cheers'ed by 12 people</span>
-                <br><br>
-
-                <a class="cheers cboxElement" href="#">Blah blah blah</a><br>
-                <span style="color: #a0a0a0; font-size: 10px;">cheers'ed by 12 people</span>
-
-
         </p>
+        {% endcomment %}
 
       </div>
     </div>

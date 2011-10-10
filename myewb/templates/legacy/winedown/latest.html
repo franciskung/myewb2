@@ -1,7 +1,7 @@
 {% for c in cheers %}
     <div>
-        <a href="{{ c.content.content_object.absolute_url }}">{{ c.content.guess_title }}</a><br/>
-        <a href="#" style='color: #d0d0d0;'>cheers'ed by {{ c.content.count }} people!</a>
+        <a href="{{ c.content_object.absolute_url }}">{{ c.guess_title }}</a><br/>
+        <a href="#" style='color: #d0d0d0;'>cheers'ed by {{ c.count }} {% ifequal c.count 1 %}person{% else %}people{% endifequal %}!</a>
     </div>
 {% endfor %}
 
