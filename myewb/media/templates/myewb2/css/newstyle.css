@@ -272,7 +272,11 @@ color: #7e3b00;
 text-shadow: 0 1px 0 #FFFFFF;
 }
 
-
+/* maybe... still playing ... */
+h1, h2 {
+    background: url('../images/headerlogo2.png') no-repeat left center;
+    padding-left: 35px;
+}
 
 
 
@@ -780,6 +784,12 @@ margin-top: -3px;
     padding: 2px;
 }
 
+.avatar-30 {
+    height: 30px;
+    width: 30px;
+    background-size: 30px 30px;
+}
+
 .avatar-40 {
 height: 44px;
 width: 44px;
@@ -793,6 +803,7 @@ width: 44px;
 display: block;
 
 background: no-repeat center center #ffffff;
+background-size: 40px 40px;
 
 
 /*     -moz-transition: all 3.1s ease-in-out 0s;  -- doesn't seem to work */

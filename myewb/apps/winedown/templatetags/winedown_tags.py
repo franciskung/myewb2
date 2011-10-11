@@ -47,6 +47,7 @@ def show_cheers_widget(context, content):
     Shows a small widget that counts the cheers and offers a link to cheers more
     """
     
+    container = Cheers.objects.get_container(content)
     cheers = Cheers.objects.get_for_object(content).count()
 
     if context['request'].user.is_authenticated():
@@ -58,6 +59,7 @@ def show_cheers_widget(context, content):
     
     return {
         "cheers": cheers,
+        "container": container,
         "link": link,
         "STATIC_URL": settings.STATIC_URL,
         "request": context['request']

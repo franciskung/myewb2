@@ -45,9 +45,9 @@
       <!-- Heading -->
       
       <div class="myewb-header">
-        <div class="myewb-logo"><a href="#" class="border-orange">my<strong>EWB</strong></a></div>
+        <div class="myewb-logo"><a href="{% url home %}" class="border-orange">my<strong>EWB</strong></a></div>
         <ul class="myewb-top-links inliner">
-          <li><a href="{% url home %}" class="current border-orange">Home</a></li>
+{#          <li><a href="{% url home %}" class="current border-orange">Home</a></li> #}  {# redundent, since the main myEWB heading does this too ?? #}
           <li><a href="{% url topic_list %}" class="border-purple">Discussions</a></li>
           <li><a href="{% url communities_index %}" class="border-lightblue">Groups</a></li>
           <li><a href="{% url events_all %}" class="border-red">Events</a></li>

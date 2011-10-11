@@ -1,6 +1,6 @@
 {% for c in cheers %}
     <div style='padding-bottom: 8px;' id="cheers-{{c.id}}">
-        <a href="{{ c.content_object.absolute_url }}">{{ c.guess_title }}</a><br/>
+        <a href="{{ c.content_object.get_absolute_url }}">{{ c.guess_title }}</a><br/>
         <a href="{% url winedown_summary c.id %}" style='color: #a0a0a0;' class="cheers_detail">cheers'ed by {{ c.count }} {% ifequal c.count 1 %}person{% else %}people{% endifequal %}!</a>
     </div>
 {% endfor %}
