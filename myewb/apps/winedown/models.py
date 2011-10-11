@@ -70,7 +70,15 @@ class CheersContainer(models.Model):
         self.save()
         
     def guess_title(self):
-        return "test"
+        obj = self.content_object
+        
+        titles = ('title', 'name', 'subject')  # any others?
+        
+        for t in titles:
+            if hasattr(obj, t):
+                return getattr(obj, t)
+                
+        return "unnamed object"
 
 class Cheers(models.Model):
     owner = models.ForeignKey(User)

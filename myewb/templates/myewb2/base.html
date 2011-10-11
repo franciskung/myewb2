@@ -1,7 +1,9 @@
 {% load i18n %}
 {% load git_revision %}
 {% load avatar_tags %}
-<!doctype html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+    
 <!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
 <!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
 <!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
@@ -23,10 +25,15 @@
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
 <script>window.jQuery || document.write('<script src="{{ STATIC_URL }}templates/myewb2/js/libs/jquery-1.6.2.min.js"><\/script>')</script>
-	<script src="{{ STATIC_URL }}templates/myewb2/js/libs/modernizr-2.0.6.min.js"></script>
+    <script src="{{ STATIC_URL }}templates/myewb2/js/libs/modernizr-2.0.6.min.js"></script>
 
 	{% block extra_head %}
 	{% endblock %}
+
+    {# I use this often enough, I'd love to just include it once and for all...!! #}
+    <link type="text/css" href="{{STATIC_URL}}css/colorbox.css?v=5" rel="stylesheet" />
+    <script type="text/javascript" src="{{STATIC_URL}}js/colorbox.js?v=6"></script>
+
 </head>
 <body>
 
@@ -110,125 +117,20 @@
 
 
 {% block body_base %}
-{% block body %} 
-    
-    
-{%comment%}
-    
-    
-<?php
-
-foreach($posts as $post) {
-
-?>
-    
-    <div class="minipost">
-      
-      <div class="minipostcontents">
-
-        <div class="minipost-thumb">
-          <img src="<?php echo $post['thumb']; ?>"/>
-        </div>
-        
-        <div class="minipost-inside">
-        
-        
-        
-          <div class="minipost-heading border-bottom">
-          
-  
-          
-  
-  
-            <div class="minipost-rightcontainer">
-              <div class="minipost-replydetails">
-                <?php echo $post['latestreply']; ?>
-              </div>
-  
-  
-  
-  
-  
-              <div class="minipost-replycount">
-              
-                  <a class="spch-bub-inside" href="#">
-        <span class="point"></span>  
-        <em><?php echo $post['replycount']; ?></em>
-    </a>
-              
-<!--                 <span class="numero"><?php echo $post['replycount']; ?></span> -->
-              </div>
-              <div class="minipost-star">
-                <span class="starstar">
-                  &star;
-                </span>
-              
-              </div>
-  
-            </div>
-  
-          
-            <div class="minipost-title">
-              <h3><?php echo $post['title']; ?></h3>
-            </div>
-            <div class="minipost-authortime">
-              <?php echo $post['authortime']; ?>
-            </div>
+ 
+    <div class="maincontent-background">
+    <div class="container_12">
+        <div class="grid_12">
+            {% block body %} 
+            {% endblock %}
             
-            
-  
-  
-          
-          </div>
-          
-          <div class="minipost-text">
-           <?php echo $post['text']; ?>
-          </div>
-        
+            <br/><br/>
         </div>
-        
-        
-
-    
-      </div>
-    
-    
-      
-    
-      <div class="dividerstyle minidivider">
-        <div class="ds1"></div>
-        <div class="ds2"></div>
-        <div class="ds3"></div>
-        <div class="ds4"></div>
-        <div class="ds5"></div>
-        <div class="ds6"></div>
-      
-      </div>
-    
+    </div>
     </div>
     
-
-<?php
-
-}
-
-?>
-{% endcomment %}
- 
-{% endblock %}
 {% endblock %}   
   
-</div>
-
-
-<div class="bigfooter-background">
-
-
-  {% include "components/bigfooter.html" %}
-
-</div>
-
-
 {% include "components/divider.html" %}
 
 
@@ -256,6 +158,10 @@ foreach($posts as $post) {
 <script src="{{ STATIC_URL }}templates/myewb2/js/plugins.js"></script>
 <script src="{{ STATIC_URL }}templates/myewb2/js/script.js"></script>
 <!-- end scripts-->
+
+{% block extra_body %}
+{% endblock %}
+
 
 <!-- TODO - put this in an external file minimize -->
 <!-- (this handles the search bar -->

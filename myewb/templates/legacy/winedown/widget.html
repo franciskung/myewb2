@@ -1,10 +1,10 @@
 {#<div>#}
     {% if link %}
         <a href="{{ link }}" class="cheers">
-            <img src="{{ STATIC_URL }}images/red-wine-glass.png" style="width: 21px; height: 28px;" class="faded"/>
+            <img src="{{ STATIC_URL }}images/red-wine-glass.png" style="width: 21px; height: 28px;" class="faded" title="Like this?  Send it some virtual cheers!"/>
         </a>
     {% else %}
-        <img src="{{ STATIC_URL }}images/red-wine-glass.png" style="width: 21px; height: 28px;"/>
+        <img src="{{ STATIC_URL }}images/red-wine-glass.png" style="width: 21px; height: 28px;" title="Like this?  Send it some virtual cheers!"/>
     {% endif %}
     <span class="cheerscount" style="font-size: 14px; color: #a0a0a0; position: relative; top: -12px; left: -6px;">{{ cheers }}</span>
     

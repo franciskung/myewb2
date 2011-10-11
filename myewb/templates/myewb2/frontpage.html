@@ -78,6 +78,11 @@ function install_watchlists() {
     });
 }
 
+// and this too.
+$().ready(function() {
+    $('.cheers_detail').colorbox({opacity: '0.5', width: '50%', height: '50%'});
+});
+
 function load_homepage_posts()   // now, this'll be a behind-the-scenes function that's only called by hashchanges.
 {
   clearTimeout(timeout_id)
@@ -378,6 +383,12 @@ $(document).ready(function() {
 
 
 
+<div class="bigfooter-background">
+
+
+  {% include "components/bigfooter.html" %}
+
+</div>
 
 
 

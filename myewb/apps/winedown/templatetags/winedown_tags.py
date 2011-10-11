@@ -48,9 +48,10 @@ def show_cheers_widget(context, content):
     """
     
     cheers = Cheers.objects.get_for_object(content).count()
-    
-    mycheers = Cheers.objects.get_for_object(content).filter(owner=context['request'].user)
-    if mycheers.count():
+
+    if context['request'].user.is_authenticated():
+        mycheers = Cheers.objects.get_for_object(content).filter(owner=context['request'].user)
+    if not context['request'].user.is_authenticated() or mycheers.count():
         link = None
     else:
         link = Cheers.objects.create_link(content)
