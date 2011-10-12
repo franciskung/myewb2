@@ -31,13 +31,16 @@ class ConferenceRegistration(models.Model):
     cellphone = models.CharField(max_length=50, blank=True, null=True)
     cellphone_optout = models.DateTimeField(blank=True, null=True)
     cellphone_from = models.ForeignKey('ConferencePhoneFrom', null=True, blank=True)
-    grouping = models.CharField(max_length=50, blank=True, null=True)
+    #grouping = models.CharField(max_length=50, blank=True, null=True)
+    roommate = models.CharField(max_length=255, blank=True, null=True)
+    new_to_ottawa = models.BooleanField(default=False)
     
     txid = models.CharField(max_length=255)
     receiptNum = models.CharField(max_length=255)
     code = models.ForeignKey('ConferenceCode', related_name="registration", blank=True, null=True)
     type = models.CharField(max_length=50)
     africaFund = models.SmallIntegerField(blank=True, null=True)
+    tshirt = models.CharField(max_length=1, blank=True, null=True)
 
     def cancel(self):
         self.cancelled = True
@@ -45,20 +48,20 @@ class ConferenceRegistration(models.Model):
         self.save()
 
         # remove from delegates group
-        grp, created = Community.objects.get_or_create(slug='conference2011',
+        grp, created = Community.objects.get_or_create(slug='conference2012',
                                                        defaults={'invite_only': True,
-                                                                 'name': 'National Conference 2011 - EWB delegates',
+                                                                 'name': 'National Conference 2012 - EWB delegates',
                                                                  'creator': self.user,
-                                                                 'description': 'National Conference 2011 delegates (EWB members)',
-                                                                 'mailchimp_name': 'National Conference 2011 members',
+                                                                 'description': 'National Conference 2012 delegates (EWB members)',
+                                                                 'mailchimp_name': 'National Conference 2012 members',
                                                                  'mailchimp_category': 'Conference'})
 
         grp2, created = Community.objects.get_or_create(slug='conference2011-external',
                                                         defaults={'invite_only': True,
-                                                                  'name': 'National Conference 2011 - external delegates',
+                                                                  'name': 'National Conference 2012 - external delegates',
                                                                   'creator': self.user,
-                                                                  'description': 'National Conference 2011 delegates (external)',
-                                                                  'mailchimp_name': 'National Conference 2011 external',
+                                                                  'description': 'National Conference 2012 delegates (external)',
+                                                                  'mailchimp_name': 'National Conference 2012 external',
                                                                   'mailchimp_category': 'Conference'})
 
         grp.remove_member(self.user)

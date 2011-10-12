@@ -13,7 +13,7 @@ register = template.Library()
 
 @register.simple_tag
 def lookup_cost(code, room):
-    key = "confreg-2011-" + room + "-" + code
+    key = "confreg-2012-" + room + "-" + code
     listing = CONF_OPTIONS.get(key, None)
     
     if listing:

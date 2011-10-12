@@ -47,13 +47,13 @@ class ConferenceRegistrationForm(forms.ModelForm):
 								   widget=forms.Textarea,
 								   help_text='Please let us know about any special dietary, accessibility or other needs you may have, or any medical conditions (including allergies).')
     
-    #emergName = forms.CharField(label='Emergency contact name')
-    #emergPhone = forms.CharField(label='Emergency contact phone number')
+    emergName = forms.CharField(label='Emergency contact name')
+    emergPhone = forms.CharField(label='Emergency contact phone number')
     
-    #prevConfs = forms.ChoiceField(label='EWB national conferences attended',
-	#							  choices=PASTEVENTS)
-    #prevRetreats = forms.ChoiceField(label='EWB regional retreats attended',
-	#								 choices=PASTEVENTS)
+    prevConfs = forms.ChoiceField(label='EWB national conferences attended',
+								  choices=PASTEVENTS)
+    prevRetreats = forms.ChoiceField(label='EWB regional retreats attended',
+									 choices=PASTEVENTS)
     
     #resume = forms.FileField(label='Resume',
     #                         required=False,
@@ -67,10 +67,12 @@ class ConferenceRegistrationForm(forms.ModelForm):
                            help_text='if you have a registration code, enter it here for a discounted rate.',
                            required=False)
     type = forms.ChoiceField(label='Registration type',
-							 choices=FINAL_CHOICES,
+							 #choices=FINAL_CHOICES,
+                             choices=ROOM_CHOICES,
 							 widget=forms.RadioSelect,
 							 #help_text="""<a href='#' id='confoptiontablelink'>click here for a rate guide and explanation</a>""")
-                             help_text="""Note that tickets to the Gala on Saturday evening featuring K'naan are sold separately, through the Gala event site""")
+                             #help_text="""Note that tickets to the Gala on Saturday evening featuring K'naan are sold separately, through the Gala event site"""
+                             )
     
     africaFund = forms.ChoiceField(label='Support an African delegate?',
                                    choices=AFRICA_FUND,
@@ -78,12 +80,17 @@ class ConferenceRegistrationForm(forms.ModelForm):
 								   required=False,
 								   help_text='<a href="/site_media/static/conference/delegateinfo.html" class="delegatelink">more information...</a>')
 
-    grouping = forms.ChoiceField(label='Which group do you belong to?',
-                                 choices=EXTERNAL_GROUPS,
-                                 required=False)
-    grouping2 = forms.CharField(label='&nbsp;',
-                                required=False,
-                                help_text='(if other)')
+    #grouping = forms.ChoiceField(label='Which group do you belong to?',
+    #                             choices=EXTERNAL_GROUPS,
+    #                             required=False)
+    #grouping2 = forms.CharField(label='&nbsp;',
+    #                            required=False,
+    #                            help_text='(if other)')
+    
+    roommate = forms.CharField(label='Roommate request (if any)', required=False)
+    new_to_ottawa = forms.BooleanField('Is this your first time in Ottawa?')
+    tshirt = forms.ChoiceField(label='Purchase an EWB t-shirt?',
+                               choices=TSHIRT_CHOICES)
     
     cc_type = forms.ChoiceField(label='Credit card type',
 								  choices=CC_TYPES)
@@ -98,12 +105,11 @@ class ConferenceRegistrationForm(forms.ModelForm):
 
     class Meta:
         model = ConferenceRegistration
-#        fields = ['headset', 'foodPrefs', 'specialNeeds', #'emergName', 'emergPhone',
-#                  #'prevConfs', 'prevRetreats', 'resume',
-#                  'cellphone', 
-#                  'code', 'type', 'africaFund']
-        fields = ['type', 'grouping', 'grouping2', 'africaFund', 'cellphone',
-                  'headset', 'foodPrefs', 'specialNeeds', 'code']
+        fields = ['headset', 'foodPrefs', 'specialNeeds', 'emergName', 'emergPhone',
+                  'prevConfs', 'prevRetreats', 'africaFund',  #'resume', 
+                  'cellphone', 'code', 'type', 'roommate', 'new_to_ottawa', 'tshirt']
+#        fields = ['type', 'grouping', 'grouping2', 'africaFund', 'cellphone',
+#                  'headset', 'foodPrefs', 'specialNeeds', 'code']
         
     def clean_code(self):
         codestring = self.cleaned_data['code'].strip().lower()
@@ -112,14 +118,15 @@ class ConferenceRegistrationForm(forms.ModelForm):
             return None
         
         try:
-            if (codestring == 'ewbalumni'):
-                code = AlumniConferenceCode()
-            elif (codestring == 'ewbconfspecial'):
-                code = QuasiVIPCode()
-            elif (codestring == 'ewbfriendsconf'):
-                code = FriendsConferenceCode()
-            else:
-                code = ConferenceCode.objects.get(code=codestring)
+            #if (codestring == 'ewbalumni'):
+            #    code = AlumniConferenceCode()
+            #elif (codestring == 'ewbconfspecial'):
+            #    code = QuasiVIPCode()
+            #elif (codestring == 'ewbfriendsconf'):
+            #    code = FriendsConferenceCode()
+            #else:
+            #    code = ConferenceCode.objects.get(code=codestring)
+            code = ConferenceCode.objects.get(code=codestring)
                 
             if code.isAvailable():
                 self.cleaned_data['code'] = code
@@ -158,17 +165,17 @@ class ConferenceRegistrationForm(forms.ModelForm):
         if not cleaned_data.get('code', None):
             cleaned_data['code'] = None
             
-        if not cleaned_data.get('grouping', None):
-            cleaned_data['grouping'] = None
-        if cleaned_data['grouping'] == 'Other' and cleaned_data.get('grouping2', None):
-            cleaned_data['grouping'] = cleaned_data['grouping2'] 
+        #if not cleaned_data.get('grouping', None):
+        #    cleaned_data['grouping'] = None
+        #if cleaned_data['grouping'] == 'Other' and cleaned_data.get('grouping2', None):
+        #    cleaned_data['grouping'] = cleaned_data['grouping2'] 
             
         if cleaned_data['code']:
             codename = cleaned_data['code'].getShortname()
         else:
             codename = "open"
         
-        sku = "confreg-2011-" + cleaned_data['type'] + "-" + codename
+        sku = "confreg-2012-" + cleaned_data['type'] + "-" + codename
         
         if not CONF_OPTIONS.get(sku, None):
             errormsg = "The registration code you've entered is not valid for the registration type you selected."
@@ -219,7 +226,7 @@ class ConferenceRegistrationForm(forms.ModelForm):
 
         if cleaned_data['africaFund']:
             cost = cleaned_data['africaFund']
-            sku = "11-africafund-" + cost
+            sku = "12-africafund-" + cost
             name = "Support an African delegate ($" + cost + ")"
             product, created = Product.objects.get_or_create(sku=sku)
             if created:
@@ -287,7 +294,7 @@ class ConferenceRegistrationFormPreview(PaymentFormPreview):
             
             registration = form.save(commit=False)
             registration.user = request.user
-            registration.type = "confreg-2011-" + cleaned_data['type'] + "-" + codename
+            registration.type = "confreg-2012-" + cleaned_data['type'] + "-" + codename
             registration.amountPaid = CONF_OPTIONS[registration.type]['cost']
             registration.roomSize = cleaned_data['type']
             if cleaned_data['code']:
@@ -297,8 +304,8 @@ class ConferenceRegistrationFormPreview(PaymentFormPreview):
             registration.receiptNum = response[2]
             registration.txid = response[1]
             
-            if cleaned_data.get('grouping', None):
-                registration.grouping = cleaned_data['grouping']
+            #if cleaned_data.get('grouping', None):
+            #    registration.grouping = cleaned_data['grouping']
             
             registration.save()
             
@@ -307,20 +314,20 @@ class ConferenceRegistrationFormPreview(PaymentFormPreview):
                 request.user.get_profile().pay_membership()
                 
             # lastly, add them to the group
-            grp, created = Community.objects.get_or_create(slug='conference2011',
+            grp, created = Community.objects.get_or_create(slug='conference2012',
                                                            defaults={'invite_only': True,
-                                                                     'name': 'National Conference 2011 - EWB delegates',
+                                                                     'name': 'National Conference 2012 - EWB delegates',
                                                                      'creator': request.user,
-                                                                     'description': 'National Conference 2011 delegates (EWB members)',
-                                                                     'mailchimp_name': 'National Conference 2011 members',
+                                                                     'description': 'National Conference 2012 delegates (EWB members)',
+                                                                     'mailchimp_name': 'National Conference 2012 members',
                                                                      'mailchimp_category': 'Conference'})
 
             grp2, created = Community.objects.get_or_create(slug='conference2011-external',
                                                             defaults={'invite_only': True,
-                                                                      'name': 'National Conference 2011 - external delegates',
+                                                                      'name': 'National Conference 2012 - external delegates',
                                                                       'creator': request.user,
-                                                                      'description': 'National Conference 2011 delegates (external)',
-                                                                      'mailchimp_name': 'National Conference 2011 external',
+                                                                      'description': 'National Conference 2012 delegates (external)',
+                                                                      'mailchimp_name': 'National Conference 2012 external',
                                                                       'mailchimp_category': 'Conference'})
 
             if request.user.is_bulk:
