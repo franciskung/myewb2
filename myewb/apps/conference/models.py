@@ -42,6 +42,15 @@ class ConferenceRegistration(models.Model):
     type = models.CharField(max_length=50, null=True, blank=True)
     africaFund = models.SmallIntegerField(blank=True, null=True)
     tshirt = models.CharField(max_length=1, blank=True, null=True)
+    
+    survey1 = models.TextField(null=True, blank=True)
+    survey2 = models.TextField(null=True, blank=True)
+    survey3 = models.TextField(null=True, blank=True)
+    survey4 = models.TextField(null=True, blank=True)
+    survey5 = models.TextField(null=True, blank=True)
+    survey6 = models.TextField(null=True, blank=True)
+    survey7 = models.TextField(null=True, blank=True)
+    survey8 = models.TextField(null=True, blank=True)
 
     def cancel(self):
         self.cancelled = True

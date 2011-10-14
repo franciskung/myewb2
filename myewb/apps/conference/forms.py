@@ -99,8 +99,6 @@ class ConferenceRegistrationForm1(ConferenceRegistrationForm):
     #                            help_text='(if other)')
     
     roommate = forms.CharField(label='Roommate request (if any)', required=False)
-    new_to_ottawa = forms.BooleanField(label='Is this your first time in Ottawa?',
-                                       required=False)
     tshirt = forms.ChoiceField(label='Purchase an EWB t-shirt?',
                                choices=TSHIRT_CHOICES)
     
@@ -108,7 +106,7 @@ class ConferenceRegistrationForm1(ConferenceRegistrationForm):
     class Meta:
         model = ConferenceRegistration
         fields = ['headset', 'foodPrefs', 'specialNeeds', 'emergName', 'emergPhone',
-                  'cellphone', 'code', 'type', 'roommate', 'new_to_ottawa', 'tshirt']
+                  'cellphone', 'code', 'type', 'roommate', 'tshirt']
 
     def clean_code(self):
         codestring = self.cleaned_data['code'].strip().lower()
@@ -150,11 +148,41 @@ class ConferenceRegistrationForm2(ConferenceRegistrationForm):
 								  choices=PASTEVENTS)
     prevRetreats = forms.ChoiceField(label='EWB regional retreats attended',
 									 choices=PASTEVENTS)
+    new_to_ottawa = forms.BooleanField(label='Is this your first time in Ottawa?',
+                                       required=False)
 
+    survey1 = forms.CharField(label='What are you hoping to learn through conference?',
+                              required=False,
+                              widget=forms.Textarea)
+    survey2 = forms.CharField(label='What are some of the connections you are hoping to make through conference?',
+                              help_text='ie, connections to national office, african programs staff, sponsors, chapter members...',
+                              required=False,
+                              widget=forms.Textarea)
+    survey3 = forms.CharField(label='Reflect on the main opportunities and challenges ahead in your involvement with EWB.  How can your experience at conference help you capitalize on the opportunities and overcome the challenges?',
+                              required=False,
+                              widget=forms.Textarea)
+    survey4 = forms.CharField(label='How would you define your perfect conference experience?',
+                              required=False,
+                              widget=forms.Textarea)
+    survey5 = forms.CharField(label='In the months leading to conference, how will you stay up to speed with the latest conference news?',
+                              help_text='ie, twitter, myewb, conference website, newsletter...',
+                              required=False,
+                              widget=forms.Textarea)
+    survey6 = forms.CharField(label='On Sunday the 15th, would you be interested in a trip to a) the War Museum, b) skiing? (neither are included in the cost of conference)',
+                              required=False,
+                              widget=forms.Textarea)
+    survey7 = forms.CharField(label='What type of socials would you be interested in?',
+                              required=False,
+                              widget=forms.Textarea)
+    survey8 = forms.CharField(label='Is there a particular restaurant or style of food that you would be interested in knowing the location of?',
+                              required=False,
+                              widget=forms.Textarea)
 
     class Meta:
         model = ConferenceRegistration
-        fields = ['prevConfs', 'prevRetreats']
+        fields = ['prevConfs', 'prevRetreats', 'new_to_ottawa',
+                  'survey1', 'survey2', 'survey3', 'survey4', 'survey5',
+                  'survey6', 'survey7', 'survey8']
     
 class ConferenceRegistrationForm3(ConferenceRegistrationForm):
     africaFund = forms.ChoiceField(label='Support an African delegate?',
