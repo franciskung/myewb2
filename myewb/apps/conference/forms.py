@@ -57,7 +57,7 @@ class ConferenceRegistrationForm1(ConferenceRegistrationForm):
     # bleh.  i don't like putting so much UI text here, instead of in a template!!
     headset = forms.BooleanField(label='Headset requested?',
 								 required=False,
-								 help_text='Would you use a simultaneous-translation headset for keynote speakers not in your preferred language, if headsets were available?')
+								 help_text='Would you like a simultaneous-translation headset? There will be keynotes in both English and French.')
 	
     foodPrefs = forms.ChoiceField(label='Food preferences',
 								  choices=FOOD_CHOICES,
