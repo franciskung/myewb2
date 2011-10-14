@@ -4,13 +4,13 @@
 {% load i18n %}
 {% load creditcard_tags %}
 
-{% block head_title %}National Conference 2011{% endblock %}
+{% block head_title %}National Conference 2012{% endblock %}
 
 {% block body %}
 
 <br/><br/>
 
-<h1>National Conference 2011: Registration Preview</h1>
+<h1>National Conference 2012: Registration Preview</h1>
 	
 <h2>Personal Details</h2>
 
@@ -124,7 +124,13 @@
 	{% if not user.is_bulk %}
 	<tr>
 		<td class='leftcell'>Registration code</td>
-		<td>{{ form.instance.code.getLongname }} ({{ form.instance.code.code }})</td>
+		<td>
+			{% if form.instance.code %}
+				{{ form.instance.code.getLongname }} ({{ form.instance.code.code }})
+			{% else %}
+				Open registration
+			{% endif %}
+		</td>
 	</tr>
 	{% endif %}
 	<tr>

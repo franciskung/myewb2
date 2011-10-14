@@ -145,7 +145,7 @@ class ConferenceCode(models.Model):
             return False
         
         try:
-            ConferenceCode.objects.get(code=self.code, registration__cancelled=False)
+            ConferenceCode.objects.get(code=self.code, registration__submitted=True, registration__cancelled=False)
         except ObjectDoesNotExist:
             return True
         except:

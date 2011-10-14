@@ -227,7 +227,7 @@ class ConferenceRegistrationForm4(ConferenceRegistrationForm):
     def clean(self):
         # If the card is declined at the bank, trnError will get set...
         if self.trnError:
-            raise forms.ValidationError("Credit card error: " + self.trnError)
+            raise forms.ValidationError("Error: " + self.trnError)
         
         if self.errors:
             return None
@@ -346,6 +346,9 @@ class ConferenceRegistrationFormPreview(PaymentFormPreview):
             # simulate a credit card declined, to trigger form validation failure
             response = (False, "Please edit your myEWB profile and enter an email address.")
 
+        elif reg.code and not reg.code.isAvailable():
+            response = (False, "Registration code has already been used or has expired")
+        
         else:
             cleaned_data['email'] = request.user.email
             if request.user.get_profile().default_phone() and request.user.get_profile().default_phone().number:
@@ -355,6 +358,9 @@ class ConferenceRegistrationFormPreview(PaymentFormPreview):
             
             # this call sends it to the bank!!
             response = super(ConferenceRegistrationFormPreview, self).done(request, cleaned_data)
+            
+            if not response[0]:
+                response = (False, "Credit card: %s" % response[1])
         
         if response[0] == True:
             if reg.code:

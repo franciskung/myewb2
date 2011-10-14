@@ -180,7 +180,7 @@ def registration_preview(request):
 def receipt(request):
 
     try:
-        registration = ConferenceRegistration.objects.get(user=request.user, cancelled=False)
+        registration = ConferenceRegistration.objects.get(user=request.user, submitted=True, cancelled=False)
 
     except ObjectDoesNotExist:
         #message = loader.get_template("profiles/suggest_network.html")
@@ -198,7 +198,7 @@ def receipt(request):
 @login_required
 def cancel(request):
     try:
-        registration = ConferenceRegistration.objects.get(user=request.user, cancelled=False)
+        registration = ConferenceRegistration.objects.get(user=request.user, submitted=True, cancelled=False)
 
     except ObjectDoesNotExist:
         #message = loader.get_template("profiles/suggest_network.html")
@@ -256,23 +256,32 @@ def list(request, chapter=None):
             # otherwise, show a summary page
             for chapter in chapters:
                 registrations = ConferenceRegistration.objects.filter(user__memberprofile__chapter=chapter.network,
-                                                                      cancelled=False)
+                                                                      submitted=True, cancelled=False)
                 chapter.numRegistrations = registrations.count()
             
             stats = {}
             if request.user.has_module_perms('conference'):
-                reg = ConferenceRegistration.objects.filter(cancelled=False)
+                reg = ConferenceRegistration.objects.filter(submitted=True, cancelled=False)
                 stats['total_registration'] = reg.count()
                 stats['external_registration'] = reg.filter(user__is_bulk=True).count()
                 
                 all_fees = reg.aggregate(Sum('amountPaid'), Sum('africaFund'))
                 stats['reg_fees'] = all_fees['amountPaid__sum']
                 stats['africafund'] = all_fees['africaFund__sum']
-                stats['africafund_percent'] = reg.filter(africaFund__isnull=False).count() * 100 / stats['total_registration']  
+                if stats['total_registration']:
+                    stats['africafund_percent'] = reg.filter(africaFund__isnull=False).count() * 100 / stats['total_registration']
+                else:
+                    stats['africafund_percent'] = 0
                 stats['male'] = reg.filter(user__memberprofile__gender='M').count()
-                stats['male_percent'] = stats['male'] * 100 / stats['total_registration']
+                if stats['africafund_percent']:
+                    stats['male_percent'] = stats['male'] * 100 / stats['total_registration']
+                else:
+                    stats['male_percent'] = 0
                 stats['female'] = reg.filter(user__memberprofile__gender='F').count()
-                stats['female_percent'] = stats['female'] * 100 / stats['total_registration']
+                if stats['africafund_percent']:
+                    stats['female_percent'] = stats['female'] * 100 / stats['total_registration']
+                else:
+                    stats['female_percent'] = 0
             
                 reg = reg.filter(user__is_bulk=False)
                 stats['member_registration'] = reg.filter(code__isnull=False).count()
@@ -297,7 +306,7 @@ def list(request, chapter=None):
         return render_to_response('denied.html', context_instance=RequestContext(request))
         
     registrations = ConferenceRegistration.objects.filter(user__memberprofile__chapter=group,
-                                                          cancelled=False)
+                                                          submitted=True, cancelled=False)
 
     return render_to_response('conference/list.html',
                               {'registrations': registrations,
@@ -309,7 +318,7 @@ def download(request, who=None):
     if not request.user.has_module_perms('conference'):
         return render_to_response('denied.html', context_instance=RequestContext(request))
     
-    reg = ConferenceRegistration.objects.filter(cancelled=False)
+    reg = ConferenceRegistration.objects.filter(submitted=True, cancelled=False)
     
     if who == 'chapter':
         reg = reg.filter(user__is_bulk=False, code__isnull=False)
@@ -408,7 +417,7 @@ def lookup_code(request):
             if code and code.expired:
                 return HttpResponse("voided")
             elif code:
-                reg = ConferenceRegistration.objects.filter(code=code, cancelled=False)
+                reg = ConferenceRegistration.objects.filter(code=code, submitted=True, cancelled=False)
                 if reg.count():
                     return HttpResponse("used")
                 else:
