@@ -84,7 +84,7 @@
 	<tr>
 		<td class='leftcell'>Headset requested</td>
 		<td>
-			{% if form.headset.data %}
+			{% if form.instance.headset %}
 				Yes
 			{% else %}
 				No
@@ -93,31 +93,20 @@
 	</tr>
 	<tr>
 		<td class='leftcell'>Food preferences</td>
-		<td>{{ form.foodPrefs.data }}</td>
+		<td>{{ form.instance.foodPrefs }}</td>
 	</tr>
 	<tr>
 		<td class='leftcell'>Special needs</td>
-		<td>{{ form.specialNeeds.data }}</td>
+		<td>{{ form.instance.specialNeeds }}</td>
 	</tr>
 	<tr>
 		<td class='leftcell'>Emergency Contact</td>
-		<td>{{ form.emergName.data }}<br/>{{ form.emergPhone.data }}</td>
+		<td>{{ form.instance.emergName }}<br/>{{ form.instance.emergPhone }}</td>
 	</tr>
-	
-	{% if not user.is_bulk %}
-	<tr>
-		<td class='leftcell'>Past national conferences</td>
-		<td>{{ form.prevConfs.data }}</td>
-	</tr>
-	<tr>
-		<td class='leftcell'>Past regional retreats</td>
-		<td>{{ form.prevRetreats.data }}</td>
-	</tr>
-	{% endif %}
 	
 	<tr>
 		<td class='leftcell'>Cell phone</td>
-		<td>{{ form.cellphone.data }}</td>
+		<td>{{ form.instance.cellphone }}</td>
 	</tr>
 	
 	{% if user.is_bulk %}
@@ -135,17 +124,29 @@
 	{% if not user.is_bulk %}
 	<tr>
 		<td class='leftcell'>Registration code</td>
-		<td>{{ form.code.data }}</td>
+		<td>{{ form.instance.code.getLongname }} ({{ form.instance.code.code }})</td>
 	</tr>
 	{% endif %}
 	<tr>
 		<td class='leftcell'>Registration type</td>
-		<td>{{ form.type.data }}</td>
+		<td>{{ form.instance.type }}</td>
 	</tr>
+
+	{% if not user.is_bulk %}
+	<tr>
+		<td class='leftcell'>Past national conferences</td>
+		<td>{{ form.instance.prevConfs }}</td>
+	</tr>
+	<tr>
+		<td class='leftcell'>Past regional retreats</td>
+		<td>{{ form.instance.prevRetreats }}</td>
+	</tr>
+	{% endif %}
+	
 	<tr>
 		<td class='leftcell'>Support an African delegate?</td>
 		<td>
-			{% if form.africaFund.data %}
+			{% if form.instance.africaFund %}
 				Yes
 			{% else %}
 				No
@@ -161,7 +162,7 @@
 	
 	<tr>
 		<td class='leftcell'>Credit card type</td>
-		<td>{{ form.ccardtype.data }}</td>
+		<td>{{ form.cc_type.data }}</td>
 	</tr>
 	<tr>
 		<td class='leftcell'>Credit card number</td>
@@ -191,6 +192,7 @@
 {% endfor %}
 <input type="hidden" name="{{ stage_field }}" value="2" />
 <input type="hidden" name="{{ hash_field }}" value="{{ hash_value }}" />
+<input type="hidden" name="reg_stage" value="4" />
 <p>
 	<input type="button" value="Go back" onClick="history.go(-1);" />
 	&nbsp;&nbsp;

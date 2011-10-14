@@ -77,7 +77,7 @@ class Product(models.Model):
     """ Items / products that you can pay for by credit card
     """
     
-    name = models.CharField(_('product_name'), max_length=45)
+    name = models.CharField(_('product_name'), max_length=125)
     sku = models.CharField(_('sku'), max_length=45)
 #    amount = CurrencyField(_('amount'), widget=CurrencyInput)
     # FIXME: why doesn't CurrencyField work?

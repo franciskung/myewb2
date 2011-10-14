@@ -17,15 +17,16 @@ class ConferenceRegistration(models.Model):
     user = models.ForeignKey(User, related_name="conference_registrations")
     chapter = models.ForeignKey(Network, related_name="conference_delegates", null=True)
     
-    amountPaid = models.DecimalField(max_digits=6, decimal_places=2)
-    roomSize = models.CharField(max_length=25)
+    amountPaid = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
+    roomSize = models.CharField(max_length=25, null=True, blank=True)
     date = models.DateTimeField(default=datetime.now)
     headset = models.BooleanField(default=False)
     foodPrefs = models.CharField(max_length=10, choices=FOOD_CHOICES, default='none')
+    submitted = models.BooleanField(default=False)
     cancelled = models.BooleanField(default=False)
-    specialNeeds = models.TextField()
-    emergName = models.CharField(max_length=255)
-    emergPhone = models.CharField(max_length=50)
+    specialNeeds = models.TextField(null=True, blank=True)
+    emergName = models.CharField(max_length=255, null=True, blank=True)
+    emergPhone = models.CharField(max_length=50, null=True, blank=True)
     prevConfs = models.SmallIntegerField(default=0)
     prevRetreats = models.SmallIntegerField(default=0)
     cellphone = models.CharField(max_length=50, blank=True, null=True)
@@ -33,12 +34,12 @@ class ConferenceRegistration(models.Model):
     cellphone_from = models.ForeignKey('ConferencePhoneFrom', null=True, blank=True)
     #grouping = models.CharField(max_length=50, blank=True, null=True)
     roommate = models.CharField(max_length=255, blank=True, null=True)
-    new_to_ottawa = models.BooleanField(default=False)
+    new_to_ottawa = models.BooleanField(default=False, blank=True)
     
-    txid = models.CharField(max_length=255)
-    receiptNum = models.CharField(max_length=255)
+    txid = models.CharField(max_length=255, null=True, blank=True)
+    receiptNum = models.CharField(max_length=255, null=True, blank=True)
     code = models.ForeignKey('ConferenceCode', related_name="registration", blank=True, null=True)
-    type = models.CharField(max_length=50)
+    type = models.CharField(max_length=50, null=True, blank=True)
     africaFund = models.SmallIntegerField(blank=True, null=True)
     tshirt = models.CharField(max_length=1, blank=True, null=True)
 
@@ -122,6 +123,12 @@ class ConferenceCode(models.Model):
                 return code[1]
         
         # should never get here, since the type field is restricted to CONF_CODES
+        return "unknown"
+    
+    def getLongname(self):
+        for code in CONF_CODES_LONG:
+            if code[0] == self.type.lower():
+                return code[1]
         return "unknown"
     
     def isAvailable(self):

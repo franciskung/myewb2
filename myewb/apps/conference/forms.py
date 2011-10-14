@@ -32,6 +32,28 @@ from siteutils.models import Address
 class ConferenceRegistrationForm(forms.ModelForm):
     theuser = None
 
+    _user = None
+    def _get_user(self):
+        return self._user
+    
+    def _set_user(self, value):
+        self._user = value
+        if self.fields.get('address', None):
+            self.fields['address'].user = value
+            
+        #
+        #if value.is_bulk:
+        #    del(self.fields['prevConfs'])
+        #    del(self.fields['prevRetreats'])
+        #    #del(self.fields['code'])
+        #    self.fields['type'].choices=EXTERNAL_CHOICES
+        #else:
+        #    del(self.fields['grouping'])
+        #    del(self.fields['grouping2'])
+            
+    user = property(_get_user, _set_user)
+
+class ConferenceRegistrationForm1(ConferenceRegistrationForm):
     # bleh.  i don't like putting so much UI text here, instead of in a template!!
     headset = forms.BooleanField(label='Headset requested?',
 								 required=False,
@@ -50,11 +72,6 @@ class ConferenceRegistrationForm(forms.ModelForm):
     emergName = forms.CharField(label='Emergency contact name')
     emergPhone = forms.CharField(label='Emergency contact phone number')
     
-    prevConfs = forms.ChoiceField(label='EWB national conferences attended',
-								  choices=PASTEVENTS)
-    prevRetreats = forms.ChoiceField(label='EWB regional retreats attended',
-									 choices=PASTEVENTS)
-    
     #resume = forms.FileField(label='Resume',
     #                         required=False,
     #                         help_text="(optional) Attach a resume if you would like it shared with our sponsors")
@@ -67,19 +84,13 @@ class ConferenceRegistrationForm(forms.ModelForm):
                            help_text='if you have a registration code, enter it here for a discounted rate.',
                            required=False)
     type = forms.ChoiceField(label='Registration type',
-							 #choices=FINAL_CHOICES,
+                             #choices=FINAL_CHOICES,
                              choices=ROOM_CHOICES,
-							 widget=forms.RadioSelect,
-							 #help_text="""<a href='#' id='confoptiontablelink'>click here for a rate guide and explanation</a>""")
+                             widget=forms.RadioSelect,
+                             #help_text="""<a href='#' id='confoptiontablelink'>click here for a rate guide and explanation</a>""")
                              #help_text="""Note that tickets to the Gala on Saturday evening featuring K'naan are sold separately, through the Gala event site"""
                              )
     
-    africaFund = forms.ChoiceField(label='Support an African delegate?',
-                                   choices=AFRICA_FUND,
-                                   initial='75',
-								   required=False,
-								   help_text='<a href="/site_media/static/conference/delegateinfo.html" class="delegatelink">more information...</a>')
-
     #grouping = forms.ChoiceField(label='Which group do you belong to?',
     #                             choices=EXTERNAL_GROUPS,
     #                             required=False)
@@ -88,29 +99,17 @@ class ConferenceRegistrationForm(forms.ModelForm):
     #                            help_text='(if other)')
     
     roommate = forms.CharField(label='Roommate request (if any)', required=False)
-    new_to_ottawa = forms.BooleanField('Is this your first time in Ottawa?')
+    new_to_ottawa = forms.BooleanField(label='Is this your first time in Ottawa?',
+                                       required=False)
     tshirt = forms.ChoiceField(label='Purchase an EWB t-shirt?',
                                choices=TSHIRT_CHOICES)
     
-    cc_type = forms.ChoiceField(label='Credit card type',
-								  choices=CC_TYPES)
-    cc_number = CreditCardNumberField(label='Credit card number')
-    cc_expiry = CreditCardExpiryField(label='Credit card expiry',
-                                      help_text='MM/YY')
-    billing_name = forms.CharField(label='Name on credit card', max_length=255)
-    address = CompactAddressField(label='Billing Address')
-        
-    # this gets set if the card is declined at the bank
-    trnError = None
 
     class Meta:
         model = ConferenceRegistration
         fields = ['headset', 'foodPrefs', 'specialNeeds', 'emergName', 'emergPhone',
-                  'prevConfs', 'prevRetreats', 'africaFund',  #'resume', 
                   'cellphone', 'code', 'type', 'roommate', 'new_to_ottawa', 'tshirt']
-#        fields = ['type', 'grouping', 'grouping2', 'africaFund', 'cellphone',
-#                  'headset', 'foodPrefs', 'specialNeeds', 'code']
-        
+
     def clean_code(self):
         codestring = self.cleaned_data['code'].strip().lower()
         
@@ -136,6 +135,38 @@ class ConferenceRegistrationForm(forms.ModelForm):
         except ObjectDoesNotExist:
             raise forms.ValidationError("Invalid registration code")
         
+    def clean(self):
+        if not self.user.first_name \
+            or not self.user.last_name \
+            or not self.user.get_profile().gender \
+            or not self.user.email:
+            
+            raise forms.ValidationError("Please fill out your full myEWB profile, including full name and email")
+        
+        return self.cleaned_data
+        
+class ConferenceRegistrationForm2(ConferenceRegistrationForm):
+    prevConfs = forms.ChoiceField(label='EWB national conferences attended',
+								  choices=PASTEVENTS)
+    prevRetreats = forms.ChoiceField(label='EWB regional retreats attended',
+									 choices=PASTEVENTS)
+
+
+    class Meta:
+        model = ConferenceRegistration
+        fields = ['prevConfs', 'prevRetreats']
+    
+class ConferenceRegistrationForm3(ConferenceRegistrationForm):
+    africaFund = forms.ChoiceField(label='Support an African delegate?',
+                                   choices=AFRICA_FUND,
+                                   initial='75',
+								   required=False,
+								   help_text='<a href="/site_media/static/conference/delegateinfo.html" class="delegatelink">more information...</a>')
+
+    class Meta:
+        model = ConferenceRegistration
+        fields = ['africaFund']
+
     def clean_africaFund(self):
         if self.cleaned_data['africaFund']:
             if self.cleaned_data['africaFund'].strip() == '':
@@ -145,6 +176,26 @@ class ConferenceRegistrationForm(forms.ModelForm):
                 
         return self.cleaned_data['africaFund']
 
+class ConferenceRegistrationForm4(ConferenceRegistrationForm):
+    cc_type = forms.ChoiceField(label='Credit card type',
+								  choices=CC_TYPES)
+    cc_number = CreditCardNumberField(label='Credit card number')
+    cc_expiry = CreditCardExpiryField(label='Credit card expiry',
+                                      help_text='MM/YY')
+    billing_name = forms.CharField(label='Name on credit card', max_length=255)
+    address = CompactAddressField(label='Billing Address')
+    id = forms.IntegerField(widget=forms.HiddenInput, required=False)
+    
+    trnError = None
+        
+    class Meta:
+        model = ConferenceRegistration
+        fields = ['cc_type', 'cc_number', 'cc_expiry', 'billing_name', 'address', 'id']
+        
+#    def __init__(self, *args, **kwargs):
+#        super(ConferenceRegistrationForm4, self).__init__(*args, **kwargs)
+#        reg = ConferenceRegistration.objects.get(id=cleaned_data['registration_id'])
+
     def clean(self):
         # If the card is declined at the bank, trnError will get set...
         if self.trnError:
@@ -153,36 +204,34 @@ class ConferenceRegistrationForm(forms.ModelForm):
         if self.errors:
             return None
 
+        # bypass, since the FormPreview clean isn't on a bound form
+        # (but that's ok since we validate the bound version first)
+        if self.instance.id:
+            reg = self.instance
+        elif self.cleaned_data.get('id', None):
+            reg = ConferenceRegistration.objects.get(id=self.cleaned_data['id'])
+            self.instance = reg
+        elif self.cleaned_data.get('id', None):
+            reg = ConferenceRegistration.objects.get(id=self.cleaned_data['id'])
+            self.instance = reg
+        else:
+            # this shouldn't happen.
+            raise forms.ValidationError("Internal error.  Please email support@my.ewb.ca") 
+        
         # and do some auto-processing as needed
         cleaned_data = self.cleaned_data
         cleaned_data['products'] = []
         total_cost = 0
         
-        if not cleaned_data.get('prevConfs', None):
-            cleaned_data['prevConfs'] = 0
-        if not cleaned_data.get('prevRetreats', None):
-            cleaned_data['prevRetreats'] = 0
-        if not cleaned_data.get('code', None):
-            cleaned_data['code'] = None
-            
-        #if not cleaned_data.get('grouping', None):
-        #    cleaned_data['grouping'] = None
-        #if cleaned_data['grouping'] == 'Other' and cleaned_data.get('grouping2', None):
-        #    cleaned_data['grouping'] = cleaned_data['grouping2'] 
-            
-        if cleaned_data['code']:
-            codename = cleaned_data['code'].getShortname()
+        if reg.code:
+            codename = reg.code.getShortname()
         else:
             codename = "open"
         
-        sku = "confreg-2012-" + cleaned_data['type'] + "-" + codename
+        sku = "confreg-2012-" + reg.type + "-" + codename
         
         if not CONF_OPTIONS.get(sku, None):
             errormsg = "The registration code you've entered is not valid for the registration type you selected."
-            self._errors['type'] = self.error_class([errormsg])
-            self._errors['code'] = self.error_class([errormsg])
-            del cleaned_data['type']
-            del cleaned_data['code']
             raise forms.ValidationError("Unable to complete registration (see errors below)")
          
         cost = CONF_OPTIONS[sku]['cost']
@@ -196,7 +245,7 @@ class ConferenceRegistrationForm(forms.ModelForm):
         cleaned_data['products'].append(product.sku)
         total_cost = total_cost + Decimal(product.amount)
 
-        if needsToRenew(self.user.get_profile(), type=cleaned_data['type']):
+        if needsToRenew(self.user.get_profile(), type=reg.type):
             # FIXME: some duplicated code from profiles.forms (where saving membership fees)
             if self.user.get_profile().student():
                 type = "studues"
@@ -224,10 +273,10 @@ class ConferenceRegistrationForm(forms.ModelForm):
             cleaned_data['products'].append(product.sku)
             total_cost = total_cost + Decimal(product.amount)
 
-        if cleaned_data['africaFund']:
-            cost = cleaned_data['africaFund']
-            sku = "12-africafund-" + cost
-            name = "Support an African delegate ($" + cost + ")"
+        if reg.africaFund:
+            cost = reg.africaFund
+            sku = "12-africafund-%d" % cost
+            name = "Support an African delegate ($%d)" % cost
             product, created = Product.objects.get_or_create(sku=sku)
             if created:
                 product.name = name
@@ -238,42 +287,35 @@ class ConferenceRegistrationForm(forms.ModelForm):
             total_cost = total_cost + Decimal(product.amount)
 
         cleaned_data['total_cost'] = total_cost
+        
+        cleaned_data['registration_id'] = reg.id
         self.cleaned_data = cleaned_data
 
         return self.cleaned_data
     
-    _user = None
-    def _get_user(self):
-        return self._user
-    
-    def _set_user(self, value):
-        self._user = value
-        if self.fields.get('address', None):
-            self.fields['address'].user = value
-            
-        #
-        #if value.is_bulk:
-        #    del(self.fields['prevConfs'])
-        #    del(self.fields['prevRetreats'])
-        #    #del(self.fields['code'])
-        #    self.fields['type'].choices=EXTERNAL_CHOICES
-        #else:
-        #    del(self.fields['grouping'])
-        #    del(self.fields['grouping2'])
-            
-    user = property(_get_user, _set_user)
-
 class ConferenceRegistrationFormPreview(PaymentFormPreview):
     preview_template = 'conference/preview.html'
     form_template = 'conference/registration.html'
     username = None
     
+    def parse_params(self, *args, **kwargs):
+        super(ConferenceRegistrationFormPreview, self).parse_params(*args, **kwargs)
+        self.registration_id = kwargs['registration_id']
+    
     def done(self, request, cleaned_data):
         # add profile info, as it's needed for CC processing
-        form = self.form(request.POST)
-        if not request.user.email:
-
-            # simulate a cred card declined, to trigger form validation failure
+        #form = self.form(request.POST)
+        #reg = self.form.instance
+        
+        reg = ConferenceRegistration.objects.get(id=cleaned_data['registration_id'])
+        form = self.form(request.POST, instance=reg)
+        
+        if reg.user != request.user:
+            # simulate a credit card declined, to trigger form validation failure
+            response = (False, "Internal error, please email support@my.ewb.ca")
+            
+        elif not request.user.email:
+            # simulate a credit card declined, to trigger form validation failure
             response = (False, "Please edit your myEWB profile and enter an email address.")
 
         else:
@@ -287,27 +329,24 @@ class ConferenceRegistrationFormPreview(PaymentFormPreview):
             response = super(ConferenceRegistrationFormPreview, self).done(request, cleaned_data)
         
         if response[0] == True:
-            if cleaned_data['code']:
-                codename = cleaned_data['code'].getShortname()
+            if reg.code:
+                codename = reg.code.getShortname()
             else:
                 codename = "open"
             
-            registration = form.save(commit=False)
-            registration.user = request.user
-            registration.type = "confreg-2012-" + cleaned_data['type'] + "-" + codename
-            registration.amountPaid = CONF_OPTIONS[registration.type]['cost']
-            registration.roomSize = cleaned_data['type']
-            if cleaned_data['code']:
-                registration.code = cleaned_data['code']
-            else:
-                registration.code = None
-            registration.receiptNum = response[2]
-            registration.txid = response[1]
+            #registration = form.save(commit=False)
+            #registration.user = user
+            reg.submitted = True
+            reg.type = "confreg-2012-" + reg.type + "-" + codename
+            reg.amountPaid = CONF_OPTIONS[reg.type]['cost']
+            reg.roomSize = reg.type
+            reg.receiptNum = response[2]
+            reg.txid = response[1]
             
             #if cleaned_data.get('grouping', None):
             #    registration.grouping = cleaned_data['grouping']
             
-            registration.save()
+            reg.save()
             
             # and update their membership if they paid it
             if needsToRenew(request.user.get_profile()):
@@ -343,13 +382,18 @@ class ConferenceRegistrationFormPreview(PaymentFormPreview):
             registration = None
             form.trnError = response[1]
             form.clean
+        needsRenewal = needsToRenew(request.user.get_profile())
 
         return render_to_response('conference/registration.html',
                                   {'registration': registration,
-                                   'form': form
-                                   },
-                                   context_instance=RequestContext(request)
-                                   )
+                                   'form': form,
+                                   'stage': '4',
+                                   'last_stage': '3',
+                                   'user': request.user,
+                                   'needsRenewal': needsRenewal
+                                  },
+                                  context_instance=RequestContext(request)
+                                 )
 
 class CodeGenerationForm(forms.Form):
     type = forms.CharField(max_length=1, label='Type of code')

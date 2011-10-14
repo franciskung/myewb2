@@ -10,7 +10,7 @@
 {% load group_tags %}
 {% load topics_tags %}
 
-{% block head_title %}National Conference 2011{% endblock %}
+{% block head_title %}National Conference 2012{% endblock %}
 
 {% block body %}
 <br/><br/>
@@ -75,7 +75,7 @@
 		}
 	</style> 
 
-	{% if not registration %}
+	{% if not registration or not registration.submitted %}
 	
 		{% if form.non_field_errors %}
 			<div class="uniForm">
@@ -108,9 +108,10 @@
 		{% endcomment %}
 		<br/>
 		
-		<form id="conf-registration" method="POST" action="{% url conference_preview %}" class="uniForm" enctype="multipart/form-data">
+		<h2>National Conference 2012: Registration</h2>
+		<form id="conf-registration" method="POST" action="" class="uniForm" enctype="multipart/form-data">
 			<fieldset class="inlineLabels">
-				<div class="heading">Personal Details</div>
+				{#<div class="heading">Personal Details</div>#}
 			
 				<div class="ctrlHolder">
 					<label>Name</label>
@@ -183,14 +184,20 @@
 				<hr/>
 
 				<div class="heading">Registration Details</div>
+				<div style='text-align: center;'>Page {{ stage|default:1 }} of 5</div>
 										
 				{{ form|as_uni_form }}
 				
 	            <div class="form_block ctrlHolder">
-	                <input type="submit" value="Preview your registration" />
+	            	{% if stage %}
+	                	<a href="{% url confreg %}?reg_stage={{ last_stage|default:'' }}">Back to last page</a>
+	                	&nbsp;&nbsp;&nbsp;
+	                {% endif %}
+	                <input type="submit" value="Continue to next page" />
 	                <label>&nbsp;</label>
 	            </div>
 				
+				<input type="hidden" name="reg_stage" value="{{ stage|default:'' }}"/>
 			</fieldset>
 		</form>
 
@@ -309,9 +316,9 @@
 		<p align="center">or</p>
 
 		<p align="center">
-{#			<a href="{% url conference_cancel %}">click here to cancel your registration</a> #}
-<span style="text-decoration: line-through;">click here to cancel your registration</span><br/>
-<em>Registration changes and cancellations can not be made after January 7.</em>
+			<a href="{% url conference_cancel %}">click here to cancel your registration</a> 
+{#<span style="text-decoration: line-through;">click here to cancel your registration</span><br/>#}
+{#<em>Registration changes and cancellations can not be made after January 7.</em>#}
 		</p>
 
 		<br />

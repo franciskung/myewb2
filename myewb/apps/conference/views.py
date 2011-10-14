@@ -26,7 +26,7 @@ from attachments.models import Attachment
 from account_extra.forms import EmailLoginForm, EmailSignupForm
 
 from base_groups.models import BaseGroup
-from conference.forms import ConferenceRegistrationForm, ConferenceRegistrationFormPreview, CodeGenerationForm, ConferenceSignupForm
+from conference.forms import * #ConferenceRegistrationForm, CodeGenerationForm, ConferenceSignupForm #ConferenceRegistrationFormPreview, 
 from conference.models import ConferenceRegistration, ConferenceCode
 from conference.constants import *
 from conference.utils import needsToRenew
@@ -75,35 +75,82 @@ def view_registration(request):
         return HttpResponseRedirect(reverse('conference_login'))
     
     user = request.user
+    stage = None
+    form = None
     
     try:
         # if already registered, we display "thank you" page and offer
         # cancellation or a receipt
-        registration = ConferenceRegistration.objects.get(user=user, cancelled=False)
-        form = None
+        registration = ConferenceRegistration.objects.get(user=user, submitted=True, cancelled=False)
 
-        return HttpResponseRedirect(reverse('confcomm_app'))
+        #return HttpResponseRedirect(reverse('confcomm_app'))
 
     except ObjectDoesNotExist:
         # if not registered, we display the registration form
-        registration = None
-
+        registration = get_object_or_none(ConferenceRegistration, user=user, submitted=False, cancelled=False)
+        
+        stage = request.POST.get('reg_stage', None)
+        if not stage:
+            stage = request.GET.get('reg_stage', None)
+        
         if request.method == 'POST':
-            # or, in this case, process the registration form...
-            form = ConferenceRegistrationForm(request.POST)
+            
+            # populate and process the right registration form...
+            if not stage:
+                form = ConferenceRegistrationForm1(request.POST, instance=registration)
+            elif stage == '2':
+                form = ConferenceRegistrationForm2(request.POST, instance=registration)
+            elif stage == '3':
+                form = ConferenceRegistrationForm3(request.POST, instance=registration)
+            elif stage == '4':
+                form = ConferenceRegistrationForm4(request.POST, instance=registration)
+                
             form.user = user
             if form.is_valid():
-                registration = form.save()
+                form_valid = True
+                registration = form.save(commit=False)
+                registration.user = user
+                registration.save()
                 
-        else:
-            form = ConferenceRegistrationForm()
-            form.user = user
+                # advance the stage counter and find next action
+                if not stage:
+                    stage = '2'
+                elif stage == '2':
+                    stage = '3'
+                elif stage == '3':
+                    stage = '4'
+                elif stage == '4':
+                    return ConferenceRegistrationFormPreview(ConferenceRegistrationForm4)(request, username=request.user.username, registration_id=registration.id)
+                
+                form = None
+
+        # populate form (either current form with errors, or next stage's form)
+        if not stage and not form:
+            form = ConferenceRegistrationForm1(instance=registration)
+        elif stage == '2' and not form:
+            form = ConferenceRegistrationForm2(instance=registration)
+        elif stage == '3' and not form:
+            form = ConferenceRegistrationForm3(instance=registration)
+        elif stage == '4' and not form:
+            print "redoing form"
+            form = ConferenceRegistrationForm4(instance=registration)
+        form.user = request.user
                 
     needsRenewal = needsToRenew(request.user.get_profile())
+
+    last_stage = None
+    if stage == '3':
+        last_stage = '2'
+    elif stage == '4':
+        last_stage = '3'
+    elif stage == '5':
+        last_stage = '4'
 
     return render_to_response('conference/registration.html',
                               {'registration': registration,
                                'form': form,
+                               'stage': stage,
+                               'last_stage': last_stage,
                                'user': request.user,
                                'needsRenewal': needsRenewal
                               },
