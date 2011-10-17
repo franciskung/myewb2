@@ -44,7 +44,7 @@ CONF_OPTIONS = {'confreg-2012-quad-test': {'cost': 175,
                                                'name': "Open registration (unsubsidized) - double occupancy"},
                 'confreg-2012-single-open': {'cost': 990,
                                                'name': "Open registration (unsubsidized) - single occupancy"},
-                'confreg-2012-nohotel-open': {'cost': 290,
+                'confreg-2012-nohotel-open': {'cost': 425,
                                                'name': "Open registration (unsubsidized) - no room"},
 
 #                'confreg-2012-friday-open': {'cost': 120,
@@ -150,7 +150,7 @@ CONF_OPTIONS = {'confreg-2012-quad-test': {'cost': 175,
                                                'name': "City network (ON/QB) - double occupancy"},
                 'confreg-2012-single-cityclose': {'cost': 1035,
                                                'name': "City network (ON/QB) - single occupancy"},
-                'confreg-2012-nohotel-cityclose': {'cost': 400,
+                'confreg-2012-nohotel-cityclose': {'cost': 320,
                                                'name': "City network (ON/QB) - no room"},
 
                 'confreg-2012-quad-staff': {'cost': 0,
@@ -213,6 +213,7 @@ PASTEVENTS = (('0', '0'),
 AFRICA_FUND = (('75', 'Yes - $75'),
                ('45', 'Yes - $45'),
                ('20', 'Yes - $20'),
+               ('other', 'Yes - other'),
                ('', 'No thank you'))
 
 EXTERNAL_GROUPS = (('NGO member', 'NGO member'),
@@ -225,8 +226,8 @@ EXTERNAL_GROUPS = (('NGO member', 'NGO member'),
                    ('Other', 'Other'))
 
 TSHIRT_CHOICES = (('n', 'No thanks'),
-                  ('s', 'Small ($x)'),
-                  ('m', 'Medium ($x)'),
-                  ('l', 'Large ($x)'),
-                  ('x', 'X-Large ($x)'))
+                  ('s', 'Small ($20)'),
+                  ('m', 'Medium ($20)'),
+                  ('l', 'Large ($20)'),
+                  ('x', 'X-Large ($20)'))
                   

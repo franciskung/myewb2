@@ -87,7 +87,7 @@ class ConferenceRegistrationForm1(ConferenceRegistrationForm):
                              #choices=FINAL_CHOICES,
                              choices=ROOM_CHOICES,
                              widget=forms.RadioSelect,
-                             #help_text="""<a href='#' id='confoptiontablelink'>click here for a rate guide and explanation</a>""")
+                             help_text="""<a href='#' id='confoptiontablelink'>click here for a rate guide and explanation</a>"""
                              #help_text="""Note that tickets to the Gala on Saturday evening featuring K'naan are sold separately, through the Gala event site"""
                              )
     
@@ -188,9 +188,12 @@ class ConferenceRegistrationForm3(ConferenceRegistrationForm):
     africaFund = forms.ChoiceField(label='Support an African delegate?',
                                    choices=AFRICA_FUND,
                                    initial='75',
-								   required=False,
-								   help_text='<a href="/site_media/static/conference/delegateinfo.html" class="delegatelink">more information...</a>')
+								   required=False)
 
+    africaFundOther = forms.DecimalField(label='If other',
+                                         min_value=10.00,
+                                         decimal_places=2,
+                                         required=False)
     class Meta:
         model = ConferenceRegistration
         fields = ['africaFund']
@@ -203,6 +206,15 @@ class ConferenceRegistrationForm3(ConferenceRegistrationForm):
             self.cleaned_data['africaFund'] = None
                 
         return self.cleaned_data['africaFund']
+    
+    def clean(self):
+        if self.cleaned_data['africaFund'] == 'other':
+            if not self.cleaned_data.get('africaFundOther', None):
+                raise forms.ValidationError("Please enter a value")
+            else:
+                self.cleaned_data['africaFund'] = self.cleaned_data['africaFundOther']
+                
+        return self.cleaned_data
 
 class ConferenceRegistrationForm4(ConferenceRegistrationForm):
     cc_type = forms.ChoiceField(label='Credit card type',
@@ -313,6 +325,18 @@ class ConferenceRegistrationForm4(ConferenceRegistrationForm):
             
             cleaned_data['products'].append(product.sku)
             total_cost = total_cost + Decimal(product.amount)
+
+        if reg.tshirt and (reg.tshirt == 's' or reg.tshirt == 'm' or reg.tshirt == 'l' or reg.tshirt == 'x'):
+            sku = "12-conf-tshirt"
+            name = "Conference t-shirt"
+            product, created = Product.objects.get_or_create(sku=sku)
+            if created:
+                product.name = name
+                product.amount = 20
+                product.save()
+            
+            cleaned_data['products'].append(product.sku)
+            total_cost = total_cost + Decimal(20)
 
         cleaned_data['total_cost'] = total_cost
         

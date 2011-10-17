@@ -132,7 +132,6 @@ def view_registration(request):
         elif stage == '3' and not form:
             form = ConferenceRegistrationForm3(instance=registration)
         elif stage == '4' and not form:
-            print "redoing form"
             form = ConferenceRegistrationForm4(instance=registration)
         form.user = request.user
                 
