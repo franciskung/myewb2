@@ -87,7 +87,7 @@ class ConferenceRegistrationForm1(ConferenceRegistrationForm):
                              #choices=FINAL_CHOICES,
                              choices=ROOM_CHOICES,
                              widget=forms.RadioSelect,
-                             help_text="""<a href='#' id='confoptiontablelink'>click here for a rate guide and explanation</a>"""
+                             help_text="""Hotel options are only available with use of a registration code.<br/><a href='#' id='confoptiontablelink'>click here for a rate guide and explanation</a>"""
                              #help_text="""Note that tickets to the Gala on Saturday evening featuring K'naan are sold separately, through the Gala event site"""
                              )
     
@@ -115,15 +115,14 @@ class ConferenceRegistrationForm1(ConferenceRegistrationForm):
             return None
         
         try:
-            #if (codestring == 'ewbalumni'):
-            #    code = AlumniConferenceCode()
+            if (codestring == 'ewbalumni'):
+                code = AlumniConferenceCode()
             #elif (codestring == 'ewbconfspecial'):
             #    code = QuasiVIPCode()
             #elif (codestring == 'ewbfriendsconf'):
             #    code = FriendsConferenceCode()
-            #else:
-            #    code = ConferenceCode.objects.get(code=codestring)
-            code = ConferenceCode.objects.get(code=codestring)
+            else:
+                code = ConferenceCode.objects.get(code=codestring)
                 
             if code.isAvailable():
                 self.cleaned_data['code'] = code
@@ -141,6 +140,17 @@ class ConferenceRegistrationForm1(ConferenceRegistrationForm):
             
             raise forms.ValidationError("Please fill out your full myEWB profile, including full name and email")
         
+        if self.cleaned_data['code']:
+            codename = self.cleaned_data['code'].getShortname()
+        else:
+            codename = "open"
+        
+        sku = "confreg-2012-" + self.cleaned_data['type'] + "-" + codename
+        
+        if not CONF_OPTIONS.get(sku, None):
+            self._errors['code'] = ["The registration code you've entered is not valid for the registration type you selected."]
+            raise forms.ValidationError("Unable to complete registration (see errors below)")
+         
         return self.cleaned_data
         
 class ConferenceRegistrationForm2(ConferenceRegistrationForm):
