@@ -140,7 +140,7 @@ class ConferenceRegistrationForm1(ConferenceRegistrationForm):
             
             raise forms.ValidationError("Please fill out your full myEWB profile, including full name and email")
         
-        if self.cleaned_data['code']:
+        if self.cleaned_data.get('code', None):
             codename = self.cleaned_data['code'].getShortname()
         else:
             codename = "open"
