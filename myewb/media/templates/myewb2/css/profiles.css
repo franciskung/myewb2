@@ -28,3 +28,7 @@ table.tablesorter th {
 	margin: 0;
 	padding: 10px 0;
 }
+
+#user-history {
+		width: 100%;
+}

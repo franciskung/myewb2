@@ -124,23 +124,21 @@
             <th>{% trans "Emails" %}</th>
             <td>
     			{% for address in other_user.get_profile.email_addresses %}
-    				<br/>
     				{% if address.primary %}
     					<strong>{{ address.email }}</strong>
     				{% else %}
     					{{ address.email }}
     				{% endif %}
+    				<br/>
     			{% endfor %}
     			{% for address in other_user.get_profile.unverified_email_addresses %}
-    				<br/><span style='color: #a0a0a0; font-style: italic;'>{{ address.email }} (unverified)</span>
+    				<span style='color: #a0a0a0; font-style: italic;'>{{ address.email }} (unverified)</span><br/>
     			{% endfor %}
     			
     			{% if is_me %}
-    			    <br/>
     	            (<a href="{% url acct_email %}">{% trans "edit emails" %}</a>)<br/>
     	        {% else %}
     	        	{% if perms.profiles %}
-    				    <br/>
     		            (<a href="{% url acct_email_user other_user.username %}">{% trans "edit emails" %}</a>)<br/>
     	        	{% endif %}
     			{% endif %}
@@ -159,12 +157,10 @@
     			{% endfor %}
     
     			{% if is_me %}
-    			    <br/>
     	            (<a href="{% url profile_edit %}#phone">{% trans "edit phone numbers" %}</a>)<br/>
     	        {% comment %}
     	        {% else %}
     	        	{% if perms.profiles %}
-    				    <br/>
     		            (<a href="{% url acct_email_user other_user.username %}">{% trans "edit phone numbers" %}</a>)<br/>
     	        	{% endif %}
     	        {% endcomment %}
@@ -192,12 +188,10 @@
     			{% endfor %}
     
     			{% if is_me %}
-    			    <br/>
     	            (<a href="{% url profile_edit %}#address">{% trans "edit addresses" %}</a>)<br/>
     	        {% comment %}
     	        {% else %}
     	        	{% if perms.profiles %}
-    				    <br/>
     		            (<a href="{% url acct_email_user other_user.username %}">{% trans "edit addresses" %}</a>)<br/>
     	        	{% endif %}
     	        {% endcomment %}
