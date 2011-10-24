@@ -1,4 +1,4 @@
-{% extends "topics/base.html" %}
+{% extends "base.html" %}
 
 {% load avatar_tags %}
 {% load i18n %}
@@ -263,7 +263,7 @@ $(document).ready(function() {
 
 {% block head_title %}{% trans "Home" %}{% endblock %}
 
-{% block subnav_base %}{% endblock %}
+{% block nav_class_home %} current{% endblock %}
 
 {% block body_base %}
 

@@ -429,10 +429,8 @@ background-color: #DB7403;
 
 .myewb-header a.current {
 
-
-border-bottom: 3px solid #ee8502; 
-
-padding-bottom: 7px;
+height: 47px;
+border-bottom: 7px solid #db7403; 
 
 }
 
@@ -460,6 +458,23 @@ font-size: 0.9em;
 font-weight: bold;
 }
 
+#subnav {
+	background: #db7403;
+}
+#subnav ul {
+	margin: 5px 0;
+	padding: 0;
+}
+#subnav li {
+	list-style: none;
+	margin: 0;
+	padding: 0 15px;
+	display: inline;
+	border-right: 1px solid #ffffff;
+}
+#subnav li a {
+	color: #ffffff;
+}
 
 
 /* === Chapter Dashboard === */

@@ -46,23 +46,23 @@
       <!-- Heading -->
       
       <div class="myewb-header">
-        <div class="myewb-logo"><a href="{% url home %}" class="border-orange">my<strong>EWB</strong></a></div>
+        <div class="myewb-logo"><a href="{% url home %}" class="border-orange{% block nav_class_home %}{% endblock %}">my<strong>EWB</strong></a></div>
         {% spaceless %}
         <ul class="myewb-top-links inliner">
 		  {#  <li><a href="{% url home %}" class="current border-orange">Home</a></li> #}  {# redundent, since the main myEWB heading does this too ?? #}
-          <li><a href="{% url topic_list %}" class="border-purple">
+          <li><a href="{% url topic_list %}" class="border-purple{% block nav_class_discussions %}{% endblock %}">
           		<img src="{{ STATIC_URL }}images/icons3/Chat%202.png"/>
           		Discussions
           </a></li>
-          <li><a href="{% url communities_index %}" class="border-lightblue">
+          <li><a href="{% url communities_index %}" class="border-lightblue{% block nav_class_groups %}{% endblock %}">
           		<img src="{{ STATIC_URL }}images/icons3/Buddy%20Group.png"/>
           		Groups
           </a></li>
-          <li><a href="{% url events_all %}" class="border-red">
+          <li><a href="{% url events_all %}" class="border-red{% block nav_class_events %}{% endblock %}">
           		<img src="{{ STATIC_URL }}images/icons3/Calendar.png"/>
           		Events
           </a></li>
-          <li><a href="{% url jobboard_list %}" class="border-green">
+          <li><a href="{% url jobboard_list %}" class="border-green{% block nav_class_volunteer %}{% endblock %}">
           		<img src="{{ STATIC_URL }}images/icons3/Tag.png"/>
           		Volunteer
           </a></li>
@@ -126,6 +126,13 @@
   
     <div class="clear"></div>
 
+  </div>
+</div>
+<div id="subnav">
+  <div class="container_12">
+    <div class="grid_12">
+    	{% block subnav %}{% endblock %}
+    </div>
   </div>
 </div>
 <!-- End of header menu -->
