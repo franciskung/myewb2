@@ -319,7 +319,15 @@ overflow: hidden;
 float: left;
 height: 54px;
 overflow: hidden;
+}
 
+.myewb-top-links img {
+	display: block;
+	margin: 0 auto;
+	height: 30px;
+	width: 30px;
+    opacity: 0.8;
+    filter:alpha(opacity=80)	/* for IE8 */
 }
 
 .myewb-top-links li {
@@ -408,7 +416,8 @@ box-shadow: 0px 0px 1px #CF6904;
 .myewb-header a {
 display: block;
 float: left;
-padding: 10px;
+padding: 0 15px;
+height: 54px;
 
 color: #ffffff;
 text-decoration: none;
@@ -433,13 +442,13 @@ padding-bottom: 2px;
 
 .myewb-logo a {
     font-size: 1.9em;
-    height: 44px;
-    padding-top: 17px;
+    line-height: 54px;
+    /*padding-top: 17px;*/
     
 }
 
 .myewb-top-links li a {
-padding-top: 28px;
+/*padding-top: 28px;*/
 /*
 padding-top: 19px;
 height: 16px;

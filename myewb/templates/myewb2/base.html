@@ -47,14 +47,28 @@
       
       <div class="myewb-header">
         <div class="myewb-logo"><a href="{% url home %}" class="border-orange">my<strong>EWB</strong></a></div>
+        {% spaceless %}
         <ul class="myewb-top-links inliner">
-{#          <li><a href="{% url home %}" class="current border-orange">Home</a></li> #}  {# redundent, since the main myEWB heading does this too ?? #}
-          <li><a href="{% url topic_list %}" class="border-purple">Discussions</a></li>
-          <li><a href="{% url communities_index %}" class="border-lightblue">Groups</a></li>
-          <li><a href="{% url events_all %}" class="border-red">Events</a></li>
-          <li><a href="{% url jobboard_list %}" class="border-green">Volunteer</a></li>
-        
+		  {#  <li><a href="{% url home %}" class="current border-orange">Home</a></li> #}  {# redundent, since the main myEWB heading does this too ?? #}
+          <li><a href="{% url topic_list %}" class="border-purple">
+          		<img src="{{ STATIC_URL }}images/icons3/Chat%202.png"/>
+          		Discussions
+          </a></li>
+          <li><a href="{% url communities_index %}" class="border-lightblue">
+          		<img src="{{ STATIC_URL }}images/icons3/Buddy%20Group.png"/>
+          		Groups
+          </a></li>
+          <li><a href="{% url events_all %}" class="border-red">
+          		<img src="{{ STATIC_URL }}images/icons3/Calendar.png"/>
+          		Events
+          </a></li>
+          <li><a href="{% url jobboard_list %}" class="border-green">
+          		<img src="{{ STATIC_URL }}images/icons3/Tag.png"/>
+          		Volunteer
+          </a></li>
         </ul>
+        {% endspaceless %}
+        
         <div class="myewb-header-right">
           <div class="searchbox">
             <form method="get" action="{% url search %}" id="mainsearchform">
