@@ -1,0 +1,334 @@
+{% extends "topics/base.html" %}
+
+{% load i18n %}
+{% load avatar_tags %}
+{% load threadedcommentstags %}
+{% load attachablecomments_tags %}
+{% load extra_tagging_tags %}
+{% load group_tags %}
+{% load group_topics_tags %}
+{% load attachments_tags %}
+{% load helpers %}
+{% load cache %}
+{% load time_filters %}
+{% load winedown_tags %}
+{% load uni_form_tags %}
+{% load pagination_tags %}
+{% load whiteboard_tags %}
+{% load icon_tags %}
+{% load filesize_tags %}
+{% load time_filters %}
+
+
+{% block body %}
+
+<div class="minipost">
+  
+  <div class="minipostcontents">
+
+    <div class="minipost-thumb">
+      
+      <a class="avatar-40 delay-load" title="{{topic.creator.visible_name}}" href="{% url profile_detail topic.creator %}" data-background-src="{% avatar_url topic.creator 40 %}"></a>
+      
+      
+      {#<img src="{% avatar_url topic.creator 40 %}" title="{{topic.creator.visible_name}}" alt="{{topic.creator.visible_name}}" width=40 height=40/>#}
+      
+      
+    </div>
+    
+    <div class="border-bottom">
+    <div class="minipost-inside">
+    
+    
+      {% get_comment_count for topic as num_comments %}
+      {% get_latest_comments_for 1 as latest for topic %}
+    
+    
+   
+      <div class="minipost-heading">
+      
+
+      
+
+
+        <div class="minipost-rightcontainer">
+
+{% comment %}
+          <div class="minipost-replydetails">
+        		{% if latest %}
+              Latest reply</a> by <a href="{% url profile_detail latest.0.user.username %}" class="nodeco">{{ latest.0.user.visible_name }}</a><br/> {% mktime latest.0.date_submitted %}
+            {% endif %}
+          </div>
+{% endcomment %}
+
+
+
+
+          <div class="minipost-replycount">
+          
+              <a class="spch-bub-inside" href="#">
+    <span class="point"></span>  
+    <em>{{ num_comments }}</em>
+</a>
+          
+<!--                 <span class="numero">{{ num_comments }}</span> -->
+          </div>
+
+	<div class="minipost-replydetails">
+		{% if latest %}
+			<a href="{% url profile_detail latest.0.user.username %}">{{ latest.0.user.visible_name }}</a><br/>
+			{% mktime latest.0.date_submitted %}
+		{% else %}
+			&nbsp;
+		{% endif %}
+	</div>
+
+
+        </div>
+
+      
+        <div class="minipost-title">
+          <h3><a href="{{ topic.get_absolute_url }}">{{ topic.title }}</a></h3>
+        </div>
+        <div class="minipost-authortime">
+
+          <a href="{% url profile_detail topic.creator %}">{{ topic.creator.visible_name }}</a>
+          {% mktime topic.created %}
+          
+          					{% ifnotequal topic.group.slug "ewb" %} to
+				    	<a href="{{ topic.group.get_absolute_url }}#group-posts">{{ topic.group }}</a>
+				    {% endifnotequal %}
+          
+        </div>
+        
+        
+
+
+      
+      </div>
+    </div>
+    </div>
+      
+    <div class="minipost-text">
+		<div style="float: right; width: auto; text-align: right;">
+			<!-- AddThis Button BEGIN -->
+			<div class="addthis_toolbox addthis_default_style " style="width: 115px;">
+			<a class="addthis_button_preferred_1"></a>
+			<a class="addthis_button_preferred_2"></a>
+			<a class="addthis_button_preferred_3"></a>
+			<a class="addthis_button_preferred_4"></a>
+			<a class="addthis_button_compact"></a>
+			</div>
+			<script type="text/javascript">var addthis_config = {"data_track_clickback":true};</script>
+			<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=ewbcanada"></script>
+			<!-- AddThis Button END -->
+
+            {# sean's gonna hate me for introducing another image!  we'll optimize this later... #}
+
+			<br/>            
+            {% if user.is_authenticated %}
+                {% topic_on_watchlist user topic as on_list %}
+                {% spaceless %}
+                {% if on_list %}
+                    <a href="#" id="toggle_watchlist-{{ topic.pk }}" class="more watchlist-toggle toggle-remove">
+                {% else %}
+                    <a href="#" id="toggle_watchlist-{{ topic.pk }}" class="more watchlist-toggle toggle-add faded">
+                {% endif %}
+                <img src="{{STATIC_URL}}images/icons3/Favorite.png" style="height: 30px; width: 30px;"/>
+                </a>
+                {% endspaceless %}
+            {% endif %}
+     	    {% show_cheers_widget topic %}
+     	    
+     	    <br/><br/>
+          
+          </div>
+
+
+          {{ topic.body|safe }}
+
+    	<div style='clear: right;'></div>
+    	
+		<table width="100%" style="margin:0; padding: 0; margin-top: 6px;"> <!-- tags and drill-in link table -->
+    		<tr>
+		    <td valign="top" style="font-size: 10px;">
+                {% if attachments.count %}
+                    <div class="post-attachments">
+                        <span class="attach-label lighter">attached files:</span>
+                        <ul>
+                            {% for att in attachments %}
+                                <li class="attachmentItem">
+                                    {% icon_for_filename att.filename %} <a href="{{ STATIC_URL }}{% filter urlencode %}{{ att.attachment_file.name }}{% endfilter %}" target="_blank">{{ att.filename }}</a>
+                                    {% image_preview att.attachment_file.name att.filename topic.pk %} 
+                                    {% filesize_for_filename att.attachment_file.name %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                {% endif %}
+		    </td>
+		    
+			<td align="right" valign="top" width="300" style="font-size: 10px; padding-right: 10px;">
+				{# TODO: toggle watchlists, hot list, etc, etc #}
+                {% if grpadmin %}
+                <form class="uniForm" method="POST" action="{{ request.path }}delete/">
+                    <fieldset class="inlineLabels">
+                        <div class="form_block">
+                            <input type="submit" value="{% trans "Delete Post" %}" />
+                            <input type="hidden" name="next" value="{% groupurl topic_list group %}" />
+                        </div>
+                    </fieldset>
+                </form>
+                
+                {# <p><a href="{{ request.path }}edit/">Edit Post</a></p> #}
+                
+                {% endif %}
+                
+				{% if user.is_authenticated %}
+					{% topic_on_watchlist user topic as on_list %}
+					<br/>
+					<span id="toggle_watchlist_container">
+					{% if on_list %}
+	    				<a href="#" id="toggle_watchlist-{{ topic.pk }}" class="more watchlist-toggle toggle-remove">[remove from watch-list]</a>
+	    			{% else %}
+	    				<a href="#" id="toggle_watchlist-{{ topic.pk }}" class="more watchlist-toggle toggle-add">[add to watch-list]</a>
+	    			{% endif %}
+    				</span>
+				{% endif %}
+				
+				<div align="right" style="font-size: 1-px; margin-bottom: 15px;">
+	        printable verison:{#<br/>#}
+	        <a href="{% url topic_printable_with_replies topic.id %}" class="more">with replies</a> |
+	        <a href="{% url topic_printable topic.id %}" class="more">without replies</a>
+	    </div>
+				
+				{% if perms.group_topics %}
+
+					<div id="simple_hotlist">
+						<form action="" method="post" class="score_modifier_form">
+							<input type="hidden" name="modifier" value="{{topic.score_modifier|add:100}}"/>
+							<input type="submit" value="add to global hotlist"/><br/>(<a href="#" id="show_advanced_hotlist">advanced hotlist options</a>)
+						</form>
+					</div>
+					<div id="advanced_hotlist" style="display: none;">
+						Featured posts score: <span id="featured-posts-score">{{topic.score}}</span>
+						(current threshold: {% featured_posts_threshold %})
+						<br/>
+						<form action="" method="post" class="score_modifier_form">
+							modifier:
+							<input type="text" name="modifier" value="{{topic.score_modifier}}" size="3"/>%
+							<input type="submit" value="update"/>
+							<span id="score_modifier_status"></span>
+						</form>
+						
+					</div>
+				{% endif %}
+				<br/>
+				
+			</td>
+    		</tr>
+
+            <tr>
+			<td align="left" valign="top" colspan="2" style="font-size: 10px; padding-right: 10px;">
+                {% show_tags_for topic %}
+			</td>
+			</tr>
+			
+		</table> <!-- end tags and drill-in link table -->
+		
+		
+    </div>
+  </div>
+</div>
+
+
+<div class="topic-whiteboard-container">
+{% show_whiteboard topic.whiteboard topic.group member %}
+</div>
+    
+	    	
+{% attachablecomments topic %}
+
+{% endblock %}
+
+{% block extra_body %}
+	{{ block.super }}
+	{% include "tinymce.html" %}
+    {% include "comments-js.html" %}
+	
+	{% if not edit %}
+	<link rel="stylesheet" href="{{ STATIC_URL }}css/autocomplete.css" />
+    <script type="text/javascript" src="{{STATIC_URL}}jquery.autocomplete.min.js"></script>
+	<script type="text/javascript">
+    $("#id_tags").autocomplete('{% url tagging_utils_autocomplete "group_topics" "grouptopic" %}', {
+                max: 10,
+                multiple: true,
+                multipleSeparator: ", ",
+            });
+    </script>	
+	{% endif %}	
+
+	{% if user.is_authenticated %}
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$('.watchlist-toggle').click(function() {
+			
+			  if($(this).hasClass('toggle-remove')) {
+			      // remove it from the watchlist when clicked
+	                $(this).html("removing...");
+					$(this).load('{% url topic_watchlist_remove user.pk topic.pk %}');
+					
+					$(this).removeClass('toggle-remove');
+					$(this).addClass('toggle-add');
+			  } else {
+	                $(this).html("adding...");
+					$(this).load('{% url topic_watchlist_add user.pk topic.pk %}');
+					
+					$(this).removeClass('toggle-add');
+					$(this).addClass('toggle-remove');
+			  }
+			  return false;
+			});
+		});
+	</script>
+	{% endif %}
+	
+	{% if perms.group_topics %}
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$('#show_advanced_hotlist').click(function() {
+				$('#simple_hotlist').slideToggle();
+				$('#advanced_hotlist').slideToggle();
+				return false;
+			});
+			$('form.score_modifier_form').submit(function() {
+				var new_modifier = $(this).find('input[name=modifier]').val();
+				$('#score_modifier_status').html("updating...");
+				$('#score_modifier_status').load("{% url topic_update_modifier topic.pk %}",
+						                           {value: new_modifier},
+						                           function(response, status, xhr) {
+							                           if (!isNaN(parseInt(response)))
+							                           {
+							                        	   $('#featured-posts-score').html(response);
+							                        	   $('#score_modifier_status').html("done");
+							                           }
+						                           });
+				return false;
+			});
+		});
+	</script>
+	{% endif %}
+	
+	<script type="text/javascript" src="{{STATIC_URL}}js/colorbox.js"></script>
+	<script type="text/javascript">
+		$('.preview-img').colorbox({transition: "elastic", width:"80%", height:"80%"});
+
+		{% ifnotequal request.page 1 %}
+			$.scrollTo('#replies');
+		{% endifnotequal %}
+	</script>
+{% endblock %}
+
+
+

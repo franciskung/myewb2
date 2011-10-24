@@ -1,0 +1,32 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+{% load group_tags %}
+
+{% block body_class %}topics blue{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{{ STATIC_URL }}/templates/myewb2/css/topics.css" />
+<script type="text/javascript" src="{{ STATIC_URL }}pinax/js/topics.js"></script>
+{% endblock %}
+
+{% block subnav %}
+<ul class="subnav">
+<li {# class="current" #}><a href="{% url home %}">Discussion Board</a></li>
+{% if user.is_authenticated %}
+	<li><a href="{% url topic_new %}">New Post</a></li>
+{% endif %}
+<li><a href="{% url topic_cloud %}">Tag Cloud</a></li>
+{% if user.is_authenticated %}
+	<li><a href="{% url topic_watchlists %}">Watchlist</a></li>
+{% endif %}
+
+{% if user.is_staff %}
+	<li><a href="{% url announcement_home %}">{% trans "Announcements" %}</a></li>
+	<li><a href="{% url stats_dashboard %}">{% trans "Dashboard" %}</a></li>
+{% endif %}
+
+<li><a href="{% url about %}">About</a></li>
+{# <li><a href="{% url aboutmyewb %}">Help</a></li> #}
+</ul>
+{% endblock %}
