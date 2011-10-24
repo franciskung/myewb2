@@ -146,7 +146,8 @@ class ConferenceRegistrationForm1(ConferenceRegistrationForm):
         else:
             codename = "open"
         
-        sku = "confreg-2012-" + self.cleaned_data['type'] + "-" + codename
+        type = self.cleaned_data.get('type', 'nohotel')
+        sku = "confreg-2012-" + type + "-" + codename
         
         if not CONF_OPTIONS.get(sku, None):
             self._errors['code'] = ["The registration code you've entered is not valid for the registration type you selected."]

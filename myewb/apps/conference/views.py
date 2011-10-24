@@ -337,8 +337,13 @@ def download(request, who=None):
                      'room size', 'registered on', 'headset',
                      'food prefs', 'special needs',
                      'emergency name', 'emergency phone', 'prev conferences',
-                     'prev retreats', 'cell phone', 'grouping',
-                     'reg code', 'reg type', 'african delegate'])
+                     'prev retreats', 'cell phone', 't-shirt',
+                     'reg code', 'reg type', 'african delegate',
+                     'roommate request', 'new to ottawa', 
+                     'Survey - learn', 'Survey - connections', 'Survey - opportunities and challenges',
+                     'Survey - perfect experience', 'Survey - stay up to speed',
+                     'Survey - Sunday trip', 'Survey - socials', 'Survey - restaurants'
+                     ])
     
     for r in reg:
         fname = r.user.first_name
@@ -353,8 +358,10 @@ def download(request, who=None):
         row = [fname, lname, email, gender, chapter,
                r.amountPaid, r.roomSize, r.date, r.headset,
                r.foodPrefs, r.specialNeeds, r.emergName, r.emergPhone,
-               r.prevConfs, r.prevRetreats, r.cellphone, r.grouping,
-               r.code, r.type, r.africaFund]
+               r.prevConfs, r.prevRetreats, r.cellphone, r.tshirt,
+               r.code, r.type, r.africaFund, r.roommate, r.new_to_ottawa,
+               r.survey1, r.survey2, r.survey3, r.survey4,
+               r.survey5, r.survey6, r.survey7, r.survey8]
             
         writer.writerow([fix_encoding(s) for s in row])
 
