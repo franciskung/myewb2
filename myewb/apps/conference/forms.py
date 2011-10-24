@@ -87,6 +87,7 @@ class ConferenceRegistrationForm1(ConferenceRegistrationForm):
                              #choices=FINAL_CHOICES,
                              choices=ROOM_CHOICES,
                              widget=forms.RadioSelect,
+                             initial='nohotel',
                              help_text="""Hotel options are only available with use of a registration code.<br/><a href='#' id='confoptiontablelink'>click here for a rate guide and explanation</a>"""
                              #help_text="""Note that tickets to the Gala on Saturday evening featuring K'naan are sold separately, through the Gala event site"""
                              )
