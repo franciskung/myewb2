@@ -278,6 +278,11 @@ h1, h2 {
     padding-left: 35px;
 }
 
+h1.noicon, h2.noicon {
+	background: none;
+	padding-left: 0;
+}
+
 
 
 /* === Primary layout and colour setup === */
@@ -1077,6 +1082,19 @@ a.spch-bub-inside:hover .point {
 /*   border-left: 0.5em solid #FD9200;  */
 }
 
+.toolbarheader {
+	font-weight: bold;
+	font-size: 1.2em;
+	border-left: 1px solid;
+	padding-left: 10px;
+}
+
+.toolbarcontent {
+	padding-bottom: 10px;
+	margin-bottom: 20px;
+	border-left: 1px solid;
+	padding-left: 10px;
+}
 
 
 

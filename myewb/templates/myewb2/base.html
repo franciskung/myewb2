@@ -141,13 +141,20 @@
 {% block body_base %}
  
     <div class="maincontent-background">
-    <div class="container_12">
-        <div class="grid_12">
+    <div class="container_16">
+        <div class="grid_10 suffix_1">
             {% block body %} 
             {% endblock %}
-            
             <br/><br/>
         </div>
+
+       	<div class="grid_5">
+       		<br/><br/>
+        	{% block toolbar_left %}
+        	{% endblock %}
+        	{% block toolbar_right %}
+        	{% endblock %}
+       	</div>
     </div>
     </div>
     
