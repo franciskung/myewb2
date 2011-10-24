@@ -286,9 +286,9 @@ h1, h2 {
 body {
 /* background-image: url('img/threadpattern.jpg'); */
 
-background-color: #f8efda;
+/*background-color: #f8efda;*/
 
-font-family: "Lucida Grande", sans-serif;
+font-family: 'Ubuntu', 'Open Sans', "Lucida Grande", sans-serif;
 
 }
 
@@ -465,8 +465,7 @@ font-weight: bold;
 .chapterdash-background, .bigfooter-background, .maincontent-background {
 background-color: #fff;
 
-    background-color: rgba(255, 255, 255, 0.7);
-    border-top: 1px solid #DB7403;
+/*    background-color: rgba(255, 255, 255, 0.7);*/
     box-shadow: 0 -1px 0 #FFFFFF inset;
     -webkit-box-shadow: 0 -1px 0 #ffffff inset;
     -moz-box-shadow: 0 -1px 0 #ffffff inset;
@@ -590,7 +589,7 @@ background: no-repeat center center #000;
 /* Divider style */
 
 .dividerstyle {
-height: 14px;
+height: 5px;
 overflow: hidden;
 background-color: #fe9f4c;
 }
@@ -724,6 +723,13 @@ border-color: #C0CC4C; /* C0CC4C */
 
 
 /* === Posts on homepage and search results === */
+
+.third-container {
+border: 1px solid #DB7403;
+border-top: 0;
+background-color: #f8efda;
+
+}
 
 .frontpage-loading {
 text-align: center;
@@ -943,7 +949,9 @@ font-size: 1.2em;
 
 
 
-
+.smallfooter-background {
+	background-color: #f8efda;
+}
 
 .smallfooter-background ul {
 list-style: none;
@@ -968,6 +976,7 @@ padding: 0;
     padding: 1px;
     width: 27px;
 
+    background-size: 25px 25px;
 background: no-repeat center center #ffffff;
 
 
