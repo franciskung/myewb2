@@ -1,0 +1,71 @@
+{% extends 'events/base.html' %}
+{% load events_tags %}
+{% load whiteboard_tags %}
+
+{% block body %}
+
+<div type="text" id="datepicker"></div>
+
+<div id="event-details">
+
+	<div class="minipost">
+  		<div class="minipostcontents">
+			<div class="border-bottom">
+				<div class="minipost-heading">
+       				<div class="minipost-title" style="padding-left: 0;">
+         					<h2 class="h2bold">{{ object.title }}</h2>
+					    <p>
+					    	Starts: </span>{{object.start|date:"D, M j \a\t P"}} <br/>
+					    	Ends: </span>{{object.end|date:"D, M j \a\t\ P"}}
+					    </p>
+						{% if object.location %}
+							<p>Location: {{object.location}}</p>
+						{% endif %}
+             			</div>
+     				</div>
+   			</div>
+      
+			<div class="minipost-text" style="clear: none;">
+	        	<p>{{object.description|safe}}</p>
+			</div>
+		</div>
+	</div>
+    
+	{% show_whiteboard object.whiteboard object.content_object member %}
+
+</div>
+
+
+<a href="{% link_to_events_for object.content_object 'css_class' 1 %}">
+	&laquo; Back to 
+	{% if object.content_object.visible_name %}
+		{{object.content_object.visible_name}}
+	{% else %}
+		{{object.content_object }}
+		{# more accurate chapter_info.name or something? #}
+	{% endif %} 
+	events
+</a>
+
+{% endblock %}
+
+{% block toolbar_left %}
+	<div class="toolbarheader bkgd" id="box-eventoptions">Event Options</div>
+	<div class="toolbarcontent">
+		<p class="lighter">
+			{% if object.creator.visible_name %}
+				Created by: {{object.creator.visible_name}}<br/>
+			{% endif %}
+			Visible to: {{object.content_object}}
+		</p>
+       
+		<p><a href="{% url events_feed_for_event object.id %}">Export to iCal</a></p>
+
+    	{% if can_edit %}
+	    	<a href="{% url events_change object.pk %}">Edit this event</a><br/><a href="{% url events_delete object.pk %}">Delete event</a>
+    		{% if can_send %}
+	    		<br/><a href="{% url events_email object.pk %}">Send email invites</a> {# is that what this does? :)  @@@ #}
+    		{% endif %}
+    	{% endif %}
+    </div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'events/base.html' %}
+
+{% load events_tags %}
+
+{% block body %}
+<div id="for_day">
+{% for e in events %}
+	
+	<div class="minipost">
+  		<div class="minipostcontents">
+			<div class="border-bottom">
+				<div class="minipost-heading">
+       				<div class="minipost-title" style="padding-left: 0;">
+         					<h3><a href="{{ e.get_absolute_url }}">{{ e.title }}</a></h3>
+					    <p>
+					    	Starts: </span>{{e.start|date:"D, M j \a\t P"}} <br/>
+					    	Ends: </span>{{e.end|date:"D, M j \a\t\ P"}}
+					    </p>
+						{% if e.location %}
+							<p>Location: {{e.location}}</p>
+						{% endif %}
+             			</div>
+     				</div>
+   			</div>
+      
+			<div class="minipost-text" style="clear: none;">
+	        	<p>{{e.description|safe}}</p>
+			</div>
+	
+		    <div class="whiteboard-editing-box">
+				<a href="{{ e.get_absolute_url }}">See full event details &raquo;</a>
+		    </div>
+		</div>
+	</div>
+	
+{% endfor %}
+</div>
+
+{% endblock %}
