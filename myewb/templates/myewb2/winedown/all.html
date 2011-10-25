@@ -1,0 +1,33 @@
+{% extends 'site_base.html' %}
+
+{% block body %}
+
+	<h1 class="h2bold">EWB Cheers</h1>
+	
+	<p>
+		What are <em>cheers</em>?
+	</p>
+	
+	<p>
+		EWBers are often very self-critical, looking for ways to improve and 
+		learn.  While this culture drives us forward, it is also important that we
+		celebrate our successes... so, most Fridays, the EWB National Office
+		gathers in the main meeting room for a "wine down", to share stories from the past week.
+		With a glass of wine, juice, or soda, we <em>cheers</em> the amazing 
+		accomplishments of EWBers across the country and around the world.
+	</p>
+	
+	<p>
+		If you notice something you like on myEWB, or want to recognize or 
+		congratulate something that's happened recently, send it some virtual
+		cheers! 
+	</p>
+	
+	{% for c in cheers %}
+	    <div style="padding-bottom: 10px;">
+	        <a href="{{ c.content_object.absolute_url }}">{{ c.guess_title }}</a><br/>
+	        <a href="#" style='color: #d0d0d0;'>cheers'ed by {{ c.count }} people!</a>
+	    </div>
+	{% endfor %}
+
+{% endblock %}

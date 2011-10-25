@@ -364,17 +364,15 @@ $(document).ready(function() {
 
 
     <div class="standardbox ewb-latest">
-      <div class="standardbox-title">Wine Down!</div>
+      <div class="standardbox-title">EWB Cheers</div>
       <div class="standardbox-content">
-        {% show_latest_cheers %}
-        {% comment %}
-        <p>
-        <a class="cheers cboxElement" href="#">Blah blah blah</a><br>
-                <span style="color: #a0a0a0; font-size: 10px;">cheers'ed by 12 people</span>
-                <br><br>
-        </p>
-        {% endcomment %}
-
+      	<a href="{% url winedown_all %}">What is this?</a>
+      	<br/><br/>
+      	
+      	{% show_latest_cheers %}
+      	
+      	<br/>
+      	<a href="{% url winedown_all %}">See all cheers &raquo;</a>
       </div>
     </div>
   </div>
