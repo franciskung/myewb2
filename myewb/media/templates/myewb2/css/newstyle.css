@@ -1096,6 +1096,10 @@ a.spch-bub-inside:hover .point {
 	padding-left: 10px;
 }
 
+.toolbarcontent p {
+	margin: 0;
+	padding: 10px 0;
+}
 
 
 

@@ -1,0 +1,13 @@
+th {
+	vertical-align: top;
+	text-align: right;
+	padding-right: 20px;
+}
+
+td p {
+	margin: 0;
+}
+
+td {
+	padding-bottom: 15px;
+}

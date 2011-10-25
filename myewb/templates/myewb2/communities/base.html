@@ -15,11 +15,13 @@
                 <li><a href="{% url group_detail group.slug %}">{{ group.name }}</a></li>
             {% endifnotequal %}
         {% endif %}
+        {% comment %}
         {% if request.user.get_profile.get_chapter %}
         	<li><a href="{% url network_detail user.get_profile.get_chapter.slug %}">{{ user.get_profile.get_chapter.name }}</a></li> 
         {% endif %}
-        <li><a href="{% url networks_index %}">{% trans "Chapter list" %}</a></li> 
-        <li><a href="{% url communities_index %}">{% trans "Browse Communities" %}</a></li>
+        {% endcomment %}
+        <li><a href="{% url networks_index %}">{% trans "Chapters" %}</a></li> 
+        <li><a href="{% url communities_index %}">{% trans "Communities" %}</a></li>
         <li><a href="{% url national_office %}">{% trans "National Office" %}</a></li>
         {% if is_exec %}
        		<li><a href="{% link_to_current_champ request.user %}">CHAMP</a></li>
