@@ -1101,8 +1101,18 @@ a.spch-bub-inside:hover .point {
 	padding: 10px 0;
 }
 
+select.normalize {
+	margin-left: 20px;
+	font-size: 12px;
+	position: relative;
+	top: -3px;
+}
 
-
+#new_discussion {
+	position: relative;
+	top: -10px;
+	left: 37px;
+}
 
 
 

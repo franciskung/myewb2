@@ -336,7 +336,17 @@ $(document).ready(function() {
     </a>
     {% endif %}
     
-    <h2 class="h2bold">Latest Discussions</h2>
+    <h2 class="h2bold" id="latest_discussions">
+    	Latest Discussions
+    	
+    	<select class='normalize'>
+    		<option>-- switch to --</option>
+    		<option>Active discussions</option>
+    		<option>Relevant discussions</option>
+    		<option>My watchlist</option>
+    	</select>
+    </h2>
+    <a href="{% url topic_new %}" id="new_discussion">Start a new discussion &raquo;</a>
   </div>
   <div class="grid_5">
     &nbsp;

@@ -6,7 +6,15 @@
 	.dashboard-detail { display: none; }
 </style>
 
-<h2 class="chapterspecific-title h2bold">{{ group.name }}</h2>
+<h2 class="chapterspecific-title h2bold">
+	{{ group.name }}
+   	<select class='normalize'>
+   		<option>-- switch to --</option>
+   		<option>Group X</option>
+   		<option>Group Y</option>
+   		<option>Group Z</option>
+   	</select>
+</h2>
 
 <div class="grid_4 alpha">
 	<div class="chapterspecific-branch border-right">
