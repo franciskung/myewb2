@@ -354,12 +354,16 @@ def download(request, who=None):
             chapter = r.user.get_profile().get_chapter().name
         else:
             chapter = ''
-        
+        if r.code:
+            code = r.code.code
+        else:
+            code = ''
+            
         row = [fname, lname, email, gender, chapter,
                r.amountPaid, r.roomSize, r.date, r.headset,
                r.foodPrefs, r.specialNeeds, r.emergName, r.emergPhone,
                r.prevConfs, r.prevRetreats, r.cellphone, r.tshirt,
-               r.code.code, r.type, r.africaFund, r.roommate, r.new_to_ottawa,
+               code, r.type, r.africaFund, r.roommate, r.new_to_ottawa,
                r.survey1, r.survey2, r.survey3, r.survey4,
                r.survey5, r.survey6, r.survey7, r.survey8]
             
