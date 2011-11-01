@@ -333,7 +333,7 @@ def download(request, who=None):
     
     writer = csv.writer(response)
     writer.writerow(['First name', 'Last name', 'Email',
-                     'Gender', 'Chapter', 'amount paid',
+                     'Gender', 'Language', 'Chapter', 'amount paid',
                      'room size', 'registered on', 'headset',
                      'food prefs', 'special needs',
                      'emergency name', 'emergency phone', 'prev conferences',
@@ -350,6 +350,7 @@ def download(request, who=None):
         lname = r.user.last_name
         email = r.user.email
         gender = r.user.get_profile().gender
+        language = r.user.get_profile().language
         if r.user.get_profile().get_chapter():
             chapter = r.user.get_profile().get_chapter().name
         else:
@@ -359,7 +360,7 @@ def download(request, who=None):
         else:
             code = ''
             
-        row = [fname, lname, email, gender, chapter,
+        row = [fname, lname, email, gender, language, chapter,
                r.amountPaid, r.roomSize, r.date, r.headset,
                r.foodPrefs, r.specialNeeds, r.emergName, r.emergPhone,
                r.prevConfs, r.prevRetreats, r.cellphone, r.tshirt,
