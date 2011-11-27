@@ -1,0 +1,70 @@
+{% extends 'events/base.html' %}
+{#{% extends 'conference/confsite.html' %}#}
+
+{% load i18n %}
+{% load uni_form_tags %}
+{% load avatar_tags %}
+{% load threadedcommentstags %}
+{% load pagination_tags %}
+{% load extra_tagging_tags %}
+{% load group_tags %}
+{% load topics_tags %}
+
+{% block head_title %}National Conference 2012{% endblock %}
+
+{% block body %}
+<style>
+	ul#registrationoptions li {
+		padding-bottom: 20px;
+		font-weight: bold;
+		font-size: 16px;
+	}
+	#address_detail div, form label, form p {
+		font-weight: normal;
+		font-size: 12px;
+	}
+	
+	</style> 
+	<br/><br/>
+
+<h1>National Conference 2012</h1>
+
+		<br />
+		<p style="font-weight: bold;">
+			You are currently registered to attend the conference!<br/>
+			From this page you may:
+		</p>
+		<br/>
+
+		<ul id="registrationoptions">
+		
+		<li>
+			<a href="{% url conference_receipt %}" style="font-weight: bold;">click here for a printable receipt &raquo;</a>
+		</li>
+
+		<li>
+			<a href="{% url conference_cancel %}">click here to cancel your registration</a> 
+{#<span style="text-decoration: line-through;">click here to cancel your registration</span><br/>#}
+{#<em>Registration changes and cancellations can not be made after January 7.</em>#}
+		</li>
+		
+		{% if tshirtform %}
+		<li>
+			<a href="{% url conference_tshirt %}">Add a conference t-shirt to your registration</a>
+		</li>
+		{% endif %}
+		
+		{% if africandelegateform %}
+		<li>
+			Add an African Delegate contribution to your registration
+		</li>li>
+		{% endif %}
+		
+		</ul>
+		
+		<br />
+		<br />
+		<p>Keep checking the conference website at <a href="http://conference2012.ewb.ca/">http://conference2012.ewb.ca</a> for up-to-date information regarding the conference!</p>
+
+
+{% endblock %}

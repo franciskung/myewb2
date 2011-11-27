@@ -1,0 +1,105 @@
+{% extends 'events/base.html' %}
+
+{% load i18n %}
+{% load uni_form_tags %}
+{% load avatar_tags %}
+{% load threadedcommentstags %}
+{% load pagination_tags %}
+{% load extra_tagging_tags %}
+{% load group_tags %}
+{% load topics_tags %}
+
+{% block head_title %}National Conference 2012{% endblock %}
+
+{% block body %}
+	<style>
+		.descform
+		{
+			width: auto;
+			position: static;
+		}
+		.descform th, .descform td
+		{
+			align: center;
+			padding: 10px;
+		}
+		label
+		{
+			text-align: right;
+			font-weight: bold;
+		}
+		li label
+		{
+			text-align: left;
+			font-weight: normal;
+		} 
+		div.heading
+		{
+			font-weight: bold;
+			font-size: 1.5em;
+			text-align: center;
+		}
+		.uniForm .inlineLabels select, .uniForm select
+		{
+			width: auto;
+			max-width: 200px;
+		}
+		
+		input.deleteAddressSubmit
+		{
+		    position: relative;
+		    top: -26px;
+		    left: 80px;
+		}
+		
+		#new-address label, .editAddress .inlineLabels label
+		{
+			font-size: 12px;
+			float: none;
+			margin: 0;
+			width: 100%;
+			font-weight: normal;
+			text-align: left;
+			line-height: 2;
+		}
+		#new-address .ctrlholder, .editAddress .ctrlholder
+		{
+			padding: 0 1em 0.5em 1em;
+		}
+		#address_detail div
+		{
+			font-size: 12px;
+		}
+	</style>
+	
+				
+		<form method="post" action="" class="uniForm" id="tshirtform">
+		<fieldset class="inlineLabels">
+		{{ form|as_uni_form }}
+
+           <div class="form_block ctrlHolder">
+               <label>&nbsp;</label>
+               <input type="submit" value="Submit" />
+           </div>
+		
+		</fieldset>
+		</form>
+
+		<script type="text/javascript">
+			$().ready(function() {
+				$('#tshirtform').submit(function() {
+					if ($('select[name=address]').val() == 'new')
+					{
+						$('select.compactaddresswidget').change(function() {
+							$('#tshirtform').submit();
+						});
+						$('#new-address').submit();
+						return false;
+					}
+					else
+						return true;
+				});
+			});
+		</script>
+
+{% endblock %}

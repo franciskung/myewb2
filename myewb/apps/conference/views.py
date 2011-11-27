@@ -82,8 +82,21 @@ def view_registration(request):
         # if already registered, we display "thank you" page and offer
         # cancellation or a receipt
         registration = ConferenceRegistration.objects.get(user=user, submitted=True, cancelled=False)
+        
+        if registration.tshirt and registration.tshirt != 'n':
+            tshirtform = None
+        else:
+            tshirtform = True
 
         #return HttpResponseRedirect(reverse('confcomm_app'))
+        return render_to_response('conference/postregistration.html',
+                                  {'registration': registration,
+                                   'tshirtform': tshirtform,
+                                   'user': request.user,
+                                  },
+                                  context_instance=RequestContext(request)
+                                 )
+        
 
     except ObjectDoesNotExist:
         # if not registered, we display the registration form
@@ -174,6 +187,62 @@ def registration_preview(request):
             resume.save()
             
     return ConferenceRegistrationFormPreview(ConferenceRegistrationForm)(request, username=username)
+
+@secure_required
+@login_required
+def purchase_tshirt(request):
+    registration = get_object_or_none(ConferenceRegistration, user=request.user, submitted=True, cancelled=False)
+
+    if not registration:
+        request.user.message_set.create("You aren't registered for conference...")
+        return HttpResponseRedirect(reverse('confreg'))
+    
+    if request.method == 'POST':
+        return ConferenceTShirtFormPreview(ConferenceTShirtForm)(request, username=request.user.username, registration_id=registration.id)
+    
+        """
+        tshirtform = ConferenceTShirtForm(request.POST)
+        tshirtform.user = request.user
+        if tshirtform.is_valid():
+            tshirtform = None
+            request.user.message_set.create(message='T-Shirt order received!')
+            return HttpResponseRedirect(reverse('confreg'))
+        """
+    else:
+        tshirtform = ConferenceTShirtForm(initial={'id': registration.id})
+        tshirtform.user = request.user
+
+    return render_to_response('conference/purchase.html',
+                              {'registration': registration,
+                               'form': tshirtform,
+                               'user': request.user,
+                              },
+                              context_instance=RequestContext(request)
+                             )
+    
+@secure_required
+@login_required
+def purchase_ad(request):
+    if request.method == 'POST':
+        if not request.POST.get("confirmed", None):
+            return ConferenceTShirtFormPreview(ConferenceTShirtForm)(request, username=request.user.username, registration_id=registration.id)
+        tshirtform = ConferenceTShirtForm(request.POST)
+        tshirtform.user = request.user
+        if tshirtform.is_valid():
+            tshirtform = None
+            request.user.message_set.create(message='T-Shirt order received!')
+            return HttpResponseRedirect(reverse('confreg'))
+    else:
+        tshirtform = ConferenceTShirtForm(initial={'id': registration.id})
+        tshirtform.user = request.user
+
+    return render_to_response('conference/purchase.html',
+                              {'registration': registration,
+                               'form': form,
+                               'user': request.user,
+                              },
+                              context_instance=RequestContext(request)
+                             )
         
 @login_required
 def receipt(request):
