@@ -200,14 +200,6 @@ def purchase_tshirt(request):
     if request.method == 'POST':
         return ConferenceTShirtFormPreview(ConferenceTShirtForm)(request, username=request.user.username, registration_id=registration.id)
     
-        """
-        tshirtform = ConferenceTShirtForm(request.POST)
-        tshirtform.user = request.user
-        if tshirtform.is_valid():
-            tshirtform = None
-            request.user.message_set.create(message='T-Shirt order received!')
-            return HttpResponseRedirect(reverse('confreg'))
-        """
     else:
         tshirtform = ConferenceTShirtForm(initial={'id': registration.id})
         tshirtform.user = request.user
@@ -223,18 +215,18 @@ def purchase_tshirt(request):
 @secure_required
 @login_required
 def purchase_ad(request):
+    registration = get_object_or_none(ConferenceRegistration, user=request.user, submitted=True, cancelled=False)
+
+    if not registration:
+        request.user.message_set.create("You aren't registered for conference...")
+        return HttpResponseRedirect(reverse('confreg'))
+    
     if request.method == 'POST':
-        if not request.POST.get("confirmed", None):
-            return ConferenceTShirtFormPreview(ConferenceTShirtForm)(request, username=request.user.username, registration_id=registration.id)
-        tshirtform = ConferenceTShirtForm(request.POST)
-        tshirtform.user = request.user
-        if tshirtform.is_valid():
-            tshirtform = None
-            request.user.message_set.create(message='T-Shirt order received!')
-            return HttpResponseRedirect(reverse('confreg'))
+        return ConferenceADFormPreview(ConferenceADForm)(request, username=request.user.username, registration_id=registration.id)
+
     else:
-        tshirtform = ConferenceTShirtForm(initial={'id': registration.id})
-        tshirtform.user = request.user
+        form = ConferenceADForm(initial={'id': registration.id})
+        form.user = request.user
 
     return render_to_response('conference/purchase.html',
                               {'registration': registration,

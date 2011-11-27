@@ -39,26 +39,24 @@
 		<ul id="registrationoptions">
 		
 		<li>
-			<a href="{% url conference_receipt %}" style="font-weight: bold;">click here for a printable receipt &raquo;</a>
+			<a href="{% url conference_receipt %}" style="font-weight: bold;">print a receipt</a>
 		</li>
 
 		<li>
-			<a href="{% url conference_cancel %}">click here to cancel your registration</a> 
+			<a href="{% url conference_cancel %}">cancel your registration</a> 
 {#<span style="text-decoration: line-through;">click here to cancel your registration</span><br/>#}
 {#<em>Registration changes and cancellations can not be made after January 7.</em>#}
 		</li>
 		
 		{% if tshirtform %}
 		<li>
-			<a href="{% url conference_tshirt %}">Add a conference t-shirt to your registration</a>
+			<a href="{% url conference_tshirt %}">add a conference t-shirt to your registration</a>
 		</li>
 		{% endif %}
 		
-		{% if africandelegateform %}
 		<li>
-			Add an African Delegate contribution to your registration
-		</li>li>
-		{% endif %}
+			<a href="{% url conference_ad %}">add an African Delegate contribution</a> (${{ registration.africaFund|default:0 }} received)
+		</li>
 		
 		</ul>
 		
