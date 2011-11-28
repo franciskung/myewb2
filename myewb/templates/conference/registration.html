@@ -201,6 +201,13 @@
 		
 				{{ form|as_uni_form }}
 				
+                {% if not stage %}
+                     <div class="ctrlHolder">
+                         <label>&nbsp;</label>
+                         <img src="{{ STATIC_URL }}images/conference-tshirt.png"/>
+                     </div>
+                {% endif %}
+                                
 	            <div class="form_block ctrlHolder">
 	            	{% if stage %}
 	                	<a href="{% url confreg %}?reg_stage={{ last_stage|default:'' }}">Back to last page</a>
