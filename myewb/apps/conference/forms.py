@@ -99,7 +99,7 @@ class ConferenceRegistrationForm1(ConferenceRegistrationForm):
     #                            required=False,
     #                            help_text='(if other)')
     
-    roommate = forms.CharField(label='Roommate request (if any)', required=False)
+    roommate = forms.CharField(label='Roommate request (with a hotel option, if any)', required=False)
     tshirt = forms.ChoiceField(label='Purchase an EWB t-shirt?',
                                choices=TSHIRT_CHOICES)
     
