@@ -139,7 +139,7 @@ class ConferenceRegistrationForm1(ConferenceRegistrationForm):
             or not self.user.get_profile().gender \
             or not self.user.email:
             
-            raise forms.ValidationError("Please fill out your full myEWB profile, including full name and email")
+            raise forms.ValidationError("Please fill out your full myEWB profile, including full name, email, and gender")
         
         if self.cleaned_data.get('code', None):
             codename = self.cleaned_data['code'].getShortname()
