@@ -236,6 +236,38 @@ def purchase_ad(request):
                               context_instance=RequestContext(request)
                              )
         
+@secure_required
+@login_required
+def resume(request):
+    registration = get_object_or_none(ConferenceRegistration, user=request.user, submitted=True, cancelled=False)
+
+    if not registration:
+        request.user.message_set.create("You aren't registered for conference...")
+        return HttpResponseRedirect(reverse('confreg'))
+    
+    if request.method == 'POST':
+        form = ConferenceResumeForm(request.POST, request.FILES)
+        if form.is_valid():
+            resume = Attachment()
+            resume.creator = request.user
+            resume.content_type = ContentType.objects.get_for_model(registration)
+            resume.object_id = registration.id
+            resume.attachment_file = form.cleaned_data['resume']
+            resume.save()
+            
+            request.user.message_set.create(message="Thank you!")
+            return HttpResponseRedirect(reverse('confreg'))
+    else:
+        form = ConferenceResumeForm()
+                
+    return render_to_response('conference/resume.html',
+                              {'registration': registration,
+                               'form': form,
+                               'user': request.user,
+                              },
+                              context_instance=RequestContext(request)
+                             )
+        
 @login_required
 def receipt(request):
 

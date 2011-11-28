@@ -765,6 +765,12 @@ class ConferenceADFormPreview(PaymentFormPreview):
                                   context_instance=RequestContext(request)
                                  )
 
+class ConferenceResumeForm(forms.Form):
+    resume = forms.FileField(label='Resume',
+                             required=True,
+                             help_text="Your resume (to share with our sponsors)")
+    
+    
 class ConferenceSignupForm(forms.Form):
 
     firstname = forms.CharField(label="First name")
