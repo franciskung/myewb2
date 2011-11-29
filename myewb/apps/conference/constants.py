@@ -15,6 +15,7 @@ CONF_CODES = (('a', "test"),
               ('f', "cityfar"),
               ('g', "citymid"),
               ('h', "cityclose"),
+              ('i', "alumni"),
              )
               
 CONF_CODES_LONG = (('a', "Test code"),
@@ -25,6 +26,7 @@ CONF_CODES_LONG = (('a', "Test code"),
                    ('f', "City network (BC/AB/NL)"),
                    ('g', "City network (SK/MB/NB/NS)"),
                    ('h', "City network (ON/QB)"),
+                   ('i', "EWB Alumni"),
                   )
               
 CONF_HASH = settings.CONF_HASH

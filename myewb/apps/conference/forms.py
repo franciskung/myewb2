@@ -116,8 +116,8 @@ class ConferenceRegistrationForm1(ConferenceRegistrationForm):
             return None
         
         try:
-            if (codestring == 'ewbalumni'):
-                code = AlumniConferenceCode()
+            if codestring == 'ewbalumni':
+                code, created = AlumniConferenceCode.objects.get_or_create(type='i', number=1)
             #elif (codestring == 'ewbconfspecial'):
             #    code = QuasiVIPCode()
             #elif (codestring == 'ewbfriendsconf'):
