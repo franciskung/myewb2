@@ -233,3 +233,21 @@ TSHIRT_CHOICES = (('n', 'No thanks'),
                   ('l', 'Large ($20)'),
                   ('x', 'X-Large ($20)'))
                   
+ROLES_CHOICES = (('president', 'Chapter or City Network President'),
+                 ('finance', 'Finance rep'),
+                 ('advocacy', 'Advocacy rep'),
+                 ('youth', 'Youth engagement rep'),
+                 ('members', 'Member learning rep'),
+                 ('communications', 'Communications rep'),
+                 ('webmaster', 'Webmaster/online rep'),
+                 ('fundraising', 'Fundraising rep'),
+                 ('engineering', 'Global engineering rep'),
+                 ('fairtrade', 'Fair Trade rep'),
+                 ('otherexec', 'Other current exec role'),
+                 ('pastjf', 'Past JF'),
+                 ('currentjf', '2012 JF'),
+                 ('alumni', 'Alumni'),
+                 ('distributed', 'National distributed team member (past or present)'),
+                 ('aps', 'APS (past or present)'),
+                 ('office', 'National Office Staff or Social Change Fellow (past or present)'))
+                 

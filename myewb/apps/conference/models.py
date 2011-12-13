@@ -200,49 +200,61 @@ STREAMS = (('common', 'Common sessions'),
 STREAMS_SHORT = (('aprosperity', 'African Prosperity'),
                  ('coalitions', 'Coalitions'),
                  ('rethinking', 'Rethinking Devt'))
+
+class ConferenceTimeslot(models.Model):
+    name = models.CharField(max_length=255)
+    day = models.DateField(help_text='yyyy-mm-dd')
+    time = models.TimeField(help_text='hh:mm in 24-hour time. must be either :00 or :30 to show up on schedules')
+    length = models.IntegerField(help_text="in minutes")
+    common = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ('day', 'time', 'length')
+
                  
 class ConferenceSession(models.Model):
     name = models.CharField(max_length=255)
     room = models.CharField(max_length=255, blank=True)
-    day = models.DateField(help_text='yyyy-mm-dd')
-    time = models.TimeField(help_text='hh:mm in 24-hour time. must be either :00 or :30 to show up on schedules')
-    length = models.IntegerField(help_text="in minutes")
-    sessiontype = models.CharField(max_length=50, choices=SESSION_TYPES, blank=True, null=True)
-    short_description = models.TextField(blank=True)
-    long_description = models.TextField(blank=True)
+    #sessiontype = models.CharField(max_length=50, choices=SESSION_TYPES, blank=True, null=True)
+    #short_description = models.TextField(blank=True)
+    #long_description = models.TextField(blank=True)
+    description = models.TextField(blank=True)
+    timeslot = models.ForeignKey(ConferenceTimeslot)
+    common = models.BooleanField(default=False)
     
-    stream = models.CharField(max_length=50, choices=STREAMS)
+    #stream = models.CharField(max_length=50, choices=STREAMS)
     capacity = models.IntegerField()
     
     attendees = models.ManyToManyField(User, related_name="conference_sessions")
-    maybes = models.ManyToManyField(User, related_name="conference_maybe")
+    #maybes = models.ManyToManyField(User, related_name="conference_maybe")
     
-    class Meta:
-        ordering = ('day', 'time', 'stream', 'length')
+#    class Meta:
+#        ordering = ('day', 'time', 'stream', 'length')
+#        ordering = ('day', 'time', 'length')
         
     def url(self):
         return reverse('conference_session', kwargs={'session': self.id});
         
-    def dayverbose(self):
-        if self.day == date(year=2011, month=1, day=13):
-            return 'thurs'
-        elif self.day == date(year=2011, month=1, day=14):
-            return 'fri'
-        elif self.day == date(year=2011, month=1, day=15):
-            return 'sat'
+#    def dayverbose(self):
+#        if self.day == date(year=2012, month=1, day=12):
+#            return 'thurs'
+#        elif self.day == date(year=2012, month=1, day=13):
+#            return 'fri'
+#        elif self.day == date(year=2012, month=1, day=14):
+#            return 'sat'
+#        
+#        return ''
+#        
+#    def timeverbose(self):
+#        return "%02d%02d" % (self.time.hour, self.time.minute)
         
-        return ''
+    #def streamverbose(self):
+    #    for sid, sname in STREAMS:
+    #        if self.stream == sid:
+    #            return sname
         
-    def timeverbose(self):
-        return "%02d%02d" % (self.time.hour, self.time.minute)
-        
-    def streamverbose(self):
-        for sid, sname in STREAMS:
-            if self.stream == sid:
-                return sname
-        
-    def endtime(self):
-        return datetime.combine(date.today(), self.time) + timedelta(minutes=self.length)
+#    def endtime(self):
+#        return datetime.combine(date.today(), self.time) + timedelta(minutes=self.length)
         
     def user_is_attending(self, user):
         if user.is_authenticated():
@@ -250,11 +262,11 @@ class ConferenceSession(models.Model):
                 return True
         return False
         
-    def user_is_tentative(self, user):
-        if user.is_authenticated():
-            if user in self.maybes.all():
-                return True
-        return False
+    #def user_is_tentative(self, user):
+    #    if user.is_authenticated():
+    #        if user in self.maybes.all():
+    #            return True
+    #    return False
         
     def popular(self):
         # TODO: I could probably come up with a better algorithm, which takes
@@ -264,12 +276,61 @@ class ConferenceSession(models.Model):
         
         return False
         
-    def fixed(self):
-        if self.stream == 'common':
-            return True
-        else:
-            return False
+    #def fixed(self):
+    #    if self.stream == 'common':
+    #        return True
+    #    else:
+    #        return False
+    
+class ConferenceSelectorInfo(models.Model):
+    registration = models.OneToOneField(ConferenceRegistration)
+    
+    first_conference = models.BooleanField(default=True)
+    roles = models.CharField(max_length=50, choices=ROLES_CHOICES, blank=True)
+    leadership_years = models.IntegerField(blank=True, choices=(('1', '1'),
+                                                                ('2', '2'), 
+                                                                ('3', '3'), 
+                                                                ('4', '4'), 
+                                                                ('5', '5'), 
+                                                                ('6', '6'), 
+                                                                ('7', '7'), 
+                                                                ('8', '8'), 
+                                                                ('9', '9'), 
+                                                                ('10', '10+'))
+    leadership_day = models.BooleanField(default=False)
+    prep = models.IntegerField(choices=(('0', 'Under 5 hours'),
+                                        ('5', '5-10 hours'),
+                                        ('10', 'Over 10 hours'))
+                                        
+class ConferenceSessionCriteria(models.Model):
+    first_conference = models.CharField(max_length=3, choices=(('yes', 'yes'), ('no', 'no')), blank=True)
+    roles = models.CharField(max_length=50, choices=ROLES_CHOICES, blank=True, null=True)
+    leadership_years = models.IntegerField(blank=True, choices=(('1', '1'),
+                                                                ('2', '2'), 
+                                                                ('3', '3'), 
+                                                                ('4', '4'), 
+                                                                ('5', '5'), 
+                                                                ('6', '6'), 
+                                                                ('7', '7'), 
+                                                                ('8', '8'), 
+                                                                ('9', '9'), 
+                                                                ('10', '10+'),
+                                           null=True)
+    leadership_day = models.CharField(max_length=3, choices=(('yes', 'yes'), ('no', 'no')), blank=True)
+    prep = models.IntegerField(choices=(('0', 'Under 5 hours'),
+                                        ('5', '5-10 hours'),
+                                        ('10', 'Over 10 hours'),
+                                       blank=True, null=True)
+    past_session = models.ForeignKey(ConferenceSession, blank=True, null=True)
+                                        
+    session = models.ForeignKey(ConferenceSession)
+        
+class ConferencePrep(models.Model):
+    session = models.ForeignKey(ConferenceSession)
+    url = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
 
+"""
 class ConferencePrivateEvent(models.Model):
     name = models.CharField(max_length=255)
     location = models.CharField(max_length=255, blank=True)
@@ -312,6 +373,7 @@ class ConferencePrivateEvent(models.Model):
         
     def endtime(self):
         return datetime.combine(date.today(), self.time) + timedelta(minutes=self.length)
+"""
 
 class ConferencePhoneFrom(models.Model):
     number = models.CharField(max_length=10)
