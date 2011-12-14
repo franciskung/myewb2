@@ -21,7 +21,7 @@ from emailconfirmation.models import EmailAddress
 
 from communities.models import Community
 from conference.constants import *
-from conference.models import ConferenceRegistration, ConferenceCode, AlumniConferenceCode, QuasiVIPCode, FriendsConferenceCode, InvalidCode, ConferenceSession
+from conference.models import ConferenceRegistration, ConferenceCode, AlumniConferenceCode, QuasiVIPCode, FriendsConferenceCode, InvalidCode, ConferenceSession, ConferenceQuestionnaire, ROLES_CHOICES
 from conference.utils import needsToRenew
 from creditcard.models import CC_TYPES, Product
 from creditcard.forms import CreditCardNumberField, CreditCardExpiryField, PaymentFormPreview
@@ -911,3 +911,12 @@ class ConferenceSmsForm(forms.Form):
                                  required=True)
     message = forms.CharField(max_length=160,
                               widget=forms.Textarea)
+
+class ConferenceQuestionnaireForm(forms.ModelForm):
+    roles = forms.MultipleChoiceField(required=False,
+                                      widget=forms.CheckboxSelectMultiple,
+                                      choices=ROLES_CHOICES)
+    
+    class Meta:
+            model = ConferenceQuestionnaire
+            exclude = ('registration',)

@@ -26,8 +26,8 @@ from pinax.apps.account.forms import ResetPasswordKeyForm, ResetPasswordForm
 
 from account_extra.forms import EmailLoginForm
 from base_groups.models import BaseGroup
-from conference.forms import ConferenceSessionForm
-from conference.models import ConferenceRegistration, ConferenceSession, STREAMS, STREAMS_SHORT
+from conference.forms import ConferenceSessionForm, ConferenceQuestionnaireForm
+from conference.models import ConferenceRegistration, ConferenceSession, ConferenceQuestionnaire, STREAMS, STREAMS_SHORT
 from mailer.sendmail import send_mail
 from siteutils import online_middleware
 from siteutils.shortcuts import get_object_or_none
@@ -77,19 +77,37 @@ def build_recommended(user, timeslot):
                         
                    
 @login_required
+def schedule(request, user=None):
+    reg = get_object_or_none(ConferenceRegistration, user=request.user)
+    questionnaire = get_object_or_none(ConferenceQuestionnaire, registration=reg)
+    
+    if not questionnaire:
+        return HttpResponseRedirect(reverse('conference_questionnaire'))
+    
+    else:
+        return HttpResponseRedirect(reverse('conference_session_pick'))
+    
+@login_required
 def questionnaire(request, user=None):
     if not user:
         user= request.user
         
     if request.method == 'POST':
-        form = False
+        form = ConferenceQuestionnaireForm(request.POST)
         if form.is_valid():
             form.save()
             
-            return HttpResponseRedirect('')
+            return HttpResponseRedirect(reverse('conference_session_pick'))
         
     else:
-        form = False
+        initial = {}
+        registration = get_object_or_none(ConferenceRegistration, user=request.user)
+        if registration:
+            if registration.prevConfs:
+                initial['first_conference'] = False
+            else:
+                initial['first_conference'] = True
+        form = ConferenceQuestionnaireForm(initial=initial)
         
     common_sessions = ConferenceSession.objects.filter(common=True)
     for session in common_sessions:
@@ -113,7 +131,7 @@ def session_pick(request, timeslot=None):
                 break
         
     if not timeslot:
-        return HttpResponseRedirect('schedule_for_user')
+        return HttpResponseRedirect(reverse('schedule_for_user'))
         
         
     day = timeslot.day
@@ -147,7 +165,7 @@ def session_pick_save(request):
                 
             session.attendees.add(user)
     
-    return HttpResponseRedirect('session_pick')
+    return HttpResponseRedirect(reverse('session_pick'))
     
 
 @login_required

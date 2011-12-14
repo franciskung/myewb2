@@ -63,6 +63,13 @@ urlpatterns += patterns('conference.schedule2',
     #url(r'^schedule/private/new/$', 'private_new', name='conference_private_new'),
 )
 """
+urlpatterns += patterns('conference.schedule2',
+    url(r'^schedule/$', 'schedule', name='conference_schedule'),
+
+    url(r'^schedule/questionnaire/$', 'questionnaire', name='conference_questionnaire'),
+    url(r'^schedule/session/$', 'session_pick', name='conference_session_pick'),
+)
+
 
 
 urlpatterns += patterns('conference.sms',

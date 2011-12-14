@@ -1,0 +1,44 @@
+{% extends 'conference/schedule2/base.html' %}
+
+{% load i18n %}
+{% load uni_form_tags %}
+
+{% block head_title %}National Conference 2012{% endblock %}
+
+{% block body2 %}
+<style>
+	ul#registrationoptions li {
+		padding-bottom: 20px;
+		font-weight: bold;
+		font-size: 16px;
+	}
+	#address_detail div, form label, form p {
+		font-weight: normal;
+		font-size: 12px;
+	}
+	input.checkboxinput {
+		float: left;
+		position: relative;
+		left: 35%;
+	}
+	
+	</style> 
+	<br/><br/>
+
+<h2>Session Selection</h2>
+
+	<p>Hello, <strong>{{ request.user.visible_name }}</strong>! Before we get started, help us by answering a few questions:</p>
+
+	<form method="post" action="" class="uniForm">
+		<fieldset class="inlineLabels">
+			{{ form|as_uni_form }}
+			
+            <div class="form_block ctrlHolder">
+                <input type="submit" value="Continue to next page" />
+                <label>&nbsp;</label>
+            </div>
+			
+		</fieldset>
+	</form>
+
+{% endblock %}

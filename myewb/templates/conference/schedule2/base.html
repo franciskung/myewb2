@@ -1,0 +1,12 @@
+{% extends 'conference/confsite.html' %}
+
+{% block body %}
+<div style='float: right; width: auto; padding-top: 35px;'>Logged in as <strong>{{ request.user.visible_name }}</strong></div>
+<h2>Conference Session Selection</h2>
+		
+	{% block body2 %}
+	
+	{% endblock %} 
+
+{% endblock %}
+

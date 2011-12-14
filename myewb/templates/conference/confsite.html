@@ -14,30 +14,101 @@
 <meta name="keywords" content="ewb, isf, 2012, conference, ottawa, engineers without borders, innovation" />
 <meta name="robots" content="index,follow" />
 
-
-	<!-- FlexSlider pieces -->
-	<link rel="stylesheet" href="https://conference2012.ewb.ca/public/themes/flexslider/flexslider.css" type="text/css" media="screen" />
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-	<script src="https://conference2012.ewb.ca/public/themes/flexslider/jquery.flexslider-min.js"></script>
-
-	<!-- Engage. -->
-	<script type="text/javascript">
-		$(window).load(function() {
-			$('.flexslider').flexslider({
-				slideshowSpeed: 8000
-			});
-		});
-	</script>
-
+    <link rel="stylesheet" type="text/css" href="https://perspectives.ewb.ca/theworks/css/colorbox.css" rel="stylesheet" /> 
 	
 		<script src="{{ STATIC_URL }}/js/jquery.js" type="text/javascript"></script>
 	<link rel="stylesheet" href="https://conference2012.ewb.ca/public/themes/conference-main.css" media="all" type="text/css" />
 	<link rel="shortcut icon" href="https://conference2012.ewb.ca/favicon.ico" />
 
+<script src="http://cdn.jquerytools.org/1.2.6/jquery.tools.min.js"></script>
+    <script type="text/javascript" src="https://perspectives.ewb.ca/theworks/js/lib/colorbox.js"></script> 
+
     <link rel="stylesheet" href="{{ STATIC_URL }}css/uni-form/uni-form.css" />    
     <link rel="stylesheet" href="{{ STATIC_URL }}css/uni-form/default.uni-form.css" />            
 
+<style>
 
+/* root element for tabs  */
+ul#tabhead {
+        margin:0 !important;
+        padding:0;
+        height:30px;
+        border-bottom:1px solid #666;
+}
+
+/* single tab */
+ul#tabhead li {
+        float:left;
+        padding:0;
+        margin:0;
+        list-style-type:none;
+}
+
+/* link inside the tab. uses a background image */
+ul#tabhead a {
+        float:left;
+        font-size:13px;
+        display:block;
+        padding:5px 30px;
+        text-decoration:none;
+        border:1px solid #666;
+        border-bottom:0px;
+        height:18px;
+        background-color:#efefef;
+        color:#777;
+        margin-right:2px;
+        position:relative;
+        top:1px;
+        outline:0;
+        -moz-border-radius:4px 4px 0 0;
+}
+
+ul#tabhead a:hover {
+        background-color:#F7F7F7;
+        color:#333;
+}
+
+/* selected tab */
+ul#tabhead a.current {
+        background-color:#ddd;
+        border-bottom:1px solid #ddd;
+        color:#000;
+        cursor:default;
+}
+
+/* tab pane */
+.css-panes div {
+        display:none;
+        border:1px solid #666;
+        border-width:0 1px 1px 1px;
+        min-height:150px;
+        padding:15px 20px;
+        background-color:#ddd;
+}
+
+
+#cboxLoadedContent {
+    color: #666;
+}
+
+td {
+    color: #666;
+    border: 1px solid #aaa;
+    vertical-align: top;
+    font-size: 12px;
+    padding-top: 5px;
+}
+th {
+    border: 1px solid #aaa;
+}
+th.nb {
+    border-bottom: 0px;
+}
+th.nt {
+    border-top: 0px;
+}
+
+</style>
 
 </head>
 <body>
@@ -90,42 +161,12 @@
 	<!-- content starts -->
 	<div id="content-outer" class="clear homepage">
 
-<div class="innovationflex-container">
-	<div class="flexslider innovationflex">
-	    <ul class="slides">
-	   <!-- 	<li>
 
-	    		<a href="http://conference2012.ewb.ca/en/conference/leadership-day.html"><img src="http://conference2012.ewb.ca/public/images/banners/hall1.jpg" /></a>
-	    		<p class="flex-caption"><b>Leadership Day</b>  applications close on Wednesday, November 16th at 11:59 PM EST. <b>Apply today!</b></p>
-	    	</li>
--->
-	<!--	<li>
-	    		<img src="http://conference2012.ewb.ca/public/images/banners/hall1.jpg" />
-	    		<p class="flex-caption"><b>Book your calendars!</b> January 11 to 14th, Ottawa will play host to the Engineers Without Borders 2012 National&nbsp;Conference.</p>
-	    	</li>
--->
-
-	    	<li>
-			<a href="http://conference2012.ewb.ca/en/conference/innovation-challenge.html"><img src="https://conference2012.ewb.ca/public/images/banners/inn_challenge.JPG" /></a>
-	    		<p class="flex-caption">Do you have a creative idea for systemic change? <b>Innovation Challenge</b> applications now open!</p>
-	    	</li>
-	    	<li>
-
-	    		<a href="http://conference2012.ewb.ca/en/speakers/special-guests.html"><img src="https://conference2012.ewb.ca/public/images/banners/speakers1.png" /></a>
-	    		<p class="flex-caption">We’re excited to introduce three new speakers: <b>Allan Rock</b>, <b>Samantha Nutt</b> and <b>Sanjit "Bunker" Roy</b></p>
-	    	</li>
-	    	<li>
-			<img src="https://conference2012.ewb.ca/public/images/banners/shirt3.jpg" />
-	    		<p class="flex-caption">The conference team is proud to unveil the official conference T-Shirt!</p>
-	    	</li>
-
-	    </ul>
-	</div>
-</div>
 		<div id="content-wrapper">
 
 			<!-- column-one -->
 			<div id="content" class="single-col">
+		
 		{% block body %}
 		{% endblock %}
 		

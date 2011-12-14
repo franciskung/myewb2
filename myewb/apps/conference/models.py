@@ -282,11 +282,13 @@ class ConferenceSession(models.Model):
     #    else:
     #        return False
     
-class ConferenceSelectorInfo(models.Model):
+class ConferenceQuestionnaire(models.Model):
     registration = models.OneToOneField(ConferenceRegistration)
     
-    first_conference = models.BooleanField(default=True)
-    roles = models.CharField(max_length=50, choices=ROLES_CHOICES, blank=True)
+    first_conference = models.BooleanField(default=True,
+                                           verbose_name='Is this your first EWB National Conference?')
+    roles = models.CharField(max_length=50, choices=ROLES_CHOICES, blank=True,
+                             verbose_name='What role(s) do you currently hold in EWB, if any?')
     leadership_years = models.IntegerField(blank=True, choices=(('1', '1'),
                                                                 ('2', '2'), 
                                                                 ('3', '3'), 
@@ -296,11 +298,14 @@ class ConferenceSelectorInfo(models.Model):
                                                                 ('7', '7'), 
                                                                 ('8', '8'), 
                                                                 ('9', '9'), 
-                                                                ('10', '10+')))
-    leadership_day = models.BooleanField(default=False)
+                                                                ('10', '10+')),
+                                           verbose_name='How many years have you held a leadership position in EWB?')
+    leadership_day = models.BooleanField(default=False,
+                                         verbose_name='Are you attending leadership day?')
     prep = models.IntegerField(choices=(('0', 'Under 5 hours'),
                                         ('5', '5-10 hours'),
-                                        ('10', 'Over 10 hours')))
+                                        ('10', 'Over 10 hours')),
+                                        verbose_name='How many hours of prep are you able to commit to before conference?')
                                         
 class ConferenceSessionCriteria(models.Model):
     first_conference = models.CharField(max_length=3, choices=(('yes', 'yes'), ('no', 'no')), blank=True)
