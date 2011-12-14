@@ -44,7 +44,7 @@ def build_recommended(user, timeslot):
     recommendations = set()
     
     for s in sessions:
-        criteria = ConferenceSessionCriteria.objects.filter(session=s)
+        criteria = ConferenceSessionCriteria.objects.filter(session=s, other=False)
         
         for c in criteria:
             if c.first_conference:
@@ -73,6 +73,12 @@ def build_recommended(user, timeslot):
             if c.past_session and ConferenceSession.objects.filter(id=past_session, attendees=user).count():
                 recommendations.add(s)
 
+
+    if not recommendations:
+        criteria = ConferenceSessionCriteria.objects.filter(session=s, other=True)
+        for c in criteria:
+            recommendations.add(c.session)
+            
     return recommendations
                         
                    

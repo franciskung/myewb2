@@ -210,6 +210,10 @@ class ConferenceTimeslot(models.Model):
 
     class Meta:
         ordering = ('day', 'time', 'length')
+        
+    def __unicode__(self):
+        return "" + str(self.day) + " " + str(self.time) + " - " + str(self.name)
+        #return self.name
 
                  
 class ConferenceSession(models.Model):
@@ -223,15 +227,18 @@ class ConferenceSession(models.Model):
     common = models.BooleanField(default=False)
     
     #stream = models.CharField(max_length=50, choices=STREAMS)
-    capacity = models.IntegerField()
+    capacity = models.IntegerField(blank=True, null=True)
     
-    attendees = models.ManyToManyField(User, related_name="conference_sessions")
+    attendees = models.ManyToManyField(User, related_name="conference_sessions", blank=True)
     #maybes = models.ManyToManyField(User, related_name="conference_maybe")
     
 #    class Meta:
 #        ordering = ('day', 'time', 'stream', 'length')
 #        ordering = ('day', 'time', 'length')
         
+    def __unicode__(self):
+        return str(self.id) + " - " + str(self.name) + " (" + str(self.timeslot) + ")"
+
     def url(self):
         return reverse('conference_session', kwargs={'session': self.id});
         
@@ -289,16 +296,9 @@ class ConferenceQuestionnaire(models.Model):
                                            verbose_name='Is this your first EWB National Conference?')
     roles = models.CharField(max_length=50, choices=ROLES_CHOICES, blank=True,
                              verbose_name='What role(s) do you currently hold in EWB, if any?')
-    leadership_years = models.IntegerField(blank=True, choices=(('1', '1'),
-                                                                ('2', '2'), 
-                                                                ('3', '3'), 
-                                                                ('4', '4'), 
-                                                                ('5', '5'), 
-                                                                ('6', '6'), 
-                                                                ('7', '7'), 
-                                                                ('8', '8'), 
-                                                                ('9', '9'), 
-                                                                ('10', '10+')),
+    leadership_years = models.IntegerField(blank=True, choices=(('1', '1 or less'),
+                                                                ('2', '2 - 3'), 
+                                                                ('3', '3 or more')), 
                                            verbose_name='How many years have you held a leadership position in EWB?')
     leadership_day = models.BooleanField(default=False,
                                          verbose_name='Are you attending leadership day?')
@@ -310,16 +310,9 @@ class ConferenceQuestionnaire(models.Model):
 class ConferenceSessionCriteria(models.Model):
     first_conference = models.CharField(max_length=3, choices=(('yes', 'yes'), ('no', 'no')), blank=True)
     roles = models.CharField(max_length=50, choices=ROLES_CHOICES, blank=True, null=True)
-    leadership_years = models.IntegerField(blank=True, choices=(('1', '1'),
-                                                                ('2', '2'), 
-                                                                ('3', '3'), 
-                                                                ('4', '4'), 
-                                                                ('5', '5'), 
-                                                                ('6', '6'), 
-                                                                ('7', '7'), 
-                                                                ('8', '8'), 
-                                                                ('9', '9'), 
-                                                                ('10', '10+')),
+    leadership_years = models.IntegerField(blank=True, choices=(('1', '1 or less'),
+                                                                ('2', '2 - 3'), 
+                                                                ('3', '3 or more')), 
                                            null=True)
     leadership_day = models.CharField(max_length=3, choices=(('yes', 'yes'), ('no', 'no')), blank=True)
     prep = models.IntegerField(choices=(('0', 'Under 5 hours'),
@@ -328,14 +321,22 @@ class ConferenceSessionCriteria(models.Model):
                                        blank=True, null=True)
     past_session = models.ForeignKey(ConferenceSession, related_name='past_session',
                                      blank=True, null=True)
+    
+    other = models.BooleanField(default=False, blank=True)
                                         
     session = models.ForeignKey(ConferenceSession)
+    
+    def __unicode__(self):
+        return str(self.session) + " criteria"
         
 class ConferencePrep(models.Model):
     session = models.ForeignKey(ConferenceSession)
     url = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
 
+    def __unicode__(self):
+        return self.session + " prep: " + self.name
+        
 class ConferencePhoneFrom(models.Model):
     number = models.CharField(max_length=10)
     accounts = models.IntegerField(default=0)
