@@ -32,7 +32,8 @@ urlpatterns = patterns('conference.views',
     (r'^who/', include('confcomm.urls')),
 )
 
-urlpatterns += patterns('conference.schedule',
+"""
+urlpatterns += patterns('conference.schedule2',
     url(r'^schedule/$', 'schedule', name='conference_schedule'),
     url(r'^schedule/user/$', 'schedule_for_user', name='conference_for_user'),
     url(r'^schedule/user/(?P<day>[\w]+)/$', 'schedule_for_user', name='conference_for_user'),
@@ -40,7 +41,7 @@ urlpatterns += patterns('conference.schedule',
     url(r'^schedule/day/(?P<day>[\w]+)/(?P<stream>[\w]+)/$', 'day', name='conference_by_day'),
     url(r'^schedule/time/(?P<day>[\w]+)/(?P<time>[\d]+)/$', 'time', name='conference_by_time'),
     url(r'^schedule/room/(?P<room>[\d]+)/$', 'room', name='conference_by_room'),
-    url(r'^schedule/stream/(?P<stream>[\w]+)/$', 'stream', name='conference_by_stream'),
+    #url(r'^schedule/stream/(?P<stream>[\w]+)/$', 'stream', name='conference_by_stream'),
     
     url(r'^schedule/session/(?P<session>[\d]+)/$', 'session_detail', name='conference_session'),
     url(r'^schedule/session/(?P<session>[\d]+)/edit/$', 'session_edit', name='conference_session_edit'),
@@ -56,11 +57,12 @@ urlpatterns += patterns('conference.schedule',
     url(r'^schedule/(?P<session>[\d]+)/tentative/$', 'session_tentative', name='conference_session_tentative'),
     url(r'^schedule/(?P<session>[\d]+)/skip/$', 'session_skip', name='conference_session_skip'),
 
-    url(r'^schedule/private/(?P<session>[\d]+)/$', 'private_detail', name='conference_private'),
-    url(r'^schedule/private/(?P<session>[\d]+)/edit/$', 'private_edit', name='conference_private_edit'),
-    url(r'^schedule/private/(?P<session>[\d]+)/delete/$', 'private_delete', name='conference_private_delete'),
-    url(r'^schedule/private/new/$', 'private_new', name='conference_private_new'),
+    #url(r'^schedule/private/(?P<session>[\d]+)/$', 'private_detail', name='conference_private'),
+    #url(r'^schedule/private/(?P<session>[\d]+)/edit/$', 'private_edit', name='conference_private_edit'),
+    #url(r'^schedule/private/(?P<session>[\d]+)/delete/$', 'private_delete', name='conference_private_delete'),
+    #url(r'^schedule/private/new/$', 'private_new', name='conference_private_new'),
 )
+"""
 
 
 urlpatterns += patterns('conference.sms',

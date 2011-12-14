@@ -26,8 +26,8 @@ from pinax.apps.account.forms import ResetPasswordKeyForm, ResetPasswordForm
 
 from account_extra.forms import EmailLoginForm
 from base_groups.models import BaseGroup
-from conference.forms import ConferenceSessionForm, ConferencePrivateEventForm
-from conference.models import ConferenceRegistration, ConferenceSession, ConferencePrivateEvent, STREAMS, STREAMS_SHORT
+from conference.forms import ConferenceSessionForm
+from conference.models import ConferenceRegistration, ConferenceSession, STREAMS, STREAMS_SHORT
 from mailer.sendmail import send_mail
 from siteutils import online_middleware
 from siteutils.shortcuts import get_object_or_none

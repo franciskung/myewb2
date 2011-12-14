@@ -296,11 +296,11 @@ class ConferenceSelectorInfo(models.Model):
                                                                 ('7', '7'), 
                                                                 ('8', '8'), 
                                                                 ('9', '9'), 
-                                                                ('10', '10+'))
+                                                                ('10', '10+')))
     leadership_day = models.BooleanField(default=False)
     prep = models.IntegerField(choices=(('0', 'Under 5 hours'),
                                         ('5', '5-10 hours'),
-                                        ('10', 'Over 10 hours'))
+                                        ('10', 'Over 10 hours')))
                                         
 class ConferenceSessionCriteria(models.Model):
     first_conference = models.CharField(max_length=3, choices=(('yes', 'yes'), ('no', 'no')), blank=True)
@@ -314,14 +314,15 @@ class ConferenceSessionCriteria(models.Model):
                                                                 ('7', '7'), 
                                                                 ('8', '8'), 
                                                                 ('9', '9'), 
-                                                                ('10', '10+'),
+                                                                ('10', '10+')),
                                            null=True)
     leadership_day = models.CharField(max_length=3, choices=(('yes', 'yes'), ('no', 'no')), blank=True)
     prep = models.IntegerField(choices=(('0', 'Under 5 hours'),
                                         ('5', '5-10 hours'),
-                                        ('10', 'Over 10 hours'),
+                                        ('10', 'Over 10 hours')),
                                        blank=True, null=True)
-    past_session = models.ForeignKey(ConferenceSession, blank=True, null=True)
+    past_session = models.ForeignKey(ConferenceSession, related_name='past_session',
+                                     blank=True, null=True)
                                         
     session = models.ForeignKey(ConferenceSession)
         
@@ -329,51 +330,6 @@ class ConferencePrep(models.Model):
     session = models.ForeignKey(ConferenceSession)
     url = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
-
-"""
-class ConferencePrivateEvent(models.Model):
-    name = models.CharField(max_length=255)
-    location = models.CharField(max_length=255, blank=True)
-    day = models.DateField(help_text='yyyy-mm-dd')
-    time = models.TimeField(help_text='hh:mm in 24-hour time. must be either :00 or :30 to show up on schedules')
-    length = models.IntegerField(help_text="in minutes")
-    description = models.TextField(blank=True)
-    creator = models.ForeignKey(User)
-    
-    class Meta:
-        ordering = ('day', 'time', 'length')
-
-    def url(self):
-        return reverse('conference_private', kwargs={'session': self.id});
-        
-    def room(self):
-        return self.location
-        
-    def short_description(self):
-        return self.description
-
-    def long_description(self):
-        return self.description
-        
-    def stream(self):
-        return 'private'
-
-    def dayverbose(self):
-        if self.day == date(year=2011, month=1, day=13):
-            return 'thurs'
-        elif self.day == date(year=2011, month=1, day=14):
-            return 'fri'
-        elif self.day == date(year=2011, month=1, day=15):
-            return 'sat'
-        
-        return ''
-        
-    def timeverbose(self):
-        return "%02d%02d" % (self.time.hour, self.time.minute)
-        
-    def endtime(self):
-        return datetime.combine(date.today(), self.time) + timedelta(minutes=self.length)
-"""
 
 class ConferencePhoneFrom(models.Model):
     number = models.CharField(max_length=10)
