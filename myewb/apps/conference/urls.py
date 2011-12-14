@@ -68,6 +68,7 @@ urlpatterns += patterns('conference.schedule2',
 
     url(r'^schedule/questionnaire/$', 'questionnaire', name='conference_questionnaire'),
     url(r'^schedule/session/$', 'session_pick', name='conference_session_pick'),
+    url(r'^schedule/session/save/$', 'session_pick_save', name='conference_session_save'),
 )
 
 

@@ -299,7 +299,8 @@ class ConferenceQuestionnaire(models.Model):
     leadership_years = models.IntegerField(blank=True, choices=(('1', '1 or less'),
                                                                 ('2', '2 - 3'), 
                                                                 ('3', '3 or more')), 
-                                           verbose_name='How many years have you held a leadership position in EWB?')
+                                           verbose_name='How many years have you held a leadership position in EWB?',
+                                           default=1)
     leadership_day = models.BooleanField(default=False,
                                          verbose_name='Are you attending leadership day?')
     prep = models.IntegerField(choices=(('0', 'Under 5 hours'),

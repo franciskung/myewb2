@@ -27,7 +27,7 @@ from pinax.apps.account.forms import ResetPasswordKeyForm, ResetPasswordForm
 from account_extra.forms import EmailLoginForm
 from base_groups.models import BaseGroup
 from conference.forms import ConferenceSessionForm, ConferenceQuestionnaireForm
-from conference.models import ConferenceRegistration, ConferenceSession, ConferenceQuestionnaire, STREAMS, STREAMS_SHORT
+from conference.models import ConferenceRegistration, ConferenceSession, ConferenceQuestionnaire, ConferenceTimeslot, ConferenceSessionCriteria, STREAMS, STREAMS_SHORT
 from mailer.sendmail import send_mail
 from siteutils import online_middleware
 from siteutils.shortcuts import get_object_or_none
@@ -48,26 +48,26 @@ def build_recommended(user, timeslot):
         
         for c in criteria:
             if c.first_conference:
-                if c.first_conference == 'yes' and registration.conferenceselectorinfo.first_conference:
+                if c.first_conference == 'yes' and registration.conferencequestionnaire.first_conference:
                     recommendations.add(s)
                     
-                if c.first_conference == 'no' and not registration.conferenceselectorinfo.first_conference:
+                if c.first_conference == 'no' and not registration.conferencequestionnaire.first_conference:
                     recommendations.add(s)
 
-            if c.roles and registration.conferenceselectorinfo.roles.count(c.roles):
+            if c.roles and registration.conferencequestionnaire.roles.count(c.roles):
                 recommendations.add(s)
                     
-            if c.leadership_years and c.leadership_years == registration.conferenceselectorinfo.leadership_years:
+            if c.leadership_years and c.leadership_years == registration.conferencequestionnaire.leadership_years:
                 recommendations.add(s)
                 
             if c.leadership_day:
-                if c.leadership_day == 'yes' and registration.conferenceselectorinfo.leadership_day:
+                if c.leadership_day == 'yes' and registration.conferencequestionnaire.leadership_day:
                     recommendations.add(s)
                     
-                if c.leadership_day == 'no' and not registration.conferenceselectorinfo.leadership_day:
+                if c.leadership_day == 'no' and not registration.conferencequestionnaire.leadership_day:
                     recommendations.add(s)
             
-            if c.prep and c.prep == registration.conferenceselectorinfo.prep:
+            if c.prep and c.prep == registration.conferencequestionnaire.prep:
                 recommendations.add(s)
                 
             if c.past_session and ConferenceSession.objects.filter(id=past_session, attendees=user).count():
@@ -101,7 +101,12 @@ def questionnaire(request, user=None):
     if request.method == 'POST':
         form = ConferenceQuestionnaireForm(request.POST)
         if form.is_valid():
-            form.save()
+            questionnaire = form.save(commit=False)
+            registration = get_object_or_none(ConferenceRegistration, user=user)
+            questionnaire.registration = registration
+            if not questionnaire.leadership_years:
+                questionnaire.leadership_years = 1 
+            questionnaire.save()
             
             return HttpResponseRedirect(reverse('conference_session_pick'))
         
@@ -141,10 +146,24 @@ def session_pick(request, timeslot=None):
         
         
     day = timeslot.day
-    schedule = ConferenceSession.objects.filter(attendees=user).order_by(timeslot__day, timeslot__time)
+    #timeqry = Q(timeslot__day__lt=day) | (Q(timeslot__day=day) & Q(timeslot__time__lte=timeslot.time))
+    #schedule = ConferenceSession.objects.filter(attendees=user).filter(timeqry).order_by('timeslot__day', 'timeslot__time')
+    
+    #schedule = ConferenceSession.objects.filter(attendees=user).filter(timeslot__lt=timeslot).order_by('timeslot__day', 'timeslot__time')
+    
+    # can't do this in a qry ...??
+    scheduleset = ConferenceSession.objects.filter(attendees=user).order_by('timeslot__day', 'timeslot__time')
+    schedule = []
+    for s in scheduleset:
+        if s.timeslot.day < timeslot.day:
+            schedule.append(s)
+        elif s.timeslot.day == timeslot.day and s.timeslot.time <= timeslot.time:
+            schedule.append(s)
     
     recommended = build_recommended(user, timeslot)
-    sessions = ConferenceSession.objects.filter(timeslot=timeslot).exclude(id__in=recommended)
+    #sessions = ConferenceSession.objects.filter(timeslot=timeslot).exclude(id__in=recommended)
+    sessions = ConferenceSession.objects.filter(timeslot=timeslot)
+    sessions = set(sessions) - recommended
     
     return render_to_response('conference/schedule2/pick_session.html',
                               {"day": day,
@@ -179,7 +198,7 @@ def schedule_for_user(request, user=None, day=None, time=None):
     if not user:
         user = request.user
         
-    sessions = ConferenceSession.objects.filter(attendees=user).order_by('timeslot__day, timeslot__time')
+    sessions = ConferenceSession.objects.filter(attendees=user).order_by('timeslot__day', 'timeslot__time')
         
     timelist = []
     for t in range(8, 22):
