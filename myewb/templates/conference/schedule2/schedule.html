@@ -1,0 +1,147 @@
+{% extends "conference/schedule2/base.html" %}
+
+{% load conference_tags %}
+
+{% block viewport %}600px{% endblock %}
+
+{% block body2 %}
+	<style>
+		table.scheduler {
+			border-collapse: separate;
+			border: 0px solid;
+			border-spacing: 2px;
+			margin: -1px;
+			background: #f0f0f0;
+		}
+		td, th {
+			border: 1px solid #606060;
+		}
+		td.tlink {
+			background: #d0d0d0;
+		}
+		td.tlink a, a#rebuild_schedule {
+			color: #ff7200;
+		}
+	</style>
+    <h1>
+        My Conference Schedule
+        {% if not request.is_mobile and not printable %}
+            &nbsp;
+            <a href="{% url conference_schedule_final %}?printable=true" target="_new" style="border: none;">
+            <img src="{{STATIC_URL}}images/icons3/Print.png" style="border: 1px solid #d0d0d0; height: 25px; width: 25px; -moz-border-radius: 5px; -webkit-border-radius: 5px;"/>
+            </a>
+        {% endif %}
+        {% if printable %}
+            : {{ request.user.visible_name }}
+        {% endif %}
+    </h1>
+    
+    <p style="font-weight: bold; position: relative; top: -10px;">
+    	<a href="{% url conference_schedule_rebuild %}" id="rebuild_schedule">Rebuild my schedule</a>
+   	</p>
+    
+    <table border="1" width="100%" id="byuser" class="scheduler">
+    	<tr>
+    		<th>&nbsp;</th>
+    		<th>Thursday</th>
+    		<th>Friday</th>
+    		<th>Saturday</th>
+    	
+    	</tr>
+        {% for t in timelist %}
+            <tr>
+                <th>{{ t }}:00</th>
+                {% for s in sessions %}
+                    {% ifequal s.timeslot.time.hour t %}
+                        {% ifequal s.timeslot.time.minute 0 %}
+                        	{% ifequal s.dayverbose "thurs" %}
+	                            <td rowspan="{% rowspan s.timeslot.length %}" class="tlink" style="height: {% height s.timeslot.length %}">
+	                                <a href="{{ s.url }}">
+	                                    <strong>{{ s.name }}</strong>
+	                                    <br/>
+	                                    <span class="room">{{ s.room }}</span>
+	                                </a>
+	                            </td>
+	                        {% else %}
+	                        	{% ifequal s.dayverbose "fri" %}
+		                            <td rowspan="{% rowspan s.timeslot.length %}" class="tlink" style="height: {% height s.timeslot.length %}">
+		                                <a href="{{ s.url }}">
+		                                    <strong>{{ s.name }}</strong>
+		                                    <br/>
+		                                    <span class="room">{{ s.room }}</span>
+		                                </a>
+		                            </td>
+		                        {% else %}
+	                        
+		                        	{% ifequal s.dayverbose "sat" %}
+			                            <td rowspan="{% rowspan s.timeslot.length %}" class="tlink" style="height: {% height s.timeslot.length %}">
+			                                <a href="{{ s.url }}">
+			                                    <strong>{{ s.name }}</strong>
+			                                    <br/>
+			                                    <span class="room">{{ s.room }}</span>
+			                                </a>
+			                            </td>
+			                        {% else %}
+			                        	<td>&nbsp;</td>
+			                        {% endifequal %}
+			                    {% endifequal %}
+	                        {% endifequal %}
+                    	{% endifequal %}
+                    {% endifequal %}
+                {% endfor %}
+            </tr>
+            
+            <tr>
+                <th>&nbsp;</th>
+                {% for s in sessions %}
+                    {% ifequal s.timeslot.time.hour t %}
+                        {% ifequal s.timeslot.time.minute 30 %}
+                        	{% ifequal s.dayverbose "thurs" %}
+	                            <td rowspan="{% rowspan s.timeslot.length %}" class="tlink" style="height: {% height s.timeslot.length %}">
+	                                <a href="{{ s.url }}">
+	                                    <strong>{{ s.name }}</strong>
+	                                    <br/>
+	                                    <span class="room">{{ s.room }}</span>
+	                                </a>
+	                            </td>
+	                        {% else %}
+	                        	{% ifequal s.dayverbose "fri" %}
+		                            <td rowspan="{% rowspan s.timeslot.length %}" class="tlink" style="height: {% height s.timeslot.length %}">
+		                                <a href="{{ s.url }}">
+		                                    <strong>{{ s.name }}</strong>
+		                                    <br/>
+		                                    <span class="room">{{ s.room }}</span>
+		                                </a>
+		                            </td>
+		                        {% else %}
+		                        	{% ifequal s.dayverbose "sat" %}
+			                            <td rowspan="{% rowspan s.timeslot.length %}" class="tlink" style="height: {% height s.timeslot.length %}">
+			                                <a href="{{ s.url }}">
+			                                    <strong>{{ s.name }}</strong>
+			                                    <br/>
+			                                    <span class="room">{{ s.room }}</span>
+			                                </a>
+			                            </td>
+			                        {% else %}
+			                        	<td>&nbsp;</td>
+			                        {% endifequal %}
+			                    {% endifequal %}
+		                	{% endifequal %}
+                        {% endifequal %}
+                    {% endifequal %}
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
+    <br/>
+    
+    <script>
+    	$().ready(function() {
+        		$('#rebuild_schedule').click(function() {
+            		return confirm("Are you sure you want to erase your schedule and start over?");
+        		});
+    	});
+    </script>
+    
+{% endblock %}
+

@@ -1,0 +1,71 @@
+{% extends "conference/schedule2/base.html" %}
+
+{% load conference_tags %}
+{% load avatar_tags %}
+
+{% block body2 %}
+    <h3>{{ session.name }}</h3>
+
+    {% if not request.is_mobile and not session.fixed %}
+        <div style="float: right; width: 25%; border: 1px solid; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; padding: 0.5em; margin: 0.5em;">
+            Capacity: {{ session.capacity }}
+            <br/>
+            <p>
+                Attending:<br/>
+                {% for u in attendees %}
+                    <div style="float: left; width: 35px; height: 35px; padding: 3px; margin: 4px; border: 1px solid #d0d0d0;">
+                        <img src="{% avatar_url u 35 %}" alt="{{ u.visible_name }}" title="{{ u.visible_name }}" width="35" height="35"/>
+                    </div>
+                {% endfor %}
+                <br style="clear: both;"/>
+                <div style="text-align: right; font-style: italic; padding-right: 30px;">... and more</div>
+            </p>
+        </div>
+    {% endif %}
+    
+    {{ session.timeslot.day|date:"l"}}, {{ session.timeslot.time|time:"g:i A" }} - {{ session.timeslot.endtime|time:"g:i A" }}{% if session.room %} ({{ session.room }}){% endif %}<br/>
+    {% if session.popular and not session.common %}
+        <br/>
+        <span style="color: red;">Popular - arrive early to save a seat!</span>
+    {% endif %}
+    {% if false and perms.conference %}
+        <br/>
+        <a href="{% url conference_session_edit session.id %}">edit session</a> | 
+        <a href="{% url conference_session_delete session.id %}">delete session</a> |
+        <a href="{% url conference_send_sms session.id %}">text all attendees</a>
+    {% endif %}
+
+    <br/><br/>
+    
+    <p>
+        {{ session.long_description|safe|linebreaksbr }}
+    </p>
+    <br style="clear: both;">
+    <hr/>
+    
+    {% if request.is_mobile and not session.fixed %}
+    	{% if session.capacity %}
+	        <p>
+	            Session capacity: {{ session.capacity }}
+	        </p>
+	    {% endif %}
+        <p>
+            Attending:<br/>
+            {% for u in attendees %}
+                <div style="float: left; width: 35px; height: 35px; padding: 3px; margin: 4px; border: 1px solid #d0d0d0;">
+                    <img src="{% avatar_url u 35 %}" alt="{{ u.visible_name }}" title="{{ u.visible_name }}" width="35" height="35"/>
+                </div>
+            {% endfor %}
+            <br style="clear: both;"/>
+            <div style="text-align: right; font-style: italic; padding-right: 30px;">... and more</div>
+        </p>
+        <br style="clear: both;"/>
+        <hr/>
+    {% endif %}
+    
+    <p>
+        {% if request.user.is_authenticated %}
+                <a href="{% url conference_schedule_final %}">&laquo; back to my schedule</a><br/>
+        {% endif %}   
+    </p>
+{% endblock %}

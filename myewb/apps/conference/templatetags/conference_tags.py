@@ -39,7 +39,7 @@ def colspans(capacity):
         return "2"
     else:
         return "1"
-
+    
 class AttendanceNode(template.Node):
     def __init__(self, session, user, context_attending, context_tentative):
         self.session = template.Variable(session)

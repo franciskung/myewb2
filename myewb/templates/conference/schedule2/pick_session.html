@@ -1,0 +1,159 @@
+{% extends 'conference/schedule2/base.html' %}
+
+{% load i18n %}
+{% load uni_form_tags %}
+
+{% block head_title %}National Conference 2012{% endblock %}
+
+{% block body2 %}
+<style>
+	form.select_session {
+		background: none;
+		border: 0;
+	}
+</style>
+
+
+<div style="border: 1px solid; background: #e0e0e0; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; float: left; width: 200px; padding: 10px;">
+    <strong>{{ day|date:'l, M j' }}</strong>
+    <br/><br/>
+	
+	{% for s in schedule %}
+		{{ s.timeslot.time|time:'g:i a' }}<br/>
+		{% if s.common %}
+			<em>{{ s.name }}</em>
+		{% else %}
+			{{ s.name }}
+		{% endif %}
+		<br/><br/>
+
+	{% endfor %}
+	
+    <div style='background: #c0c0c0; margin: -5px; padding: 5px;'>
+    <span style='color: red;'>{{ timeslot.time|time:'g:i a' }}</span><br/>
+    <span style='color: red;'>?????</span>
+    </div><br/>
+</div>
+
+<div style='margin-left: 250px;'>
+
+    <p>
+        <strong>{{ day|date:'l, F j' }}</strong><br/>
+        <strong>{{ timeslot.time|time:'g:i A' }}: "{{ timeslot.name }}"</strong>
+    </p>
+
+	{% comment %}
+    <ul id="tabhead">
+    	{% for r in recommended %}
+    		<li><a href="#">{{ r.name }}</a></li>
+    	{% endfor %}
+    </ul>
+
+    <div id="tabs" class="css-panes">
+    	{% for r in recommended %}
+	        <div>
+	            <p>
+	                <strong>{{ r.name }}</strong>
+	            </p>
+	
+	            <p>
+	                {{ r.description|default:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse libero sapien, sodales et laoreet quis, sagittis eu lorem. In pellentesque, tellus vel volutpat dictum, orci nulla consequat quam, consequat venenatis tellus elit ac orci. Aliquam at dolor quam, a blandit urna. Aliquam hendrerit mattis egestas. Nunc vulputate tortor eget felis malesuada placerat a ut mi. Nulla facilisi. Vivamus nec enim in sem commodo condimentum. Aliquam iaculis bibendum tincidunt. Ut tellus mi, ultrices imperdiet sodales ut, congue vel quam. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aenean vel purus nisi, id lacinia lorem. Aenean sit amet nunc eget odio lobortis placerat nec bibendum dui." }}
+	            </p>
+	
+				<form method="post" action="{% url conference_session_save %}" class="select_session">
+					<input type="hidden" name="session" value="{{ r.id }}"/>
+					<input type="hidden" name="timeslot" value="{{ r.timeslot.id }}"/>
+	            	<input type="submit" value="select this session"/>
+	          	</form>
+	        </div>
+	    {% endfor %}
+    </div>
+	{% endcomment %}
+	
+	<div style="border: 1px solid; background: #e0e0e0; padding: 10px;">
+	    <strong>Recommended Sessions</strong>
+	
+	    <ul style='list-style-type: disc; margin-left: 25px;'>
+	    {% for r in recommended %}
+	    	<li style='padding-bottom: 5px; list-style-type: disc;'><a href="#" class="colorbox" id="sother-{{ r.id }}">{{ r.name }}</a></li>
+		{% endfor %}
+	    </ul>
+	</div>
+
+    <br/><br/>
+    <strong>Other sessions at this time</strong>
+
+    <ul style='list-style-type: disc; margin-left: 25px;'>
+    {% for s in sessions %}
+    	<li style='padding-bottom: 5px; list-style-type: disc;'><a href="#" class="colorbox" id="sother-{{ s.id }}">{{ s.name }}</a></li>
+	{% endfor %}
+    </ul>
+    <br/>
+
+    <div style="display: none;">
+	   	{% for r in recommended %}
+	        <div id="sbox-sother-{{ r.id }}">
+	        <p>
+	            <strong>{{ r.name }}</strong>
+	        </p>
+	
+	        <p>
+	            {{ r.description|default:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ante lectus, dictum at blandit eu, luctus vitae neque. Vivamus pharetra, dui et scelerisque bibendum, dui ligula euismod ante, eu sodales metus risus imperdiet tellus. Nulla facilisi. Nunc ornare pellentesque metus quis tempor. Fusce consequat gravida diam. Donec condimentum sapien eget sem tempor varius. Nulla facilisi. Donec id nulla lobortis lectus facilisis fermentum. Pellentesque pulvinar accumsan eros sed pulvinar. Nullam ullamcorper, dolor sit amet molestie eleifend, lectus lectus accumsan odio, at feugiat sem quam a eros. Mauris cursus sagittis eleifend. Donec vel sapien orci." }}
+	        </p>
+	
+			<form method="post" action="{% url conference_session_save %}" class="select_session">
+				<input type="hidden" name="session" value="{{ r.id }}"/>
+				<input type="hidden" name="timeslot" value="{{ r.timeslot.id }}"/>
+	           	<input type="submit" value="select this session"/>
+	         	</form>
+	        </div>
+	    {% endfor %}
+
+    	{% for s in sessions %}
+	        <div id="sbox-sother-{{ s.id }}">
+	        <p>
+	            <strong>{{ s.name }}</strong>
+	        </p>
+	
+	        <p>
+	            {{ s.description|default:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ante lectus, dictum at blandit eu, luctus vitae neque. Vivamus pharetra, dui et scelerisque bibendum, dui ligula euismod ante, eu sodales metus risus imperdiet tellus. Nulla facilisi. Nunc ornare pellentesque metus quis tempor. Fusce consequat gravida diam. Donec condimentum sapien eget sem tempor varius. Nulla facilisi. Donec id nulla lobortis lectus facilisis fermentum. Pellentesque pulvinar accumsan eros sed pulvinar. Nullam ullamcorper, dolor sit amet molestie eleifend, lectus lectus accumsan odio, at feugiat sem quam a eros. Mauris cursus sagittis eleifend. Donec vel sapien orci." }}
+	        </p>
+	
+			<form method="post" action="{% url conference_session_save %}" class="select_session">
+				<input type="hidden" name="session" value="{{ s.id }}"/>
+				<input type="hidden" name="timeslot" value="{{ s.timeslot.id }}"/>
+            	<input type="submit" value="select this session"/>
+          	</form>
+	        </div>
+	    {% endfor %}
+    </div>
+
+
+</div>
+
+<script type="text/javascript">
+    $().ready(function() {
+        $("ul#tabhead").tabs("div#tabs > div");
+
+        {% for r in recommended %}
+    	    $('#sother-{{ r.id }}').colorbox({'width': '50%',
+                                 		  	  'height': '50%',
+                                 		  	  'opacity': '0.5',
+                                 		  	  'inline': true,
+                                 		  	  'href': '#sbox-sother-{{ r.id }}'
+                                     });
+	    {% endfor %}
+
+        {% for s in sessions %}
+	        $('#sother-{{ s.id }}').colorbox({'width': '50%',
+	                                 		  'height': '50%',
+	                                 		  'opacity': '0.5',
+	                                 		  'inline': true,
+	                                 		  'href': '#sbox-sother-{{ s.id }}'
+	                                 });
+	    {% endfor %}
+    });
+</script>
+    
+    
+{% endblock %}

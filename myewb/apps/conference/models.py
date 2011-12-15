@@ -215,6 +215,8 @@ class ConferenceTimeslot(models.Model):
         return "" + str(self.day) + " " + str(self.time) + " - " + str(self.name)
         #return self.name
 
+    def endtime(self):
+        return datetime.combine(date.today(), self.time) + timedelta(minutes=self.length)
                  
 class ConferenceSession(models.Model):
     name = models.CharField(max_length=255)
@@ -242,27 +244,24 @@ class ConferenceSession(models.Model):
     def url(self):
         return reverse('conference_session', kwargs={'session': self.id});
         
-#    def dayverbose(self):
-#        if self.day == date(year=2012, month=1, day=12):
-#            return 'thurs'
-#        elif self.day == date(year=2012, month=1, day=13):
-#            return 'fri'
-#        elif self.day == date(year=2012, month=1, day=14):
-#            return 'sat'
-#        
-#        return ''
-#        
-#    def timeverbose(self):
-#        return "%02d%02d" % (self.time.hour, self.time.minute)
+    def dayverbose(self):
+        if self.timeslot.day == date(year=2012, month=1, day=12):
+            return 'thurs'
+        elif self.timeslot.day == date(year=2012, month=1, day=13):
+            return 'fri'
+        elif self.timeslot.day == date(year=2012, month=1, day=14):
+            return 'sat'
+        
+        return ''
+        
+    def timeverbose(self):
+        return "%02d%02d" % (self.timeslot.time.hour, self.timeslot.time.minute)
         
     #def streamverbose(self):
     #    for sid, sname in STREAMS:
     #        if self.stream == sid:
     #            return sname
-        
-#    def endtime(self):
-#        return datetime.combine(date.today(), self.time) + timedelta(minutes=self.length)
-        
+              
     def user_is_attending(self, user):
         if user.is_authenticated():
             if user in self.attendees.all():
@@ -278,7 +277,7 @@ class ConferenceSession(models.Model):
     def popular(self):
         # TODO: I could probably come up with a better algorithm, which takes
         # into account how many people have set up schedules...
-        if self.attendees.count() + (self.maybes.count() / 2) > self.capacity * 0.5:
+        if self.capacity and self.attendees.count() + (self.maybes.count() / 2) > self.capacity * 0.5:
             return True
         
         return False
@@ -294,7 +293,7 @@ class ConferenceQuestionnaire(models.Model):
     
     first_conference = models.BooleanField(default=True,
                                            verbose_name='Is this your first EWB National Conference?')
-    roles = models.CharField(max_length=50, choices=ROLES_CHOICES, blank=True,
+    roles = models.CharField(max_length=255, choices=ROLES_CHOICES, blank=True,
                              verbose_name='What role(s) do you currently hold in EWB, if any?')
     leadership_years = models.IntegerField(blank=True, choices=(('1', '1 or less'),
                                                                 ('2', '2 - 3'), 

@@ -70,12 +70,12 @@ def build_recommended(user, timeslot):
             if c.prep and c.prep == registration.conferencequestionnaire.prep:
                 recommendations.add(s)
                 
-            if c.past_session and ConferenceSession.objects.filter(id=past_session, attendees=user).count():
+            if c.past_session and ConferenceSession.objects.filter(id=c.past_session.id, attendees=user).count():
                 recommendations.add(s)
 
 
     if not recommendations:
-        criteria = ConferenceSessionCriteria.objects.filter(session=s, other=True)
+        criteria = ConferenceSessionCriteria.objects.filter(session__timeslot=timeslot, other=True)
         for c in criteria:
             recommendations.add(c.session)
             
@@ -98,11 +98,19 @@ def questionnaire(request, user=None):
     if not user:
         user= request.user
         
+    registration = get_object_or_none(ConferenceRegistration, user=user)
+    
     if request.method == 'POST':
-        form = ConferenceQuestionnaireForm(request.POST)
+        if registration:
+            questionnaire = get_object_or_none(ConferenceQuestionnaire, registration=registration)
+            
+        if questionnaire:
+            form = ConferenceQuestionnaireForm(request.POST, instance=questionnaire)
+        else:
+            form = ConferenceQuestionnaireForm(request.POST)
+            
         if form.is_valid():
             questionnaire = form.save(commit=False)
-            registration = get_object_or_none(ConferenceRegistration, user=user)
             questionnaire.registration = registration
             if not questionnaire.leadership_years:
                 questionnaire.leadership_years = 1 
@@ -142,7 +150,7 @@ def session_pick(request, timeslot=None):
                 break
         
     if not timeslot:
-        return HttpResponseRedirect(reverse('schedule_for_user'))
+        return HttpResponseRedirect(reverse('conference_schedule_final'))
         
         
     day = timeslot.day
@@ -150,14 +158,12 @@ def session_pick(request, timeslot=None):
     #schedule = ConferenceSession.objects.filter(attendees=user).filter(timeqry).order_by('timeslot__day', 'timeslot__time')
     
     #schedule = ConferenceSession.objects.filter(attendees=user).filter(timeslot__lt=timeslot).order_by('timeslot__day', 'timeslot__time')
-    
+
     # can't do this in a qry ...??
     scheduleset = ConferenceSession.objects.filter(attendees=user).order_by('timeslot__day', 'timeslot__time')
     schedule = []
     for s in scheduleset:
-        if s.timeslot.day < timeslot.day:
-            schedule.append(s)
-        elif s.timeslot.day == timeslot.day and s.timeslot.time <= timeslot.time:
+        if s.timeslot.day == timeslot.day and s.timeslot.time <= timeslot.time:
             schedule.append(s)
     
     recommended = build_recommended(user, timeslot)
@@ -190,26 +196,37 @@ def session_pick_save(request):
                 
             session.attendees.add(user)
     
-    return HttpResponseRedirect(reverse('session_pick'))
+    return HttpResponseRedirect(reverse('conference_session_pick'))
     
 
 @login_required
-def schedule_for_user(request, user=None, day=None, time=None):
-    if not user:
-        user = request.user
-        
-    sessions = ConferenceSession.objects.filter(attendees=user).order_by('timeslot__day', 'timeslot__time')
+def schedule_final(request):
+    user = request.user
+    sessions = ConferenceSession.objects.filter(attendees=user).order_by('timeslot__time', 'timeslot__day')
         
     timelist = []
     for t in range(8, 22):
         timelist.append(t)
 
-    return render_to_response("conference/schedule2/user.html",
+    return render_to_response("conference/schedule2/schedule.html",
                               {"sessions": sessions,
                                "timelist": timelist,
                                "printable": request.GET.get('printable', None)},
                               context_instance = RequestContext(request))
 
+@login_required
+def schedule_rebuild(request):
+    user = request.user
+    sessions = ConferenceSession.objects.filter(attendees=user)
+    
+    for s in sessions:
+        s.attendees.remove(user)
+        
+    questionnaire = get_object_or_none(ConferenceQuestionnaire, registration__user=user)
+    if questionnaire:
+        questionnaire.delete()
+        
+    return HttpResponseRedirect(reverse('conference_questionnaire'))
 
 @login_required
 def print_schedule(request):
@@ -295,108 +312,6 @@ def session_delete(request, session):
                               {"session": s},
                               context_instance = RequestContext(request))
 
-@login_required
-def session_attend(request, session):
-    s = get_object_or_404(ConferenceSession, id=session)
-    s.maybes.remove(request.user)
-    s.attendees.add(request.user)
-    
-    return HttpResponseRedirect(reverse('conference_session', kwargs={'session': s.id}))
-    
-@login_required
-def session_tentative(request, session):
-    s = get_object_or_404(ConferenceSession, id=session)
-    s.attendees.remove(request.user)
-    s.maybes.add(request.user)
-    
-    return HttpResponseRedirect(reverse('conference_session', kwargs={'session': s.id}))
-    
-    
-@login_required
-def session_skip(request, session):
-    s = get_object_or_404(ConferenceSession, id=session)
-    s.attendees.remove(request.user)
-    s.maybes.remove(request.user)
-    
-    return HttpResponseRedirect(reverse('conference_session', kwargs={'session': s.id}))
-    
-@login_required
-def private_detail(request, session):
-    s = get_object_or_404(ConferencePrivateEvent, id=session)
-    
-    if s.creator != request.user:
-        return render_to_response("conference/schedule/denied.html",
-                                  {}, context_instance = RequestContext(request))
-    
-    return render_to_response("conference/schedule/session_private_detail.html",
-                              {"session": s,
-                               "attendees": [],
-                               "private": True},
-                              context_instance = RequestContext(request))
-
-@login_required
-def private_new(request):
-    if request.method == 'POST':
-        form = ConferencePrivateEventForm(request.POST)
-
-        if form.is_valid():
-            session = form.save(commit=False)
-            session.creator = request.user
-            session.save()
-            return HttpResponseRedirect(reverse('conference_private', kwargs={'session': session.id}))
-    else:
-        form = ConferencePrivateEventForm()
-        
-    return render_to_response("conference/schedule/session_edit.html",
-                              {"form": form,
-                               "new": True,
-                               "private": True},
-                              context_instance = RequestContext(request))
-
-@login_required
-def private_edit(request, session):
-    s = get_object_or_404(ConferencePrivateEvent, id=session)
-    
-    if s.creator != request.user:
-        return render_to_response("conference/schedule/denied.html",
-                                  {}, context_instance = RequestContext(request))
-    
-    if request.method == 'POST':
-        form = ConferencePrivateEventForm(request.POST, instance=s)
-
-        if form.is_valid():
-            session = form.save()
-            return HttpResponseRedirect(reverse('conference_private', kwargs={'session': session.id}))
-    else:
-        form = ConferencePrivateEventForm(instance=s)
-        
-    return render_to_response("conference/schedule/session_edit.html",
-                              {"form": form,
-                               "private": True},
-                              context_instance = RequestContext(request))
-
-@login_required
-def private_delete(request, session):
-    s = get_object_or_404(ConferencePrivateEvent, id=session)
-    
-    if s.creator != request.user:
-        return render_to_response("conference/schedule/denied.html",
-                                  {}, context_instance = RequestContext(request))
-    
-    if request.method == 'POST' and request.POST.get('delete', None):
-        redirect_day = 14
-        if s.day.day == 13:
-            redirect_day = 13
-        elif s.day.day == 15:
-            redirect_day = 15
-            
-        s.delete()
-        return HttpResponseRedirect(reverse('conference_for_user'))
-        
-    return render_to_response("conference/schedule/session_delete.html",
-                              {"session": s,
-                               "private": True},
-                              context_instance = RequestContext(request))
 
 def login(request):
     if request.user.is_authenticated():
