@@ -1,7 +1,25 @@
 {% extends 'conference/confsite.html' %}
 
 {% block body %}
-<div style='float: right; width: auto; padding-top: 35px;'>Logged in as <strong>{{ request.user.visible_name }}</strong></div>
+    {% if messages %}
+    	<br/>
+        <div class="message" style="width: 500px; margin: 0 auto; background: #d0d0d0; border: 1px solid #a0a0a0; padding: 5px 10px;">
+            {% for message in messages %}
+                <div class="message">{{ message|safe }}</div>
+                {% if not forloop.last %}<hr/>{% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+
+
+<div style='float: right; width: auto; padding-top: 35px;'>
+	Logged in as <strong>{{ request.user.visible_name }}</strong>
+	{% if perms.conference and not group.is_chapter %}
+		| <a href="{% url conference_session_list %}">admin</a>
+	{% endif %}      
+</div>
+
 <h2>Conference Session Selection</h2>
 		
 	{% block body2 %}

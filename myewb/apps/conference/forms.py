@@ -888,15 +888,17 @@ CONFERENCE_LENGTH_CHOICES = (('30', '0 hours, 30 minutes'),
                              ('480', '8 hours'),
                              )
 class ConferenceSessionForm(forms.ModelForm):
-    day = forms.ChoiceField(choices=CONFERENCE_DAY_CHOICES)
-    time = DropdownTimeField()
-    length = forms.ChoiceField(choices=CONFERENCE_LENGTH_CHOICES)
+    #day = forms.ChoiceField(choices=CONFERENCE_DAY_CHOICES)
+    #time = DropdownTimeField()
+    #length = forms.ChoiceField(choices=CONFERENCE_LENGTH_CHOICES)
     
     class Meta:
         model = ConferenceSession
-        fields = ['name', 'room', 'day', 'time', 'length',
-                  'stream', 'capacity',
-                  'short_description', 'long_description']
+        #fields = ['name', 'room', 'day', 'time', 'length',
+        #          'stream', 'capacity',
+        #          'short_description', 'long_description']
+        fields = ['name', 'room', 'capacity',
+                  'description', 'prep']
 
 SMS_CHOICES = (('all', 'All conference delegates'),
                ('internal', 'Internal (EWB member + alumni) delegates'),

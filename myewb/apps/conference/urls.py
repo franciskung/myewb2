@@ -71,6 +71,9 @@ urlpatterns += patterns('conference.schedule2',
     url(r'^schedule/session/(?P<session>[\d]+)/$', 'session_detail', name='conference_session'),
     url(r'^schedule/session/save/$', 'session_pick_save', name='conference_session_save'),
 
+    url(r'^schedule/session/list/$', 'session_list', name='conference_session_list'),
+    url(r'^schedule/session/(?P<session>[\d]+)/edit/$', 'session_edit', name='conference_session_edit'),
+
     url(r'^schedule/final/$', 'schedule_final', name='conference_schedule_final'),
     url(r'^schedule/rebuild/$', 'schedule_rebuild', name='conference_schedule_rebuild'),
 

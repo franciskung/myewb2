@@ -282,6 +282,17 @@ def session_new(request):
                               context_instance = RequestContext(request))
 
 @login_required
+def session_list(request):
+    if not request.user.has_module_perms("conference"):
+        return HttpResponseRedirect(reverse('conference_schedule'))
+
+    timeslots = ConferenceTimeslot.objects.all()
+    
+    return render_to_response("conference/schedule2/session_list.html",
+                              {"times": timeslots},
+                              context_instance = RequestContext(request))
+    
+@login_required
 def session_edit(request, session):
     if not request.user.has_module_perms("conference"):
         return HttpResponseRedirect(reverse('conference_schedule'))
@@ -293,12 +304,15 @@ def session_edit(request, session):
 
         if form.is_valid():
             session = form.save()
-            return HttpResponseRedirect(reverse('conference_session', kwargs={'session': session.id}))
+            #return HttpResponseRedirect(reverse('conference_session', kwargs={'session': session.id}))
+            request.user.message_set.create(message='Session updated!')
+            return HttpResponseRedirect(reverse('conference_session_list'))
     else:
         form = ConferenceSessionForm(instance=s)
         
-    return render_to_response("conference/schedule/session_edit.html",
-                              {"form": form},
+    return render_to_response("conference/schedule2/session_edit.html",
+                              {"form": form,
+                               "session": s},
                               context_instance = RequestContext(request))
 
 @login_required

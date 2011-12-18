@@ -1,0 +1,27 @@
+{% extends "conference/schedule2/base.html" %}
+
+{% load conference_tags %}
+{% load avatar_tags %}
+
+{% block body2 %}
+    <h3>Session listing</h3>
+    
+    <table style='border: 1px solid;'>
+	    {% for timeslot in times %}
+	    	<tr>
+	    		<th style='width: 35%; vertical-align: top;'>
+	    			{{ timeslot.name }}
+	    			<br/>
+	    			<span style='font-weight: normal;'>{{ timeslot.day|date:"l"}}, {{ timeslot.time|time:"g:i" }} - {{ timeslot.endtime|time:"g:i A" }}</span>
+	    		</th>
+	    		
+	    		<td>
+	    			{% for s in timeslot.conferencesession_set.all %}
+    					<a href="{% url conference_session_edit s.id %}">{{ s.name }}</a><br/>
+	    			{% endfor %}
+	    		</td>
+	    	</tr>
+    	{% endfor %}
+    </table>
+
+{% endblock %}

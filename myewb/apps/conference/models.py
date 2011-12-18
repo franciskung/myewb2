@@ -203,6 +203,7 @@ STREAMS_SHORT = (('aprosperity', 'African Prosperity'),
 
 class ConferenceTimeslot(models.Model):
     name = models.CharField(max_length=255)
+    name_fr = models.CharField(max_length=255, blank=True, null=True)
     day = models.DateField(help_text='yyyy-mm-dd')
     time = models.TimeField(help_text='hh:mm in 24-hour time. must be either :00 or :30 to show up on schedules')
     length = models.IntegerField(help_text="in minutes")
@@ -220,11 +221,13 @@ class ConferenceTimeslot(models.Model):
                  
 class ConferenceSession(models.Model):
     name = models.CharField(max_length=255)
+    name_fr = models.CharField(max_length=255, blank=True, null=True)
     room = models.CharField(max_length=255, blank=True)
     #sessiontype = models.CharField(max_length=50, choices=SESSION_TYPES, blank=True, null=True)
     #short_description = models.TextField(blank=True)
     #long_description = models.TextField(blank=True)
     description = models.TextField(blank=True)
+    description_fr = models.TextField(blank=True, null=True)
     timeslot = models.ForeignKey(ConferenceTimeslot)
     common = models.BooleanField(default=False)
     
@@ -233,6 +236,9 @@ class ConferenceSession(models.Model):
     
     attendees = models.ManyToManyField(User, related_name="conference_sessions", blank=True)
     #maybes = models.ManyToManyField(User, related_name="conference_maybe")
+    
+    prep = models.TextField(blank=True)
+    prep_fr = models.TextField(blank=True)
     
 #    class Meta:
 #        ordering = ('day', 'time', 'stream', 'length')
@@ -342,7 +348,9 @@ class ConferenceSessionCriteria(models.Model):
 class ConferencePrep(models.Model):
     session = models.ForeignKey(ConferenceSession)
     url = models.CharField(max_length=255)
+    url_fr = models.CharField(max_length=255, blank=True, null=True)
     name = models.CharField(max_length=255)
+    name_fr = models.CharField(max_length=255, blank=True, null=True)
 
     def __unicode__(self):
         return self.session + " prep: " + self.name

@@ -90,6 +90,7 @@
 		<h4 style='font-size: 1.1em;'>Prep Material</h4>
 		
 		{% for s in sessions %}
+			{% comment %}
 			{% if s.conferenceprep_set.all %}
 				<strong>{{ s.name }}</strong>
 				<ul class="prep">
@@ -98,6 +99,15 @@
 					{% endfor %}
 				</ul>
 			{% endif %}
+			{% endcomment %}
+			
+			{% if s.prep %}
+				<strong>{{ s.name }}</strong>
+				<ul class="prep">
+					{{ s.prep }}
+				</ul>
+			{% endif %}
+			
 		{% endfor %}
 	</div>
    	
