@@ -1,8 +1,8 @@
 {% extends 'events/base.html' %}
 
 {% block entire_body %}
-	{#{% ifequal request.META.SERVER_NAME "conference2012.ewb.ca" %} #} 
-	{% ifequal request.META.SERVER_NAME "localhost.localdomain" %}
+	{% ifequal request.META.SERVER_NAME "conference2012.ewb.ca" %}  
+	{#{% ifequal request.META.SERVER_NAME "localhost.localdomain" %} #}
 	
 <head>
 	
@@ -20,8 +20,8 @@
 	<link rel="stylesheet" href="https://conference2012.ewb.ca/public/themes/conference-main.css" media="all" type="text/css" />
 	<link rel="shortcut icon" href="https://conference2012.ewb.ca/favicon.ico" />
 
-	{#<script src="https://my.ewb.ca/site_media/static/js/jquery.tools.min.js"></script>#}
-	<script src="{{ STATIC_URL }}js/jquery.tools.min.js"></script>
+	<script src="https://my.ewb.ca/site_media/static/js/jquery.tools.min.js"></script>
+	{#<script src="{{ STATIC_URL }}js/jquery.tools.min.js"></script>#}
     <script type="text/javascript" src="https://perspectives.ewb.ca/theworks/js/lib/colorbox.js"></script> 
 
     <link rel="stylesheet" href="https://my.ewb.ca/site_media/static/css/uni-form/uni-form.css" />    
