@@ -382,7 +382,7 @@ class ConferenceRegistrationFormPreview(PaymentFormPreview):
             # simulate a credit card declined, to trigger form validation failure
             response = (False, "Please edit your myEWB profile and enter an email address.")
 
-        elif reg.code and not reg.code.isAvailable():
+        elif reg.code and reg.code.type != 'i' and not reg.code.isAvailable():
             response = (False, "Registration code has already been used or has expired")
         
         else:
