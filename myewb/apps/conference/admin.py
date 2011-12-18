@@ -24,7 +24,7 @@ class CodeAdmin(admin.ModelAdmin):
 admin.site.register(ConferenceCode, CodeAdmin)
 
 class TimeslotAdmin(admin.ModelAdmin):
-    list_display = ('name', 'day', 'time')
+    list_display = ('id', 'name', 'day', 'time')
     
 admin.site.register(ConferenceTimeslot, TimeslotAdmin)
 

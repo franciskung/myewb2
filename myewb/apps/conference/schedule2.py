@@ -54,6 +54,9 @@ def build_recommended(user, timeslot):
                 if c.first_conference == 'no' and not registration.conferencequestionnaire.first_conference:
                     recommendations.add(s)
 
+            if c.chaptertype and c.chaptertype == registration.conferencequestionnaire.chaptertype:
+                recommendations.add(s)
+
             if c.roles and registration.conferencequestionnaire.roles.count(c.roles):
                 recommendations.add(s)
                     
@@ -65,6 +68,13 @@ def build_recommended(user, timeslot):
                     recommendations.add(s)
                     
                 if c.leadership_day == 'no' and not registration.conferencequestionnaire.leadership_day:
+                    recommendations.add(s)
+            
+            if c.innovation_challenge:
+                if c.innovation_challenge == 'yes' and registration.conferencequestionnaire.innovation_challenge:
+                    recommendations.add(s)
+                    
+                if c.innovation_challenge == 'no' and not registration.conferencequestionnaire.innovation_challenge:
                     recommendations.add(s)
             
             if c.prep and c.prep == registration.conferencequestionnaire.prep:

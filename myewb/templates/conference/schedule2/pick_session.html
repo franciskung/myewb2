@@ -64,7 +64,7 @@
 				<form method="post" action="{% url conference_session_save %}" class="select_session">
 					<input type="hidden" name="session" value="{{ r.id }}"/>
 					<input type="hidden" name="timeslot" value="{{ r.timeslot.id }}"/>
-	            	<input type="submit" value="select this session"/>
+	            	<input type="submit" value="choose this session"/>
 	          	</form>
 	        </div>
 	    {% endfor %}
@@ -107,7 +107,7 @@
 			<form method="post" action="{% url conference_session_save %}" class="select_session">
 				<input type="hidden" name="session" value="{{ r.id }}"/>
 				<input type="hidden" name="timeslot" value="{{ r.timeslot.id }}"/>
-	           	<input type="submit" value="select this session"/>
+	           	<input type="submit" value="choose this session"/>
 	         	</form>
 	        </div>
 	    {% endfor %}
@@ -126,7 +126,7 @@
 			<form method="post" action="{% url conference_session_save %}" class="select_session">
 				<input type="hidden" name="session" value="{{ s.id }}"/>
 				<input type="hidden" name="timeslot" value="{{ s.timeslot.id }}"/>
-            	<input type="submit" value="select this session"/>
+            	<input type="submit" value="choose this session"/>
           	</form>
 	        </div>
 	    {% endfor %}

@@ -251,3 +251,8 @@ ROLES_CHOICES = (('president', 'Chapter or City Network President'),
                  ('aps', 'APS (past or present)'),
                  ('office', 'National Office Staff or Social Change Fellow (past or present)'))
                  
+CHAPTERTYPE_CHOICES = (('none', 'Not affiliated with a chapter'),
+                       ('city', 'City network'),
+                       ('enguni', 'University chapter - english'),
+                       ('fruni', 'University chapter - french'))
+

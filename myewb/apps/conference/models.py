@@ -293,31 +293,41 @@ class ConferenceQuestionnaire(models.Model):
     
     first_conference = models.BooleanField(default=True,
                                            verbose_name='Is this your first EWB National Conference?')
+    
+    chaptertype = models.CharField(max_length=10, choices=CHAPTERTYPE_CHOICES,
+                                   verbose_name='What type of chapter are you from?')
+    
     roles = models.CharField(max_length=255, choices=ROLES_CHOICES, blank=True,
                              verbose_name='What role(s) do you currently hold in EWB, if any?')
+    
     leadership_years = models.IntegerField(blank=True, choices=(('1', '1 or less'),
                                                                 ('2', '2 - 3'), 
                                                                 ('3', '3 or more')), 
                                            verbose_name='How many years have you held a leadership position in EWB?',
                                            default=1)
+    
     leadership_day = models.BooleanField(default=False,
                                          verbose_name='Are you attending leadership day?')
+    
+    innovation_challenge = models.BooleanField(default=False,
+                                               verbose_name='Are you participating in the Innovation Challenge?')
+    
     prep = models.IntegerField(choices=(('0', 'Under 5 hours'),
-                                        ('5', '5-10 hours'),
-                                        ('10', 'Over 10 hours')),
+                                        ('5', 'Over 5 hours')),
                                         verbose_name='How many hours of prep are you able to commit to before conference?')
                                         
 class ConferenceSessionCriteria(models.Model):
     first_conference = models.CharField(max_length=3, choices=(('yes', 'yes'), ('no', 'no')), blank=True)
+    chaptertype = models.CharField(max_length=10, choices=CHAPTERTYPE_CHOICES, blank=True, null=True)
     roles = models.CharField(max_length=50, choices=ROLES_CHOICES, blank=True, null=True)
     leadership_years = models.IntegerField(blank=True, choices=(('1', '1 or less'),
                                                                 ('2', '2 - 3'), 
                                                                 ('3', '3 or more')), 
                                            null=True)
     leadership_day = models.CharField(max_length=3, choices=(('yes', 'yes'), ('no', 'no')), blank=True)
+    innovation_challenge = models.CharField(max_length=3, choices=(('yes', 'yes'), ('no', 'no')), blank=True)
     prep = models.IntegerField(choices=(('0', 'Under 5 hours'),
-                                        ('5', '5-10 hours'),
-                                        ('10', 'Over 10 hours')),
+                                        ('5', 'Over 5 hours')),
                                        blank=True, null=True)
     past_session = models.ForeignKey(ConferenceSession, related_name='past_session',
                                      blank=True, null=True)
