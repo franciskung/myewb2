@@ -104,7 +104,7 @@
 			{% if s.prep %}
 				<strong>{{ s.name }}</strong>
 				<ul class="prep">
-					{{ s.prep }}
+					{{ s.prep|safe }}
 				</ul>
 			{% endif %}
 			

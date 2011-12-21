@@ -1,8 +1,18 @@
 {% extends 'events/base.html' %}
 
 {% block entire_body %}
+<<<<<<< Updated upstream
 	{% ifequal request.META.SERVER_NAME "conference2012.ewb.ca" %}  
 	{#{% ifequal request.META.SERVER_NAME "localhost.localdomain" %} #}
+=======
+<<<<<<< Updated upstream
+	{% ifequal request.META.SERVER_NAME "conference2012.ewb.ca" %} 
+{#	{% ifequal request.META.SERVER_NAME "localhost.localdomain" %}#}
+=======
+{#	{% ifequal request.META.SERVER_NAME "conference2012.ewb.ca" %}#}
+	{% ifequal request.META.SERVER_NAME "localhost.localdomain" %}
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 	
 <head>
 	
@@ -112,6 +122,13 @@ th.nt {
 
 a, a:link, a:visited {
 	color: #ff7200;
+}
+
+ul.prep li {
+    margin-left: 10px;
+}
+ul.prep, ul.prep li {
+   list-style-type: disc; 
 }
 
 </style>

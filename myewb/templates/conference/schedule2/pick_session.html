@@ -58,7 +58,7 @@
 	            </p>
 	
 	            <p>
-	                {{ r.description|default:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse libero sapien, sodales et laoreet quis, sagittis eu lorem. In pellentesque, tellus vel volutpat dictum, orci nulla consequat quam, consequat venenatis tellus elit ac orci. Aliquam at dolor quam, a blandit urna. Aliquam hendrerit mattis egestas. Nunc vulputate tortor eget felis malesuada placerat a ut mi. Nulla facilisi. Vivamus nec enim in sem commodo condimentum. Aliquam iaculis bibendum tincidunt. Ut tellus mi, ultrices imperdiet sodales ut, congue vel quam. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aenean vel purus nisi, id lacinia lorem. Aenean sit amet nunc eget odio lobortis placerat nec bibendum dui." }}
+	                {{ r.description|linebreaksbr }}
 	            </p>
 	
 				<form method="post" action="{% url conference_session_save %}" class="select_session">
@@ -120,7 +120,7 @@
 	        </p>
 	
 	        <p>
-	            {{ s.description|default:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ante lectus, dictum at blandit eu, luctus vitae neque. Vivamus pharetra, dui et scelerisque bibendum, dui ligula euismod ante, eu sodales metus risus imperdiet tellus. Nulla facilisi. Nunc ornare pellentesque metus quis tempor. Fusce consequat gravida diam. Donec condimentum sapien eget sem tempor varius. Nulla facilisi. Donec id nulla lobortis lectus facilisis fermentum. Pellentesque pulvinar accumsan eros sed pulvinar. Nullam ullamcorper, dolor sit amet molestie eleifend, lectus lectus accumsan odio, at feugiat sem quam a eros. Mauris cursus sagittis eleifend. Donec vel sapien orci." }}
+	            {{ s.description|linebreaksbr }}
 	        </p>
 	
 			<form method="post" action="{% url conference_session_save %}" class="select_session">

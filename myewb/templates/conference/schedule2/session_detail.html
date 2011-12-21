@@ -8,13 +8,20 @@
 
     {% if not request.is_mobile and not session.fixed %}
         <div style="float: right; width: 25%; border: 1px solid; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; padding: 0.5em; margin: 0.5em;">
+            {% if session.capacity %}
             Capacity: {{ session.capacity }}
             <br/>
+            {% endif %}
+
             <p>
                 Attending:<br/>
                 {% for u in attendees %}
-                    <div style="float: left; width: 35px; height: 35px; padding: 3px; margin: 4px; border: 1px solid #d0d0d0;">
-                        <img src="{% avatar_url u 35 %}" alt="{{ u.visible_name }}" title="{{ u.visible_name }}" width="35" height="35"/>
+                    <div style="float: left; width: 35px; height: 35px; padding: 3px; margin: 4px; border: 0px solid #d0d0d0;">
+                        {% ifequal request.META.SERVER_NAME "conference2012.ewb.ca" %}
+                            <img src="http://my.ewb.ca{% avatar_url u 35 %}" alt="{{ u.visible_name }}" title="{{ u.visible_name }}" width="35" height="35"/>
+                        {% else %}
+                            <img src="{% avatar_url u 35 %}" alt="{{ u.visible_name }}" title="{{ u.visible_name }}" width="35" height="35"/>
+                        {% endifequal %}
                     </div>
                 {% endfor %}
                 <br style="clear: both;"/>
@@ -38,7 +45,7 @@
     <br/><br/>
     
     <p>
-        {{ session.long_description|safe|linebreaksbr }}
+        {{ session.description|safe|linebreaksbr }}
     </p>
     <br style="clear: both;">
     <hr/>
