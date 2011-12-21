@@ -38,7 +38,7 @@ CONFERENCE_DAYS = (('thurs', 'Thursday', 13),
                    ('sat', 'Saturday', 15))
 
 def build_recommended(user, timeslot):
-    registration = get_object_or_404(ConferenceRegistration, user=user)
+    registration = get_object_or_404(ConferenceRegistration, user=user, submitted=True, cancelled=False)
     
     sessions = ConferenceSession.objects.filter(timeslot=timeslot)
     recommendations = set()
@@ -94,7 +94,7 @@ def build_recommended(user, timeslot):
                    
 @login_required
 def schedule(request, user=None):
-    reg = get_object_or_none(ConferenceRegistration, user=request.user)
+    reg = get_object_or_none(ConferenceRegistration, user=request.user, submitted=True, cancelled=False)
     questionnaire = get_object_or_none(ConferenceQuestionnaire, registration=reg)
     
     if not questionnaire:
@@ -108,7 +108,11 @@ def questionnaire(request, user=None):
     if not user:
         user= request.user
         
-    registration = get_object_or_none(ConferenceRegistration, user=user)
+    registration = get_object_or_none(ConferenceRegistration, user=user, submitted=True, cancelled=False)
+    
+    if not registration:
+        request.user.message_set.create(message='You are not registered for the conference yet')
+        return HttpResponseRedirect(reverse('confreg'))
     
     if request.method == 'POST':
         if registration:
@@ -130,7 +134,6 @@ def questionnaire(request, user=None):
         
     else:
         initial = {}
-        registration = get_object_or_none(ConferenceRegistration, user=request.user)
         if registration:
             if registration.prevConfs:
                 initial['first_conference'] = False

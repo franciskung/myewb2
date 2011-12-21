@@ -88,10 +88,16 @@ def view_registration(request):
         else:
             tshirtform = True
 
+        if registration.ski:
+            skiform = None
+        else:
+            skiform = True
+
         #return HttpResponseRedirect(reverse('confcomm_app'))
         return render_to_response('conference/postregistration.html',
                                   {'registration': registration,
                                    'tshirtform': tshirtform,
+                                   'skiform': skiform,
                                    'user': request.user,
                                   },
                                   context_instance=RequestContext(request)
@@ -207,6 +213,30 @@ def purchase_tshirt(request):
     return render_to_response('conference/purchase.html',
                               {'registration': registration,
                                'form': tshirtform,
+                               'user': request.user,
+                              },
+                              context_instance=RequestContext(request)
+                             )
+    
+@secure_required
+@login_required
+def purchase_ski(request):
+    registration = get_object_or_none(ConferenceRegistration, user=request.user, submitted=True, cancelled=False)
+
+    if not registration:
+        request.user.message_set.create("You aren't registered for conference...")
+        return HttpResponseRedirect(reverse('confreg'))
+    
+    if request.method == 'POST':
+        return ConferenceSkiFormPreview(ConferenceSkiForm)(request, username=request.user.username, registration_id=registration.id)
+    
+    else:
+        skiform = ConferenceSkiForm(initial={'id': registration.id})
+        skiform.user = request.user
+
+    return render_to_response('conference/purchase.html',
+                              {'registration': registration,
+                               'form': skiform,
                                'user': request.user,
                               },
                               context_instance=RequestContext(request)
@@ -430,7 +460,7 @@ def download(request, who=None):
                      'room size', 'registered on', 'headset',
                      'food prefs', 'special needs',
                      'emergency name', 'emergency phone', 'prev conferences',
-                     'prev retreats', 'cell phone', 't-shirt',
+                     'prev retreats', 'cell phone', 't-shirt', 'ski trip',
                      'reg code', 'reg type', 'african delegate',
                      'roommate request', 'new to ottawa', 
                      'Survey - learn', 'Survey - connections', 'Survey - opportunities and challenges',
@@ -456,7 +486,7 @@ def download(request, who=None):
         row = [fname, lname, email, gender, language, chapter,
                r.amountPaid, r.roomSize, r.date, r.headset,
                r.foodPrefs, r.specialNeeds, r.emergName, r.emergPhone,
-               r.prevConfs, r.prevRetreats, r.cellphone, r.tshirt,
+               r.prevConfs, r.prevRetreats, r.cellphone, r.tshirt, r.ski,
                code, r.type, r.africaFund, r.roommate, r.new_to_ottawa,
                r.survey1, r.survey2, r.survey3, r.survey4,
                r.survey5, r.survey6, r.survey7, r.survey8]

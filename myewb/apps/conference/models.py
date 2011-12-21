@@ -42,6 +42,7 @@ class ConferenceRegistration(models.Model):
     type = models.CharField(max_length=50, null=True, blank=True)
     africaFund = models.SmallIntegerField(blank=True, null=True)
     tshirt = models.CharField(max_length=1, blank=True, null=True)
+    ski = models.CharField(max_length=1, blank=True, null=True)
     
     survey1 = models.TextField(null=True, blank=True)
     survey2 = models.TextField(null=True, blank=True)

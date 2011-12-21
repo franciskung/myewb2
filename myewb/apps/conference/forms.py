@@ -765,6 +765,136 @@ class ConferenceADFormPreview(PaymentFormPreview):
                                   context_instance=RequestContext(request)
                                  )
 
+class ConferenceSkiForm(forms.Form):
+    theuser = None
+
+    _user = None
+    def _get_user(self):
+        return self._user
+    
+    def _set_user(self, value):
+        self._user = value
+        if self.fields.get('address', None):
+            self.fields['address'].user = value
+            
+    user = property(_get_user, _set_user)
+
+    ski = forms.ChoiceField(label='Attend the Sunday ski trip?',
+                               choices=SKI_CHOICES)
+    
+    cc_type = forms.ChoiceField(label='Credit card type',
+                                  choices=CC_TYPES)
+    cc_number = CreditCardNumberField(label='Credit card number')
+    cc_expiry = CreditCardExpiryField(label='Credit card expiry',
+                                      help_text='MM/YY')
+    billing_name = forms.CharField(label='Name on credit card', max_length=255)
+    address = CompactAddressField(label='Billing Address')
+    id = forms.IntegerField(widget=forms.HiddenInput, required=False)
+    
+    trnError = None
+    
+    def clean(self):
+        # If the card is declined at the bank, trnError will get set...
+        if self.trnError:
+            raise forms.ValidationError("Error: " + self.trnError)
+        
+        if self.errors:
+            return None
+
+        # bypass, since the FormPreview clean isn't on a bound form
+        # (but that's ok since we validate the bound version first)
+        if self.cleaned_data.get('id', None):
+            reg = ConferenceRegistration.objects.get(id=self.cleaned_data['id'])
+        else:
+            # this shouldn't happen.
+            raise forms.ValidationError("Internal error.  Please email support@my.ewb.ca") 
+        
+        # and do some auto-processing as needed
+        cleaned_data = self.cleaned_data
+        cleaned_data['products'] = []
+        total_cost = 0
+
+        if cleaned_data['ski'] == 's':        
+            sku = "12-conf-ski-student"
+            name = "Conference ski trip (student)"
+            cost = 48
+        else:
+            sku = "12-conf-ski-adult"
+            name = "Conference ski trip (adult)"
+            cost = 60
+            
+        product, created = Product.objects.get_or_create(sku=sku)
+        if created:
+            product.name = name
+            product.amount = cost
+            product.save()
+            
+        cleaned_data['products'].append(product.sku)
+        total_cost = total_cost + Decimal(product.amount)
+        cleaned_data['total_cost'] = total_cost
+        
+        cleaned_data['registration_id'] = reg.id
+        self.cleaned_data = cleaned_data
+
+        return self.cleaned_data
+    
+    
+class ConferenceSkiFormPreview(PaymentFormPreview):
+    preview_template = 'conference/tshirtpreview.html'
+    form_template = 'conference/purchase.html'
+    username = None
+    
+    def parse_params(self, *args, **kwargs):
+        super(ConferenceSkiFormPreview, self).parse_params(*args, **kwargs)
+        self.registration_id = kwargs['registration_id']
+    
+    def done(self, request, cleaned_data):
+        # add profile info, as it's needed for CC processing
+        #form = self.form(request.POST)
+        #reg = self.form.instance
+        
+        reg = ConferenceRegistration.objects.get(id=cleaned_data['registration_id'])
+        form = self.form(request.POST)
+        
+        if reg.user != request.user:
+            # simulate a credit card declined, to trigger form validation failure
+            response = (False, "Internal error, please email support@my.ewb.ca")
+            
+        else:
+            cleaned_data['email'] = request.user.email
+            if request.user.get_profile().default_phone() and request.user.get_profile().default_phone().number:
+                cleaned_data['phone'] = request.user.get_profile().default_phone().number
+            else:
+                cleaned_data['phone'] = '416-481-3696'
+            
+            # this call sends it to the bank!!
+            response = super(ConferenceSkiFormPreview, self).done(request, cleaned_data)
+            
+            if not response[0]:
+                response = (False, "Credit card: %s" % response[1])
+        
+        if response[0] == True:
+            reg.ski = cleaned_data['ski']      # somethin like this...
+            reg.save()
+            
+            # don't do the standard render_to_response; instead, do a redirect
+            # so that someone can't double-submit by hitting refresh
+            request.user.message_set.create(message='Ski trip order received!')
+            return HttpResponseRedirect(reverse('confreg'))
+        
+        else:
+            registration = None
+            form.trnError = response[1]
+            form.clean
+
+        return render_to_response('conference/purchase.html',
+                                  {'registration': registration,
+                                   'form': form,
+                                   'user': request.user,
+                                  },
+                                  context_instance=RequestContext(request)
+                                 )
+
 class ConferenceResumeForm(forms.Form):
     resume = forms.FileField(label='Resume',
                              required=True,

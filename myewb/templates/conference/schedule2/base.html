@@ -1,17 +1,6 @@
 {% extends 'conference/confsite.html' %}
 
 {% block body %}
-    {% if messages %}
-    	<br/>
-        <div class="message" style="width: 500px; margin: 0 auto; background: #d0d0d0; border: 1px solid #a0a0a0; padding: 5px 10px;">
-            {% for message in messages %}
-                <div class="message">{{ message|safe }}</div>
-                {% if not forloop.last %}<hr/>{% endif %}
-            {% endfor %}
-        </div>
-    {% endif %}
-    
-
 
 <div style='float: right; width: auto; padding-top: 35px;'>
 	Logged in as <strong>{{ request.user.visible_name }}</strong>

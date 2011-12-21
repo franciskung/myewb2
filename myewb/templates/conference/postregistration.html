@@ -58,13 +58,21 @@
 		</li>
 		{% endif %}
 		
+		{% if skiform %}
+		<li>
+			<a href="{% url conference_ski %}">attend the optional Sunday ski trip</a>
+		</li>
+		{% endif %}
+		
 		<li>
 			<a href="{% url conference_ad %}">add an African Delegate contribution</a> (${{ registration.africaFund|default:0 }} received)
 		</li>
 		
+		{% comment %}
 		<li>
 			<a href="{% url conference_resume %}">upload or change your resume</a>
 		</li>
+		{% endcomment %}
 		
 		</ul>
 		

@@ -233,6 +233,9 @@ TSHIRT_CHOICES = (('n', 'No thanks'),
                   ('l', 'Large ($20)'),
                   ('x', 'X-Large ($20)'))
                   
+SKI_CHOICES = (('s', 'Students (14-21): $48'),
+               ('a', 'Adults: $60'))
+                  
 ROLES_CHOICES = (('president', 'Chapter or City Network President'),
                  ('finance', 'Finance rep'),
                  ('advocacy', 'Advocacy rep'),

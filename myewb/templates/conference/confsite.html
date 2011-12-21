@@ -1,18 +1,8 @@
 {% extends 'events/base.html' %}
 
 {% block entire_body %}
-<<<<<<< Updated upstream
-	{% ifequal request.META.SERVER_NAME "conference2012.ewb.ca" %}  
-	{#{% ifequal request.META.SERVER_NAME "localhost.localdomain" %} #}
-=======
-<<<<<<< Updated upstream
-	{% ifequal request.META.SERVER_NAME "conference2012.ewb.ca" %} 
-{#	{% ifequal request.META.SERVER_NAME "localhost.localdomain" %}#}
-=======
-{#	{% ifequal request.META.SERVER_NAME "conference2012.ewb.ca" %}#}
-	{% ifequal request.META.SERVER_NAME "localhost.localdomain" %}
->>>>>>> Stashed changes
->>>>>>> Stashed changes
+{#	{% ifequal request.META.SERVER_NAME "conference2012.ewb.ca" %}  #}
+	{% ifequal request.META.SERVER_NAME "localhost.localdomain" %} 
 	
 <head>
 	
@@ -190,6 +180,16 @@ ul.prep, ul.prep li {
 			<!-- column-one -->
 			<div id="content" class="single-col">
 		
+    {% if messages %}
+    	<br/>
+        <div class="message" style="width: 500px; margin: 0 auto; background: #d0d0d0; border: 1px solid #a0a0a0; padding: 5px 10px;">
+            {% for message in messages %}
+                <div class="message">{{ message|safe }}</div>
+                {% if not forloop.last %}<hr/>{% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
+    
 		{% block body %}
 		{% endblock %}
 		
