@@ -26,6 +26,7 @@ from attachments.models import Attachment
 from account_extra.forms import EmailLoginForm, EmailSignupForm
 
 from base_groups.models import BaseGroup
+from conference.decorators import conference_login_required
 from conference.forms import * #ConferenceRegistrationForm, CodeGenerationForm, ConferenceSignupForm #ConferenceRegistrationFormPreview, 
 from conference.models import ConferenceRegistration, ConferenceCode
 from conference.constants import *
@@ -68,12 +69,8 @@ def login(request):
                               context_instance = RequestContext(request))
 
 @secure_required
-#@login_required
+@conference_login_required()
 def view_registration(request):
-    
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect(reverse('conference_login'))
-    
     user = request.user
     stage = None
     form = None
@@ -176,9 +173,8 @@ def view_registration(request):
                              )
     
 @secure_required
-@login_required
+@conference_login_required()
 def registration_preview(request):
-#def pay_membership_preview(request, username):
     username = request.user.username
     
     f = ConferenceRegistrationForm(request.POST, request.FILES)
@@ -195,7 +191,7 @@ def registration_preview(request):
     return ConferenceRegistrationFormPreview(ConferenceRegistrationForm)(request, username=username)
 
 @secure_required
-@login_required
+@conference_login_required()
 def purchase_tshirt(request):
     registration = get_object_or_none(ConferenceRegistration, user=request.user, submitted=True, cancelled=False)
 
@@ -219,7 +215,7 @@ def purchase_tshirt(request):
                              )
     
 @secure_required
-@login_required
+@conference_login_required()
 def purchase_ski(request):
     registration = get_object_or_none(ConferenceRegistration, user=request.user, submitted=True, cancelled=False)
 
@@ -243,7 +239,7 @@ def purchase_ski(request):
                              )
     
 @secure_required
-@login_required
+@conference_login_required()
 def purchase_ad(request):
     registration = get_object_or_none(ConferenceRegistration, user=request.user, submitted=True, cancelled=False)
 
@@ -267,7 +263,7 @@ def purchase_ad(request):
                              )
         
 @secure_required
-@login_required
+@conference_login_required()
 def resume(request):
     registration = get_object_or_none(ConferenceRegistration, user=request.user, submitted=True, cancelled=False)
 
@@ -298,7 +294,7 @@ def resume(request):
                               context_instance=RequestContext(request)
                              )
         
-@login_required
+@conference_login_required()
 def receipt(request):
 
     try:
@@ -317,7 +313,7 @@ def receipt(request):
                               context_instance=RequestContext(request)
                              )
         
-@login_required
+@conference_login_required()
 def cancel(request):
     try:
         registration = ConferenceRegistration.objects.get(user=request.user, submitted=True, cancelled=False)
@@ -357,7 +353,7 @@ def cancel(request):
                                context_instance=RequestContext(request)
                                )
     
-@login_required
+@conference_login_required()
 def list(request, chapter=None):
     if chapter == None:
         

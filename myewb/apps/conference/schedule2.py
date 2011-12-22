@@ -26,6 +26,7 @@ from pinax.apps.account.forms import ResetPasswordKeyForm, ResetPasswordForm
 
 from account_extra.forms import EmailLoginForm
 from base_groups.models import BaseGroup
+from conference.decorators import conference_login_required
 from conference.forms import ConferenceSessionForm, ConferenceQuestionnaireForm
 from conference.models import ConferenceRegistration, ConferenceSession, ConferenceQuestionnaire, ConferenceTimeslot, ConferenceSessionCriteria, STREAMS, STREAMS_SHORT
 from mailer.sendmail import send_mail
@@ -92,7 +93,7 @@ def build_recommended(user, timeslot):
     return recommendations
                         
                    
-@login_required
+@conference_login_required()
 def schedule(request, user=None):
     reg = get_object_or_none(ConferenceRegistration, user=request.user, submitted=True, cancelled=False)
     questionnaire = get_object_or_none(ConferenceQuestionnaire, registration=reg)
@@ -103,7 +104,7 @@ def schedule(request, user=None):
     else:
         return HttpResponseRedirect(reverse('conference_session_pick'))
     
-@login_required
+@conference_login_required()
 def questionnaire(request, user=None):
     if not user:
         user= request.user
@@ -149,7 +150,7 @@ def questionnaire(request, user=None):
                               {"form": form},
                               context_instance = RequestContext(request))
                               
-@login_required
+@conference_login_required()
 def session_pick(request, timeslot=None):
     user = request.user
 
@@ -192,7 +193,7 @@ def session_pick(request, timeslot=None):
                                "timeslot": timeslot},
                               context_instance=RequestContext(request))
 
-@login_required
+@conference_login_required()
 def session_pick_save(request):
     if request.method == 'POST':
         timeslot = request.POST.get('timeslot', None)
@@ -212,7 +213,7 @@ def session_pick_save(request):
     return HttpResponseRedirect(reverse('conference_session_pick'))
     
 
-@login_required
+@conference_login_required()
 def schedule_final(request):
     user = request.user
     sessions = ConferenceSession.objects.filter(attendees=user).order_by('timeslot__time', 'timeslot__day')
@@ -227,7 +228,7 @@ def schedule_final(request):
                                "printable": request.GET.get('printable', None)},
                               context_instance = RequestContext(request))
 
-@login_required
+@conference_login_required()
 def schedule_rebuild(request):
     user = request.user
     sessions = ConferenceSession.objects.filter(attendees=user)
@@ -241,7 +242,7 @@ def schedule_rebuild(request):
         
     return HttpResponseRedirect(reverse('conference_questionnaire'))
 
-@login_required
+@conference_login_required()
 def print_schedule(request):
     return HttpResponse("not implemented")
 
@@ -265,7 +266,7 @@ def session_detail(request, session):
                               context_instance = RequestContext(request))
 
 
-@login_required
+@conference_login_required()
 def session_new(request):
     if not request.user.has_module_perms("conference"):
         return HttpResponseRedirect(reverse('conference_schedule'))
@@ -284,7 +285,7 @@ def session_new(request):
                                "new": True},
                               context_instance = RequestContext(request))
 
-@login_required
+@conference_login_required()
 def session_list(request):
     if not request.user.has_module_perms("conference"):
         return HttpResponseRedirect(reverse('conference_schedule'))
@@ -295,7 +296,7 @@ def session_list(request):
                               {"times": timeslots},
                               context_instance = RequestContext(request))
     
-@login_required
+@conference_login_required()
 def session_edit(request, session):
     if not request.user.has_module_perms("conference"):
         return HttpResponseRedirect(reverse('conference_schedule'))
@@ -318,7 +319,7 @@ def session_edit(request, session):
                                "session": s},
                               context_instance = RequestContext(request))
 
-@login_required
+@conference_login_required()
 def session_delete(request, session):
     if not request.user.has_module_perms("conference"):
         return HttpResponseRedirect(reverse('conference_schedule'))
