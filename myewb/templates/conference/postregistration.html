@@ -52,11 +52,13 @@
 {#<em>Registration changes and cancellations can not be made after January 7.</em>#}
 		</li>
 		
+		{% comment %}
 		{% if tshirtform %}
 		<li>
 			<a href="{% url conference_tshirt %}">add a conference t-shirt to your registration</a>
 		</li>
 		{% endif %}
+		{% endcomment %}
 		
 		{% if skiform %}
 		<li>
