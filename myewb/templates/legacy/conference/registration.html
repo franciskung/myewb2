@@ -1,3 +1,4 @@
+{#{% extends 'events/base.html' %}#}
 {% extends 'conference/confsite.html' %}
 
 {% load i18n %}
@@ -9,7 +10,7 @@
 {% load group_tags %}
 {% load topics_tags %}
 
-{% block head_title %}National Conference 2011{% endblock %}
+{% block head_title %}National Conference 2012{% endblock %}
 
 {% block body %}
 <br/><br/>
@@ -74,7 +75,7 @@
 		}
 	</style> 
 
-	{% if not registration %}
+	{% if not registration or not registration.submitted %}
 	
 		{% if form.non_field_errors %}
 			<div class="uniForm">
@@ -105,11 +106,13 @@
 		
 		<p>This is your first step on the exciting road to Conference 2011! After registering you will begin to get regular updates and be given opportunities to participate in a series of lead up activities to help you get the most out of the event.</p>
 		{% endcomment %}
+		
 		<br/>
 		
-		<form id="conf-registration" method="POST" action="{% url conference_preview %}" class="uniForm" enctype="multipart/form-data">
+		<h2>National Conference 2012: Registration</h2>
+		<form id="conf-registration" method="POST" action="" class="uniForm" enctype="multipart/form-data">
 			<fieldset class="inlineLabels">
-				<div class="heading">Personal Details</div>
+				{#<div class="heading">Personal Details</div>#}
 			
 				<div class="ctrlHolder">
 					<label>Name</label>
@@ -182,64 +185,91 @@
 				<hr/>
 
 				<div class="heading">Registration Details</div>
+				<div style='text-align: center;'>Page {{ stage|default:1 }} of 5</div>
 										
+				{% ifequal stage '3' %}
+					<br/><br/>
+					{% include "conference/africandelegates.html" %}
+				{% endifequal %}
+				{% ifequal stage '4' %}
+					<br/><br/>
+					<div style='text-align: center; font-weight: bold; font-style: italic;'>
+						You will have an opportunity to preview your registration on the next page.
+					</div>
+					<br/>
+				{% endifequal %}
+		
 				{{ form|as_uni_form }}
 				
+                {% if not stage %}
+                     <div class="ctrlHolder">
+                         <label>&nbsp;</label>
+                         <img src="{{ STATIC_URL }}images/conference-tshirt.png"/>
+                     </div>
+                {% endif %}
+                                
 	            <div class="form_block ctrlHolder">
-	                <input type="submit" value="Preview your registration" />
+	            	{% if stage %}
+	                	<a href="{% url confreg %}?reg_stage={{ last_stage|default:'' }}">Back to last page</a>
+	                	&nbsp;&nbsp;&nbsp;
+	                {% endif %}
+	                <input type="submit" value="Continue to next page" />
 	                <label>&nbsp;</label>
 	            </div>
 				
+				<input type="hidden" name="reg_stage" value="{{ stage|default:'' }}"/>
 			</fieldset>
 		</form>
 
-		{% if not user.is_bulk %}
+{#		{% if not user.is_bulk %}#}
 		<table border='1' class='descform' id='confoptiontable' style='display: none;'>
 		  <tr>
 		    <th>&nbsp;</th>
-		    <th>Shared bed</th>
-		    <th>Single bed</th>
+		    <th>Quad occupancy<br/>4/room (shared beds)</th>
+		    <th>Double occupancy<br/>2/room (single beds)</th>
+		    <th>Single occupancy<br/>own room</th>
 		    <th>No room</th>
 		  </tr>
 		  <tr>
 		    <th>Subsidized: BC/AB/NF</th>
-		    <td>$100 (student)<br/>$250 (general)</td>    
-		    <td>$220 (student)<br/>$370 (general)</td>
+		    <td>$125 (student)<br/>$275 (general)</td>    
+		    <td>$275 (student)<br/>$450 (general)</td>    
+		    <td>$625 (student)<br/>$785 (general)</td>
 		    <td>$80 (student)<br/>$200 (general)</td>    
 		  </tr>
 		  <tr>
 		    <th>Subsidized: SK/MB/NB/NS</th>
-		    <td>$200 (student)<br/>$350 (general)</td>    
-		    <td>$320 (student)<br/>$470 (general)</td>    
+		    <td>$225 (student)<br/>$375 (general)</td>    
+		    <td>$375 (student)<br/>$550 (general)</td>    
+		    <td>$725 (student)<br/>$885 (general)</td>    
 		    <td>$160 (student)<br/>$280 (general)</td>    
 		  </tr>
 		  <tr>
 		    <th>Subsidized: ON/QB</th>
-		    <td>$350 (student)<br/>$500 (general)</td>    
-		    <td>$470 (student)<br/>$620 (general)</td>    
-		    <td>$280 (student)<br/>$400 (general)</td>    
+		    <td>$375 (student)<br/>$525 (general)</td>    
+		    <td>$525 (student)<br/>$700 (general)</td>    
+		    <td>$875 (student)<br/>$1035 (general)</td>    
+		    <td>$280 (student)<br/>$320 (general)</td>    
 		  </tr>
 		  <tr>
 		  	<th>
-		  		EWB Alumni<br/>
-		  		special early-bird rate
+		  		EWB Alumni
 		  	</th>
-		  	<td colspan='2' style='text-align: center;'>
-		  		$125<br/>
-		  		hotel NOT included<br/>
-		  		select these options to indicate interest in a group rate,<br/>
-		  		details to follow
+		  	<td colspan='3' style='text-align: center;'>
+		  		<em>n/a</em>
 		  	</td>
-		  	<td>$125</td>
+		  	<td>$350</td>
 		  </tr>
 		  <tr>
 		    <th>Standard<br/>(no registration code)</th>
-		    <td>$620</td>
-		    <td>$740</td>    
-		    <td>$500</td>    
+		    <td colspan='3' style='text-align: center;'>
+		    	<em>n/a</em>
+		    </td>    
+		    <td>$425</td>    
 		  </tr>
 		</table>
 
+		{% comment %}
 		{% else %}
 		
 		<table border='1' class='descform' id='confoptiontable' style='display: none;'>
@@ -264,7 +294,10 @@
 		</table>
 		
 		{% endif %}
+		{% endcomment %}
 
+	    <link type="text/css" href="{{STATIC_URL}}css/colorbox.css" rel="stylesheet" />
+	    <script type="text/javascript" src="{{STATIC_URL}}js/colorbox.js"></script>
 		<script type="text/javascript">
 			$().ready(function() {
 				$('#confoptiontablelink').colorbox({transition: 'elastic',
@@ -308,14 +341,14 @@
 		<p align="center">or</p>
 
 		<p align="center">
-{#			<a href="{% url conference_cancel %}">click here to cancel your registration</a> #}
-<span style="text-decoration: line-through;">click here to cancel your registration</span><br/>
-<em>Registration changes and cancellations can not be made after January 7.</em>
+			<a href="{% url conference_cancel %}">click here to cancel your registration</a> 
+{#<span style="text-decoration: line-through;">click here to cancel your registration</span><br/>#}
+{#<em>Registration changes and cancellations can not be made after January 7.</em>#}
 		</p>
 
 		<br />
 		<br />
-		<p>Keep checking the conference website at <a href="http://conference2011.ewb.ca/">http://conference2011.ewb.ca</a> for up-to-date information regarding the conference!</p>
+		<p>Keep checking the conference website at <a href="http://conference2012.ewb.ca/">http://conference2012.ewb.ca</a> for up-to-date information regarding the conference!</p>
 
 	{% endif %}
 

@@ -1,10 +1,12 @@
 Installation instructions:
 
 Generic instructions:
-- install Pinax 0.7.1 (download at http://downloads.pinaxproject.com/Pinax-0.7.1-bundle.tar.gz)
+- check myewb out of git (assuming you've already done this...)
+- install Pinax 0.7.3 (download at http://pinaxproject.com/downloads/)
   preferably in a virtual environment. See below for better instructions on
   Windows and Ubuntu for virtualenvs
 - upgrade django ("easy_install -U Django==1.1")
+   (TODO: explicity test version requirements/compatibility. I think we need 1.2, if not 1.3 now?)
 - install lxml ("easy_install lxml" - if running Linux/Mac, see http://codespeak.net/lxml/installation.html for dependencies)
 - install pycountry ("easy_install pycountry")
 - and a few more... easy_install python-memcached django_piston
@@ -43,7 +45,7 @@ On Ubuntu:
 # Updated to reflect the changes in the generic instructions on 2010-10-25
 #
 # install necessary ubuntu packages
-$ sudo aptitude install build-essential python-dev libxml2 libxml2-dev libxslt1.1 libxslt1-dev python-virtualenv python-ldap python-imaging
+$ sudo aptitude install build-essential python-dev libxml2 libxml2-dev libxslt1.1 libxslt1-dev python-virtualenv python-imaging
 
 # set up virtualenvwrapper. check for newer version ov virtualenvwrapper if need be
 # these commands set up virtuatenvwrapper to manage your virtual environments
@@ -131,8 +133,7 @@ On Windows: NOTE: This instructions are now out of date - see the general instru
     (Substitute 26 for your version)
     Don't forget the first semi-colon!
 
-4. Install python-ldap from http://svn.kmrc.de/download/distribution/contrib/
-    Most current version at time of writing is http://svn.kmrc.de/download/distribution/contrib/python_ldap-2.3.9-py2.6-win32.egg
+4.  Sit back and relax. This used to be a nasty LDAP dependency which no longer exists.
     See http://mrtopf.de/blog/python_zope/a-small-introduction-to-python-eggs/ for installing python eggs.
 
 5. Install the python imaging library from http://www.pythonware.com/products/pil/
@@ -210,14 +211,6 @@ chmod u+x manage.py
 Install pycountry
 ----------------------------------------------------------------------
 easy_install pycountry
-
-Install LDAP
-----------------------------------------------------------------------
-http://pypi.python.org/pypi/python-ldap/
-tar zxf python-ldap-2.3.9.tar.gz 
-cd python-ldap-2.3.9
-sudo python setup.py install
-
 
 Install imaging
 ----------------------------------------------------------------------

@@ -26,7 +26,8 @@ from attachments.models import Attachment
 from account_extra.forms import EmailLoginForm, EmailSignupForm
 
 from base_groups.models import BaseGroup
-from conference.forms import ConferenceRegistrationForm, ConferenceRegistrationFormPreview, CodeGenerationForm, ConferenceSignupForm
+from conference.decorators import conference_login_required
+from conference.forms import * #ConferenceRegistrationForm, CodeGenerationForm, ConferenceSignupForm #ConferenceRegistrationFormPreview, 
 from conference.models import ConferenceRegistration, ConferenceCode
 from conference.constants import *
 from conference.utils import needsToRenew
@@ -68,42 +69,103 @@ def login(request):
                               context_instance = RequestContext(request))
 
 @secure_required
-#@login_required
+@conference_login_required()
 def view_registration(request):
-    
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect(reverse('conference_login'))
-    
     user = request.user
+    stage = None
+    form = None
     
     try:
         # if already registered, we display "thank you" page and offer
         # cancellation or a receipt
-        registration = ConferenceRegistration.objects.get(user=user, cancelled=False)
-        form = None
+        registration = ConferenceRegistration.objects.get(user=user, submitted=True, cancelled=False)
+        
+        if registration.tshirt and registration.tshirt != 'n':
+            tshirtform = None
+        else:
+            tshirtform = True
 
-        return HttpResponseRedirect(reverse('confcomm_app'))
+        if registration.ski:
+            skiform = None
+        else:
+            skiform = True
+
+        #return HttpResponseRedirect(reverse('confcomm_app'))
+        return render_to_response('conference/postregistration.html',
+                                  {'registration': registration,
+                                   'tshirtform': tshirtform,
+                                   'skiform': skiform,
+                                   'user': request.user,
+                                  },
+                                  context_instance=RequestContext(request)
+                                 )
+        
 
     except ObjectDoesNotExist:
         # if not registered, we display the registration form
-        registration = None
-
+        registration = get_object_or_none(ConferenceRegistration, user=user, submitted=False, cancelled=False)
+        
+        stage = request.POST.get('reg_stage', None)
+        if not stage:
+            stage = request.GET.get('reg_stage', None)
+        
         if request.method == 'POST':
-            # or, in this case, process the registration form...
-            form = ConferenceRegistrationForm(request.POST)
+            
+            # populate and process the right registration form...
+            if not stage:
+                form = ConferenceRegistrationForm1(request.POST, instance=registration)
+            elif stage == '2':
+                form = ConferenceRegistrationForm2(request.POST, instance=registration)
+            elif stage == '3':
+                form = ConferenceRegistrationForm3(request.POST, instance=registration)
+            elif stage == '4':
+                form = ConferenceRegistrationForm4(request.POST, instance=registration)
+                
             form.user = user
             if form.is_valid():
-                registration = form.save()
+                form_valid = True
+                registration = form.save(commit=False)
+                registration.user = user
+                registration.save()
                 
-        else:
-            form = ConferenceRegistrationForm()
-            form.user = user
+                # advance the stage counter and find next action
+                if not stage:
+                    stage = '2'
+                elif stage == '2':
+                    stage = '3'
+                elif stage == '3':
+                    stage = '4'
+                elif stage == '4':
+                    return ConferenceRegistrationFormPreview(ConferenceRegistrationForm4)(request, username=request.user.username, registration_id=registration.id)
+                
+                form = None
+
+        # populate form (either current form with errors, or next stage's form)
+        if not stage and not form:
+            form = ConferenceRegistrationForm1(instance=registration)
+        elif stage == '2' and not form:
+            form = ConferenceRegistrationForm2(instance=registration)
+        elif stage == '3' and not form:
+            form = ConferenceRegistrationForm3(instance=registration)
+        elif stage == '4' and not form:
+            form = ConferenceRegistrationForm4(instance=registration)
+        form.user = request.user
                 
     needsRenewal = needsToRenew(request.user.get_profile())
+
+    last_stage = None
+    if stage == '3':
+        last_stage = '2'
+    elif stage == '4':
+        last_stage = '3'
+    elif stage == '5':
+        last_stage = '4'
 
     return render_to_response('conference/registration.html',
                               {'registration': registration,
                                'form': form,
+                               'stage': stage,
+                               'last_stage': last_stage,
                                'user': request.user,
                                'needsRenewal': needsRenewal
                               },
@@ -111,9 +173,8 @@ def view_registration(request):
                              )
     
 @secure_required
-@login_required
+@conference_login_required()
 def registration_preview(request):
-#def pay_membership_preview(request, username):
     username = request.user.username
     
     f = ConferenceRegistrationForm(request.POST, request.FILES)
@@ -128,12 +189,116 @@ def registration_preview(request):
             resume.save()
             
     return ConferenceRegistrationFormPreview(ConferenceRegistrationForm)(request, username=username)
+
+@secure_required
+@conference_login_required()
+def purchase_tshirt(request):
+    registration = get_object_or_none(ConferenceRegistration, user=request.user, submitted=True, cancelled=False)
+
+    if not registration:
+        request.user.message_set.create("You aren't registered for conference...")
+        return HttpResponseRedirect(reverse('confreg'))
+    
+    if request.method == 'POST':
+        return ConferenceTShirtFormPreview(ConferenceTShirtForm)(request, username=request.user.username, registration_id=registration.id)
+    
+    else:
+        tshirtform = ConferenceTShirtForm(initial={'id': registration.id})
+        tshirtform.user = request.user
+
+    return render_to_response('conference/purchase.html',
+                              {'registration': registration,
+                               'form': tshirtform,
+                               'user': request.user,
+                              },
+                              context_instance=RequestContext(request)
+                             )
+    
+@secure_required
+@conference_login_required()
+def purchase_ski(request):
+    registration = get_object_or_none(ConferenceRegistration, user=request.user, submitted=True, cancelled=False)
+
+    if not registration:
+        request.user.message_set.create("You aren't registered for conference...")
+        return HttpResponseRedirect(reverse('confreg'))
+    
+    if request.method == 'POST':
+        return ConferenceSkiFormPreview(ConferenceSkiForm)(request, username=request.user.username, registration_id=registration.id)
+    
+    else:
+        skiform = ConferenceSkiForm(initial={'id': registration.id})
+        skiform.user = request.user
+
+    return render_to_response('conference/purchase.html',
+                              {'registration': registration,
+                               'form': skiform,
+                               'user': request.user,
+                              },
+                              context_instance=RequestContext(request)
+                             )
+    
+@secure_required
+@conference_login_required()
+def purchase_ad(request):
+    registration = get_object_or_none(ConferenceRegistration, user=request.user, submitted=True, cancelled=False)
+
+    if not registration:
+        request.user.message_set.create("You aren't registered for conference...")
+        return HttpResponseRedirect(reverse('confreg'))
+    
+    if request.method == 'POST':
+        return ConferenceADFormPreview(ConferenceADForm)(request, username=request.user.username, registration_id=registration.id)
+
+    else:
+        form = ConferenceADForm(initial={'id': registration.id})
+        form.user = request.user
+
+    return render_to_response('conference/purchase.html',
+                              {'registration': registration,
+                               'form': form,
+                               'user': request.user,
+                              },
+                              context_instance=RequestContext(request)
+                             )
         
-@login_required
+@secure_required
+@conference_login_required()
+def resume(request):
+    registration = get_object_or_none(ConferenceRegistration, user=request.user, submitted=True, cancelled=False)
+
+    if not registration:
+        request.user.message_set.create("You aren't registered for conference...")
+        return HttpResponseRedirect(reverse('confreg'))
+    
+    if request.method == 'POST':
+        form = ConferenceResumeForm(request.POST, request.FILES)
+        if form.is_valid():
+            resume = Attachment()
+            resume.creator = request.user
+            resume.content_type = ContentType.objects.get_for_model(registration)
+            resume.object_id = registration.id
+            resume.attachment_file = form.cleaned_data['resume']
+            resume.save()
+            
+            request.user.message_set.create(message="Thank you!")
+            return HttpResponseRedirect(reverse('confreg'))
+    else:
+        form = ConferenceResumeForm()
+                
+    return render_to_response('conference/resume.html',
+                              {'registration': registration,
+                               'form': form,
+                               'user': request.user,
+                              },
+                              context_instance=RequestContext(request)
+                             )
+        
+@conference_login_required()
 def receipt(request):
 
     try:
-        registration = ConferenceRegistration.objects.get(user=request.user, cancelled=False)
+        registration = ConferenceRegistration.objects.get(user=request.user, submitted=True, cancelled=False)
 
     except ObjectDoesNotExist:
         #message = loader.get_template("profiles/suggest_network.html")
@@ -148,10 +313,10 @@ def receipt(request):
                               context_instance=RequestContext(request)
                              )
         
-@login_required
+@conference_login_required()
 def cancel(request):
     try:
-        registration = ConferenceRegistration.objects.get(user=request.user, cancelled=False)
+        registration = ConferenceRegistration.objects.get(user=request.user, submitted=True, cancelled=False)
 
     except ObjectDoesNotExist:
         #message = loader.get_template("profiles/suggest_network.html")
@@ -188,7 +353,7 @@ def cancel(request):
                                context_instance=RequestContext(request)
                                )
     
-@login_required
+@conference_login_required()
 def list(request, chapter=None):
     if chapter == None:
         
@@ -209,23 +374,32 @@ def list(request, chapter=None):
             # otherwise, show a summary page
             for chapter in chapters:
                 registrations = ConferenceRegistration.objects.filter(user__memberprofile__chapter=chapter.network,
-                                                                      cancelled=False)
+                                                                      submitted=True, cancelled=False)
                 chapter.numRegistrations = registrations.count()
             
             stats = {}
             if request.user.has_module_perms('conference'):
-                reg = ConferenceRegistration.objects.filter(cancelled=False)
+                reg = ConferenceRegistration.objects.filter(submitted=True, cancelled=False)
                 stats['total_registration'] = reg.count()
                 stats['external_registration'] = reg.filter(user__is_bulk=True).count()
                 
                 all_fees = reg.aggregate(Sum('amountPaid'), Sum('africaFund'))
                 stats['reg_fees'] = all_fees['amountPaid__sum']
                 stats['africafund'] = all_fees['africaFund__sum']
-                stats['africafund_percent'] = reg.filter(africaFund__isnull=False).count() * 100 / stats['total_registration']  
+                if stats['total_registration']:
+                    stats['africafund_percent'] = reg.filter(africaFund__isnull=False).count() * 100 / stats['total_registration']
+                else:
+                    stats['africafund_percent'] = 0
                 stats['male'] = reg.filter(user__memberprofile__gender='M').count()
-                stats['male_percent'] = stats['male'] * 100 / stats['total_registration']
+                if stats['africafund_percent']:
+                    stats['male_percent'] = stats['male'] * 100 / stats['total_registration']
+                else:
+                    stats['male_percent'] = 0
                 stats['female'] = reg.filter(user__memberprofile__gender='F').count()
-                stats['female_percent'] = stats['female'] * 100 / stats['total_registration']
+                if stats['africafund_percent']:
+                    stats['female_percent'] = stats['female'] * 100 / stats['total_registration']
+                else:
+                    stats['female_percent'] = 0
             
                 reg = reg.filter(user__is_bulk=False)
                 stats['member_registration'] = reg.filter(code__isnull=False).count()
@@ -250,7 +424,7 @@ def list(request, chapter=None):
         return render_to_response('denied.html', context_instance=RequestContext(request))
         
     registrations = ConferenceRegistration.objects.filter(user__memberprofile__chapter=group,
-                                                          cancelled=False)
+                                                          submitted=True, cancelled=False)
 
     return render_to_response('conference/list.html',
                               {'registrations': registrations,
@@ -262,7 +436,7 @@ def download(request, who=None):
     if not request.user.has_module_perms('conference'):
         return render_to_response('denied.html', context_instance=RequestContext(request))
     
-    reg = ConferenceRegistration.objects.filter(cancelled=False)
+    reg = ConferenceRegistration.objects.filter(submitted=True, cancelled=False)
     
     if who == 'chapter':
         reg = reg.filter(user__is_bulk=False, code__isnull=False)
@@ -278,28 +452,40 @@ def download(request, who=None):
     
     writer = csv.writer(response)
     writer.writerow(['First name', 'Last name', 'Email',
-                     'Gender', 'Chapter', 'amount paid',
+                     'Gender', 'Language', 'Chapter', 'amount paid',
                      'room size', 'registered on', 'headset',
                      'food prefs', 'special needs',
                      'emergency name', 'emergency phone', 'prev conferences',
-                     'prev retreats', 'cell phone', 'grouping',
-                     'reg code', 'reg type', 'african delegate'])
+                     'prev retreats', 'cell phone', 't-shirt', 'ski trip',
+                     'reg code', 'reg type', 'african delegate',
+                     'roommate request', 'new to ottawa', 
+                     'Survey - learn', 'Survey - connections', 'Survey - opportunities and challenges',
+                     'Survey - perfect experience', 'Survey - stay up to speed',
+                     'Survey - Sunday trip', 'Survey - socials', 'Survey - restaurants'
+                     ])
     
     for r in reg:
         fname = r.user.first_name
         lname = r.user.last_name
         email = r.user.email
         gender = r.user.get_profile().gender
+        language = r.user.get_profile().language
         if r.user.get_profile().get_chapter():
             chapter = r.user.get_profile().get_chapter().name
         else:
             chapter = ''
-        
-        row = [fname, lname, email, gender, chapter,
+        if r.code:
+            code = r.code.code
+        else:
+            code = ''
+            
+        row = [fname, lname, email, gender, language, chapter,
                r.amountPaid, r.roomSize, r.date, r.headset,
                r.foodPrefs, r.specialNeeds, r.emergName, r.emergPhone,
-               r.prevConfs, r.prevRetreats, r.cellphone, r.grouping,
-               r.code, r.type, r.africaFund]
+               r.prevConfs, r.prevRetreats, r.cellphone, r.tshirt, r.ski,
+               code, r.type, r.africaFund, r.roommate, r.new_to_ottawa,
+               r.survey1, r.survey2, r.survey3, r.survey4,
+               r.survey5, r.survey6, r.survey7, r.survey8]
             
         writer.writerow([fix_encoding(s) for s in row])
 
@@ -361,7 +547,7 @@ def lookup_code(request):
             if code and code.expired:
                 return HttpResponse("voided")
             elif code:
-                reg = ConferenceRegistration.objects.filter(code=code, cancelled=False)
+                reg = ConferenceRegistration.objects.filter(code=code, submitted=True, cancelled=False)
                 if reg.count():
                     return HttpResponse("used")
                 else:

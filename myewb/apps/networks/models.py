@@ -15,7 +15,7 @@ from django.db import models
 from django.db.models.signals import post_save
 
 from base_groups.models import BaseGroup, GroupMember, GroupLocation, add_creator_to_group
-from networks import emailforwards
+#from networks import emailforwards
 
 class Network(BaseGroup):
     

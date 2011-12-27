@@ -7,14 +7,18 @@ Created on: 2009-10-18
 @author: Francis Kung
 """
 from django.conf.urls.defaults import *
-from conference.forms import ConferenceRegistrationForm, ConferenceRegistrationFormPreview
+from conference.forms import ConferenceRegistrationForm#, ConferenceRegistrationFormPreview
 
 urlpatterns = patterns('conference.views',
     url(r'^$', 'view_registration', name='confreg'),    
-    url(r'^login/$', 'login', name='conference_login'),    
-    url(r'^preview/$', 'registration_preview', name='conference_preview'),
+    url(r'^login/$', 'login', name='conference_login'),
+    #url(r'^preview/$', 'registration_preview', name='conference_preview'),
     url(r'^receipt/$', 'receipt', name='conference_receipt'),    
     url(r'^cancel/$', 'cancel', name='conference_cancel'),    
+    url(r'^resume/$', 'resume', name='conference_resume'),    
+    url(r'^purchase/tshirt/$', 'purchase_tshirt', name='conference_tshirt'),    
+    url(r'^purchase/ski/$', 'purchase_ski', name='conference_ski'),    
+    url(r'^purchase/ad/$', 'purchase_ad', name='conference_ad'),    
     url(r'^list/$', 'list', name='conference_list'),    
     url(r'^list/(?P<chapter>[\w\._-]+)$', 'list', name='conference_list_chapter'),    
     url(r'^codes/$', 'generate_codes', name='conference_codes'),
@@ -29,7 +33,8 @@ urlpatterns = patterns('conference.views',
     (r'^who/', include('confcomm.urls')),
 )
 
-urlpatterns += patterns('conference.schedule',
+"""
+urlpatterns += patterns('conference.schedule2',
     url(r'^schedule/$', 'schedule', name='conference_schedule'),
     url(r'^schedule/user/$', 'schedule_for_user', name='conference_for_user'),
     url(r'^schedule/user/(?P<day>[\w]+)/$', 'schedule_for_user', name='conference_for_user'),
@@ -37,7 +42,7 @@ urlpatterns += patterns('conference.schedule',
     url(r'^schedule/day/(?P<day>[\w]+)/(?P<stream>[\w]+)/$', 'day', name='conference_by_day'),
     url(r'^schedule/time/(?P<day>[\w]+)/(?P<time>[\d]+)/$', 'time', name='conference_by_time'),
     url(r'^schedule/room/(?P<room>[\d]+)/$', 'room', name='conference_by_room'),
-    url(r'^schedule/stream/(?P<stream>[\w]+)/$', 'stream', name='conference_by_stream'),
+    #url(r'^schedule/stream/(?P<stream>[\w]+)/$', 'stream', name='conference_by_stream'),
     
     url(r'^schedule/session/(?P<session>[\d]+)/$', 'session_detail', name='conference_session'),
     url(r'^schedule/session/(?P<session>[\d]+)/edit/$', 'session_edit', name='conference_session_edit'),
@@ -53,11 +58,29 @@ urlpatterns += patterns('conference.schedule',
     url(r'^schedule/(?P<session>[\d]+)/tentative/$', 'session_tentative', name='conference_session_tentative'),
     url(r'^schedule/(?P<session>[\d]+)/skip/$', 'session_skip', name='conference_session_skip'),
 
-    url(r'^schedule/private/(?P<session>[\d]+)/$', 'private_detail', name='conference_private'),
-    url(r'^schedule/private/(?P<session>[\d]+)/edit/$', 'private_edit', name='conference_private_edit'),
-    url(r'^schedule/private/(?P<session>[\d]+)/delete/$', 'private_delete', name='conference_private_delete'),
-    url(r'^schedule/private/new/$', 'private_new', name='conference_private_new'),
+    #url(r'^schedule/private/(?P<session>[\d]+)/$', 'private_detail', name='conference_private'),
+    #url(r'^schedule/private/(?P<session>[\d]+)/edit/$', 'private_edit', name='conference_private_edit'),
+    #url(r'^schedule/private/(?P<session>[\d]+)/delete/$', 'private_delete', name='conference_private_delete'),
+    #url(r'^schedule/private/new/$', 'private_new', name='conference_private_new'),
 )
+"""
+urlpatterns += patterns('conference.schedule2',
+    url(r'^schedule/$', 'schedule', name='conference_schedule'),
+
+    url(r'^schedule/questionnaire/$', 'questionnaire', name='conference_questionnaire'),
+    url(r'^schedule/session/$', 'session_pick', name='conference_session_pick'),
+    url(r'^schedule/session/(?P<session>[\d]+)/$', 'session_detail', name='conference_session'),
+    url(r'^schedule/session/save/$', 'session_pick_save', name='conference_session_save'),
+
+    url(r'^schedule/session/list/$', 'session_list', name='conference_session_list'),
+    url(r'^schedule/session/(?P<session>[\d]+)/edit/$', 'session_edit', name='conference_session_edit'),
+
+    url(r'^schedule/final/$', 'schedule_final', name='conference_schedule_final'),
+    url(r'^schedule/rebuild/$', 'schedule_rebuild', name='conference_schedule_rebuild'),
+
+    url(r'^schedule/logout/$', 'logout', name='conference_schedule_logout'),
+)
+
 
 
 urlpatterns += patterns('conference.sms',

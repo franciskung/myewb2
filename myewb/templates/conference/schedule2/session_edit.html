@@ -1,0 +1,57 @@
+{% extends "conference/schedule2/base.html" %}
+
+{% block body2 %}
+    <h2>Edit Session</h2>
+    
+    <form action="" method="post">
+        <table>
+            {{ form.as_table }}
+            <tr>
+                <th>&nbsp;</th>
+                {% if new %}
+                    <td><input type="submit" value="Add"/></td>
+                {% else %}
+                    <td><input type="submit" value="Edit"/></td>
+                {% endif %}
+            </tr>
+        </table>
+    </form>
+    
+    <br/>
+    <strong>Time: </strong> {{ session.timeslot.day|date:"l"}}, {{ session.timeslot.time|time:"g:i" }} - {{ session.timeslot.endtime|time:"g:i A" }}<br/>
+    <strong>Common session: </strong> {{ session.common|default:"no" }}<br/>
+    <br/>
+    {% if not session.common %}
+    <strong>Recommended if any of...:</strong><br/>
+    	{% for c in session.conferencesessioncriteria_set.all %}
+    		{% if c.first_conference %}
+    			First conference is {{ c.first_conference }}<br/>
+    		{% endif %}
+    		{% if c.chaptertype %}
+    			Chapter type is {{ c.chaptertype }}<br/>
+    		{% endif %}
+    		{% if c.roles %}
+    			Role is is {{ c.roles }}<br/>
+    		{% endif %}
+    		{% if c.leadership_years %}
+    			Years of leadership is {{ c.leadership_years }}<br/>
+    		{% endif %}
+    		{% if c.leadership_day %}
+    			Attending leadership day is {{ c.leadership_day }}<br/>
+    		{% endif %}
+    		{% if c.innovation_challenge %}
+    			Attending innovation challenge is {{ c.innovation_challenge }}<br/>
+    		{% endif %}
+    		{% if c.prep %}
+    			Hours of prep is {{ c.prep }}<br/>
+    		{% endif %}
+    		{% if c.past_sesssion %}
+    			Attended the session {{ c.past_session.name }}<br/>
+    		{% endif %}
+    		{% if c.other %}
+    			The person did not have any recommended sessions for this timeslot<br/>
+    		{% endif %}
+    	{% endfor %}
+    {% endif %}
+
+{% endblock %}

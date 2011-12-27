@@ -6,6 +6,7 @@ Copyright 2009-2010 Engineers Without Borders Canada
 @author: Francis Kung
 """
 
+"""
 import datetime, settings
 from datetime import date
 
@@ -26,7 +27,7 @@ from pinax.apps.account.forms import ResetPasswordKeyForm, ResetPasswordForm
 
 from account_extra.forms import EmailLoginForm
 from base_groups.models import BaseGroup
-from conference.forms import ConferenceSessionForm, ConferencePrivateEventForm
+from conference.forms import ConferenceSessionForm , ConferencePrivateEventForm
 from conference.models import ConferenceRegistration, ConferenceSession, ConferencePrivateEvent, STREAMS, STREAMS_SHORT
 from mailer.sendmail import send_mail
 from siteutils import online_middleware
@@ -441,3 +442,4 @@ def reset_password(request, key=None):
                               context,
                               context_instance = RequestContext(request))
 
+"""

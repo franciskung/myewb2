@@ -1,0 +1,59 @@
+{% extends 'conference/schedule2/base.html' %}
+
+{% load i18n %}
+{% load uni_form_tags %}
+
+{% block head_title %}National Conference 2012{% endblock %}
+
+{% block body2 %}
+<style>
+	ul#registrationoptions li {
+		padding-bottom: 20px;
+		font-weight: bold;
+		font-size: 16px;
+	}
+	#address_detail div, form label, form p {
+		font-weight: normal;
+		font-size: 12px;
+	}
+	input.checkboxinput {
+		float: left;
+		position: relative;
+		left: 35%;
+	}
+	
+	</style> 
+	<br/><br/>
+
+<h2>Choose-Your-Own-Conference Adventure</h2>
+
+	<p>
+The Choose-Your-Own-Conference Adventure builder allows you to be strategic about which sessions to attend at conference.  By selecting your sessions ahead of time, you will ensure that you are getting the most out of conference, and you will also be able to gather the appropriate materials to be prepared for conference.  Registering for sessions will also help the conference team to ensure that the room allocations are appropriate for the interest levels of participants.
+	</p>
+
+	<p><strong>How does the builder work?</strong></p>
+
+	<p>
+To begin, you will provide some additional information about your experience with EWB. For each session block, the builder will use this information as well as information from your conference registration to suggest sessions that are most appropriate for your roles within EWB, and your level of experience with the organization.  The builder will also suggestion sessions which best build upon earlier sessions at conference, to ensure that your learning and experience is enhanced throughout conference.  You can then choose which session you’d like to attend by reading through the descriptions and selecting what is best suited for your customized adventure.
+	</p>
+
+	<p>
+After choosing your sessions, the builder will provide you with a customized, printable conference schedule, as well as your personalized list of prep materials.  The next time you visit this site, you’ll be brought to your personal schedule &amp; prep.
+	</p>
+	<hr/>
+
+	<p>Hello, <strong>{{ request.user.visible_name }}</strong>! Before we get started, check out <a href="http://conference2012.ewb.ca/en/videos.html" target="_new">these videos</a> and help us by answering a few questions:</p>
+
+	<form method="post" action="" class="uniForm">
+		<fieldset class="inlineLabels">
+			{{ form|as_uni_form }}
+			
+            <div class="form_block ctrlHolder">
+                <input type="submit" value="Continue to next page" />
+                <label>&nbsp;</label>
+            </div>
+			
+		</fieldset>
+	</form>
+
+{% endblock %}

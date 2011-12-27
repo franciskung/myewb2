@@ -17,27 +17,41 @@ class ConferenceRegistration(models.Model):
     user = models.ForeignKey(User, related_name="conference_registrations")
     chapter = models.ForeignKey(Network, related_name="conference_delegates", null=True)
     
-    amountPaid = models.DecimalField(max_digits=6, decimal_places=2)
-    roomSize = models.CharField(max_length=25)
+    amountPaid = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
+    roomSize = models.CharField(max_length=25, null=True, blank=True)
     date = models.DateTimeField(default=datetime.now)
     headset = models.BooleanField(default=False)
     foodPrefs = models.CharField(max_length=10, choices=FOOD_CHOICES, default='none')
+    submitted = models.BooleanField(default=False)
     cancelled = models.BooleanField(default=False)
-    specialNeeds = models.TextField()
-    emergName = models.CharField(max_length=255)
-    emergPhone = models.CharField(max_length=50)
+    specialNeeds = models.TextField(null=True, blank=True)
+    emergName = models.CharField(max_length=255, null=True, blank=True)
+    emergPhone = models.CharField(max_length=50, null=True, blank=True)
     prevConfs = models.SmallIntegerField(default=0)
     prevRetreats = models.SmallIntegerField(default=0)
     cellphone = models.CharField(max_length=50, blank=True, null=True)
     cellphone_optout = models.DateTimeField(blank=True, null=True)
     cellphone_from = models.ForeignKey('ConferencePhoneFrom', null=True, blank=True)
-    grouping = models.CharField(max_length=50, blank=True, null=True)
+    #grouping = models.CharField(max_length=50, blank=True, null=True)
+    roommate = models.CharField(max_length=255, blank=True, null=True)
+    new_to_ottawa = models.BooleanField(default=False, blank=True)
     
-    txid = models.CharField(max_length=255)
-    receiptNum = models.CharField(max_length=255)
+    txid = models.CharField(max_length=255, null=True, blank=True)
+    receiptNum = models.CharField(max_length=255, null=True, blank=True)
     code = models.ForeignKey('ConferenceCode', related_name="registration", blank=True, null=True)
-    type = models.CharField(max_length=50)
+    type = models.CharField(max_length=50, null=True, blank=True)
     africaFund = models.SmallIntegerField(blank=True, null=True)
+    tshirt = models.CharField(max_length=1, blank=True, null=True)
+    ski = models.CharField(max_length=1, blank=True, null=True)
+    
+    survey1 = models.TextField(null=True, blank=True)
+    survey2 = models.TextField(null=True, blank=True)
+    survey3 = models.TextField(null=True, blank=True)
+    survey4 = models.TextField(null=True, blank=True)
+    survey5 = models.TextField(null=True, blank=True)
+    survey6 = models.TextField(null=True, blank=True)
+    survey7 = models.TextField(null=True, blank=True)
+    survey8 = models.TextField(null=True, blank=True)
 
     def cancel(self):
         self.cancelled = True
@@ -45,20 +59,20 @@ class ConferenceRegistration(models.Model):
         self.save()
 
         # remove from delegates group
-        grp, created = Community.objects.get_or_create(slug='conference2011',
+        grp, created = Community.objects.get_or_create(slug='conference2012',
                                                        defaults={'invite_only': True,
-                                                                 'name': 'National Conference 2011 - EWB delegates',
+                                                                 'name': 'National Conference 2012 - EWB delegates',
                                                                  'creator': self.user,
-                                                                 'description': 'National Conference 2011 delegates (EWB members)',
-                                                                 'mailchimp_name': 'National Conference 2011 members',
+                                                                 'description': 'National Conference 2012 delegates (EWB members)',
+                                                                 'mailchimp_name': 'National Conference 2012 members',
                                                                  'mailchimp_category': 'Conference'})
 
         grp2, created = Community.objects.get_or_create(slug='conference2011-external',
                                                         defaults={'invite_only': True,
-                                                                  'name': 'National Conference 2011 - external delegates',
+                                                                  'name': 'National Conference 2012 - external delegates',
                                                                   'creator': self.user,
-                                                                  'description': 'National Conference 2011 delegates (external)',
-                                                                  'mailchimp_name': 'National Conference 2011 external',
+                                                                  'description': 'National Conference 2012 delegates (external)',
+                                                                  'mailchimp_name': 'National Conference 2012 external',
                                                                   'mailchimp_category': 'Conference'})
 
         grp.remove_member(self.user)
@@ -121,12 +135,18 @@ class ConferenceCode(models.Model):
         # should never get here, since the type field is restricted to CONF_CODES
         return "unknown"
     
+    def getLongname(self):
+        for code in CONF_CODES_LONG:
+            if code[0] == self.type.lower():
+                return code[1]
+        return "unknown"
+    
     def isAvailable(self):
         if self.expired == True:
             return False
         
         try:
-            ConferenceCode.objects.get(code=self.code, registration__cancelled=False)
+            ConferenceCode.objects.get(code=self.code, registration__submitted=True, registration__cancelled=False)
         except ObjectDoesNotExist:
             return True
         except:
@@ -181,119 +201,161 @@ STREAMS = (('common', 'Common sessions'),
 STREAMS_SHORT = (('aprosperity', 'African Prosperity'),
                  ('coalitions', 'Coalitions'),
                  ('rethinking', 'Rethinking Devt'))
-                 
-class ConferenceSession(models.Model):
+
+class ConferenceTimeslot(models.Model):
     name = models.CharField(max_length=255)
-    room = models.CharField(max_length=255, blank=True)
+    name_fr = models.CharField(max_length=255, blank=True, null=True)
     day = models.DateField(help_text='yyyy-mm-dd')
     time = models.TimeField(help_text='hh:mm in 24-hour time. must be either :00 or :30 to show up on schedules')
     length = models.IntegerField(help_text="in minutes")
-    sessiontype = models.CharField(max_length=50, choices=SESSION_TYPES, blank=True, null=True)
-    short_description = models.TextField(blank=True)
-    long_description = models.TextField(blank=True)
-    
-    stream = models.CharField(max_length=50, choices=STREAMS)
-    capacity = models.IntegerField()
-    
-    attendees = models.ManyToManyField(User, related_name="conference_sessions")
-    maybes = models.ManyToManyField(User, related_name="conference_maybe")
-    
+    common = models.BooleanField(default=False)
+
     class Meta:
-        ordering = ('day', 'time', 'stream', 'length')
+        ordering = ('day', 'time', 'length')
         
+    def __unicode__(self):
+        return "" + str(self.day) + " " + str(self.time) + " - " + str(self.name)
+        #return self.name
+
+    def endtime(self):
+        return datetime.combine(date.today(), self.time) + timedelta(minutes=self.length)
+                 
+class ConferenceSession(models.Model):
+    name = models.CharField(max_length=255)
+    name_fr = models.CharField(max_length=255, blank=True, null=True)
+    room = models.CharField(max_length=255, blank=True)
+    #sessiontype = models.CharField(max_length=50, choices=SESSION_TYPES, blank=True, null=True)
+    #short_description = models.TextField(blank=True)
+    #long_description = models.TextField(blank=True)
+    description = models.TextField(blank=True)
+    description_fr = models.TextField(blank=True, null=True)
+    timeslot = models.ForeignKey(ConferenceTimeslot)
+    common = models.BooleanField(default=False)
+    
+    #stream = models.CharField(max_length=50, choices=STREAMS)
+    capacity = models.IntegerField(blank=True, null=True)
+    
+    attendees = models.ManyToManyField(User, related_name="conference_sessions", blank=True)
+    #maybes = models.ManyToManyField(User, related_name="conference_maybe")
+    
+    prep = models.TextField(blank=True)
+    prep_fr = models.TextField(blank=True)
+    
+#    class Meta:
+#        ordering = ('day', 'time', 'stream', 'length')
+#        ordering = ('day', 'time', 'length')
+        
+    def __unicode__(self):
+        return str(self.id) + " - " + str(self.name) + " (" + str(self.timeslot) + ")"
+
     def url(self):
         return reverse('conference_session', kwargs={'session': self.id});
         
     def dayverbose(self):
-        if self.day == date(year=2011, month=1, day=13):
+        if self.timeslot.day == date(year=2012, month=1, day=12):
             return 'thurs'
-        elif self.day == date(year=2011, month=1, day=14):
+        elif self.timeslot.day == date(year=2012, month=1, day=13):
             return 'fri'
-        elif self.day == date(year=2011, month=1, day=15):
+        elif self.timeslot.day == date(year=2012, month=1, day=14):
             return 'sat'
         
         return ''
         
     def timeverbose(self):
-        return "%02d%02d" % (self.time.hour, self.time.minute)
+        return "%02d%02d" % (self.timeslot.time.hour, self.timeslot.time.minute)
         
-    def streamverbose(self):
-        for sid, sname in STREAMS:
-            if self.stream == sid:
-                return sname
-        
-    def endtime(self):
-        return datetime.combine(date.today(), self.time) + timedelta(minutes=self.length)
-        
+    #def streamverbose(self):
+    #    for sid, sname in STREAMS:
+    #        if self.stream == sid:
+    #            return sname
+              
     def user_is_attending(self, user):
         if user.is_authenticated():
             if user in self.attendees.all():
                 return True
         return False
         
-    def user_is_tentative(self, user):
-        if user.is_authenticated():
-            if user in self.maybes.all():
-                return True
-        return False
+    #def user_is_tentative(self, user):
+    #    if user.is_authenticated():
+    #        if user in self.maybes.all():
+    #            return True
+    #    return False
         
     def popular(self):
         # TODO: I could probably come up with a better algorithm, which takes
         # into account how many people have set up schedules...
-        if self.attendees.count() + (self.maybes.count() / 2) > self.capacity * 0.5:
+        if self.capacity and self.attendees.count() + (self.maybes.count() / 2) > self.capacity * 0.5:
             return True
         
         return False
         
-    def fixed(self):
-        if self.stream == 'common':
-            return True
-        else:
-            return False
-
-class ConferencePrivateEvent(models.Model):
-    name = models.CharField(max_length=255)
-    location = models.CharField(max_length=255, blank=True)
-    day = models.DateField(help_text='yyyy-mm-dd')
-    time = models.TimeField(help_text='hh:mm in 24-hour time. must be either :00 or :30 to show up on schedules')
-    length = models.IntegerField(help_text="in minutes")
-    description = models.TextField(blank=True)
-    creator = models.ForeignKey(User)
+    #def fixed(self):
+    #    if self.stream == 'common':
+    #        return True
+    #    else:
+    #        return False
     
-    class Meta:
-        ordering = ('day', 'time', 'length')
+class ConferenceQuestionnaire(models.Model):
+    registration = models.OneToOneField(ConferenceRegistration)
+    
+    first_conference = models.BooleanField(default=True,
+                                           verbose_name='Is this your first EWB National Conference?')
+    
+    chaptertype = models.CharField(max_length=10, choices=CHAPTERTYPE_CHOICES,
+                                   verbose_name='What type of chapter are you from?')
+    
+    roles = models.CharField(max_length=255, choices=ROLES_CHOICES, blank=True,
+                             verbose_name='What role(s) do you currently hold in EWB, if any?')
+    
+    leadership_years = models.IntegerField(blank=True, choices=(('1', '1 or less'),
+                                                                ('2', '2 - 3'), 
+                                                                ('3', '3 or more')), 
+                                           verbose_name='How many years have you held a leadership position in EWB?',
+                                           default=1)
+    
+    leadership_day = models.BooleanField(default=False,
+                                         verbose_name='Are you attending leadership day?')
+    
+    innovation_challenge = models.BooleanField(default=False,
+                                               verbose_name='Are you participating in the Innovation Challenge?')
+    
+    prep = models.IntegerField(choices=(('0', 'Under 5 hours'),
+                                        ('5', 'Over 5 hours')),
+                                        verbose_name='How many hours of prep are you able to commit to before conference?')
+                                        
+class ConferenceSessionCriteria(models.Model):
+    first_conference = models.CharField(max_length=3, choices=(('yes', 'yes'), ('no', 'no')), blank=True)
+    chaptertype = models.CharField(max_length=10, choices=CHAPTERTYPE_CHOICES, blank=True, null=True)
+    roles = models.CharField(max_length=50, choices=ROLES_CHOICES, blank=True, null=True)
+    leadership_years = models.IntegerField(blank=True, choices=(('1', '1 or less'),
+                                                                ('2', '2 - 3'), 
+                                                                ('3', '3 or more')), 
+                                           null=True)
+    leadership_day = models.CharField(max_length=3, choices=(('yes', 'yes'), ('no', 'no')), blank=True)
+    innovation_challenge = models.CharField(max_length=3, choices=(('yes', 'yes'), ('no', 'no')), blank=True)
+    prep = models.IntegerField(choices=(('0', 'Under 5 hours'),
+                                        ('5', 'Over 5 hours')),
+                                       blank=True, null=True)
+    past_session = models.ForeignKey(ConferenceSession, related_name='past_session',
+                                     blank=True, null=True)
+    
+    other = models.BooleanField(default=False, blank=True)
+                                        
+    session = models.ForeignKey(ConferenceSession)
+    
+    def __unicode__(self):
+        return str(self.session) + " criteria"
+        
+class ConferencePrep(models.Model):
+    session = models.ForeignKey(ConferenceSession)
+    url = models.CharField(max_length=255)
+    url_fr = models.CharField(max_length=255, blank=True, null=True)
+    name = models.CharField(max_length=255)
+    name_fr = models.CharField(max_length=255, blank=True, null=True)
 
-    def url(self):
-        return reverse('conference_private', kwargs={'session': self.id});
+    def __unicode__(self):
+        return self.session + " prep: " + self.name
         
-    def room(self):
-        return self.location
-        
-    def short_description(self):
-        return self.description
-
-    def long_description(self):
-        return self.description
-        
-    def stream(self):
-        return 'private'
-
-    def dayverbose(self):
-        if self.day == date(year=2011, month=1, day=13):
-            return 'thurs'
-        elif self.day == date(year=2011, month=1, day=14):
-            return 'fri'
-        elif self.day == date(year=2011, month=1, day=15):
-            return 'sat'
-        
-        return ''
-        
-    def timeverbose(self):
-        return "%02d%02d" % (self.time.hour, self.time.minute)
-        
-    def endtime(self):
-        return datetime.combine(date.today(), self.time) + timedelta(minutes=self.length)
-
 class ConferencePhoneFrom(models.Model):
     number = models.CharField(max_length=10)
     accounts = models.IntegerField(default=0)

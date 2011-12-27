@@ -13,7 +13,7 @@ register = template.Library()
 
 @register.simple_tag
 def lookup_cost(code, room):
-    key = "confreg-2011-" + room + "-" + code
+    key = "confreg-2012-" + room + "-" + code
     listing = CONF_OPTIONS.get(key, None)
     
     if listing:
@@ -23,14 +23,16 @@ def lookup_cost(code, room):
 
 @register.simple_tag
 def rowspan(length):
-    return length / 30
+    return length / 15
 
 @register.simple_tag
 def height(length):
-    return "%fem" % (length / 30 * 1.5)
+    #return "%fem" % (length / 30 * 1.5)
+    return "0.5em"
 
 @register.simple_tag
 def colspans(capacity):
+    """
     if capacity > 500:
         return "25"
     elif capacity > 250:
@@ -39,7 +41,28 @@ def colspans(capacity):
         return "2"
     else:
         return "1"
+    """
+    return "1"
 
+@register.simple_tag
+def abs_top(hour, minute):
+    return ((hour - 8) * 80) + (minute * 80 / 60) + 30
+    
+@register.simple_tag
+def abs_left(day):
+    if day == 'thurs':
+        return 75
+    elif day == 'fri':
+        return 245
+    elif day == 'sat':
+        return 415
+    else:
+        return 0
+    
+@register.simple_tag
+def abs_height(length):
+    return length * 80 / 60 - 10
+    
 class AttendanceNode(template.Node):
     def __init__(self, session, user, context_attending, context_tentative):
         self.session = template.Variable(session)

@@ -491,7 +491,7 @@ def profile(request, username, template_name="profiles/profile.html", extra_cont
     if profile.membership_expiry != None and profile.membership_expiry > date.today():
         extra_context['regular'] = True
     if profile.membership_expiry == None or \
-        profile.membership_expiry < date.today() + timedelta(30):
+        profile.membership_expiry < date.today() + timedelta(90):
         extra_context['renew'] = True  
 
 #    if template_name == None:

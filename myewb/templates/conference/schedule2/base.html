@@ -1,0 +1,19 @@
+{% extends 'conference/confsite.html' %}
+
+{% block body %}
+
+<div style='float: right; width: auto; padding-top: 35px;'>
+	Logged in as <strong>{{ request.user.visible_name }}</strong>
+	{% if perms.conference and not group.is_chapter %}
+		| <a href="{% url conference_session_list %}">admin</a>
+	{% endif %}      
+</div>
+
+<h2>Conference Session Selection</h2>
+		
+	{% block body2 %}
+	
+	{% endblock %} 
+
+{% endblock %}
+
