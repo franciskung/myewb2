@@ -23,6 +23,9 @@ class BaseGroupForm(forms.ModelForm):
         help_text = _("a short version of the name consisting only of letters, numbers, underscores and hyphens."),
         error_message = _("This value must contain only letters, numbers, underscores and hyphens."))
         
+    group_type = forms.ChoiceField(label='Group type',
+                                          widget=forms.RadioSelect,
+                                          choices=BaseGroup.GROUP_TYPES)
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)     # pop off user arg, in case subclass doesn't use it
         super(BaseGroupForm, self).__init__(*args, **kwargs)
@@ -48,6 +51,17 @@ class BaseGroupForm(forms.ModelForm):
     def clean_welcome_email(self):
         self.cleaned_data['welcome_email'] = self.cleaned_data['welcome_email'].strip()
         return self.cleaned_data['welcome_email']
+        
+    def clean_group_type(self):
+        if self.instance:
+            members = self.instance.members.count()
+        else:
+            members = 0
+        
+        if members > 150 and self.cleaned_data['group_type'] == 'd':
+            raise forms.ValidationError("Discussion groups cannot have more than 150 members; this group has %d members." % members)
+            
+        return self.cleaned_data['group_type']
     
     class Meta:
         abstract = True

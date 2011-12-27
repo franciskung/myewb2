@@ -1,0 +1,161 @@
+{% extends "conference/schedule2/base.html" %}
+
+{% load conference_tags %}
+
+{% block viewport %}600px{% endblock %}
+
+{% block head_title %}My Schedule{% endblock %}
+
+{% block body2 %}
+	<style>
+		table.scheduler {
+			border-collapse: separate;
+			border: 0px solid;
+			border-spacing: 2px;
+			margin: -1px;
+			background: #f0f0f0;
+		}
+		td, th {
+			border: 1px solid #606060;
+			vertical-align: top;
+		}
+		td.tlink {
+			background: #d0d0d0;
+		}
+		td.tlink a, a#rebuild_schedule {
+			color: #ff7200;
+		}
+		
+		#schedule_table {
+			width: 580px;
+			height: 1150px;
+			position: relative; 
+		}
+		#schedule_table, #schedule_table div {
+			border: 1px solid #a0a0a0;
+			overflow: hidden;
+			line-height: 1.0em;
+		}
+		.schedule_table_time {
+			 width: 65px;
+			 position: absolute;
+			 left: -1px;
+			 height: 34px;
+		}
+		#schedule_table div.schedule_table_time_grid {
+			 width: 580px;
+			 position: absolute;
+			 left: -1px;
+			 height: 34px;
+			 background: #ffffff;
+			 border: 1px solid #e0e0e0;
+		}
+		.schedule_table_day {
+			 width: 159px;
+			 position: absolute;
+			 top: -1px;
+			 height: 20px;
+		}
+		.schedule_table_session {
+			width: 159px;
+			position: absolute; 
+		}
+		#schedule_table div {
+			padding: 5px;
+			background: #e0e0e0;
+		}
+		#schedule_table a {
+			padding-left: 0;
+		}
+
+	</style>
+    <h3>
+        My Conference Schedule
+        {% if false and not request.is_mobile and not printable %}
+            &nbsp;
+            <a href="{% url conference_schedule_final %}?printable=true" target="_new" style="border: none;">
+            <img src="{{STATIC_URL}}images/icons3/Print.png" style="border: 1px solid #d0d0d0; height: 25px; width: 25px; -moz-border-radius: 5px; -webkit-border-radius: 5px;"/>
+            </a>
+        {% endif %}
+        {% if printable %}
+            : {{ request.user.visible_name }}
+        {% endif %}
+    </h3>
+    
+    <p style="font-weight: bold; position: relative; top: -10px;">
+    	<a href="{% url conference_schedule_rebuild %}" id="rebuild_schedule">Rebuild my schedule</a>
+   	</p>
+   	
+	<div style="border: 1px solid #a0a0a0; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; float: right; width: 250px; padding: 10px; padding-top: 0px;">
+		<h4 style='font-size: 1.1em;'>Prep Material</h4>
+		
+		{% for s in sessions %}
+			{% comment %}
+			{% if s.conferenceprep_set.all %}
+				<strong>{{ s.name }}</strong>
+				<ul class="prep">
+					{% for p in s.conferenceprep_set.all %}
+						<li><a href="{{ p.url }}" target="_new">{{ p.name }}</a></li>
+					{% endfor %}
+				</ul>
+			{% endif %}
+			{% endcomment %}
+			
+			{% if s.prep %}
+				<strong>{{ s.name }}</strong>
+				<ul class="prep">
+					{{ s.prep|safe }}
+				</ul>
+			{% endif %}
+			
+		{% endfor %}
+	</div>
+   	
+    <div id="schedule_table">
+    	{% for  t in timelist %}
+    		<div class="schedule_table_time_grid" style='top: {% abs_top t 0 %}px;'>
+    			&nbsp;
+    		</div>
+    		<div class="schedule_table_time" style='top: {% abs_top t 0 %}px;'>
+    			{{ t }}:00
+    		</div>
+    		<div class="schedule_table_time_grid" style='top: {% abs_top t 30 %}px;'>
+    			&nbsp;
+    		</div>
+    		<div class="schedule_table_time" style='top: {% abs_top t 30 %}px;'>
+    			&nbsp;
+    		</div>
+    	{% endfor %}
+    	
+   		<div class="schedule_table_day" style='left: {% abs_left 'thurs' %}px;'>
+   			Thursday
+   		</div>
+   		<div class="schedule_table_day" style='left: {% abs_left 'fri' %}px;'>
+   			Friday
+   		</div>
+   		<div class="schedule_table_day" style='left: {% abs_left 'sat' %}px;'>
+   			Saturday
+   		</div>
+
+
+    	{% for s in sessions %}
+    		<div class="schedule_table_session" style='top: {% abs_top s.timeslot.time.hour s.timeslot.time.minute %}px; left: {% abs_left s.dayverbose %}px; height: {% abs_height s.timeslot.length %}px'>
+    			<a href="{{ s.url }}">
+    				<strong>{{ s.name }}</strong>
+    				<br/>
+    				<span class="room">{{ s.room }}</span>
+    			</a>
+    		</div>
+    	{% endfor %}
+    </div>
+    
+    <script>
+    	$().ready(function() {
+        		$('#rebuild_schedule').click(function() {
+            		return confirm("Are you sure you want to erase your schedule and start over?");
+        		});
+    	});
+    </script>
+    
+{% endblock %}
+

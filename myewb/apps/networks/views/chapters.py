@@ -11,7 +11,7 @@ from base_groups.decorators import group_admin_required, group_membership_requir
 from communities.models import ExecList
 from networks.models import Network, ChapterInfo, EmailForward
 from networks.forms import ChapterInfoForm, EmailForwardForm
-from networks import emailforwards
+#from networks import emailforwards
 from networks.views import network_detail
 from siteutils.shortcuts import get_object_or_none 
 

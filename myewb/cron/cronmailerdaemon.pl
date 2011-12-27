@@ -33,7 +33,7 @@ if(!(-e "$path/running.txt"))
 
 	# get emails that need sending
 	$result = $dbh->query("SELECT id, recipients, shortname,
-		sender, subject, textMessage, htmlMessage, lang, cc, bcc
+		sender, subject, textMessage, htmlMessage, lang, cc, bcc, reply_to, message_id
 		FROM mailer_email WHERE progress='waiting'");
 #	$result = $dbh->query('SELECT id, recipients, shortname,
 #		sender, subject, textMessage, htmlMessage
@@ -57,6 +57,8 @@ if(!(-e "$path/running.txt"))
 		$lang = $emails[7];
 		$cc = $emails[8];
 		$bcc = $emails[9];
+		$reply_to = $emails[10];
+		$message_id = $emails[11];
 
 		#print STDOUT "Processing email #$ id \n";
 	
@@ -187,6 +189,14 @@ if(!(-e "$path/running.txt"))
 			$bulk->header($headerinfo[$i], $headerinfo[$i+1]);
 		}
 
+		# add our own custom message-id
+		$bulk->header('Message-ID', '<' . $message_id . '>');
+		
+		if ($reply_to)
+		{
+		    $bulk->ReplyTo($reply_to);
+		}
+		
 		# send the thing!
 		$bulk->bulkmail || die 'Problem sending: ' . $bulk->error;
 
@@ -219,11 +229,12 @@ else
 	
 	open(FILEHANDLE, "< $path/running.txt");
 	@info = stat FILEHANDLE;
-	@moddate = localtime($info[9]);
-	@nowdate = localtime();
+#	@moddate = localtime($info[9]);
+#	@nowdate = localtime();
 	
 	# Deal with stale instances (ie, running for over an hour)
-	if(($nowdate[2] - $moddate[2]) >= 2)
+#	if(($nowdate[2] - $moddate[2]) >= 2)
+        if (time() - $info[9] > 900)
 	{
 		# remove the marker, so the next time this script is called it will run
 		rename "$path/running.txt", "$path/notrunning.txt";

@@ -34,7 +34,7 @@ from profiles.forms import StudentRecordForm, WorkRecordForm, MembershipForm, Me
 
 from networks.models import Network
 from networks.helpers import is_exec_over
-from base_groups.models import GroupMember
+from base_groups.models import BaseGroup, GroupMember
 from base_groups.forms import GroupBulkImportForm
 from creditcard.forms import PaymentForm
 from creditcard.models import Payment, Product
@@ -491,7 +491,7 @@ def profile(request, username, template_name="profiles/profile.html", extra_cont
     if profile.membership_expiry != None and profile.membership_expiry > date.today():
         extra_context['regular'] = True
     if profile.membership_expiry == None or \
-        profile.membership_expiry < date.today() + timedelta(30):
+        profile.membership_expiry < date.today() + timedelta(90):
         extra_context['renew'] = True  
 
 #    if template_name == None:
@@ -819,10 +819,12 @@ def settings(request, username=None):
             
         else:
             form = SettingsForm(instance=user.get_profile())
+            memberships = GroupMember.objects.filter(user=user) 
         
             return render_to_response("profiles/edit_settings.html",
                                       {"other_user": user,
                                        "form": form,
+                                       "memberships": memberships,
                                        'is_me': user.pk == request.user.pk},
                                        context_instance=RequestContext(request))
     else:
@@ -898,3 +900,26 @@ def create_ewbmail_account(request, username):
                                'form': form,
                                'is_me': user.pk == request.user.pk},
                                context_instance=RequestContext(request))
+                               
+def enable_email(request, username, group_slug):
+    group = get_object_or_404(BaseGroup, slug=group_slug)
+    user = get_object_or_404(User, username=username)
+    group_member = get_object_or_404(GroupMember, group=group, user=user)
+    
+    group_member.emails_enabled = True
+    group_member.save()
+
+    request.user.message_set.create(message="Emails enabled.")
+    return HttpResponseRedirect(reverse('profile_settings', kwargs={'username': username}))
+    
+def disable_email(request, username, group_slug):
+    group = get_object_or_404(BaseGroup, slug=group_slug)
+    user = get_object_or_404(User, username=username)
+    group_member = get_object_or_404(GroupMember, group=group, user=user)
+    
+    group_member.emails_enabled = False
+    group_member.save()
+
+    request.user.message_set.create(message="Emails disabled.")
+    return HttpResponseRedirect(reverse('profile_settings', kwargs={'username': username}))
+

@@ -102,5 +102,5 @@ class CommunityForm(BaseGroupForm):
     class Meta:
         model = Community
         fields = ('name', 'slug', 'description', 'parent', 'invite_only', 'visibility',
-                  'welcome_email')
+                  'welcome_email', 'group_type', )
 

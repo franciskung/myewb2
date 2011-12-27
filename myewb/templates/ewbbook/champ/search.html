@@ -75,6 +75,7 @@
     	{% autopaginate results 10 %}
 
         {% for result in results %}
+        	{% if result.object %}
 			<div class="post">
 				<div class="postheader yellow" style="position: relative;"> <!-- header row -->
 	  					<a class="postheaderlink" href="{{ result.object.get_absolute_url }}">{{ result.object.name }}</a>
@@ -101,6 +102,7 @@
 	  					<br class="clear"/>
 				</div>
 			</div>
+			{% endif %}
         {% endfor %}
 
 		{% paginate %}

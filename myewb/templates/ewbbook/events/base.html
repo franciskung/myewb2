@@ -38,7 +38,7 @@
             <li><a href="{% url events_for_user username=request.user.username%} ">{% trans "Your events" %}</a></li>
             <li><a href="{% url event_add_choose_group %} ">{% trans "Add an Event" %}</a></li> 
 			
-            {# <li><a href="{% url confreg %}">Conference Registration</a></li> #}
+            <li><a href="{% url confreg %}">Conference Registration</a></li>
         	{% if is_exec %}
             	<li><a href="{% url conference_list %}">Conference Delegate List</a></li>
             {% endif %}

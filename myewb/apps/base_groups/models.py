@@ -66,6 +66,12 @@ class BaseGroup(Group):
     welcome_email = models.TextField(_('Welcome email'), blank=True, null=True,
                                      help_text='Welcome email to send when someone joins or is added to this group (leave blank for none)')
     
+    GROUP_TYPES = (
+        ('d', "Discussion (anyone can post, and all posts & replies are emailed to the group)"),
+        ('a', "Announcement-only (anyone can post, but only admins can can send emails to the group)")
+    )
+    group_type = models.CharField("Group type", max_length=1, choices=GROUP_TYPES, default='d')
+    
     secret_key = models.CharField(max_length=255, blank=True, null=True, default=None, editable=False)
     is_project = models.NullBooleanField(blank=True, null=True, editable=False) # to save info during migration. not really used.
     is_active = models.BooleanField(_("Is active? (false means deleted group"),
@@ -143,6 +149,18 @@ class BaseGroup(Group):
                 return True
         
         return False
+ 
+    # returns whether this user can email the discussion group
+    # (does not check for admins emailing an announcement group)
+    def user_can_email(self, user):
+        if self.user_is_member(user) :
+            if self.group_type == 'd':
+                return True
+            
+#            if self.group_type == 'a' and self.user_is_admin(user):
+#                return True
+        
+        return False
     
     # subclasses should override this...
     def can_bulk_add(self, user):
@@ -151,21 +169,29 @@ class BaseGroup(Group):
     def get_absolute_url(self):
         return reverse('group_detail', kwargs={'group_slug': self.slug})
 
+    # returns list of member emails who have opted to receive emails from this list
     def get_member_emails(self):
-        members_with_emails = self.members.all().select_related(depth=1)
+        members_with_emails = self.members.filter(emails_enabled=True).select_related(depth=1)
         return [member.user.email for member in members_with_emails if member.user.email and not member.user.nomail]
 
     def add_member(self, user):
         """
-        Adds a member to a group.
-        Retained for backwards compatibility with request_status days.
-        Wait, should I not be actively using this?  Because it's a very useful function =)
+        Adds a member to a group.  If the the user is already a member, doesn't do anything.
         """
-        member = GroupMember.objects.filter(user=user, group=self)
-        if member.count() > 0:
-            return member[0]
+        members = GroupMember.objects.filter(user=user, group=self)
+        if members.count() > 0:
+            member = members[0]
         else:
-            return GroupMember.objects.create(user=user, group=self)
+            member = GroupMember.objects.create(user=user, group=self)
+            
+        # this check assumes the *only* way to ever add a member to a group 
+        # is to call this method...! otherwise it would be better implemented
+        # as a listener on GroupMember object creation.
+        if self.group_type == 'd' and self.member_users.count() > 150:
+            self.group_type = 'a'
+            self.save()
+            
+        return member
     
     def add_email(self, email):
         """
@@ -184,10 +210,11 @@ class BaseGroup(Group):
             
     def send_mail_to_members(self, subject, htmlBody,
                              fail_silently=False, sender=None,
-                             context={}):
+                             context={}, content_object=None,
+                             reply_to=None):
         """
-        Creates and sends an email to all members of a network using Django's
-        EmailMessage.
+        Creates and sends an email to all members of a group who have opted to 
+        receive group emails.
         Takes in a a subject and a message and an optional fail_silently flag.
         Automatically sets:
         from_email: the sender param, or group_name <group_slug@ewb.ca>
@@ -198,6 +225,9 @@ class BaseGroup(Group):
         
         if sender == None:
             sender = '%s <%s@ewb.ca>' % (self.name, self.slug)
+            
+        if not reply_to:
+            reply_to = "%s@my.ewb.ca" % self.slug
             
         lang = 'en'
         try:
@@ -214,7 +244,9 @@ class BaseGroup(Group):
                   recipients=self.get_member_emails(),
                   context=context,
                   shortname=self.slug,
-                  lang=lang)
+                  lang=lang,
+                  content_object=content_object,
+                  reply_to=reply_to)
     
     def save(self, force_insert=False, force_update=False):
         # if we are updating a group, don't change the slug (for consistency)
@@ -366,6 +398,8 @@ class GroupMember(BaseGroupMember):
     # away = models.BooleanField(_('away'), default=False)
     # away_message = models.CharField(_('away_message'), max_length=500)
     # away_since = models.DateTimeField(_('away since'), default=datetime.now)
+
+    emails_enabled = models.BooleanField(default=True)
 
     objects = GroupMemberManager()
 

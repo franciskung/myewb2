@@ -8,7 +8,7 @@ Created on 2009-10-20
 """
 
 from django.contrib import admin
-from conference.models import ConferenceRegistration, ConferenceCode
+from conference.models import *
 
 class RegistrationAdmin(admin.ModelAdmin):
     list_display = ('user', 'amountPaid', 'roomSize', 'type',
@@ -22,3 +22,24 @@ class CodeAdmin(admin.ModelAdmin):
     list_display = ('id', 'code', 'type', 'number')
     
 admin.site.register(ConferenceCode, CodeAdmin)
+
+class TimeslotAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'day', 'time')
+    
+admin.site.register(ConferenceTimeslot, TimeslotAdmin)
+
+class SessionAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'timeslot')
+    
+admin.site.register(ConferenceSession, SessionAdmin)
+
+class CriteriaAdmin(admin.ModelAdmin):
+    list_display = ('session',)
+    
+admin.site.register(ConferenceSessionCriteria, CriteriaAdmin)
+
+class PrepAdmin(admin.ModelAdmin):
+    list_display = ('session', 'name', 'url')
+    
+admin.site.register(ConferencePrep, PrepAdmin)
+

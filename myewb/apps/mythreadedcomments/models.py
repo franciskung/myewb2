@@ -15,6 +15,7 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models.signals import post_save
 from threadedcomments.models import ThreadedComment, FreeThreadedComment
+from siteutils.helpers import fix_encoding
 
 from attachments.models import Attachment
 from group_topics.models import GroupTopic, Watchlist, wiki_convert
@@ -40,6 +41,17 @@ def send_to_watchlist(self):
            'event': None,
            'attachments': attachments
           }
+          
+    if topic.group.group_type == 'd':
+        sender = '"%s %s" <%s>' % (self.user.get_profile().first_name,
+                                   self.user.get_profile().last_name,
+                                   self.user.email)
+        reply_to = self.user.email
+            
+        topic.group.send_mail_to_members(topic.title, self.comment, sender=sender,
+                                        context=ctx, content_object=self,
+                                        reply_to=reply_to)
+        
     sender = 'myEWB <notices@my.ewb.ca>'
     recipients = set()
     
@@ -64,6 +76,9 @@ def send_to_watchlist(self):
     # but remove original poster
     if self.user.email in recipients:
         recipients.remove(self.user.email)
+    # also remove all people who've already been emailed (can this be more efficient?)
+    groupmembers = set(topic.group.get_member_emails())
+    recipients -= groupmembers
         
     messagebody = """<p>Hello</p>        
 
@@ -79,7 +94,7 @@ def send_to_watchlist(self):
 added it to your watchlist.  To change your email preferences, 
 <a href="http://my.ewb.ca%s">click here</a>.
 </p>
-""" % (self.user.visible_name(), topic.title, self.comment, reverse('profile_settings'))
+""" % (fix_encoding(self.user.visible_name()), fix_encoding(topic.title), fix_encoding(self.comment), reverse('profile_settings'))
       
     if len(recipients):
         send_mail(subject="Re: %s" % topic.title,
@@ -88,7 +103,8 @@ added it to your watchlist.  To change your email preferences,
                   fromemail=sender,
                   recipients=recipients,
                   context=ctx,
-                  shortname=topic.group.slug)
+                  shortname=topic.group.slug,
+                  content_object=self)
 
 ThreadedComment.send_to_watchlist = send_to_watchlist
 

@@ -42,6 +42,7 @@ def send_message_email(sender, instance, created, **kwargs):
                   htmlMessage=message,
                   fromemail=sender,
                   recipients=[user.email],
-                  context=ctx)
+                  context=ctx,
+                  content_object=instance)
             
 post_save.connect(send_message_email, sender=Message, dispatch_uid='emailprivatemessage')

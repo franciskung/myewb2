@@ -81,9 +81,15 @@ The {% if group %} checks are left in just in case, and should be removed eventu
             
     $('#id_send_as_email').click(function() {
         if ($('#id_send_as_email').attr('checked'))
+        {
     		$('#div_id_sender').slideDown();
+      		$('#div_id_reply_to').slideDown();
+        }
         else
+        {
     		$('#div_id_sender').slideUp();
+    		$('#div_id_reply_to').slideUp();
+        }
     });
     
     $(document).ready(function() {
@@ -102,6 +108,13 @@ The {% if group %} checks are left in just in case, and should be removed eventu
     		$('#div_id_sender').show();
     	else
     		$('#div_id_sender').hide();
+    		
+        {% ifequal group.group_type 'a' %}
+        	if ($('#id_send_as_email:checked').val())
+        		$('#div_id_reply_to').show();
+        	else
+        		$('#div_id_reply_to').hide();
+        {% endifequal %}
 
     });
     </script>	

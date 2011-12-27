@@ -238,25 +238,36 @@ def new_topic(request, group_slug=None, bridge=None):
                     # extra security check that sender isn't forged.
                     # can't hurt...
                     sender_valid = False
+                    sender_email = None
                     if group.user_is_admin(request.user) and request.POST.get('sender', None):
                         if request.POST['sender'] == group.from_email:
                             sender_valid = True
                             sender = '"%s" <%s>' % (group.from_name, group.from_email)
+                            sender_email = group.from_email
                             
                         elif get_object_or_none(EmailAddress, email=request.POST['sender']) in request.user.get_profile().email_addresses():
                             sender_valid = True
                             sender = '"%s %s" <%s>' % (request.user.get_profile().first_name,
                                                        request.user.get_profile().last_name,
                                                        request.POST['sender'])
+                            sender_email = request.POST['sender']
                             
                         elif request.user.is_staff and request.POST['sender'] == "info@ewb.ca":
                             sender_valid = True
                             sender = '"EWB-ISF Canada" <info@ewb.ca>'
-                            
-                    if topic.send_as_email:
+                            sender_email = 'info@ewb.ca'
+                    
+                    if group.user_can_email(request.user) and not sender_valid:
+                        sender_valid = True
+                        sender = '"%s %s" <%s>' % (request.user.get_profile().first_name,
+                                                   request.user.get_profile().last_name,
+                                                   request.user.email)
+                        sender_email = request.user.email
+                    
+                    if topic.send_as_email or group.user_can_email(request.user):
                         if sender_valid:
                             request.user.message_set.create(message=escape("Sent as %s" % sender))
-                            topic.send_email(sender=sender)
+                            topic.send_email(sender=sender, sender_email=sender_email)
                         else:
                             request.user.message_set.create(message="Unable to send email.")
                         
@@ -316,12 +327,13 @@ def new_topic(request, group_slug=None, bridge=None):
                     is_large_group = False
                     if group.members.count() > 50:
                         is_large_group = True
-        
+                        
                     return render_to_response("topics/preview.html",
                                               {"group": group,
                                                "topic": topic,
                                                "is_member": is_member,
                                                "sender": sender,
+                                               "reply_to": topic_form.cleaned_data.get('reply_to', 'myewb'),
                                                "attachments": attachments,
                                                "is_large_group": is_large_group,
                                               },
@@ -422,6 +434,7 @@ def topics_by_user(request, username):
                               {"topics": topics,
                                "group": None,
                                "mode": "byuser-%s" % username,
+                               "adminovision": False,
                                "hideheader": True},
                               context_instance=RequestContext(request)
                              )
@@ -453,6 +466,7 @@ def watchlist(request, list_id):
                               {"topics": topics,
                                "group": None,
                                "mode": "watchlist-%s" % list_id,
+                               "adminovision": False,
                                "hideheader": True},
                               context_instance=RequestContext(request)
                              )
