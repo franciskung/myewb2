@@ -4,7 +4,10 @@ from django.contrib.auth.models import User
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.http import HttpResponse, HttpResponseRedirect
-from django.forms.fields import email_re
+try:
+    from django.core.validators import email_re     # django 1.2+
+except:
+    from django.forms.fields import email_re        # django 1.1
 
 from base_groups.models import BaseGroup
 
