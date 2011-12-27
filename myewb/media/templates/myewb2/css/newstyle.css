@@ -328,7 +328,7 @@ body {
 
 /*overflow: hidden;*/
 height: 62px;
-padding: 10px 0 0 0;
+padding: 0;
 }
 
 .myewb-logo {
@@ -346,9 +346,9 @@ overflow: hidden;
 
 .myewb-top-links img {
 	display: block;
-	margin: 0 auto;
-	height: 30px;
-	width: 30px;
+	margin: 7px auto -3px auto;
+	height: 33px;
+	width: 33px;
     opacity: 0.8;
     filter:alpha(opacity=80)	/* for IE8 */
 }
@@ -439,7 +439,7 @@ box-shadow: 0px 0px 1px #CF6904;
 .myewb-header a {
 display: block;
 float: left;
-padding: 0 15px;
+padding: 0 17px;
 height: 62px;
 
 color: #ffffff;
