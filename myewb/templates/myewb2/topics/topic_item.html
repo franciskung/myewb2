@@ -53,6 +53,15 @@
 
 
 
+	<div class="minipost-replydetails">
+		{% if latest %}
+			<a href="{% url profile_detail latest.0.user.username %}">{{ latest.0.user.visible_name }}</a><br/>
+			{% mktime latest.0.date_submitted %}
+		{% else %}
+			&nbsp;
+		{% endif %}
+	</div>
+
           <div class="minipost-replycount">
           
               <a class="spch-bub-inside" href="#">
@@ -62,15 +71,6 @@
           
 <!--                 <span class="numero">{{ num_comments }}</span> -->
           </div>
-
-	<div class="minipost-replydetails">
-		{% if latest %}
-			<a href="{% url profile_detail latest.0.user.username %}">{{ latest.0.user.visible_name }}</a><br/>
-			{% mktime latest.0.date_submitted %}
-		{% else %}
-			&nbsp;
-		{% endif %}
-	</div>
 
 
         </div>

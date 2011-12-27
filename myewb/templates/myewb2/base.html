@@ -130,7 +130,7 @@
 
   </div>
 </div>
-<div id="subnav">
+<div id="subnav" class="topround">
   <div class="container_12">
     <div class="grid_12">
     	{% block subnav %}{% endblock %}
@@ -139,45 +139,47 @@
 </div>
 <!-- End of header menu -->
 
+<div id="maincontent" class="topround">
 
-{% block body_base %}
- 
-    <div class="maincontent-background">
-    <div class="container_16">
-        <div class="grid_10 suffix_1">
-            {% block body %} 
-            {% endblock %}
-            <br/><br/>
+    {% block body_base %}
+     
+        <div class="maincontent-background">
+        <div class="container_16">
+            <div class="grid_10 suffix_1">
+                {% block body %} 
+                {% endblock %}
+                <br/><br/>
+            </div>
+
+           	<div class="grid_5">
+           		<br/><br/>
+            	{% block toolbar_left %}
+            	{% endblock %}
+            	{% block toolbar_right %}
+            	{% endblock %}
+           	</div>
         </div>
+        </div>
+        
+    {% endblock %}   
+      
+    {% include "components/divider.html" %}
 
-       	<div class="grid_5">
-       		<br/><br/>
-        	{% block toolbar_left %}
-        	{% endblock %}
-        	{% block toolbar_right %}
-        	{% endblock %}
-       	</div>
+
+
+    <div class="smallfooter-background">
+
+      {% include "components/smallfooter.html" %}
+
+
+      
+	    <br/>  
     </div>
-    </div>
-    
-{% endblock %}   
-  
-{% include "components/divider.html" %}
 
 
+    <div class="clear"></div>
 
-<div class="smallfooter-background">
-
-  {% include "components/smallfooter.html" %}
-
-
-  
-	<br/>  
 </div>
-
-
-<div class="clear"></div>
-
 
 <!-- scripts concatenated and minified via ant build script-->
 <script src="{{ STATIC_URL }}templates/myewb2/js/plugins.js"></script>

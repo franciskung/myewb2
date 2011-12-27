@@ -272,11 +272,12 @@ color: #7e3b00;
 text-shadow: 0 1px 0 #FFFFFF;
 }
 
-/* maybe... still playing ... */
+/* maybe... still playing ... *
 h1, h2 {
     background: url('../images/headerlogo2.png') no-repeat left center;
     padding-left: 35px;
 }
+*/
 
 h1.noicon, h2.noicon {
 	background: none;
@@ -289,21 +290,40 @@ h1.noicon, h2.noicon {
 
 
 body {
-/* background-image: url('img/threadpattern.jpg'); */
+    font-family: 'Ubuntu', 'Open Sans', "Lucida Grande", sans-serif;
+    border-left: 10px solid #fd9200;
+    border-right: 10px solid #fd9200;
+    background: #fd9200;
+}
 
-/*background-color: #f8efda;*/
+.topround {
+    border-top-left-radius: 1em;
+    border-top-right-radius: 1em;
+    -moz-border-radius-topleft: 1em;
+    -moz-border-radius-topright: 1em;
+    -webkit-border-top-left-radius: 1em;
+    -webkit-border-top-right-radius: 1em;
+}
 
-font-family: 'Ubuntu', 'Open Sans', "Lucida Grande", sans-serif;
-
+#maincontent {
+    background: #ffffff;
+    padding-top: 1em;
+    margin-bottom: 10px;
+    margin-top: -1em;
+    border: 2px solid #db7403;
 }
 
 
 .grey-background {
     background-color: #FD9200;
-    background-image: -moz-linear-gradient(center bottom , #FD9200, #DB7403);
+    /* http://robertnyman.com/2010/02/15/css-gradients-for-all-web-browsers-without-using-images/ */
+    background-image: -moz-linear-gradient(center bottom , #DB7403, #FD9200);
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#db7403), to(#fd9200));
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#db7403, endColorstr=#db7403);
+    -ms-filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#db7403, endColorstr=#fd9200);
     color: #FFFFFF;
     text-shadow: 0 -1px 0 #CF6904;
-    
+    margin: 0 -10px;
 }
 
 .myewb-header {
@@ -311,18 +331,20 @@ font-family: 'Ubuntu', 'Open Sans', "Lucida Grande", sans-serif;
 
 
 /*overflow: hidden;*/
-height: 54px;
+height: 62px;
+padding: 10px 0 0 0;
 }
 
 .myewb-logo {
 float: left;
-height: 54px;
+height: 62px;
 overflow: hidden;
+padding-right: 10px;
 }
 
 .myewb-top-links {
 float: left;
-height: 54px;
+height: 62px;
 overflow: hidden;
 }
 
@@ -422,7 +444,7 @@ box-shadow: 0px 0px 1px #CF6904;
 display: block;
 float: left;
 padding: 0 15px;
-height: 54px;
+height: 62px;
 
 color: #ffffff;
 text-decoration: none;
@@ -434,8 +456,8 @@ background-color: #DB7403;
 
 .myewb-header a.current {
 
-height: 47px;
-border-bottom: 7px solid #db7403; 
+height: 54px;
+border-bottom: 10px solid #db7403; 
 
 }
 
@@ -444,8 +466,8 @@ padding-bottom: 2px;
 }
 
 .myewb-logo a {
-    font-size: 1.9em;
-    line-height: 54px;
+    font-size: 2.5em;
+    line-height: 62px;
     /*padding-top: 17px;*/
     
 }
@@ -465,9 +487,10 @@ font-weight: bold;
 
 #subnav {
 	background: #db7403;
+	padding-bottom: 1em;
 }
 #subnav ul {
-	margin: 5px 0;
+	margin: 10px 0 5px 0;
 	padding: 0;
 }
 #subnav li {
@@ -503,7 +526,6 @@ background-color: #fff;
 }
 .maincontent-background {
     background-color: #ffffff;
-    border-top: 0;
 }
 .chapterdash-background {
     padding: 20px 0;
@@ -618,18 +640,19 @@ background: no-repeat center center #000;
 /* Divider style */
 
 .dividerstyle {
-height: 5px;
+height: 2px;
 overflow: hidden;
-background-color: #fe9f4c;
+/*background-color: #fe9f4c;*/
+background: #db7403;
 }
 
 .dividerstyle.minidivider {
 height: 2px;
 }
+/*
 .dividerstyle div {
 width: 16.6%;
 float: left;
-/* border-right: 3px solid blue; */
 height: 14px;
 
     box-shadow: 0 -2px 0 rgba(0, 0, 0, 0.2) inset;
@@ -662,7 +685,7 @@ background-color: #7e4f26;
 .dividerstyle .ds5 {
 background-color: #cb5e00;
 }
-
+*/
 
 
 /* === Standard sidemenu boxes === */
@@ -1113,8 +1136,6 @@ select.normalize {
 	top: -10px;
 	left: 37px;
 }
-
-
 
 
 
