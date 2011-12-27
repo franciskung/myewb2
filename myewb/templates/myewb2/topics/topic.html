@@ -53,27 +53,6 @@
 
         <div class="minipost-rightcontainer">
 
-{% comment %}
-          <div class="minipost-replydetails">
-        		{% if latest %}
-              Latest reply</a> by <a href="{% url profile_detail latest.0.user.username %}" class="nodeco">{{ latest.0.user.visible_name }}</a><br/> {% mktime latest.0.date_submitted %}
-            {% endif %}
-          </div>
-{% endcomment %}
-
-
-
-
-          <div class="minipost-replycount">
-          
-              <a class="spch-bub-inside" href="#">
-    <span class="point"></span>  
-    <em>{{ num_comments }}</em>
-</a>
-          
-<!--                 <span class="numero">{{ num_comments }}</span> -->
-          </div>
-
 	<div class="minipost-replydetails">
 		{% if latest %}
 			<a href="{% url profile_detail latest.0.user.username %}">{{ latest.0.user.visible_name }}</a><br/>
@@ -82,6 +61,15 @@
 			&nbsp;
 		{% endif %}
 	</div>
+
+          <div class="minipost-replycount">
+          
+              <a class="spch-bub-inside" href="#">
+    <span class="point"></span>  
+    <em>{{ num_comments }}</em>
+</a>
+          
+          </div>
 
 
         </div>
@@ -110,9 +98,12 @@
     </div>
       
     <div class="minipost-text">
-		<div style="float: right; width: auto; text-align: right;">
+        <div style="float: right; width: auto; font-size: 10px; font-weight: normal; padding: 5px; margin: 0 0 10px 10px;" class="standardbox standardbox-title">
+
+		<div style="width: auto; line-height: 2em; padding-bottom: 10px;">
+		    Share this post<br/>
 			<!-- AddThis Button BEGIN -->
-			<div class="addthis_toolbox addthis_default_style " style="width: 115px;">
+			<div class="addthis_toolbox addthis_default_style " style="width: 115px; height: 16px;">
 			<a class="addthis_button_preferred_1"></a>
 			<a class="addthis_button_preferred_2"></a>
 			<a class="addthis_button_preferred_3"></a>
@@ -122,28 +113,31 @@
 			<script type="text/javascript">var addthis_config = {"data_track_clickback":true};</script>
 			<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=ewbcanada"></script>
 			<!-- AddThis Button END -->
+        </div>
 
-            {# sean's gonna hate me for introducing another image!  we'll optimize this later... #}
-
-			<br/>            
-            {% if user.is_authenticated %}
-                {% topic_on_watchlist user topic as on_list %}
-                {% spaceless %}
-                {% if on_list %}
-                    <a href="#" id="toggle_watchlist-{{ topic.pk }}" class="more watchlist-toggle toggle-remove">
-                {% else %}
-                    <a href="#" id="toggle_watchlist-{{ topic.pk }}" class="more watchlist-toggle toggle-add faded">
-                {% endif %}
-                <img src="{{STATIC_URL}}images/icons3/Favorite.png" style="height: 30px; width: 30px;"/>
-                </a>
-                {% endspaceless %}
-            {% endif %}
+        {% if user.is_authenticated %}
+            <div style="text-align: center; float: left;">
+                {# sean's gonna hate me for introducing another image!  we'll optimize this later... #}
+                
+                    Watchlist<br/>
+                    {% topic_on_watchlist user topic as on_list %}
+                    {% spaceless %}
+                    {% if on_list %}
+                        <a href="#" id="toggle_watchlist-{{ topic.pk }}" class="more watchlist-toggle toggle-remove">
+                    {% else %}
+                        <a href="#" id="toggle_watchlist-{{ topic.pk }}" class="more watchlist-toggle toggle-add faded">
+                    {% endif %}
+                    <img src="{{STATIC_URL}}images/icons3/Favorite.png" style="height: 30px; width: 30px;"/>
+                    </a>
+                    {% endspaceless %}
+            </div>
+        {% endif %}
+        <div style="text-align: center; float: right;">
+            Cheers<br/>
      	    {% show_cheers_widget topic %}
-     	    
-     	    <br/><br/>
+        </div>
           
-          </div>
-
+    </div>
 
           {{ topic.body|safe }}
 
