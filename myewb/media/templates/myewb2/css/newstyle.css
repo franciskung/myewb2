@@ -33,7 +33,7 @@ html { font-size: 100%; overflow-y: scroll; -webkit-overflow-scrolling: touch; -
 
 body { margin: 0; font-size: 13px; line-height: 1.231; }
 
-body, button, input, select, textarea { font-family: sans-serif; color: #222; }
+body, button, input, select, textarea { font-family: sans-serif; color: #444; }
 
 /* 
  * These selection declarations have to be separate
@@ -49,12 +49,23 @@ body, button, input, select, textarea { font-family: sans-serif; color: #222; }
    Links
    ========================================================================== */
 
-a { color: #00e; }
-a:visited { color: #551a8b; }
+a, a:link {
+/*    color: #fd9200; or #CB5E00;  or #db7403; */
+    color: #cb5e00;
+    text-decoration: none;
+}
+/*
+a:visited {
+    color: #CB5E00;
+}
+*/
 a:focus { outline: thin dotted; }
 
 /* Improve readability when focused and hovered in all browsers: people.opera.com/patrickl/experiments/keyboard/test */
-a:hover, a:active { outline: 0; }
+a:hover, a:active {
+    outline: 0;
+    text-decoration: underline;
+}
 
 
 /* =============================================================================
@@ -201,24 +212,6 @@ table { border-collapse: collapse; border-spacing: 0; }
    Author: Sean, 2011-09-30
    ========================================================================== */
 
-
-
-
-
-a, a:link {
-text-decoration: none;
-
-color: #fd9200;
-}
-a:hover {
-text-decoration: underline;
-}
-
-a:visited {
-color: #CB5E00;
-}
-
-
 /* === Shared components === */
 
 ul.inliner {
@@ -265,7 +258,10 @@ text-decoration: none;
 
 }
 
-
+h1, h2, h3 {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 800;
+}
 
 .h2bold,  .bigfooter-background h3, .smallfooter-background h3 {
 color: #7e3b00;
@@ -910,7 +906,7 @@ padding: 0;
 .minipost-text {
 /*   color: #A38337; */
 
-    color: #333333;
+    color: #444444;
     clear: left;
 /*
     padding: 5px;
