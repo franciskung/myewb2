@@ -1,10 +1,10 @@
-{% extends "conference/schedule2/base.html" %}
+{% extends "conference/schedule2-fr/base.html" %}
 
 {% load conference_tags %}
 {% load avatar_tags %}
 
 {% block body2 %}
-    <h3>{{ session.name }}</h3>
+    <h3>{{ session.name_fr }}</h3>
 
     {% comment %}
     {% if not request.is_mobile and not session.fixed %}
@@ -33,6 +33,7 @@
     {% endcomment %}
     
     {{ session.timeslot.day|date:"l"}}, {{ session.timeslot.time|time:"g:i A" }} - {{ session.timeslot.endtime|time:"g:i A" }}{% if session.room %} ({{ session.room }}){% endif %}<br/>
+    {% comment %}
     {% if session.popular and not session.common %}
         <br/>
         <span style="color: red;">Popular - arrive early to save a seat!</span>
@@ -45,9 +46,10 @@
     {% endif %}
 
     <br/><br/>
+    {% endcomment %}
     
     <p>
-        {{ session.description|safe|linebreaksbr }}
+        {{ session.description_fr|safe|linebreaksbr }}
     </p>
     <br style="clear: both;">
     <hr/>

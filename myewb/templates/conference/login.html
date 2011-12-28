@@ -1,5 +1,5 @@
-{#{% extends 'events/base.html' %}#}
 {% extends 'conference/confsite.html' %}
+
 
 {% load i18n %}
 {% load uni_form_tags %}
@@ -48,6 +48,13 @@
 	    <form class="login" method="post" action="" style="position: relative;">
 	    	{{ signin_form.as_p }}
 	
+            <p>
+                <input type="radio" name="language" value="english" id="id_lang_english" />
+                <label for="id_lang_english" style="display: inline;">English</label><br/>
+                <input type="radio" name="language" value="french" id="id_lang_french" />
+                <label for="id_lang_french" style="display: inline;">Fran&ccedil;ais</label><br/>
+            </p>
+            
 			<p>
 				<label for="id_login"></label>
 				<input type="hidden" name="action" value="signin" />

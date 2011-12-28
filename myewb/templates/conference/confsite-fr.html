@@ -1,18 +1,13 @@
 {% extends 'events/base.html' %}
 
 {% block entire_body %}
-	{#{% ifequal request.META.SERVER_NAME "conference2012.ewb.ca" %}#}  
+{#	{% ifequal request.META.SERVER_NAME "conference2012.ewb.ca" %}  #}
 	{#{% ifequal request.META.SERVER_NAME "localhost.localdomain" %} #}
 	{% ifequal request.META.SERVER_NAME "francis-laptop" %} 
 	
 <head>
 	
-	<title>{{ request.session.language }} 
-|
-{{ request.session.conflang }} 
-|
-
-{% block head_title %}{% endblock %} - EWB 2012 National Conference</title>
+	<title>{% block head_title %}{% endblock %} - EWB 2012 National Conference</title>
 	
 <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
 <meta name="author" content="Engineers Without Borders-Ingénieurs Sans Frontières Canada" />
@@ -137,29 +132,36 @@ ul.prep, ul.prep li {
 
 	<!-- header starts-->
 <div id="header-bg"></div>
-	<div id="header-wrap" >			
+	<div id="header-wrap" class="fr">			
 		
 		<h1 id="logo-text"><a href="http://conference2012.ewb.ca/" title=""></a></h1>		
-			<p id="intro">&nbsp;<br/>Jan. 11 - 14, 2012<br/>Ottawa, Ontario</p>	
+			<p id="intro">&nbsp;<br/>du 11 au 14 janvier 2012<br/>Ottawa, Ontario</p>	
 		
 		<div class="nav-outer" id="nav">
 		<ul class="nav">
-		<li><a id="current" href="http://conference2012.ewb.ca/en/">Home</a></li>
+		<li><a id="current" href="http://conference2012.ewb.ca/fr/">Accueil</a></li>
 
 		<li>
-<a href="http://conference2012.ewb.ca/en/conference.html" >Conference</a></li>
+<a href="http://conference2012.ewb.ca/fr/conference.html" >Congrès</a>
+</li>
 		<li>
-<a href="http://conference2012.ewb.ca/en/speakers.html" >Speakers</a></li>
+<a href="http://conference2012.ewb.ca/fr/speakers.html" >Conférenciers</a>
+</li>
 		<li>
-<a href="http://conference2012.ewb.ca/en/logistics.html" >Logistics</a></li>
+<a href="http://conference2012.ewb.ca/fr/logistics.html" >Logistique</a>
+</li>
 		<li>
-<a href="http://conference2012.ewb.ca/en/sponsors.html" >Sponsors</a></li>
+<a href="http://conference2012.ewb.ca/fr/sponsors.html" >Commanditaires</a>
+</li>
 		<li>
-<a href="http://conference2012.ewb.ca/en/registration.html" >Registration</a></li>
+<a href="http://conference2012.ewb.ca/fr/registration.html" >Inscription</a>
+</li>
 		<li>
-<a href="http://conference2012.ewb.ca/en/blog.html" >Blog</a></li>
- 
- 
+<a href="http://conference2012.ewb.ca/fr/videos.html" >Vidéos</a>
+</li>
+		<li>
+<a href="http://conference2012.ewb.ca/fr/blog.html" >Blog</a>
+</li> 
 
 		</ul>		
 		</div><!-- end #nav -->
@@ -212,7 +214,7 @@ ul.prep, ul.prep li {
 
 	<div id="breadcrumbs">	
 		<!--breadcrumbs -->
-<div id="top-link"><a href="#top">&uarr; 	Top</a></div>
+<div id="top-link"><a href="#top">&uarr; 	Haut</a></div>
 	</div>
 
 
@@ -225,15 +227,17 @@ ul.prep, ul.prep li {
 	<div id="footer-bottom">
 	
 		<p class="bottom-left">			
-		&copy;2011 <strong><a class="footer_links" href="http://ewb.ca">EWB-ISF Canada</a></strong> | <a class="footer_links" href="http://conference2012.ewb.ca/fr.html">Fran&ccedil;ais</a>
+		&copy;2011 <strong><a class="footer_links" href="http://ewb.ca">EWB-ISF Canada</a></strong> | <a class="footer_links" href="http://conference2012.ewb.ca/en.html">English</a>
 
-| <a class="footer_links" href="http://conference2012.ewb.ca/en.html?mobile=on">Mobile site</a>
+| <a class="footer_links" href="http://conference2012.ewb.ca/fr.html?mobile=on">Site mobile</a>
 			</p>	
 			
 			<p class="bottom-right" >
-				<a class="footer_links" href="http://conference2012.ewb.ca/en/">Home</a> |
-				<a class="footer_links" href="http://conference2012.ewb.ca/en/contact-us/about-ewb">About EWB</a> |					
-				<a class="footer_links" href="http://conference2012.ewb.ca/en/contact-us/">Contact Us</a> 
+				<a class="footer_links" href="http://www.twitter.com/ewb2012">Twitter</a> |
+				<a class="footer_links" href="http://www.facebook.com/EWBNationalConference2012">Facebook</a> |
+				<a class="footer_links" href="http://conference2012.ewb.ca/fr/">Accueil</a> |
+				<a class="footer_links" href="http://conference2012.ewb.ca/fr/contact-us/about-ewb">À propos d'ISF</a> |					
+				<a class="footer_links" href="http://conference2012.ewb.ca/fr/contact-us/">Contactez-nous</a> 
 				<!--<a class="footer_links" href="http://conference2012.ewb.ca/en/sitemap">Sitemap</a> -->
 			</p>
 	

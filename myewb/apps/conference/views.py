@@ -52,6 +52,14 @@ def login(request):
                 user.is_bulk = False
                 user.save()
                 auth.login(request, user)
+
+                if request.POST.get('language', 'english') == 'french':
+                    request.session['conflang'] = 'fr'
+                    request.session['django_language'] = 'fr'
+                else:
+                    request.session['conflang'] = 'en'
+                    request.session['django_language'] = 'en'
+                
                 return HttpResponseRedirect(reverse('confreg'))
         else:
             signup_form = ConferenceSignupForm(request.POST)
@@ -60,8 +68,11 @@ def login(request):
                 username, password = signup_form.save()
                 user = auth.authenticate(username=username, password=password)
                 auth.login(request, user)
-                
-                return HttpResponseRedirect(reverse('confreg'))
+
+                if request.META.SERVER_NAME == 'conference2012.ewb.ca':
+                    return HttpResponseRedirect(reverse('conference_questionnaire'))
+                else:
+                    return HttpResponseRedirect(reverse('confreg'))
         
     return render_to_response('conference/login.html',
                               {"signin_form": signin_form,
