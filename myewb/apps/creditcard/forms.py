@@ -256,11 +256,15 @@ class PaymentFormPreview(FormPreview):
         address = get_object_or_none(Address, pk=cleaned_data['address'])
         if not address or  not request.user.get_profile() == address.content_object:
             address = Address()
-            address.street = '366 Adelaide'
+            address.street = '312 Adelaide'
             address.city = 'Toronto'
             address.province = 'ON'
-            address.postal_code = 'M5V1R9'
+            address.postal_code = 'M5V1R2'
             address.country = 'CA'
+
+        province = address.province
+        if not province:
+            province = '--'
         
         # stuff necessary values into dictionary... to be encoded.
         param = {'trnCardOwner': cleaned_data['billing_name'],
@@ -273,7 +277,7 @@ class PaymentFormPreview(FormPreview):
                  'ordAddress1': address.street,
                  'ordAddress2': '',
                  'ordCity':address.city,
-                 'ordProvince': address.province,
+                 'ordProvince': province,
                  'ordPostalCode': address.postal_code,
                  'ordCountry': address.country,
                  'requestType': 'BACKEND',
