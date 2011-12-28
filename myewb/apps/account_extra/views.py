@@ -14,6 +14,10 @@ from django.core.urlresolvers import reverse
 from django.forms import fields
 from django.template import RequestContext
 from django.utils.translation import ugettext, ugettext_lazy as _
+try:
+    from django.core.validators import email_re     # django 1.2+
+except:
+    from django.forms.fields import email_re        # django 1.1
 
 from account.utils import get_default_redirect
 from emailconfirmation.models import EmailAddress, EmailConfirmation
@@ -254,7 +258,7 @@ def email(request, form_class=AddEmailForm, template_name="account/email.html",
     }, context_instance=RequestContext(request))
 
 def silent_signup(request, email):
-    regex = re.compile(fields.email_re)
+    regex = re.compile(email_re)
     if not regex.search(email):
         return HttpResponseNotFound()   # invalid email
 

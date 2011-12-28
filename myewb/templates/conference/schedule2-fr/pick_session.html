@@ -1,4 +1,4 @@
-{% extends 'conference/schedule2/base.html' %}
+{% extends 'conference/schedule2-fr/base.html' %}
 
 {% load i18n %}
 {% load uni_form_tags %}
@@ -15,15 +15,15 @@
 
 
 <div style="border: 1px solid; background: #e0e0e0; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; float: left; width: 200px; padding: 10px;">
-    <strong>{{ day|date:'l, M j' }}</strong>
+    <strong>{{ day|date:'l le j M' }}</strong>
     <br/><br/>
 	
 	{% for s in schedule %}
 		{{ s.timeslot.time|time:'g:i a' }}<br/>
 		{% if s.common %}
-			<em>{{ s.name }}</em>
+			<em>{{ s.name_fr }}</em>
 		{% else %}
-			{{ s.name }}
+			{{ s.name_fr }}
 		{% endif %}
 		<br/><br/>
 
@@ -38,8 +38,8 @@
 <div style='margin-left: 250px;'>
 
     <p>
-        <strong>{{ day|date:'l, F j' }}</strong><br/>
-        <strong>{{ timeslot.time|time:'g:i A' }}: "{{ timeslot.name }}"</strong>
+        <strong>{{ day|date:'l le j M' }}</strong><br/>
+        <strong>{{ timeslot.time|time:'g:i A' }}</strong>
     </p>
 
     <ul id="tabhead">
@@ -54,11 +54,11 @@
     	{% for r in recommended %}
 	        <div>
 	            <p>
-	                <strong>{{ r.name }}</strong>
+	                <strong>{{ r.name_fr }}</strong>
 	            </p>
 	
 	            <p>
-	                {{ r.description|linebreaksbr }}
+	                {{ r.description_fr|linebreaksbr }}
 	            </p>
 	
 				<form method="post" action="{% url conference_session_save %}" class="select_session">
@@ -87,7 +87,7 @@
 
     <ul style='list-style-type: disc; margin-left: 25px;'>
     {% for s in sessions %}
-    	<li style='padding-bottom: 5px; list-style-type: disc;'><a href="#" class="colorbox" id="sother-{{ s.id }}">{{ s.name }}</a></li>
+    	<li style='padding-bottom: 5px; list-style-type: disc;'><a href="#" class="colorbox" id="sother-{{ s.id }}">{{ s.name_fr }}</a></li>
 	{% endfor %}
     </ul>
     <br/>
@@ -116,11 +116,11 @@
     	{% for s in sessions %}
 	        <div id="sbox-sother-{{ s.id }}">
 	        <p>
-	            <strong>{{ s.name }}</strong>
+	            <strong>{{ s.name_fr }}</strong>
 	        </p>
 	
 	        <p>
-	            {{ s.description|linebreaksbr }}
+	            {{ s.description_fr|linebreaksbr }}
 	        </p>
 	
 			<form method="post" action="{% url conference_session_save %}" class="select_session">

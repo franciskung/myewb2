@@ -1,4 +1,4 @@
-{% extends "conference/schedule2/base.html" %}
+{% extends "conference/schedule2-fr/base.html" %}
 
 {% load conference_tags %}
 
@@ -101,10 +101,10 @@
 			{% endif %}
 			{% endcomment %}
 			
-			{% if s.prep %}
-				<strong>{{ s.name }}</strong>
+			{% if s.prep_fr %}
+				<strong>{{ s.name_fr }}</strong>
 				<ul class="prep">
-					{{ s.prep|safe }}
+					{{ s.prep_fr|safe }}
 				</ul>
 			{% endif %}
 			
@@ -128,20 +128,20 @@
     	{% endfor %}
     	
    		<div class="schedule_table_day" style='left: {% abs_left 'thurs' %}px;'>
-   			Thursday
+   			jeudi
    		</div>
    		<div class="schedule_table_day" style='left: {% abs_left 'fri' %}px;'>
-   			Friday
+   			vendredi
    		</div>
    		<div class="schedule_table_day" style='left: {% abs_left 'sat' %}px;'>
-   			Saturday
+   			samedi
    		</div>
 
 
     	{% for s in sessions %}
     		<div class="schedule_table_session" style='top: {% abs_top s.timeslot.time.hour s.timeslot.time.minute %}px; left: {% abs_left s.dayverbose %}px; height: {% abs_height s.timeslot.length %}px'>
     			<a href="{{ s.url }}" class="sessionlink">
-    				<strong>{{ s.name }}</strong>
+    				<strong>{{ s.name_fr }}</strong>
     				<br/>
     				<span class="room">{{ s.room }}</span>
     			</a>
@@ -154,7 +154,7 @@
         		$('#rebuild_schedule').click(function() {
             		return confirm("Are you sure you want to erase your schedule and start over?");
         		});
-
+        		
         		$('.sessionlink').colorbox({'width': '75%',
 	                                 		'height': '50%',
 	                                 		'opacity': '0.5'

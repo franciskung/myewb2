@@ -27,7 +27,7 @@ from pinax.apps.account.forms import ResetPasswordKeyForm, ResetPasswordForm
 from account_extra.forms import EmailLoginForm
 from base_groups.models import BaseGroup
 from conference.decorators import conference_login_required
-from conference.forms import ConferenceSessionForm, ConferenceQuestionnaireForm
+from conference.forms import ConferenceSessionForm, ConferenceQuestionnaireForm, ConferenceQuestionnaireFormFrench
 from conference.models import ConferenceRegistration, ConferenceSession, ConferenceQuestionnaire, ConferenceTimeslot, ConferenceSessionCriteria, STREAMS, STREAMS_SHORT
 from mailer.sendmail import send_mail
 from siteutils import online_middleware
@@ -115,14 +115,22 @@ def questionnaire(request, user=None):
         request.user.message_set.create(message='You are not registered for the conference yet')
         return HttpResponseRedirect(reverse('confreg'))
     
+    if request.session.get('conflang', 'en') == 'fr':
+        template = 'conference/schedule2-fr/questionnaire.html'
+        #formclass = ConferenceQuestionnaireFormFrench
+        formclass = ConferenceQuestionnaireFormFrench
+    else:
+        template = 'conference/schedule2/questionnaire.html'
+        formclass = ConferenceQuestionnaireForm
+
     if request.method == 'POST':
         if registration:
             questionnaire = get_object_or_none(ConferenceQuestionnaire, registration=registration)
             
         if questionnaire:
-            form = ConferenceQuestionnaireForm(request.POST, instance=questionnaire)
+            form = formclass(request.POST, instance=questionnaire)
         else:
-            form = ConferenceQuestionnaireForm(request.POST)
+            form = formclass(request.POST)
             
         if form.is_valid():
             questionnaire = form.save(commit=False)
@@ -140,13 +148,13 @@ def questionnaire(request, user=None):
                 initial['first_conference'] = False
             else:
                 initial['first_conference'] = True
-        form = ConferenceQuestionnaireForm(initial=initial)
+        form = formclass(initial=initial)
         
     common_sessions = ConferenceSession.objects.filter(common=True)
     for session in common_sessions:
         session.attendees.add(user)
-        
-    return render_to_response('conference/schedule2/questionnaire.html',
+
+    return render_to_response(template,
                               {"form": form},
                               context_instance = RequestContext(request))
                               
@@ -185,7 +193,11 @@ def session_pick(request, timeslot=None):
     sessions = ConferenceSession.objects.filter(timeslot=timeslot)
     sessions = set(sessions) - recommended
     
-    return render_to_response('conference/schedule2/pick_session.html',
+    if request.session.get('conflang', 'en') == 'fr':
+        template = 'conference/schedule2-fr/pick_session.html'
+    else:
+        template = 'conference/schedule2/pick_session.html'
+    return render_to_response(template,
                               {"day": day,
                                "schedule": schedule,
                                "recommended": recommended,
@@ -222,7 +234,11 @@ def schedule_final(request):
     for t in range(8, 22):
         timelist.append(t)
 
-    return render_to_response("conference/schedule2/schedule.html",
+    if request.session.get('conflang', 'en') == 'fr':
+        template = 'conference/schedule2-fr/schedule.html'
+    else:
+        template = 'conference/schedule2/schedule.html'
+    return render_to_response(template,
                               {"sessions": sessions,
                                "timelist": timelist,
                                "printable": request.GET.get('printable', None)},
@@ -258,8 +274,18 @@ def session_detail(request, session):
             attendees = attendees[0:numattendees]
         else:
             attendees = attendees[0:10]
-    
-    return render_to_response("conference/schedule2/session_detail.html",
+
+    if request.is_ajax():
+        if request.session.get('conflang', 'en') == 'fr':
+            template = 'conference/schedule2-fr/session_detail_ajax.html'
+        else:
+            template = 'conference/schedule2/session_detail_ajax.html'
+    else:
+        if request.session.get('conflang', 'en') == 'fr':
+            template = 'conference/schedule2-fr/session_detail.html'
+        else:
+            template = 'conference/schedule2/session_detail.html'
+    return render_to_response(template,
                               {"session": s,
                                "attendees": attendees,
                                "numattendees": numattendees},

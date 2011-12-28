@@ -11,7 +11,10 @@ from django import forms
 #from django.utils.translation import ugettext_lazy as _
 from siteutils.countries import _
 
-from django.forms.fields import email_re
+try:
+    from django.core.validators import email_re     # django 1.2+
+except:
+    from django.forms.fields import email_re        # django 1.1
 from base_groups.models import BaseGroup, GroupMember, GroupLocation, InvitationToJoinGroup
 from base_groups.helpers import get_valid_parents
 from user_search.forms import MultipleUserField
@@ -21,7 +24,8 @@ class BaseGroupForm(forms.ModelForm):
     slug = forms.SlugField(max_length=20,
         label = _("Short name"),
         help_text = _("a short version of the name consisting only of letters, numbers, underscores and hyphens."),
-        error_message = _("This value must contain only letters, numbers, underscores and hyphens."))
+        #error_message = _("This value must contain only letters, numbers, underscores and hyphens.")
+        )
         
     group_type = forms.ChoiceField(label='Group type',
                                           widget=forms.RadioSelect,

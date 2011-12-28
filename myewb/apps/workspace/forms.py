@@ -7,7 +7,10 @@ Last modified on 2010-08-20
 @author Francis Kung
 """
 from django import forms
-from django.forms.fields import email_re
+try:
+    from django.core.validators import email_re     # django 1.2+
+except:
+    from django.forms.fields import email_re        # django 1.1
 
 class WorkspaceMoveForm(forms.Form):
     folder = forms.CharField(label="Location",

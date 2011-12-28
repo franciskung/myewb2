@@ -9,7 +9,11 @@ Last modified on 2009-12-29
 """
 from settings import STATIC_URL
 from django import forms
-from django.forms.util import flatatt, smart_unicode
+from django.forms.util import flatatt
+try:
+    from django.utils.encoding import smart_unicode     # django 1.2+
+except:
+    from django.forms.util import smart_unicode         # django 1.1
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse

@@ -259,3 +259,26 @@ CHAPTERTYPE_CHOICES = (('none', 'Not affiliated with a chapter'),
                        ('enguni', 'University chapter - english'),
                        ('fruni', 'University chapter - french'))
 
+ROLES_CHOICES_FR = (('president', 'Chapter or City Network President'),
+                 ('finance', 'Finance rep'),
+                 ('advocacy', 'Advocacy rep'),
+                 ('youth', 'Youth engagement rep'),
+                 ('members', 'Member learning rep'),
+                 ('communications', 'Communications rep'),
+                 ('webmaster', 'Webmaster/online rep'),
+                 ('fundraising', 'Fundraising rep'),
+                 ('engineering', 'Global engineering rep'),
+                 ('fairtrade', 'Fair Trade rep'),
+                 ('otherexec', 'Other current exec role'),
+                 ('pastjf', 'Past JF'),
+                 ('currentjf', '2012 JF'),
+                 ('alumni', 'Alumni'),
+                 ('distributed', 'National distributed team member (past or present)'),
+                 ('aps', 'APS (past or present)'),
+                 ('office', 'National Office Staff or Social Change Fellow (past or present)'))
+                 
+CHAPTERTYPE_CHOICES_FR = (('none', 'Not affiliated with a chapter'),
+                       ('city', 'City network'),
+                       ('enguni', 'University chapter - english'),
+                       ('fruni', 'University chapter - french'))
+

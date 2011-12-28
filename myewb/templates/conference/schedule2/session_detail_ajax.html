@@ -1,0 +1,17 @@
+    <h3>{{ session.name }}</h3>
+
+    {{ session.timeslot.day|date:"l"}}, {{ session.timeslot.time|time:"g:i A" }} - {{ session.timeslot.endtime|time:"g:i A" }}{% if session.room %} ({{ session.room }}){% endif %}<br/>
+
+    {% if session.popular and not session.common %}
+        <br/>
+        <span style="color: red;">Popular - arrive early to save a seat!</span>
+    {% endif %}
+
+    <br/><br/>
+    
+    <p>
+        {{ session.description|safe|linebreaksbr }}
+    </p>
+    <br style="clear: both;">
+    <hr/>
+    

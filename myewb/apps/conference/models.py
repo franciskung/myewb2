@@ -222,13 +222,15 @@ class ConferenceTimeslot(models.Model):
                  
 class ConferenceSession(models.Model):
     name = models.CharField(max_length=255)
-    name_fr = models.CharField(max_length=255, blank=True, null=True)
+    name_fr = models.CharField(max_length=255, blank=True, null=True,
+                               verbose_name='Name (french)')
     room = models.CharField(max_length=255, blank=True)
     #sessiontype = models.CharField(max_length=50, choices=SESSION_TYPES, blank=True, null=True)
     #short_description = models.TextField(blank=True)
     #long_description = models.TextField(blank=True)
     description = models.TextField(blank=True)
-    description_fr = models.TextField(blank=True, null=True)
+    description_fr = models.TextField(blank=True, null=True,
+                                      verbose_name='Name (french)')
     timeslot = models.ForeignKey(ConferenceTimeslot)
     common = models.BooleanField(default=False)
     
@@ -239,7 +241,7 @@ class ConferenceSession(models.Model):
     #maybes = models.ManyToManyField(User, related_name="conference_maybe")
     
     prep = models.TextField(blank=True)
-    prep_fr = models.TextField(blank=True)
+    prep_fr = models.TextField(blank=True, verbose_name='Prep (french)')
     
 #    class Meta:
 #        ordering = ('day', 'time', 'stream', 'length')
@@ -345,7 +347,7 @@ class ConferenceSessionCriteria(models.Model):
     
     def __unicode__(self):
         return str(self.session) + " criteria"
-        
+
 class ConferencePrep(models.Model):
     session = models.ForeignKey(ConferenceSession)
     url = models.CharField(max_length=255)

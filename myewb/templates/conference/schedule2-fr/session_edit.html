@@ -19,7 +19,7 @@
     
     <br/>
     <strong>Time: </strong> {{ session.timeslot.day|date:"l"}}, {{ session.timeslot.time|time:"g:i" }} - {{ session.timeslot.endtime|time:"g:i A" }}<br/>
-    <strong>Common session: </strong> {% if session.common %}yes{% else %}no{% endif %}<br/>
+    <strong>Common session: </strong> {{ session.common|default:"no" }}<br/>
     <br/>
     {% if not session.common %}
     <strong>Recommended if any of...:</strong><br/>
