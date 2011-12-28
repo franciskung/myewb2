@@ -69,7 +69,7 @@ def login(request):
                 user = auth.authenticate(username=username, password=password)
                 auth.login(request, user)
 
-                if request.META.SERVER_NAME == 'conference2012.ewb.ca':
+                if request.META['SERVER_NAME'] == 'conference2012.ewb.ca':
                     return HttpResponseRedirect(reverse('conference_questionnaire'))
                 else:
                     return HttpResponseRedirect(reverse('confreg'))

@@ -17,7 +17,7 @@
 	    		
 	    		<td>
 	    			{% for s in timeslot.conferencesession_set.all %}
-	    			    <span style='float: right; font-size: 0.7em; font-style: italic;'>
+	    			    <span style='float: right; font-style: italic;'>
 	    			        ({{ s.attendees.count }} attending)
 	    			    </span>
     					<a href="{% url conference_session_edit s.id %}">{{ s.name }}</a>
