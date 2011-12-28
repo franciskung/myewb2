@@ -140,7 +140,7 @@
 
     	{% for s in sessions %}
     		<div class="schedule_table_session" style='top: {% abs_top s.timeslot.time.hour s.timeslot.time.minute %}px; left: {% abs_left s.dayverbose %}px; height: {% abs_height s.timeslot.length %}px'>
-    			<a href="{{ s.url }}">
+    			<a href="{{ s.url }}" class="sessionlink">
     				<strong>{{ s.name }}</strong>
     				<br/>
     				<span class="room">{{ s.room }}</span>
@@ -154,6 +154,11 @@
         		$('#rebuild_schedule').click(function() {
             		return confirm("Are you sure you want to erase your schedule and start over?");
         		});
+
+        		$('.sessionlink').colorbox({'width': '75%',
+	                                 		'height': '50%',
+	                                 		'opacity': '0.5'
+	                                 });
     	});
     </script>
     

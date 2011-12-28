@@ -1,0 +1,11 @@
+    <h3>{{ session.name_fr }}</h3>
+
+    {{ session.timeslot.day|date:"l"}}, {{ session.timeslot.time|time:"g:i A" }} - {{ session.timeslot.endtime|time:"g:i A" }}{% if session.room %} ({{ session.room }}){% endif %}<br/>
+    
+    <p>
+        {{ session.description_fr|safe|linebreaksbr }}
+    </p>
+    <br style="clear: both;">
+    <hr/>
+    
+

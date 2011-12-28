@@ -274,11 +274,17 @@ def session_detail(request, session):
             attendees = attendees[0:numattendees]
         else:
             attendees = attendees[0:10]
-    
-    if request.session.get('conflang', 'en') == 'fr':
-        template = 'conference/schedule2-fr/session_detail.html'
+
+    if request.is_ajax():
+        if request.session.get('conflang', 'en') == 'fr':
+            template = 'conference/schedule2-fr/session_detail_ajax.html'
+        else:
+            template = 'conference/schedule2/session_detail_ajax.html'
     else:
-        template = 'conference/schedule2/session_detail.html'
+        if request.session.get('conflang', 'en') == 'fr':
+            template = 'conference/schedule2-fr/session_detail.html'
+        else:
+            template = 'conference/schedule2/session_detail.html'
     return render_to_response(template,
                               {"session": s,
                                "attendees": attendees,
