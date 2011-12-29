@@ -38,10 +38,6 @@
     {% for p in recent_posts|slice:":5" %}
         <a href="{{ p.get_absolute_url }}">{{ p }}</a> ({{ p.creator.visible_name }})<br/>
     {% endfor %}
-    <a href="#">test1</a><br/>
-    <a href="#">test2</a><br/>
-    <a href="#">test3</a><br/>
-    <a href="#">test4</a><br/>
 </div>
 
 <div id="champ_entries" class="dashboard-detail">
