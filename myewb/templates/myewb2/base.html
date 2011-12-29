@@ -142,14 +142,13 @@
      
         <div class="maincontent-background">
         <div class="container_16">
-            <div class="grid_10 suffix_1">
+            <div class="grid_10 suffix_1" id="maincontent-nobars">
                 {% block body %} 
                 {% endblock %}
                 <br/><br/>
             </div>
 
-           	<div class="grid_5">
-           		<br/><br/>
+           	<div class="grid_5" id="righttoolbars">
             	{% block toolbar_left %}
             	{% endblock %}
             	{% block toolbar_right %}
@@ -253,6 +252,12 @@
                     });
             }
         );
+
+        if ($.trim($('#righttoolbars').html()) == "")
+        {
+            $('#righttoolbars').hide();
+            $('#maincontent-nobars').removeClass('grid_10').removeClass('suffix_1').addClass('grid_16');
+        }
     });
 </script>
 
