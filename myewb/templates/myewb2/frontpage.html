@@ -87,9 +87,9 @@ function load_homepage_posts()   // now, this'll be a behind-the-scenes function
 
   fetchUrl = "/?ajax=1";
 
-  if (console && console.log){
-    console.log( $.now(), 'Starting, ' );
-  }
+//  if (console && console.log){
+//    console.log( $.now(), 'Starting, ' );
+//  }
 
 
   $.ajax({
@@ -99,16 +99,16 @@ function load_homepage_posts()   // now, this'll be a behind-the-scenes function
     
     success: function(data) {
     
-      if (console && console.log){
-        console.log( $.now(), 'Data ready, ' );
-      }
+//      if (console && console.log){
+//        console.log( $.now(), 'Data ready, ' );
+//      }
     
       $(document).ready(function() {
         // DOM manipulation here.
         
-        if (console && console.log){
-          console.log( $.now(), 'Loaded.');
-        }
+//        if (console && console.log){
+//          console.log( $.now(), 'Loaded.');
+//        }
         
         $('#topiclisting').html(data);
         
@@ -193,16 +193,16 @@ function chapter_dashboard()
           
           success: function(data) {
           
-            if (console && console.log){
-              console.log( $.now(), 'CD Data ready, ' );
-            }
+//            if (console && console.log){
+//              console.log( $.now(), 'CD Data ready, ' );
+//            }
           
             $(document).ready(function() {
               // DOM manipulation here.
               
-              if (console && console.log){
-                console.log( $.now(), 'CD Loaded.');
-              }
+//              if (console && console.log){
+//                console.log( $.now(), 'CD Loaded.');
+//              }
               
               $('#chapter_dashboard').html(data);
               

@@ -313,10 +313,10 @@ body {
 .grey-background {
     background-color: #FD9200;
     /* http://robertnyman.com/2010/02/15/css-gradients-for-all-web-browsers-without-using-images/ */
-    background-image: -moz-linear-gradient(center bottom , #DB7403, #FD9200);
+    background-image: -moz-linear-gradient(#DB7403, #FD9200);
     background-image: -webkit-gradient(linear, left top, left bottom, from(#db7403), to(#fd9200));
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#db7403, endColorstr=#db7403);
-    -ms-filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#db7403, endColorstr=#fd9200);
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#db7403, endColorstr=#fd9200)";
     color: #FFFFFF;
     text-shadow: 0 -1px 0 #CF6904;
     margin: 0 -10px;
@@ -1149,7 +1149,7 @@ select.normalize {
 	border: 1px solid #db7403;
 	-moz-border-radius: 0.5em;
 	-webkit-border-radius: 0.5em;
-	-border-radius: 0.5em;
+	border-radius: 0.5em;
 	background: #fcf6e6;
 	padding: 3px;
 }
