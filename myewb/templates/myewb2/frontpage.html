@@ -309,6 +309,14 @@ $(document).ready(function() {
                     {% endfor %}
                     {% endcomment %}
 
+                    <div style="float: right; width: 40%; margin-top: 5px;">
+                    <input type="submit" value="{% trans "sign in" %} &raquo;" />
+                    <br/><br/>
+                    <a href="{% url acct_passwd_reset %}">{% trans "Forgot your password?" %}</a><br/>
+                    <a href="{% url acct_signup %}">{% trans "Create an account" %}</a>
+                    </div>
+                    
+                    <div style="margin-right: 30%; margin-top: 20px;">
                     <p>
                     <label for="id_login_name">Email:</label>
                     <input id="id_login_name" type="text" name="login_name" maxlength="75" />
@@ -325,12 +333,6 @@ $(document).ready(function() {
                         Remember me
                     </label>
                     </p>
-                    
-                    <label>&nbsp;</label>                    
-                    <div style="float: left; line-height: 2em;">
-                    <input type="submit" value="{% trans "sign in" %} &raquo;" /><br/>
-                    <a href="{% url acct_passwd_reset %}">{% trans "Forgot your password?" %}</a> or 
-                    <a href="{% url acct_signup %}">{% trans "Create an account" %}</a>
                     </div>
                     
                 </fieldset>
