@@ -540,7 +540,8 @@ margin: 0 0 10px;
 
 
 .chapterspecific-branch {
-padding-right: 10px;
+padding: 5px 10px 5px 0;
+margin: -5px 0 -5px 0;
 }
 
 .chapterspecific-branch ul {
@@ -611,14 +612,33 @@ box-shadow: none;
 
 }
 
+#dashboard_links li {
+    margin: 5px 0;
+}
+
+.dashboard-detail {
+    position: relative;
+    /*height: 9em;*/
+    padding-bottom: 3em;
+    line-height: 1.6em;
+}
 .dashboard-detail-more {
+    position: absolute;
+    bottom: 0;
+    /*
 	float: right;
 	width: auto;
-	padding: 3px;
+	*/
+	padding: 3px 10px;
+	border-top: 1px solid #d0d0d0;
+	width: auto;
+	margin-left: -10px;
+	/*
 	margin: -30px 10px 10px;
 	border: 1px solid #a0a0a0;
 	border-radius: 0.5em;
 	-webkit-box-shadow: 2px 2px 2px #a0a0a0;
+	*/
 }
 
 
@@ -1125,6 +1145,13 @@ select.normalize {
 	font-size: 12px;
 	position: relative;
 	top: -3px;
+	/*border: 1px solid #f7dfa6;*/
+	border: 1px solid #db7403;
+	-moz-border-radius: 0.5em;
+	-webkit-border-radius: 0.5em;
+	-border-radius: 0.5em;
+	background: #fcf6e6;
+	padding: 3px;
 }
 
 #new_discussion {
@@ -1133,9 +1160,9 @@ select.normalize {
 	left: 37px;
 }
 
-
-
-
+#mainpagelogin label {
+    text-align: right;
+}
 
 
 

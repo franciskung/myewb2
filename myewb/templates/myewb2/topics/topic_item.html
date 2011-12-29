@@ -97,8 +97,11 @@
       </div>
     </div>
     </div>
-      
+
     <div class="minipost-text">
+
+{% comment %}
+    
         <div style="float: right; width: auto; font-size: 10px; font-weight: normal; padding: 5px; margin: 0 0 5px 5px;" class="standardbox standardbox-title">
             {% if user.is_authenticated %}
                 <div style="text-align: center; line-height: 0.5em; padding-bottom: 5px;">
@@ -123,6 +126,35 @@
             </div>
           
         </div>
+
+{% endcomment %}
+
+        <div style="float: right; width: auto; font-size: 10px; font-weight: normal; padding: 5px; margin: 0 0 10px 10px;" class="standardbox standardbox-title">
+
+        {% if user.is_authenticated %}
+            <div style="text-align: center; float: left; margin-right: 15px;">
+                {# sean's gonna hate me for introducing another image!  we'll optimize this later... #}
+                
+                    Watchlist<br/>
+                    {% topic_on_watchlist user topic as on_list %}
+                    {% spaceless %}
+                    {% if on_list %}
+                        <a href="#" id="toggle_watchlist-{{ topic.pk }}" class="more watchlist-toggle toggle-remove">
+                    {% else %}
+                        <a href="#" id="toggle_watchlist-{{ topic.pk }}" class="more watchlist-toggle toggle-add faded">
+                    {% endif %}
+                    <img src="{{STATIC_URL}}images/icons3/Favorite.png" style="height: 30px; width: 30px;"/>
+                    </a>
+                    {% endspaceless %}
+            </div>
+        {% endif %}
+        <div style="text-align: center; float: right;">
+            Cheers<br/>
+     	    {% show_cheers_widget topic %}
+        </div>
+          
+    </div>
+
 
 
         <a href="{{ topic.get_absolute_url }}" class="quietlink">

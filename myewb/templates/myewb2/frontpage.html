@@ -270,42 +270,76 @@ $(document).ready(function() {
 <div class="chapterdash-background">
   <div class="container_16 second-container">
 
-    <div class="grid_11">
+    <div class="grid_11 border-right" id="chapter_dashboard">
 
-      <div class="border-right" id="chapter_dashboard">
         {% if request.user.is_authenticated %}
                 {% if request.user.get_profile.get_chapter %}
 			&nbsp;
                 {% else %}
-                        You aren't in a chapter.  We should prompt you to join one, or pick some other default group.
+                    <h2 class="chapterspecific-title h2bold">Join a chapter</h2>
+
+                    <p>
+                        EWB has university chapters and city networks across Canada.
+                        <br/>
+                        <a href="{% url networks_index %}">Click here to browse our chapters
+                        and to join one.</a>
+                    </p>
+
+                    <p>
+                        Or, if you identify with EWB through another group, 
+                        <br/>
+                        <a href="{% url communities_index %}">find that group</a>
+                        and click "add to dashboard".
+                    </p>
+                    
                 {% endif %}
         {% else %}
-                <p>Welcome to myEWB, the online community for Engineers Without Borders Canada!</p>
+            <h2 class="chapterspecific-title h2bold">myEWB: Engineers Without Borders Canada</h2>
 
-		<p>You're a guest, you're a guest, and we encourage you to sign in or create an account.  We won't bite... promise!
-		</p>
+            <p>Welcome to myEWB, the online community for Engineers Without Borders Canada!</p>
 
-                {% if login_form %}
-			<p>
-                            <strong>Sign in to myEWB</strong> (ok, we really need to clean up this formatting)
-                        <form class="toolbarlogin" method="POST" action="{% url acct_login %}">
-                            {% for field in login_form %}
-                                    {{ field.label_tag }}:
-                                    {{ field }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            {% endfor %}<br/>
-                            <input type="submit" value="{% trans "sign in" %} &raquo;" /> --
-                                            <a href="{% url acct_signup %}">{% trans "Sign up" %}</a> --
-                            <a href="{% url acct_passwd_reset %}">{% trans "Forgot password?" %}</a>
-                    </form>
-</p>
+            {% if login_form %}
+                <form class="uniForm" id="mainpagelogin" method="POST" action="{% url acct_login %}">
+                <fieldset class="inlineLabels">
+                    {#{{ login_form.as_p }}#}
+                    {% comment %}
+                    {% for field in login_form %}
+                        {{ field.label_tag }}:
+                        {{ field }}<br/>
+                    {% endfor %}
+                    {% endcomment %}
+
+                    <p>
+                    <label for="id_login_name">Email:</label>
+                    <input id="id_login_name" type="text" name="login_name" maxlength="75" />
+                    </p>
+
+                    <p>
+                    <label for="id_password">Password:</label>
+                    <input type="password" name="password" id="id_password" />
+                    </p>
+                    
+                    <p><label>&nbsp;</label>
+                    <input type="checkbox" name="remember" id="id_remember" />
+                    <label for="id_remember" style="float: none; display: inline;">
+                        Remember me
+                    </label>
+                    </p>
+                    
+                    <label>&nbsp;</label>                    
+                    <div style="float: left; line-height: 2em;">
+                    <input type="submit" value="{% trans "sign in" %} &raquo;" /><br/>
+                    <a href="{% url acct_passwd_reset %}">{% trans "Forgot your password?" %}</a> or 
+                    <a href="{% url acct_signup %}">{% trans "Create an account" %}</a>
+                    </div>
+                    
+                </fieldset>
+                </form>
             {% endif %}
-
-	{% endif %}
-      </div>
-
+    	{% endif %}
     </div>
 
-    <div class="grid_5">
+    <div class="grid_5" style="margin-right: -2px;">
         <h2 class="chapterspecific-title h2bold">EWB Canada</h2>
 
         <div class="youtube-preview" style="background-image:url(http://i3.ytimg.com/vi/U1Ni9nvtYhE/default.jpg);"></div>
@@ -331,11 +365,13 @@ $(document).ready(function() {
 
 <div class="container_16">
   <div class="grid_11">
+    {% comment %}
     {% if user.is_authenticated %}
     <a href="{% url topic_new %}" style='display: block; width: auto; float: right; padding: 20px 5px 0 0;'>
         start a discussion &raquo;
     </a>
     {% endif %}
+    {% endcomment %}
     
     <h2 class="h2bold" id="latest_discussions">
     	Latest Discussions
