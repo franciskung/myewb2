@@ -22,11 +22,13 @@
 		congratulate something that's happened recently, send it some virtual
 		cheers! 
 	</p>
+
+	<h2 class="h2bold">Recent Cheers</h2>
 	
 	{% for c in cheers %}
 	    <div style="padding-bottom: 10px;">
-	        <a href="{{ c.content_object.absolute_url }}">{{ c.guess_title }}</a><br/>
-	        <a href="#" style='color: #d0d0d0;'>cheers'ed by {{ c.count }} people!</a>
+	        <a href="{{ c.content_object.absolute_url }}">{{ c.guess_title }}</a>
+	        <div style="padding-left: 15px;">cheers'ed by {{ c.count }} people!</a>
 	    </div>
 	{% endfor %}
 
