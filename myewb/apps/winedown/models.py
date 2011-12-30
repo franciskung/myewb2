@@ -72,13 +72,24 @@ class CheersContainer(models.Model):
     def guess_title(self):
         obj = self.content_object
         
-        titles = ('title', 'name', 'subject')  # any others?
+        titles = ('title', 'name', 'subject', 'text')  # any others?
         
         for t in titles:
             if hasattr(obj, t):
                 return getattr(obj, t)
                 
         return "unnamed object"
+
+    def guess_author(self):
+        obj = self.content_object
+        
+        titles = ('author', 'owner', 'creator', 'user')
+        
+        for t in titles:
+            if hasattr(obj, t):
+                return getattr(obj, t)
+                
+        return {'id': 0, 'visible_name': "unknown user"}
 
 class Cheers(models.Model):
     owner = models.ForeignKey(User)
@@ -89,3 +100,16 @@ class Cheers(models.Model):
     content = models.ForeignKey(CheersContainer)
     objects = CheersManager()
 
+class Tweet(models.Model):
+    author = models.ForeignKey(User, blank=True, null=True)
+    author_name = models.CharField(max_length=255)
+    author_username = models.CharField(max_length=255)
+    author_userid = models.IntegerField()
+    author_image = models.CharField(max_length=255)
+    date = models.DateTimeField(db_index=True)
+    twitter_id = models.IntegerField(db_index=True)
+    text = models.CharField(max_length=255)
+
+    def get_absolute_url(self):
+        return "http://twitter.com/#!/%s/status/%d" % (self.author_username, self.twitter_id)
+        
