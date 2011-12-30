@@ -1,0 +1,66 @@
+ul.segmented {
+  margin: 1em;
+/*   height: 2.7em; */
+  float: left;
+  padding-left: 0;
+  margin-left: 0;
+  list-style: none;
+  clear:both;
+}
+
+ul.segmented li {
+display: inline;
+}
+
+ul.segmented li a, ul.segmented li span {
+  display: block;
+  background: #f8efda;
+padding:0.5em 0.65em;
+  margin: 0;
+  border: 0.1em solid #db7403;
+  border-left: none;
+  float: left;
+  color: #333;
+}
+
+ul.segmented li a:hover {
+  background: #fd9200;
+}
+
+ul.segmented li.current a,
+ul.segmented li.current a:visited {
+  color: #fff;
+}
+
+ul.segmented li a.label {
+  font-weight: bold;
+  background-color: inherit;
+  border: inherit;
+}
+
+
+
+ul.segmented li:first-child a, ul.segmented li:first-child span {
+  border-left: 1px solid #db7403;
+
+  -webkit-border-top-left-radius: 0.8em;
+  -webkit-border-bottom-left-radius: 0.8em;
+
+  -moz-border-radius-topleft: 0.8em;
+  -moz-border-radius-bottomleft: 0.8em;
+
+}
+
+ul.segmented li.current span, ul.segmented li.current a {
+  font-weight: bold;
+  background: #fd9200;
+}
+
+ul.segmented li:last-child a, ul.segmented li:last-child span {
+
+  -webkit-border-top-right-radius: 0.8em;
+  -webkit-border-bottom-right-radius: 0.8em;
+  -moz-border-radius-topright: 0.8em;
+  -moz-border-radius-bottomright: 0.8em;
+
+}
