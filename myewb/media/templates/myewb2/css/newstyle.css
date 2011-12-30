@@ -1164,7 +1164,23 @@ select.normalize {
     text-align: right;
 }
 
+.cheerswidgetcount {
+    font-size: 14px;
+    color: #a0a0a0;
+    position: relative;
+    top: -4px;
+    left: -8px;
+}
 
+#cheerscomment label {
+    display: block;
+}
+#cheerscomment textarea {
+    height: 50px;
+}
+.redwarning {
+    color: #ff0000;
+}
 
 
 

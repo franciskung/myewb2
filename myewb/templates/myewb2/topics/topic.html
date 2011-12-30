@@ -131,11 +131,11 @@
                     </a>
                     {% endspaceless %}
             </div>
+            <div style="text-align: center; float: right;">
+                Cheers<br/>
+         	    {% show_cheers_widget topic %}
+            </div>
         {% endif %}
-        <div style="text-align: center; float: right;">
-            Cheers<br/>
-     	    {% show_cheers_widget topic %}
-        </div>
           
     </div>
 
@@ -325,4 +325,7 @@
 {% endblock %}
 
 
+{% block toolbar_right %}
+    {% show_cheers_for_content topic %}
+{% endblock %}
 

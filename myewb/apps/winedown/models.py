@@ -83,7 +83,8 @@ class CheersContainer(models.Model):
 class Cheers(models.Model):
     owner = models.ForeignKey(User)
     date = models.DateTimeField(auto_now_add=True)
-    comment = models.TextField(max_length=140, blank=True, null=True)
+    comment = models.TextField(max_length=120, blank=True, null=True,
+                               verbose_name="Comment (optional)")
 
     content = models.ForeignKey(CheersContainer)
     objects = CheersManager()

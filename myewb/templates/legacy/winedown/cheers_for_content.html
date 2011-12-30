@@ -1,8 +1,17 @@
+{% load avatar_tags %}
+
+{% if cheers %}
+<strong>Cheers</strong><br/><br/>
+{% endif %}
 {% for c in cheers %}
-    <div>
-        Cheers! {{ c.owner.visible_name }}
-        {% if c.comment %}
-            <br/><em>{{ c.comment }}</em>
-        {% endif %}
+    <div style="padding-bottom: 15px;">
+    	<a href="{% url profile_detail c.owner %}"  class="avatar-whos-online" data-background-src="{% avatar_url c.owner 25 %}" style="margin-right: 10px;"></a>
+
+    	<div style="float: left;">
+            {{ c.owner.visible_name }}
+            {% if c.comment %}
+                <br/><em>{{ c.comment }}</em>
+            {% endif %}
+        </div>
     </div>
 {% endfor %}

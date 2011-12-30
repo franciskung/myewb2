@@ -11,7 +11,7 @@ def show_cheers_for_content(context, content, num=10):
     Show all cheers attached to an object.
     """
     
-    cheers = Cheers.objects.get_for_object(content).order-by('-date')
+    cheers = Cheers.objects.get_for_object(content).order_by('-date')
     
     if num:
         cheers = cheers[0:num]

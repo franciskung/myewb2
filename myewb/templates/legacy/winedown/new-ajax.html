@@ -1,0 +1,53 @@
+<h1>Cheers!</h1>
+
+<p>A <em>cheers</em> is a way to show that you like something, and want to 
+share it with the EWB community!</p>
+
+<p><strong><em>{{ container.guess_title }}</em></strong></p>
+
+<form action="#" method="post" id="cheerscomment">
+    {{ form.as_p}}
+    <em id="charremainingcontainer"><span id="charremaining">120</span> characters remaining...</em>
+
+    <p>
+    <input type="hidden" id="containerid" name="containerid" value="{{ container.id }}"/>
+    <input type="submit" value="cheers!"/>
+    </p>
+</form>
+
+<script type="text/javascript">
+    $().ready(function() {
+        $('#cheerscomment textarea').keyup(function() {
+            var l = 120 - $(this).val().length;
+            if (l < 0)
+                $('#charremainingcontainer').addClass('redwarning');
+            else
+                $('#charremainingcontainer').removeClass('redwarning');
+
+            $('#charremaining').html(l);
+        });
+        
+        $('#cheerscomment').submit(function() {
+            var containerid = $('#containerid').val();
+            var cheerslink = $('#cheers-' + containerid);
+            
+            $.post(cheerslink.attr('href'),
+                   $(this).serialize(),
+                   function(data) {
+                       var newcount = "<span class='cheerswidgetcount'>" + data + "</span>"
+                       $('img', cheerslink).removeClass('faded');
+                       var cheersimg = cheerslink.html();
+                       cheerslink.next().remove();
+                       cheerslink.replaceWith(cheersimg + newcount);
+
+                        if (typeof window.refresh_cheerslist == 'function') {
+                            refresh_cheerslist();
+                        }
+                       
+                       $.colorbox.close();
+                   });
+            return false;
+        });
+    });
+</script>
+

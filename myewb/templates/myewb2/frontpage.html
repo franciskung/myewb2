@@ -37,7 +37,8 @@ var timeout_id = 0;
 function install_cheers() {
     $('.cheers').unbind('click');
     $('.cheers_detail').unbind('click');
-    
+
+    /*    
     $('.cheers').click(function() {
         var cheerslink = $(this);
         $.get($(this).attr('href'), function(data) {
@@ -46,7 +47,9 @@ function install_cheers() {
         });
         return false;
     });
-
+    */
+    
+    $('.cheers').colorbox({opacity: '0.5', width: '50%', height: '50%'});
     $('.cheers_detail').colorbox({opacity: '0.5', width: '50%', height: '50%'});
 }
 
@@ -79,6 +82,11 @@ function install_watchlists() {
         {% endif %}
         return false;
     });
+}
+
+function refresh_cheerslist()
+{
+    $('#cheerslist').load('{% url winedown_latest %}');
 }
 
 function load_homepage_posts()   // now, this'll be a behind-the-scenes function that's only called by hashchanges.
@@ -404,8 +412,9 @@ $(document).ready(function() {
 
     <div class="standardbox ewb-latest">
       <div class="standardbox-content" style="padding-top: 0;">
-      	
-      	{% show_latest_cheers %}
+      	<div id="cheerslist">
+          	{% show_latest_cheers %}
+        </div>
       	
       	<br/>
       	<a href="{% url winedown_all %}">See all cheers &raquo;</a>
