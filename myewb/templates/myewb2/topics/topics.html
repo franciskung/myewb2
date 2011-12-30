@@ -1,0 +1,38 @@
+{% extends "topics/base.html" %}
+
+{% load i18n %}
+{% load uni_form_tags %}
+{% load pagination_tags %}
+{% load group_tags %}
+{% load tagging_tags %}
+
+{% block extra_head %}
+    {{ block.super }}
+    
+    {% if group %}
+        <link rel="alternate" type="application/rss+xml" title="{{ group }}" href="{% url topic_feed_group group.slug %}" />
+    {% else %}
+        <link rel="alternate" type="application/rss+xml" title="myEWB Front Page" href="{% url topic_feed_all %}" />
+    {% endif %}
+{% endblock %}
+
+{% block head_title %}{% spaceless %}
+{% if group %}
+    {% blocktrans with group.name as group_name %}Posts for {{ group_name }}{% endblocktrans %}
+{% else %}
+    {% trans "Posts" %}
+{% endif %}
+{% endspaceless %}{% endblock %}
+
+{% block body %}
+
+    {% autopaginate topics 10 %}
+
+    {% for topic in topics %}
+	    {% include "topics/topic_item.html" %}
+    {% endfor %}
+
+    {% paginate %}
+    
+{% endblock %}
+
