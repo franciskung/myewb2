@@ -107,7 +107,7 @@ class Tweet(models.Model):
     author_userid = models.IntegerField()
     author_image = models.CharField(max_length=255)
     date = models.DateTimeField(db_index=True)
-    twitter_id = models.IntegerField(db_index=True)
+    twitter_id = models.CharField(max_length=255, db_index=True)
     text = models.CharField(max_length=255)
 
     def get_absolute_url(self):

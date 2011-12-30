@@ -35,7 +35,7 @@ def load_tweets():
     for r in result['results']:
         parsed_date = datetime.strptime(r['created_at'], '%a, %d %b %Y %H:%M:%S +0000')
 
-        tweet, created = Tweet.objects.get_or_create(twitter_id=r['id'],
+        tweet, created = Tweet.objects.get_or_create(twitter_id=r['id_str'],
                                                      defaults={'text': r['text'],
                                                                'author_name': r['from_user_name'],
                                                                'author_username': r['from_user'],
@@ -47,5 +47,6 @@ def load_tweets():
             # force creation of container...
             container = Cheers.objects.get_container(tweet)
             container.count = 1
+            container.latest = parsed_date
             container.save()
 
