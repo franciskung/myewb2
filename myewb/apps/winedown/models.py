@@ -111,5 +111,5 @@ class Tweet(models.Model):
     text = models.CharField(max_length=255)
 
     def get_absolute_url(self):
-        return "http://twitter.com/#!/%s/status/%d" % (self.author_username, self.twitter_id)
+        return "http://twitter.com/#!/%s/status/%s" % (self.author_username, self.twitter_id)
         
