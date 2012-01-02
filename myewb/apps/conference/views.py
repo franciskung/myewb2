@@ -7,7 +7,7 @@ Created on: 2009-10-18
 @author: Francis Kung
 """
 
-import csv, locale
+import csv
 from datetime import date
 
 from django.contrib import auth
@@ -55,12 +55,10 @@ def login(request):
 
                 if request.POST.get('language', 'english') == 'french':
                     request.session['conflang'] = 'fr'
-                    request.session['django_language'] = 'fr'
-                    locale.setlocale(locale.LC_ALL, 'fr_FR')
+                    request.session['django_language'] = 'fr_FR'
                 else:
                     request.session['conflang'] = 'en'
-                    request.session['django_language'] = 'en'
-                    locale.setlocale(locale.LC_ALL, 'en_US')
+                    request.session['django_language'] = 'en_US'
                 
                 return HttpResponseRedirect(reverse('confreg'))
         else:
