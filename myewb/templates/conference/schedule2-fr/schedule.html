@@ -4,8 +4,6 @@
 
 {% block viewport %}600px{% endblock %}
 
-{% block head_title %}My Schedule{% endblock %}
-
 {% block body2 %}
 	<style>
 		table.scheduler {
@@ -70,7 +68,7 @@
 
 	</style>
     <h3>
-        My Conference Schedule
+        Mon horaire
         {% if false and not request.is_mobile and not printable %}
             &nbsp;
             <a href="{% url conference_schedule_final %}?printable=true" target="_new" style="border: none;">
@@ -141,7 +139,7 @@
     	{% for s in sessions %}
     		<div class="schedule_table_session" style='top: {% abs_top s.timeslot.time.hour s.timeslot.time.minute %}px; left: {% abs_left s.dayverbose %}px; height: {% abs_height s.timeslot.length %}px'>
     			<a href="{{ s.url }}" class="sessionlink">
-    				<strong>{{ s.name_fr }}</strong>
+    				<strong>{{ s.name_fr|default:s.name }}</strong>
     				<br/>
     				<span class="room">{{ s.room }}</span>
     			</a>

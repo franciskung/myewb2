@@ -6,10 +6,20 @@ Copyright 2010 Engineers Without Borders Canada
 @author Francis Kung
 """
 
+from datetime import date, time
 from django import template
 from conference.constants import *
 
 register = template.Library()
+
+@register.filter
+def date_fr(thedate):
+    return thedate.strftime('%A le %d %B')
+    
+@register.filter
+def time_fr(thetime):
+    return thetime.strftime('%H:%M')
+    
 
 @register.simple_tag
 def lookup_cost(code, room):

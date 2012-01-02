@@ -1,3 +1,5 @@
+# coding=utf-8
+
 from django.utils.translation import ugettext_lazy as _
 import settings
 
@@ -259,26 +261,26 @@ CHAPTERTYPE_CHOICES = (('none', 'Not affiliated with a chapter'),
                        ('enguni', 'University chapter - english'),
                        ('fruni', 'University chapter - french'))
 
-ROLES_CHOICES_FR = (('president', 'Chapter or City Network President'),
-                 ('finance', 'Finance rep'),
-                 ('advocacy', 'Advocacy rep'),
-                 ('youth', 'Youth engagement rep'),
-                 ('members', 'Member learning rep'),
-                 ('communications', 'Communications rep'),
-                 ('webmaster', 'Webmaster/online rep'),
-                 ('fundraising', 'Fundraising rep'),
-                 ('engineering', 'Global engineering rep'),
-                 ('fairtrade', 'Fair Trade rep'),
-                 ('otherexec', 'Other current exec role'),
-                 ('pastjf', 'Past JF'),
-                 ('currentjf', '2012 JF'),
-                 ('alumni', 'Alumni'),
-                 ('distributed', 'National distributed team member (past or present)'),
-                 ('aps', 'APS (past or present)'),
-                 ('office', 'National Office Staff or Social Change Fellow (past or present)'))
+ROLES_CHOICES_FR = (('president', 'Président(e) de section étudiante ou professionnelle'),
+                 ('finance', "Membre de l'équipe des finances"),
+                 ('advocacy', "Membre de l'équipe de plaidoyer"),
+                 ('youth', "Membre de l'équipe d’engagement des jeunes"),
+                 ('members', "Membre de l'équipe d’éducation des membres"),
+                 ('communications', "Membre de l'équipe des communications"),
+                 ('webmaster', "Webmestre / Administrateur de site / Gestionnaire Web"),
+                 ('fundraising', "Membre de l'équipe de collecte de fonds"),
+                 ('engineering', "Membre de l'équipe de génie global"),
+                 ('fairtrade', "Membre de l'équipe de commerce équitable"),
+                 ('otherexec', "Autre rôle exécutif"),
+                 ('pastjf', "Ancien JF"),
+                 ('currentjf', "JF 2012"),
+                 ('alumni', "Ancien membre"),
+                 ('distributed', "Membre d'une équipe décentralisée (passé ou présent)"),
+                 ('aps', "PPA (passé ou présent)PPA (passé ou présent)"),
+                 ('office', "Employé du bureau national ou stagiaire en changement social (passé ou présent)"))
                  
-CHAPTERTYPE_CHOICES_FR = (('none', 'Not affiliated with a chapter'),
-                       ('city', 'City network'),
-                       ('enguni', 'University chapter - english'),
-                       ('fruni', 'University chapter - french'))
+CHAPTERTYPE_CHOICES_FR = (('none', 'Non affilié(e) à une section'),
+                       ('city', 'Section professionelle'),
+                       ('enguni', 'Section universitaire anglophone'),
+                       ('fruni', 'Section universitaire francophone'))
 

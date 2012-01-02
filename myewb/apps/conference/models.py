@@ -230,7 +230,7 @@ class ConferenceSession(models.Model):
     #long_description = models.TextField(blank=True)
     description = models.TextField(blank=True)
     description_fr = models.TextField(blank=True, null=True,
-                                      verbose_name='Name (french)')
+                                      verbose_name='Description (french)')
     timeslot = models.ForeignKey(ConferenceTimeslot)
     common = models.BooleanField(default=False)
     
