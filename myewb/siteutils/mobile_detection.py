@@ -63,7 +63,7 @@ class MobileDetectionMiddleware(object):
         
         # this doesn't really belong here, but it's better than the overhead of
         # loading yet another middleware class...
-        mylocale = request.session.get('django_language', 'en_US'):
+        mylocale = request.session.get('django_language', 'en_US')
         try:
             locale.setlocale(locale.LC_ALL, mylocale)
         except:

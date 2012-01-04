@@ -25,7 +25,7 @@ from attachments.models import Attachment
 
 from account_extra.forms import EmailLoginForm, EmailSignupForm
 
-from base_groups.models import BaseGroup
+from base_groups.models import BaseGroup, GroupMemberRecord
 from conference.decorators import conference_login_required
 from conference.forms import * #ConferenceRegistrationForm, CodeGenerationForm, ConferenceSignupForm #ConferenceRegistrationFormPreview, 
 from conference.models import ConferenceRegistration, ConferenceCode
@@ -472,9 +472,11 @@ def download(request, who=None):
                      'roommate request', 'new to ottawa', 
                      'Survey - learn', 'Survey - connections', 'Survey - opportunities and challenges',
                      'Survey - perfect experience', 'Survey - stay up to speed',
-                     'Survey - Sunday trip', 'Survey - socials', 'Survey - restaurants'
+                     'Survey - Sunday trip', 'Survey - socials', 'Survey - restaurants',
+                     'past/current jf', 'past/current president', 'past/current exec'
                      ])
-    
+                     
+                     
     for r in reg:
         fname = r.user.first_name
         lname = r.user.last_name
@@ -490,13 +492,27 @@ def download(request, who=None):
         else:
             code = ''
             
+        jf = ''
+        records = GroupMemberRecord.objects.filter(user=r.user, group__in=[210, 469, 716, 892, 955, 1092, 1202, 1317])
+        if records:
+            jf = 'yes'
+        president = ''
+        records = GroupMemberRecord.objects.filter(user=r.user, group__in=[12,427])
+        if records:
+            president = 'yes'
+        executive = ''
+        records = GroupMemberRecord.objects.filter(user=r.user, group__in=[5, 254])
+        if records:
+            executive = 'yes'
+            
         row = [fname, lname, email, gender, language, chapter,
                r.amountPaid, r.roomSize, r.date, r.headset,
                r.foodPrefs, r.specialNeeds, r.emergName, r.emergPhone,
                r.prevConfs, r.prevRetreats, r.cellphone, r.tshirt, r.ski,
                code, r.type, r.africaFund, r.roommate, r.new_to_ottawa,
                r.survey1, r.survey2, r.survey3, r.survey4,
-               r.survey5, r.survey6, r.survey7, r.survey8]
+               r.survey5, r.survey6, r.survey7, r.survey8,
+               jf, president, executive]
             
         writer.writerow([fix_encoding(s) for s in row])
 
