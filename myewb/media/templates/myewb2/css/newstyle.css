@@ -378,14 +378,14 @@ padding-top: 18px;
 
 .myewb-header-right .profile-pic {
 float: right;
-width: 42px;
+width: 52px;
 }
 
 .myewb-header-right .profile-pic-link {
 padding: 6px;
 
 padding-top: 16px;
-height: 44px;
+height: 54px;
 }
 
 /*
@@ -1183,7 +1183,10 @@ select.normalize {
 }
 
 
-
+table.messages th, table.messages td {
+    text-align: left;
+    padding: 5px 30px 5px 0;
+}
 
 
 

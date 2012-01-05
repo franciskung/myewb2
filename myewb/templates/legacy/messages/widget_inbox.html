@@ -1,0 +1,40 @@
+{% load i18n %}
+{% load timezone_filters %}
+
+<p>
+    <a href="{% url messages_inbox %} ">{% trans "Full Inbox" %}</a> | 
+    <a href="{% url messages_outbox %} ">{% trans "Sent Messages" %}</a> | 
+    <a href="{% url messages_compose %} ">{% trans "New Message" %}</a> | 
+    <a href="{% url messages_trash %} ">{% trans "Trash" %}</a>
+</p>
+
+{% if messages %}
+    <table class="messages standard">
+        <thead>
+            <tr>
+                <th>{% trans "Sender" %}</th>
+                <th>{% trans "Subject" %}</th>
+                <th>{% trans "Received" %}</th>
+            </tr>
+        </thead>
+        
+        <tbody>
+            {% for message in messages %}
+                <tr class="{% cycle "" "bkgd-light" %}">
+                    <td>{{ message.sender.visible_name }}</td>
+                    <td>
+                        {% if message.replied %}<em>{% endif %}
+                        <a class="message-link {% if message.new %}new{% endif %}" href="{{ message.get_absolute_url }}">{% if message.subject.strip %}{{ message.subject }}{% else %}(No subject.){% endif %}</a>
+                        {% if message.replied %}</em>{% endif %}
+                    </td>
+                    <td>{{ message.sent_at|localtime:user.get_profile.timezone|date:_("DATETIME_FORMAT") }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <em>Your inbox is empty.</em>
+{% endif %}
+
+<br/><br/>
+

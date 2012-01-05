@@ -39,6 +39,10 @@
     <link type="text/css" href="{{STATIC_URL}}css/colorbox.css?v=5" rel="stylesheet" />
     <script type="text/javascript" src="{{STATIC_URL}}js/colorbox.js?v=6"></script>
 
+    {# really only used for tabs... but... yeah. #}
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/tabs.css" />
+    <script src="http://cdn.jquerytools.org/1.2.6/jquery.tools.min.js"></script>
+
 </head>
 <body>
 
@@ -90,12 +94,20 @@
               {% endif %}
 
           </div>
-          <div class="profile-pic">
+          <div class="profile-pic" style='position: relative;'>
             
             {% if user.is_authenticated %}
                 <a class="profile-pic-link" href="{% url profile_detail user %}" id="profile_image">
-                  <span data-background-src="{% avatar_url user 30 %}" class="avatar-30"></span>
+                  <span data-background-src="{% avatar_url user 40 %}" class="avatar-40"></span>
                 </a>
+                
+	            <div id="inbox_count" style="position: absolute; top: 30px; left: 30px; font-weight: bold; padding: 0px; text-align: center;">
+                    {% if messages_inbox_count %}
+                        <img src="{{ STATIC_URL }}images/icons3/Mail1.png" style='height: 30px; width: 30px;'/>
+		                <span style='position: absolute; top: 10px; left: 0px; color: #db7403;'>{{ messages_inbox_count }}</span>
+    		        {% endif %}
+		        </div>
+                
                 <br/>
                 <div id="profile_links">
                     Logged in as {{user.visible_name}}<br/><br/>
@@ -241,6 +253,7 @@
         {% endif %}
         
         /* this handles the profile image on-hover dropdown */
+        /*
         $('.profile-pic').hover(
             function() {
                 $('.profile-pic-link').addClass('current');
@@ -253,6 +266,7 @@
                     });
             }
         );
+        */
 
         if ($.trim($('#righttoolbars').html()) == "")
         {

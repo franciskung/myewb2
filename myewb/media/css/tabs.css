@@ -1,6 +1,6 @@
 
 /* root element for tabs  */
-.tabs { 
+.tabs, .ui-tabs-nav { 
 	list-style:none; 
 	margin: 0 !important; 
 	padding:0;
@@ -9,7 +9,7 @@
 }
 
 /* single tab */
-.tabs li { 
+.tabs li, .ui-tabs-nav li { 
 	float:left;	 
 	text-indent:0;
 	padding:0;
@@ -18,7 +18,7 @@
 }
 
 /* link inside the tab. uses a background image */
-.tabs a { 
+.tabs a, .ui-tabs-nav a { 
 	font-size:12px;
 	display:block;
 	height: 30px;  
@@ -30,16 +30,17 @@
 	margin:0px;	
 }
 
-.tabs a:active {
+.tabs a:active, .ui-tabs-nav a:active {
 	outline:none;		
 }
 
-.tabs a:hover {
+.tabs a:hover, .ui-tabs-nav a:hover {
 	background: #f8efda;	
 }
 
 /* active tab uses a class name "current". it's highlight is also done by moving the background image. */
-.tabs .current, .tabs .current:hover, .tabs li.current a {
+.tabs .current, .tabs .current:hover, .tabs li.current a,
+.ui-tabs-nav .current, .ui-tabs-nav .current:hover, .ui-tabs-nav li.current a {
 	cursor:default !important; 
 	color:#fff !important;
 	background: #fd7200 !important;

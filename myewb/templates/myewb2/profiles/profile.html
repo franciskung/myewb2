@@ -11,6 +11,7 @@ Copyright 2009 Engineers Without Borders (Canada) Organisation and/or volunteer 
 {% load profile_tags %}
 {% load group_topics_tags %}
 {% load base_groups_tags %}
+{% load messages_ext_tags %}
 
 {% block head_title %}{% blocktrans with other_user.visible_name as username %}Profile for {{ username }}{% endblocktrans %}{% endblock %}
 
@@ -20,187 +21,187 @@ Copyright 2009 Engineers Without Borders (Canada) Organisation and/or volunteer 
 
 {% block body %}
 
-    <h1 class="noicon">{{ other_user.visible_name }}</h1>
+    <div style='text-align: center;'>
+        <h1 class="noicon">{{ other_user.visible_name }}</h1>
 
-    {% if is_me or has_visibility or other_user.is_staff %}
-        <div style="position: relative; top: -5px;">
-            <a href="mailto:{{other_user.email}}">{{other_user.email}}</a>
-        </div>
-    {% endif %}
-    
-    <div id="profile_avatar">
-    	<a href="{% avatar_url other_user 500 %}" id="avatar">
-        	{% avatar other_user 160 %}
-        </a>
-    </div>
-    <br/>
-    
-    {% if not is_me %}
-		{% if is_me or has_visibility %}
-	    	<div>
-				
-				
-				{#<a href="{% url messages_compose_to other_user.username %}">Send a message to {{ other_user.visible_name}}</a>#}
-				
-				<form method="GET" action="{% url messages_compose_to other_user.username %}">
-    	                <input type="submit" value="{% trans "Send a message to " %}{{ other_user.visible_name}}"/>
-	            </form>
-	            
-	            
-	            {% if is_friend %}
-<br/>
-    	            <form method="POST" action="">
-    	                <input type="hidden" name="action" value="remove" /><input type="submit" value="{% trans "Remove from friends" %}"/>
-    	            </form>
-	            {% endif %}
-	            
-			</div>
-			<br/>
-		{% endif %}
-    {% endif %}
-    
-    
-    {% if other_user.get_profile.about %}
-        <p class="profile_info profile_about_p">
-            {{ other_user.get_profile.about }}
-        </p>
-    {% endif %}
-    
-    
-{#start main content info table#}
-<div id="profile-content">
-<h2>{% trans "About" %}</h2>
-    
-    
-
+        {% if is_me or has_visibility or other_user.is_staff %}
+            <div style="position: relative; top: -5px;">
+                <a href="mailto:{{other_user.email}}">{{other_user.email}}</a>
+            </div>
+        {% endif %}
         
-	{% if is_me or has_visibility %}
-
-		{% include "profiles/profile_info.html" %}        
-	{# end of, is_me or is friend #}
-    {% else %}
+        <div id="profile_avatar">
+        	<a href="{% avatar_url other_user 500 %}" id="avatar">
+            	{% avatar other_user 160 %}
+            </a>
+        </div>
+    </div>
+    <br/><br/>
     
-    {# see this if it's not you and not a friend #}
-<table class="standard standard-right search-form">
-    <tbody>
+    {% if has_visibility and not is_me %}
+	    <div>
+		    <form method="GET" action="{% url messages_compose_to other_user.username %}">
+                    <input type="submit" value="{% trans "Send a message to " %}{{ other_user.visible_name}}"/>
+            </form>
+            
+            {% if is_friend %}
+                <br/>
+                <form method="POST" action="">
+                    <input type="hidden" name="action" value="remove" /><input type="submit" value="{% trans "Remove from friends" %}"/>
+                </form>
+            {% endif %}
+            
+	    </div>
+	    <br/>
+    {% endif %}
+    
+    {% if is_me or has_visibility or perms.profiles %}
+	    <ul class='tabs'>
+		    <li><a href="#profile-content">About</a></li>
+		    <li><a href="#profile-groups">Groups</a></li>
 
-        {% if other_user.get_profile.get_chapter %}
-                <tr>
+		    {% if perms.profiles %}
+			    <li><a href="#profile-history">History</a></li>
+		    {% endif %}
+		    {% if is_me %}
+			    <li><a href="#profile-messages">Messages {% if messages_inbox_count %}&nbsp;&nbsp;({{ messages_inbox_count }}){% endif %}</a></li>
+		    {% endif %}
+	    </ul>
+	
+        <div class="panes grid_15" style="padding-top: 25px;">
+            <div id="profile-content">
+                {% if other_user.get_profile.about %}
+                    <p class="profile_info profile_about_p">
+                        {{ other_user.get_profile.about }}
+                    </p>
+                {% endif %}
+                
+	            {% include "profiles/profile_info.html" %}        
+            </div>
+
+            <div id="profile-groups">
+                {% if other_user.basegroup_set.all %}
+	                <p>
+		                <strong>Chapters</strong><br/>
+                    	{% for group in other_user.get_networks %}
+                    		<span style="padding-bottom: 3px; display:block;">
+				                {% ifequal user.get_profile.get_chapter group %}
+                                	<strong><a href="{% url group_detail group.slug %}">{{ group.name }}</a></strong>
+                                {% else %}
+                                	<a href="{% url group_detail group.slug %}">{{ group.name }}</a>
+                                {% endifequal %}
+                            </span>
+                    	{% endfor %}
+                    </p>
+	                <p>
+		                <strong>Communities</strong><br/>
+                    	{% for group in other_user.get_communities %}
+                    		{% group_is_visible group for user as grpvisible %}
+                    		{% if is_me or grpvisible %}
+                    			<span style="padding-bottom: 3px; display:block;">
+                                	<a href="{% url group_detail group.slug %}">{{ group.name }}</a>
+                            	</span>
+                            {% endif %}
+                    	{% endfor %}
+                    </p>
+                {% endif %}
+            </div>
+
+            {% if perms.profiles %}
+                <div id="profile-history">
+                    <table id="user-history" class="standard tablesorter">
+                        <thead>
+                        <tr>
+                            <th>{% trans "Date" %}</th>
+                            <th>{% trans "Group" %}</th>
+                            <th>{% trans "Is Admin?" %}</th>
+                            <th>{% trans "Admin Title" %}</th>
+                            <th>{% trans "Notes" %}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for record in other_user.group_records.all %}
+                        <tr style="{% cycle 'background: #ffffff;' 'background: #eee;' %}">
+                            <td>{{ record.datetime|date:"d M Y" }}</td>
+                            <td>{{ record.group }}</td>
+                            <td>
+                                {% if record.is_admin %}
+                                    {% trans "Yes" %}
+                                {% else %}
+                                    {% trans "No" %}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if record.admin_title %}
+                                    {{ record.admin_title }}
+                                {% comment %}
+                                {% else %}
+                                    {% trans "N/A" %}
+                                {% endcomment %}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {# {% ifequal record.datetime|date:"d M Y" record.joined|date:"d M Y" %} #}
+                                {% if record.membership_start %}
+                                    {% trans "joined" %}
+                                {% endif %}
+                                {# {% endifequal %} #}
+                                {% if record.membership_end %}
+                                    {% trans "left" %}
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+            
+            {% if is_me %}
+                <div id="profile-messages">
+                    {% messages_inbox request.user %}
+                </div>
+            {% endif %}
+        </div>
+    
+    {% else %}
+        {# see this if it's not you and not a friend #}
+        <table class="standard standard-right search-form">
+            <tbody>
+                {% if other_user.get_profile.get_chapter %}
+                    <tr>
                         <th>&nbsp;</th>
                         <td>
-                                {% get_membership other_user.get_profile.get_chapter other_user as title %}
-                                {% if title.is_admin %}
-                                        <strong>{{title.admin_title}}, {{ other_user.get_profile.get_chapter.name }}</strong>
-                                {% else %}
-                                        {{ other_user.get_profile.get_chapter.name }}
-                                {% endif %}
+                            {% get_membership other_user.get_profile.get_chapter other_user as title %}
+                            {% if title.is_admin %}
+                                <strong>{{title.admin_title}}, {{ other_user.get_profile.get_chapter.name }}</strong>
+                            {% else %}
+                                {{ other_user.get_profile.get_chapter.name }}
+                            {% endif %}
                         </td>
+                    </tr>
+                {% endif %}
+                <tr>
+                    <th>Profile Info</th>
+                    <td>
+                        <p class="profile_info">
+                    	    Account created {{ other_user.date_joined|timesince }} ago
+                    		<br/>
+                    		Last signed in {{ other_user.get_profile.current_login|timesince }} ago
+                    		<br/>
+                    		{{ other_user.get_profile.login_count }} logins
+                    		<br/>
+                    		<a href="{% url topic_list_by_user other_user %}">
+                    			{% num_topics_for_user other_user %} posts/replies
+                    		</a>
+                    	</p>
+                    </td>
                 </tr>
-        {% endif %}
-
-
-<tr>
-            <th>Profile Info</th>
-            <td>
-            
-                <p class="profile_info">
-            	    Account created {{ other_user.date_joined|timesince }} ago
-            		<br/>
-            		Last signed in {{ other_user.get_profile.current_login|timesince }} ago
-            		<br/>
-            		{{ other_user.get_profile.login_count }} logins
-            		<br/>
-            		<a href="{% url topic_list_by_user other_user %}">
-            			{% num_topics_for_user other_user %} posts/replies
-            		</a>
-            	</p>
-            
-            </td>
-        </tr>
-        
-        
-        
-    </tbody>
-</table>
-    
-    
-    
-        
-	{% endif %}
-</div>    
-        
-    	{% comment %}
-    	eh. maybe. maaaaybe.
-            <p>
-                <a href="{% url tweet_followers other_user %}">{% trans "Followers" %}</a>: {{ other_user.followers.count|default:"0" }}
-                <a href="{% url tweet_following other_user %}">{% trans "Following" %}</a>: {{ other_user.followed.count|default:"0" }}
-            </p>
-
-            {% if not is_me %}
-
-            {# @@@ this could be done with ajax, or at the very least turned into an inclusion tag #}
-            <div>
-                <form method="POST" action="{% url toggle_follow other_user %}">
-                    {% if is_following %}
-                        <input type="hidden" name="action" value="unfollow" /><input type="submit" value="{% trans "unfollow" %}"/>
-                    {% else %}
-                        <input type="hidden" name="action" value="follow" /><input type="submit" value="{% trans "follow tweets" %}"/>
-                    {% endif %}
-                </form>
-            </div>
-		{% endcomment %}
-		                
-	{# friend handling used to be here; moving to sidebar #}
-    
-    {% if perms.profiles %}
-        <h2>{% trans "myEWB History" %}</h2>
-        {#we'll add a neat-o search &amp; sort feature and stuff soon#}
-        <table id="user-history" class="standard tablesorter">
-            <thead>
-            <tr>
-                <th>{% trans "Date" %}</th>
-                <th>{% trans "Group" %}</th>
-                <th>{% trans "Is Admin?" %}</th>
-                <th>{% trans "Admin Title" %}</th>
-                <th>{% trans "Notes" %}</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for record in other_user.group_records.all %}
-            <tr style="{% cycle 'background: #ffffff;' 'background: #eee;' %}">
-                <td>{{ record.datetime|date:"d M Y" }}</td>
-                <td>{{ record.group }}</td>
-                <td>
-                    {% if record.is_admin %}
-                        {% trans "Yes" %}
-                    {% else %}
-                        {% trans "No" %}
-                    {% endif %}
-                </td>
-                <td>
-                    {% if record.admin_title %}
-                        {{ record.admin_title }}
-                    {% comment %}
-                    {% else %}
-                        {% trans "N/A" %}
-                    {% endcomment %}
-                    {% endif %}
-                </td>
-                <td>
-                    {# {% ifequal record.datetime|date:"d M Y" record.joined|date:"d M Y" %} #}
-                    {% if record.membership_start %}
-                        {% trans "joined" %}
-                    {% endif %}
-                    {# {% endifequal %} #}
-                    {% if record.membership_end %}
-                        {% trans "left" %}
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
             </tbody>
-        </table>
+        </table>        
+	{% endif %}
         
+        {% comment %}
         {% if other_user.pending_memberships.all %}
             <h2>{% trans "Pending Memberships" %}</h2>
             <table id="pending-memberships">
@@ -228,11 +229,12 @@ Copyright 2009 Engineers Without Borders (Canada) Organisation and/or volunteer 
                 </tbody>
             </table>
         {% endif %}
-    {% endif %}{# end of perms.profiles block for user history#}
+        {% endcomment %}
         
 {% endblock %}
 
 {% block toolbar_left %}
+    <br/><br/>
     {# TODO: not really "is_me", admins should have some of these options too #}
     {% if is_me %}
         <div class="toolbarheader bkgd" id="box-my-profile-actions">{% trans "Actions" %}</div>
@@ -400,6 +402,7 @@ Copyright 2009 Engineers Without Borders (Canada) Organisation and/or volunteer 
 	    $(document).ready(function() {
 			$('#avatar').colorbox({transition: "elastic", width:"80%", height:"80%"});
 			$(".tablesorter").tablesorter();
+			$("ul.tabs").tabs("div.panes  > div");
 	    });
 		$('#manual_update').click(function() {
 			var confirmed = confirm("Only continue if this person has paid their membership fees in person - this will renew their membership by one year.");
@@ -409,5 +412,6 @@ Copyright 2009 Engineers Without Borders (Canada) Organisation and/or volunteer 
 				return false;
 		});
     </script>
+
 {% endblock %}
 
