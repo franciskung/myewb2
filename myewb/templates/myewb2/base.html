@@ -32,16 +32,16 @@
 <script>window.jQuery || document.write('<script src="{{ STATIC_URL }}templates/myewb2/js/libs/jquery-1.6.2.min.js"><\/script>')</script>
     <script src="{{ STATIC_URL }}templates/myewb2/js/libs/modernizr-2.0.6.min.js"></script>
 
-	{% block extra_head %}
-	{% endblock %}
+    {# really only used for tabs... but... yeah. #}
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/tabs.css" />
+    <script src="http://cdn.jquerytools.org/1.2.6/jquery.tools.min.js"></script>
 
     {# I use this often enough, I'd love to just include it once and for all...!! #}
     <link type="text/css" href="{{STATIC_URL}}css/colorbox.css?v=5" rel="stylesheet" />
     <script type="text/javascript" src="{{STATIC_URL}}js/colorbox.js?v=6"></script>
 
-    {# really only used for tabs... but... yeah. #}
-    <link rel="stylesheet" href="{{ STATIC_URL }}css/tabs.css" />
-    <script src="http://cdn.jquerytools.org/1.2.6/jquery.tools.min.js"></script>
+	{% block extra_head %}
+	{% endblock %}
 
 </head>
 <body>
