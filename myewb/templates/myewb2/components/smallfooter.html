@@ -27,19 +27,21 @@
     
     <div class="grid_4">
     
-      <h3>Meta</h3>
+      <h3>myEWB Account</h3>
 
       <ul>
-        <li>Logged in as <a href="{% url profile_detail user %}" >{{ user.visible_name }}</a> &mdash; <a href="{% url acct_logout %}">Logout</a></li>
+        {% if request.user.is_authenticated %}
+            <li>Signed in as <a href="{% url profile_detail user %}" >{{ user.visible_name }}</a></li>
+            <li><strong><a href="{% url acct_logout %}">Sign out</a></strong></li>
+        {% else %}
+            <li><strong><a href="{% url acct_login %}">Sign in to myEWB</a></strong></li>
+        {% endif %}
         <br/>
+                
         <li><a href="#">Fran&ccedil;ais</a></li>
         <li><a href="#">Change time zone ({% if detected_timezone %}{{detected_timezone}}{% endif %})</a></li>
         <br/>
-        <li><a href="#">Terms of Use</a></li>
-        <li><a href="#">Privacy Policy</a></li>
-        <li>&copy; 2005-11 <a href="#">EWB-ISF Canada</a></li>
-        
-      
+
       </ul>
 
     

@@ -382,10 +382,8 @@ width: 52px;
 }
 
 .myewb-header-right .profile-pic-link {
-padding: 6px;
-
-padding-top: 16px;
-height: 54px;
+padding: 16px 20px 0 20px;
+height: 51px;
 }
 
 /*
@@ -1028,6 +1026,17 @@ padding: 0;
 
 }
 
+#lastfooter {
+    text-align: center;
+    color: #fafafa;
+    padding-bottom: 10px;
+}
+#lastfooter a, #lastfooter a:link, #lastfooter a:visited {
+    color: #fafafa;
+}
+#lastfooter a:hover {
+    text-decoration: underline;
+}
 
 
 .avatar-whos-online {

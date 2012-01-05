@@ -80,7 +80,7 @@
         <div class="myewb-header-right">
           <div class="searchbox">
             <form method="get" action="{% url search %}" id="mainsearchform">
-               <input type="text" value="search" style="width: 200px; color: #a0a0a0; margin-left: 10px;" id="global_search_box" name="q"/>
+               <input type="text" value="search" style="width: 200px; color: #a0a0a0; margin: 5px 10px;" id="global_search_box" name="q"/>
                     
                {% if user.is_authenticated %}
                     
@@ -188,6 +188,13 @@
 
     <div class="clear"></div>
 
+</div>
+
+<div id='lastfooter'>
+    <a href="{% url about %}">About myEWB</a> |
+    <a href="{% url terms %}">Terms of Use</a> |
+    <a href="{% url privacy %}">Privacy Policy</a> |
+    <a href="http://www.ewb.ca">&copy; 2005-12 EWB-ISF Canada</a>
 </div>
 
 <!-- scripts concatenated and minified via ant build script-->

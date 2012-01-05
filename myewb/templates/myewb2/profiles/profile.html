@@ -63,6 +63,7 @@ Copyright 2009 Engineers Without Borders (Canada) Organisation and/or volunteer 
 		    {% if perms.profiles %}
 			    <li><a href="#profile-history">History</a></li>
 		    {% endif %}
+		    
 		    {% if is_me %}
 			    <li><a href="#profile-messages">Messages {% if messages_inbox_count %}&nbsp;&nbsp;({{ messages_inbox_count }}){% endif %}</a></li>
 		    {% endif %}
@@ -166,11 +167,11 @@ Copyright 2009 Engineers Without Borders (Canada) Organisation and/or volunteer 
     
     {% else %}
         {# see this if it's not you and not a friend #}
-        <table class="standard standard-right search-form">
+        <table class="standard standard-right search-form" id="profile-content">
             <tbody>
                 {% if other_user.get_profile.get_chapter %}
                     <tr>
-                        <th>&nbsp;</th>
+                        <th>Chapter</th>
                         <td>
                             {% get_membership other_user.get_profile.get_chapter other_user as title %}
                             {% if title.is_admin %}
