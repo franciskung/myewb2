@@ -33,7 +33,8 @@ def load_tweets():
 
     result = json.loads(data)
     for r in result['results']:
-        parsed_date = datetime.strptime(r['created_at'], '%a, %d %b %Y %H:%M:%S +0000')
+        tzdelta = datetime.now() - datetime.utcnow()
+        parsed_date = datetime.strptime(r['created_at'], '%a, %d %b %Y %H:%M:%S +0000') + tzdelta
 
         tweet, created = Tweet.objects.get_or_create(twitter_id=r['id_str'],
                                                      defaults={'text': r['text'],
