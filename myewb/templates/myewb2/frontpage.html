@@ -32,6 +32,7 @@
 
 
 var timeout_id = 0;
+var cheers_timeout_id = 0;
 
 // this goes into the external javascript file later
 function install_cheers() {
@@ -86,12 +87,14 @@ function install_watchlists() {
 
 function refresh_cheerslist()
 {
+    clearTimeout(cheers_timeout_id);
     $('#cheerslist').load('{% url winedown_latest %}');
+    cheers_timeout_id = setTimeout('refresh_cheerslist()', 10 * 60 * 1000, true);
 }
 
 function load_homepage_posts()   // now, this'll be a behind-the-scenes function that's only called by hashchanges.
 {
-  clearTimeout(timeout_id)
+  clearTimeout(timeout_id);
 
   fetchUrl = "/?ajax=1";
 
