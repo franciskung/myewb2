@@ -98,75 +98,24 @@ function load_homepage_posts()   // now, this'll be a behind-the-scenes function
 
   fetchUrl = "/?ajax=1";
 
-//  if (console && console.log){
-//    console.log( $.now(), 'Starting, ' );
-//  }
-
-
   $.ajax({
-    // Your usual AJAX parameters here.
-    
     url: fetchUrl,
-    
     success: function(data) {
     
-//      if (console && console.log){
-//        console.log( $.now(), 'Data ready, ' );
-//      }
-    
       $(document).ready(function() {
-        // DOM manipulation here.
-        
-//        if (console && console.log){
-//          console.log( $.now(), 'Loaded.');
-//        }
-        
         $('#topiclisting').html(data);
         
         runDelayedAvatarLoad();
 
         install_watchlists();
         install_cheers();
-        
-        
       });
     }
     
   });
 
-
-{% comment %}
-
-    
-    $('#topiclisting').load(url,
-        function() {
-            $('.frontpage-loading').stop().hide();
-
-            // if hidden earlier, need to re-show here
-            //$('#topiclisting').show();
-
-            // catch pagination-related clicks and load via ajax
-            $('.pagination a').click(function() {
-               	targetPage =  $.deparam( $(this).attr('href') )['?page'] ;
-               	var state = {};
-               	state['page'] = targetPage;
-               	$.bbq.pushState( state );
-               	if(shortPosts!=true)
-                {
-                	$().scrollTo(0,600);
-                }
-                return false;
-            });
-
-            install_cheers();
-		});
-		
-		
-{% endcomment %}
-
-
-	// and set a timer to auto-refresh... every half hour, let's say?
-    timeout_id = setTimeout('load_homepage_posts()', 30 * 60 * 1000, true);
+  // and set a timer to auto-refresh... every half hour, let's say?
+  timeout_id = setTimeout('load_homepage_posts()', 30 * 60 * 1000, true);
 }
 
 
@@ -175,88 +124,38 @@ function chapter_dashboard()
 {
 	{% if request.user.is_authenticated %}
 		{% if request.user.get_profile.get_chapter %}
-		
-		
-		
-		  {% comment %}
-		
-			$('#chapter_dashboard').load('{% url group_summary request.user.get_profile.get_chapter.slug %}',
-				function() {
-					$('#dashboard_links a').mouseover(function() {
-						var myname = $(this).attr('id').substr(10);
-						$('.dashboard-detail').hide();
-						$('#' + myname).show();
-
-						$('#dashboard_links a').removeClass('current');
-						$(this).addClass('current');
-					});
-				});
-		
-		    {% endcomment %}
-		
-		
 		    fetchUrl = "{% url group_summary request.user.get_profile.get_chapter.slug %}";
 		
-        $.ajax({
-          // Your usual AJAX parameters here.
-          
-          url: fetchUrl,
-          
-          success: function(data) {
-          
-//            if (console && console.log){
-//              console.log( $.now(), 'CD Data ready, ' );
-//            }
-          
-            $(document).ready(function() {
-              // DOM manipulation here.
+            $.ajax({
+                url: fetchUrl,
+                success: function(data) {
+                    $(document).ready(function() {
+                          $('#chapter_dashboard').html(data);
               
-//              if (console && console.log){
-//                console.log( $.now(), 'CD Loaded.');
-//              }
-              
-              $('#chapter_dashboard').html(data);
-              
-    					$('#dashboard_links a').mouseover(function() {
+    			          $('#dashboard_links a').mouseover(function() {
     						var myname = $(this).attr('id').substr(10);
     						$('.dashboard-detail').hide();
     						$('#' + myname).show();
     
     						$('#dashboard_links a').removeClass('current');
     						$(this).addClass('current');
-    					});
-              
-      
-              
-              
+    					  });
+                    });
+                }
             });
-          }
-          
-        });
-		
-		
-		
-		
-		
-		
-		
 		{% else %}
-{#			$('#chapter_dashboard').html("You aren't in a chapter.  We should prompt you to join one, or pick some other default group."); #}
 			return false;
 		{% endif %}
 	{% else %}
-{# 		$('#chapter_dashboard').html("You aren't signed in. We shoudl display some generic static content here, or a big sign-in box.");#}
 		return false;
 	{% endif %}
 }
 	
-	chapter_dashboard();
-load_homepage_posts();
-	
 $(document).ready(function() {
 
-    install_cheers();
-
+	chapter_dashboard();
+    load_homepage_posts();
+    refresh_cheerslist();
 
 });
  
@@ -416,7 +315,7 @@ $(document).ready(function() {
     <div class="standardbox ewb-latest">
       <div class="standardbox-content" style="padding-top: 0;">
       	<div id="cheerslist">
-          	{% show_latest_cheers %}
+{#          	{% show_latest_cheers %}#}
         </div>
       	
       	<br/>
