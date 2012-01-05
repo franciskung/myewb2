@@ -51,11 +51,6 @@
           <div class="minipost-authortime">
             <a href="{% url profile_detail topic.creator %}">{{ topic.creator.visible_name }}</a>
             {% mktime topic.created %}
-          
-            {% ifnotequal topic.group.slug "ewb" %}
-              to
-              <a href="{{ topic.group.get_absolute_url }}#group-posts">{{ topic.group }}</a>
-            {% endifnotequal %}
           </div>
         </div>
       </div>
@@ -91,7 +86,15 @@
         {{ topic.intro|striptags }}
       </a>
 
-      <div style='clear: right;'></div>
+      {% ifnotequal topic.group.slug "ewb" %}
+        <div style='clear: right; margin-top: 10px;'>
+          Posted to 
+          <em><a href="{{ topic.group.get_absolute_url }}#group-posts">{{ topic.group }}</a></em>
+        </div>
+      {% else %}
+        <div style='clear: right;'></div>
+      {% endifnotequal %}
+      
     </div>
   </div>
 </div>

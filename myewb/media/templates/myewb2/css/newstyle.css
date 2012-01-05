@@ -1187,6 +1187,10 @@ select.normalize {
 #cheerscomment textarea {
     height: 50px;
 }
+a.cheers, a:hover.cheers {
+    text-decoration: none;
+}
+
 .redwarning {
     color: #ff0000;
 }

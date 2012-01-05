@@ -4,8 +4,8 @@
 <strong>Cheers</strong><br/><br/>
 {% endif %}
 {% for c in cheers %}
-    <div style="padding-bottom: 15px;">
-    	<a href="{% url profile_detail c.owner %}"  class="avatar-whos-online" data-background-src="{% avatar_url c.owner 25 %}" style="margin-right: 10px;"></a>
+    <div style="padding-bottom: 15px; clear: left;">
+    	<a href="{% url profile_detail c.owner %}"  class="avatar-whos-online" data-background-src="{% avatar_url c.owner 25 %}" style="margin-right: 10px; margin-bottom: 15px;"></a>
 
     	<div style="float: left;">
             {{ c.owner.visible_name }}

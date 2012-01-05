@@ -82,11 +82,6 @@
 
           <a href="{% url profile_detail topic.creator %}">{{ topic.creator.visible_name }}</a>
           {% mktime topic.created %}
-          
-          					{% ifnotequal topic.group.slug "ewb" %} to
-				    	<a href="{{ topic.group.get_absolute_url }}#group-posts">{{ topic.group }}</a>
-				    {% endifnotequal %}
-          
         </div>
         
         
@@ -326,6 +321,13 @@
 
 
 {% block toolbar_right %}
+    <br/>
+    {% ifnotequal topic.group.slug "ewb" %}
+        <strong>Posted to:</strong><br/>
+    	<a href="{{ topic.group.get_absolute_url }}#group-posts">{{ topic.group }}</a>
+    	<br/><br/>
+    {% endifnotequal %}
+          
     {% show_cheers_for_content topic %}
 {% endblock %}
 
