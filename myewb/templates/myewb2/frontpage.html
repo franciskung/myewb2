@@ -88,8 +88,11 @@ function install_watchlists() {
 function refresh_cheerslist()
 {
     clearTimeout(cheers_timeout_id);
-    $('#cheerslist').load('{% url winedown_latest %}');
-    cheers_timeout_id = setTimeout('refresh_cheerslist()', 10 * 60 * 1000, true);
+    $('#cheerslist').load('{% url winedown_latest %}',
+                          function() {
+                            cheers_timeout_id = setTimeout('refresh_cheerslist()', 10 * 60 * 1000, true);
+                            install_cheers();
+                          });
 }
 
 function load_homepage_posts()   // now, this'll be a behind-the-scenes function that's only called by hashchanges.
