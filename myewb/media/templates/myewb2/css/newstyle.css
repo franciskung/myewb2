@@ -1201,6 +1201,11 @@ table.messages th, table.messages td {
     padding: 5px 30px 5px 0;
 }
 
+li.attachmentItem img {
+    width: 16px;
+    height: 16px;
+}
+
 
 
 
