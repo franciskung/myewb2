@@ -39,7 +39,8 @@ def show_latest_cheers(context, num=10):
         "cheers": cheers,
         "num": num,
         "STATIC_URL": settings.STATIC_URL,
-        "request": context['request']
+        "request": context['request'],
+        "perms": context['perms']
     }
 
 @register.inclusion_tag("winedown/widget.html", takes_context=True)

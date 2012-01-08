@@ -13,5 +13,6 @@ urlpatterns = patterns('winedown.views',
     url(r'all/$', 'all_cheers', name='winedown_all'),
     url(r'latest/$', 'latest_cheers', name='winedown_latest'),
     url(r'(?P<content_id>[\d]+)/summary/$', 'cheers_summary', name='winedown_summary'),
+    url(r'(?P<content_id>[\d]+)/remove/$', 'cheers_remove', name='winedown_remove'),
     url(r'summary/$', 'cheers_summary', name='winedown_summary'),
 ) 

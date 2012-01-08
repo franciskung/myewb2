@@ -27,11 +27,11 @@ class CheersManager(models.Manager):
         return c
         
     def latest(self):
-        c = CheersContainer.objects.filter(count__gt=0).order_by('-latest')
+        c = CheersContainer.objects.filter(count__gt=0, hidden=False).order_by('-latest')
         return c
         
     def popular(self):
-        c = CheersContainer.objects.filter(count__gt=0).order_by('-count')
+        c = CheersContainer.objects.filter(count__gt=0, hidden=False).order_by('-count')
         return 
         
     def create_link(self, obj):
@@ -64,6 +64,7 @@ class CheersContainer(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     count = models.PositiveIntegerField(default=0)
     latest = models.DateTimeField(default=datetime.datetime.now())
+    hidden = models.BooleanField(default=False)
     
     def refresh_count(self):
         count = Cheers.objects.filter(content=self).count()

@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import permission_required
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext, Context, loader
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotFound
@@ -65,4 +66,11 @@ def cheers_summary(request, content_id=None):
                               context_instance=RequestContext(request)
                              )
                              
-
+@permission_required('winedown')
+def cheers_remove(request, content_id):
+    container = get_object_or_404(CheersContainer, id=content_id)
+    container.hidden = True
+    container.save()
+    
+    return HttpResponse("done")
+    
