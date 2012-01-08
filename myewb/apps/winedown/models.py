@@ -38,7 +38,7 @@ class CheersManager(models.Manager):
         container = self.get_container(obj)
         return reverse('winedown_cheers', kwargs={'content_id': container.id})
         
-    def create_from_obj(self, obj, user, comment=None):
+    def create_from_obj(self, obj, user=None, comment=None):
         container = self.get_container(obj)
         return self.create_from_container(container, user, comment)
         
@@ -93,7 +93,7 @@ class CheersContainer(models.Model):
         return {'id': 0, 'visible_name': "unknown user"}
 
 class Cheers(models.Model):
-    owner = models.ForeignKey(User)
+    owner = models.ForeignKey(User, blank=True, null=True)
     date = models.DateTimeField(auto_now_add=True)
     comment = models.TextField(max_length=120, blank=True, null=True,
                                verbose_name="Comment (optional)")
@@ -104,7 +104,7 @@ class Cheers(models.Model):
 class Tweet(models.Model):
     author = models.ForeignKey(User, blank=True, null=True)
     author_name = models.CharField(max_length=255)
-    author_username = models.CharField(max_length=255)
+    author_username = models.CharField(max_length=255, db_index=True)
     author_userid = models.IntegerField()
     author_image = models.CharField(max_length=255)
     date = models.DateTimeField(db_index=True)

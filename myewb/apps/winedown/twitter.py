@@ -8,6 +8,7 @@ import httplib, json, urllib
 from datetime import datetime
 from django.db.models import Max
 
+from siteutils.shortcuts import get_object_or_none
 from winedown.models import Cheers, Tweet
 
 def load_tweets():
@@ -32,22 +33,41 @@ def load_tweets():
     conn.close()
 
     result = json.loads(data)
+    result['results'].reverse()
+    
     for r in result['results']:
         tzdelta = datetime.now() - datetime.utcnow()
         parsed_date = datetime.strptime(r['created_at'], '%a, %d %b %Y %H:%M:%S +0000') + tzdelta
-
-        tweet, created = Tweet.objects.get_or_create(twitter_id=r['id_str'],
-                                                     defaults={'text': r['text'],
-                                                               'author_name': r['from_user_name'],
-                                                               'author_username': r['from_user'],
-                                                               'author_userid': r['from_user_id'],
-                                                               'author_image': r['profile_image_url'],
-                                                               'date': parsed_date})
         
-        if created:
-            # force creation of container...
-            container = Cheers.objects.get_container(tweet)
-            container.count = 1
-            container.latest = parsed_date
-            container.save()
+        tweet = None
+        
+        # retweet?  see what we can find...!
+        text = r['text']
+        print "i gots a tweet,", text
+        if text[0:4] == 'RT @':
+            original_tweeter = text.split(':')[0].split('@')[1].strip()
+            original_tweet = text.split(':', 1)[1].strip()
+            print "and it's a retweet??", original_tweeter, original_tweet
+            
+            tweet = get_object_or_none(Tweet, author_username=original_tweeter, text=original_tweet)
+            print tweet
+            
+        if tweet:
+            Cheers.objects.create_from_obj(tweet)
+        
+        else:
+            tweet, created = Tweet.objects.get_or_create(twitter_id=r['id_str'],
+                                                         defaults={'text': r['text'],
+                                                                   'author_name': r['from_user_name'],
+                                                                   'author_username': r['from_user'],
+                                                                   'author_userid': r['from_user_id'],
+                                                                   'author_image': r['profile_image_url'],
+                                                                   'date': parsed_date})
+            
+            if created:
+                # force creation of container...
+                container = Cheers.objects.get_container(tweet)
+                container.count = 1
+                container.latest = parsed_date
+                container.save()
 

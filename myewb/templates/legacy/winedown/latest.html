@@ -21,7 +21,6 @@
                     {% endifequal %}
                 </div>
                 {% ifnotequal c.count 1 %}
-                    <br/>
                     <a href="{% url winedown_summary c.id %}" style='color: #a0a0a0; font-size: 10px;' class="cheers_detail">cheers'ed by {{ c.count }} {% ifequal c.count 1 %}person{% else %}people{% endifequal %}!</a>
                     {% if cheers_link %}
                         &nbsp;&nbsp;&nbsp;
