@@ -1,3 +1,4 @@
+from django import template
 from django.template import Library
 from django.conf import settings
 
@@ -64,5 +65,43 @@ def show_cheers_widget(context, content):
         "STATIC_URL": settings.STATIC_URL,
         "request": context['request']
     }
+
+
+def do_get_cheers_link(parser, token):
+    """
+    Gets the link to cheers this item
+    """
+    error_message = "%r tag must be of format {%% %r CHEERS_CONTAINER USER as CONTEXT_VARIABLE %%}" % (token.contents.split()[0], token.contents.split()[0])
+    try:
+        split = token.split_contents()
+    except ValueError:
+        raise template.TemplateSyntaxError, error_message
+    if len(split) != 5:
+        raise template.TemplateSyntaxError, error_message
+    if split[3] != 'as':
+        raise template.TemplateSyntaxError, error_message
+    
+    return CheersLinkNode(split[1], split[2], split[4])
+
+class CheersLinkNode(template.Node):
+    def __init__(self, container, user, context_name):
+        self.container = template.Variable(container)
+        self.user = template.Variable(user)
+        self.context_name = context_name
+        
+    def render(self, context):
+        container = self.container.resolve(context)
+        user = self.user.resolve(context)
+        obj  = container.content_object
+        
+        link = None
+        if user.is_authenticated():
+            mycheers = Cheers.objects.get_for_object(obj).filter(owner=user)
+            if mycheers.count() == 0:
+                link = Cheers.objects.create_link(obj)
+        
+        context[self.context_name] = link
+        return ''
+register.tag('get_cheers_link', do_get_cheers_link)
 
 

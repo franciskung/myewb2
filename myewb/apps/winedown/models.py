@@ -49,7 +49,8 @@ class CheersManager(models.Manager):
             c.comment = comment
             c.save()
         
-            container.refresh_count()
+            #container.refresh_count()
+            container.count = container.count + 1
             container.latest = datetime.datetime.now()
             container.save()
         
