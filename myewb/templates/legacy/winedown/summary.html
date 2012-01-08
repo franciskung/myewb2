@@ -44,14 +44,14 @@
             {% ifequal c.model 'Cheers' %}
                 <img src="{% avatar_url c.owner 25 %}" alt="{{ c.owner.visible_name }}" style="height: 25px; width: 25px; float: left;"/>
                 
-                <div style='margin-left: 30px;'>
+                <div style='margin-left: 35px;'>
                     Cheers from 
                     <a href="{% url profile_detail c.owner %}">
                         {{ c.owner.visible_name }} 
     		        </a>
 		
                     {% if c.comment %} 
-                        <div style='font-style: italic; font-size: 12px; padding-left: 40px;'>
+                        <div style='font-style: italic; font-size: 12px;'>
                             {{ c.comment }}
                         </div>
                     {% endif %}
@@ -65,7 +65,7 @@
             {% ifequal c.model 'Retweet' %}
                 <img style="width: 25px; height: 25px; float: left;" src="{{ c.author_image }}"/>
 
-                <div style='margin-left: 30px;'>
+                <div style='margin-left: 35px;'>
                     Retweeted by 
                     <a href="http://twitter.com/intent/user?screen_name={{ c.author_username }}" target="_new">@{{ c.author_username }}</a>
 
