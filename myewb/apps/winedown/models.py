@@ -55,7 +55,7 @@ class CheersManager(models.Manager):
             container.save()
         
         return c
-
+        
 class CheersContainer(models.Model):
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
@@ -91,6 +91,18 @@ class CheersContainer(models.Model):
                 return getattr(obj, t)
                 
         return {'id': 0, 'visible_name': "unknown user"}
+        
+    def get_cheers(self):
+        cheers = self.cheers_set.all()
+        
+        cheers2 = []
+        for c in cheers:
+            if c.model == 'Retweet':
+                c = c.retweet
+                
+            cheers2.append(c)
+            
+        return cheers2
 
 class Cheers(models.Model):
     owner = models.ForeignKey(User, blank=True, null=True)
@@ -99,6 +111,9 @@ class Cheers(models.Model):
                                verbose_name="Comment (optional)")
 
     content = models.ForeignKey(CheersContainer)
+    
+    model = models.CharField(max_length=50, default='Cheers')
+    
     objects = CheersManager()
 
 class Tweet(models.Model):
@@ -113,4 +128,34 @@ class Tweet(models.Model):
 
     def get_absolute_url(self):
         return "http://twitter.com/#!/%s/status/%s" % (self.author_username, self.twitter_id)
+        
+    def retweet(self, twitter_array):
+        container = Cheers.objects.get_container(self)
+        
+        c, created = Retweet.objects.get_or_create(twitter_id=twitter_array['id_str'], content=container,
+                                                   defaults={'author_name': twitter_array['from_user_name'],
+                                                             'author_username': twitter_array['from_user'],
+                                                             'author_userid':  twitter_array['from_user_id'],
+                                                             'author_image': twitter_array['profile_image_url']})
+
+        if created:
+            #container.refresh_count()
+            container.count = container.count + 1
+            container.latest = datetime.datetime.now()
+            container.save()
+        
+        return c
+        
+        
+class Retweet(Cheers):
+    author = models.ForeignKey(User, blank=True, null=True)
+    author_name = models.CharField(max_length=255)
+    author_username = models.CharField(max_length=255, db_index=True)
+    author_userid = models.IntegerField()
+    author_image = models.CharField(max_length=255)
+    twitter_id = models.CharField(max_length=255, db_index=True)
+
+    def save(self, force_insert=False, force_update=False):
+        self.model = "Retweet"
+        return super(Retweet, self).save(force_insert, force_update)
         

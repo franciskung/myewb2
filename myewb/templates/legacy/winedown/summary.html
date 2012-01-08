@@ -1,23 +1,80 @@
 {% load avatar_tags %}
+{% load time_filters %}
 
 <div style='padding: 10px;'>
 
     <div style='font-size: 1.5em; padding-bottom: 15px; font-weight: bold;'>
-        Cheers for <em>{{ container.guess_title }}</em>
+        Cheers!
     </div>
 
-    {% for c in container.cheers_set.all %}
-        <div style="position: relative; padding-bottom: 10px;">
-            <img src="{% avatar_url c.owner 25 %}" alt="{{ c.owner.visible_name }}" style="height: 25px; width: 25px;"/>
-             <a href="{% url profile_detail c.owner %}" style="position: absolute; top: 5px; left: 40px;">
-                {{ c.owner.visible_name }} 
-		    </a>
-		
-            {% if c.comment %} 
-                <div style='font-style: italic; font-size: 12px; padding-left: 40px;'>
-                    {{ c.comment }}
+    {% ifequal container.content_type.model 'tweet' %}
+        <div style='font-size: 1.5em; padding-bottom: 15px; font-weight: bold;'>
+            <img style="width: 40px; height: 40px; padding-right: 10px; float: left;" src="{{ container.content_object.author_image }}"/>
+            
+            <div style='margin-left: 50px;'>
+                <em>{{ container.guess_title }}</em>
+                <div style='font-size: 0.6em; color: #a0a0a0;'>
+                    Tweeted by <a href="http://twitter.com/intent/user?screen_name={{ container.content_object.author_username }}" target="_new">@{{ container.content_object.author_username }}</a>,
+                    {% mktime container.created %}
                 </div>
-            {% endif %} 
+            </div>
+        </div>
+        
+    {% else %}
+        {% with container.guess_author as author %}
+            <div style='font-size: 1.5em; padding-bottom: 15px; font-weight: bold;'>
+                <img style="width: 40px; height: 40px; padding-right: 10px; float: left;" src="{% avatar_url author 40 %}"/>
+                
+                <div style='margin-left: 50px;'>
+                    <em>{{ container.guess_title }}</em>
+                    <div style='font-size: 0.6em; color: #a0a0a0;'>
+                        Posted by <a href="{% url profile_detail author %}">{{ author.visible_name }}</a>,
+                        {% mktime container.latest %}
+                    </div>
+                </div>
+            </div>
+        {% endwith %}
+        
+    {% endifequal %}
+    <br/>
+    
+    
+    {% for c in container.get_cheers %}
+        <div style="position: relative; padding-bottom: 10px;">
+            {% ifequal c.model 'Cheers' %}
+                <img src="{% avatar_url c.owner 25 %}" alt="{{ c.owner.visible_name }}" style="height: 25px; width: 25px; float: left;"/>
+                
+                <div style='margin-left: 30px;'>
+                    Cheers from 
+                    <a href="{% url profile_detail c.owner %}">
+                        {{ c.owner.visible_name }} 
+    		        </a>
+		
+                    {% if c.comment %} 
+                        <div style='font-style: italic; font-size: 12px; padding-left: 40px;'>
+                            {{ c.comment }}
+                        </div>
+                    {% endif %}
+                    
+                    <div style='font-size: 10px; color: #a0a0a0;'>
+                        {% mktime c.date %}
+                    </div>
+                </div>
+            {% endifequal %}
+             
+            {% ifequal c.model 'Retweet' %}
+                <img style="width: 25px; height: 25px; float: left;" src="{{ c.author_image }}"/>
+
+                <div style='margin-left: 30px;'>
+                    Retweeted by 
+                    <a href="http://twitter.com/intent/user?screen_name={{ c.author_username }}" target="_new">@{{ c.author_username }}</a>
+
+                    <div style='font-size: 10px; color: #a0a0a0;'>
+                        {% mktime c.date %}
+                    </div>
+                </div>
+            {% endifequal %}
+             
         </div>
     {% endfor %}
 

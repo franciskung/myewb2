@@ -53,7 +53,7 @@ def load_tweets():
             print tweet
             
         if tweet:
-            Cheers.objects.create_from_obj(tweet)
+            tweet.retweet(r)
         
         else:
             tweet, created = Tweet.objects.get_or_create(twitter_id=r['id_str'],
