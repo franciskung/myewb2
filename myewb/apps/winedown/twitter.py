@@ -43,14 +43,11 @@ def load_tweets():
         
         # retweet?  see what we can find...!
         text = r['text']
-        print "i gots a tweet,", text
         if text[0:4] == 'RT @':
             original_tweeter = text.split(':')[0].split('@')[1].strip()
             original_tweet = text.split(':', 1)[1].strip()
-            print "and it's a retweet??", original_tweeter, original_tweet
             
             tweet = get_object_or_none(Tweet, author_username=original_tweeter, text=original_tweet)
-            print tweet
             
         if tweet:
             tweet.retweet(r)
