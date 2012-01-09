@@ -22,7 +22,7 @@
     <strong>Common session: </strong> {% if session.common %}yes{% else %}no{% endif %}<br/>
     <br/>
     {% if not session.common %}
-    <strong>Recommended if any of...:</strong><br/>
+        <strong>Recommended if any of...:</strong><br/>
     	{% for c in session.conferencesessioncriteria_set.all %}
     		{% if c.first_conference %}
     			First conference is {{ c.first_conference }}<br/>
@@ -52,6 +52,11 @@
     			The person did not have any recommended sessions for this timeslot<br/>
     		{% endif %}
     	{% endfor %}
+    	
+        <strong>Attendees</strong>
+        {% for u in session.attendees.all %}
+            {{ u.visible_name }}<br/>
+        {% endfor %}
     {% endif %}
 
 {% endblock %}
