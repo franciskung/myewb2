@@ -60,11 +60,13 @@
 		{% endif %}
 		{% endcomment %}
 		
+		{% comment %}
 		{% if skiform %}
 		<li>
 			<a href="{% url conference_ski %}">attend the optional Sunday ski trip</a>
 		</li>
 		{% endif %}
+		{% endcomment %}
 		
 		<li>
 			<a href="{% url conference_ad %}">add an African Delegate contribution</a> (${{ registration.africaFund|default:0 }} received)
