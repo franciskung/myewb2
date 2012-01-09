@@ -53,7 +53,8 @@
     		{% endif %}
     	{% endfor %}
     	
-        <strong>Attendees</strong>
+    	<br/><br/>
+        <strong>Attendees</strong><br/>
         {% for u in session.attendees.all %}
             {{ u.visible_name }}<br/>
         {% endfor %}
