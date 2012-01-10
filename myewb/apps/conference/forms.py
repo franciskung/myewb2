@@ -1058,7 +1058,8 @@ class ConferenceQuestionnaireForm(forms.ModelForm):
             exclude = ('registration',)
 
 class ConferenceQuestionnaireFormFrench(forms.ModelForm):
-    first_conference = forms.BooleanField(label='Est-ce votre premier congrès?')
+    first_conference = forms.BooleanField(label='Est-ce votre premier congrès?',
+                                          required=False)
     
     chaptertype = forms.ChoiceField(choices=CHAPTERTYPE_CHOICES_FR,
                                     label='De quel type de section faites-vous partie?')
