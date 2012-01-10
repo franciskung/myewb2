@@ -1033,18 +1033,20 @@ class ConferenceSessionForm(forms.ModelForm):
                   'description', 'description_fr', 'prep', 'prep_fr']
 
 SMS_CHOICES = (('all', 'All conference delegates'),
-               ('internal', 'Internal (EWB member + alumni) delegates'),
-               ('external', 'External delegates'),
+#               ('internal', 'Internal (EWB member + alumni) delegates'),
+#               ('external', 'External delegates'),
                ('alumni', 'Alumni delegates'),
-               ('hotel', 'Internal delegates with a hotel room'),
-               ('nohotel', 'Internal delegates without a hotel room (incl alumni)'),
-               ('nohotel-all', 'All delegates without a hotel room (internal and external)'))
+               ('hotel', 'Delegates with a hotel room'),
+#               ('nohotel', 'Internal delegates without a hotel room (incl alumni)'),
+#               ('nohotel-all', 'All delegates without a hotel room (internal and external)'))
+               ('nohotel', 'All delegates without a hotel room'))
 class ConferenceSmsForm(forms.Form):
     grouping = forms.ChoiceField(choices=SMS_CHOICES,
                                  widget=forms.RadioSelect,
                                  required=True)
     message = forms.CharField(max_length=160,
-                              widget=forms.Textarea)
+                              widget=forms.Textarea,
+                              help_text='Maximum 160 characters.')
 
 class ConferenceQuestionnaireForm(forms.ModelForm):
     roles = forms.MultipleChoiceField(required=False,

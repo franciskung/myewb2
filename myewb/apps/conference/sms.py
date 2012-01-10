@@ -41,6 +41,7 @@ def do_send_sms(args):
         try:
             response = account.request('/%s/Accounts/%s/SMS/Messages' % (api, sid),
                                        'POST', x)
+            #print x['To']
         except Exception, e:
             response = e.read()
 
@@ -50,6 +51,8 @@ def do_send_sms(args):
                       fromemail="itsupport@ewb.ca",
                       recipients=['franciskung@ewb.ca',],
                       use_template=False)
+
+        break
 
 
 @login_required
@@ -64,6 +67,7 @@ def send_sms(request, session=None):
         api = settings.TWILIO_API_VERSION
         sid = settings.TWILIO_ACCOUNT_SID
         token = settings.TWILIO_ACCOUNT_TOKEN
+        number = settings.TWILIO_PHONE_NUMBER
         
         form = ConferenceSmsForm(request.POST)
         
@@ -79,32 +83,39 @@ def send_sms(request, session=None):
                 registrations = ConferenceRegistration.objects.filter(user__in=list(s.attendees.all()))
             elif form.cleaned_data['grouping'] == 'all':
                 registrations = ConferenceRegistration.objects.all()
-            elif form.cleaned_data['grouping'] == 'internal':
-                registrations = ConferenceRegistration.objects.filter(~Q(type__contains='day'))
-            elif form.cleaned_data['grouping'] == 'external':
-                registrations = ConferenceRegistration.objects.filter(type__contains='day')
+
+            #elif form.cleaned_data['grouping'] == 'internal':
+            #    registrations = ConferenceRegistration.objects.filter(~Q(type__contains='day'))
+            #elif form.cleaned_data['grouping'] == 'external':
+            #    registrations = ConferenceRegistration.objects.filter(type__contains='day')
+
             elif form.cleaned_data['grouping'] == 'alumni':
                 registrations = ConferenceRegistration.objects.filter(type__contains='alumni')
             elif form.cleaned_data['grouping'] == 'hotel':
-                registrations = ConferenceRegistration.objects.filter(Q(type__contains='single') | Q(type__contains='double'))
+                registrations = ConferenceRegistration.objects.filter(Q(type__contains='single') | Q(type__contains='double') | Q(type__contains='quad'))
             elif form.cleaned_data['grouping'] == 'nohotel':
-                registrations = ConferenceRegistration.objects.filter(Q(type__contains='nohotel') | Q(type__contains='alumni'))
-            elif form.cleaned_data['grouping'] == 'nohotel-all':
-                registrations = ConferenceRegistration.objects.filter(~Q(type__contains='single'), ~Q(type__contains='double'))
+                registrations = ConferenceRegistration.objects.filter(Q(type__contains='nohotel'))
+            #elif form.cleaned_data['grouping'] == 'nohotel-all':
+            #    registrations = ConferenceRegistration.objects.filter(~Q(type__contains='single'), ~Q(type__contains='double'))
             
-            registrations = registrations.filter(cancelled=False, cellphone__isnull=False, cellphone_optout__isnull=True)
+            registrations = registrations.filter(cancelled=False, submitted=True, cellphone__isnull=False, cellphone_optout__isnull=True)
+
+            # just for debugging...
+            #registrations = registrations.filter(cellphone='mynumber')
             
-            if not s and form.cleaned_data['grouping'] == 'all':
-                registrations = list(registrations)
-                registrations.extend(list(ConferenceCellNumber.objects.filter(cellphone_optout__isnull=True)))
+            #if not s and form.cleaned_data['grouping'] == 'all':
+            #    registrations = list(registrations)
+            #    registrations.extend(list(ConferenceCellNumber.objects.filter(cellphone_optout__isnull=True)))
             
             # Twilio
             account = twilio.Account(sid, token)
-            thread_list = {}
+            #thread_list = {}
+            batch_messages = []
             for r in registrations:
                 if r.cellphone_optout or not r.cellphone:
                     continue
-                
+
+                """
                 fromnumber = r.cellphone_from
                 if not fromnumber:
                     numbers = ConferencePhoneFrom.objects.order_by('accounts')
@@ -132,79 +143,30 @@ def send_sms(request, session=None):
                 failed = failed + 1
             else:
                 success = success + 1
+                """
+
+                d = {'From': number,
+                     'To': r.cellphone,
+                     'Body': form.cleaned_data['message']}
+
+                batch_messages.append(d)                
+                
+            try:
+                t = Thread(target=do_send_sms, args=(batch_messages,))
+                t.start()
+                
+            except Exception, e:
+                #response = e.read()
+                failed = failed + 1
+            else:
+                success = success + 1
 
             response = ""
             if failed:
-                response = "%s<br/>Messages queued for sending, but some errors encountered =(" % response
+                response = "%s<br/>%d messages queued for sending, but some errors encountered =(" % (response, len(batch_messages))
             else:
-                response = "%s<br/>Messages queued for sending!" % response
+                response = "%s<br/>%d messages queued for sending!" % (response, len(batch_messages))
             
-            """
-            # ThunderTexting, simple GET
-            import urllib
-            try:
-                params = {}
-                params['CellNumber'] = '000-000-0000'
-                params['MessageBody'] = form.cleaned_data['message']
-                params['AccountKey'] = 'PPD843rw14'
-                
-                encoded = urllib.urlencode(params)
-                handle = urllib.urlopen("http://thundertexting.com/sendsms.aspx?%s" % encoded)
-                response = handle.read()
-                #response = "http://thundertexting.com/sendsms.aspx?%s" % encoded
-                
-            except Exception, e:
-                response = r.read()
-            """
-
-            """
-            # ThunderTexting, SOAP
-            from suds.client import Client
-            try:
-                url = 'http://thundertexting.com/SendSMS.asmx?WSDL'
-                client = Client(url)
-                
-                response = client.service.SendMessageWithReference(CellNumber='000-000-0000',
-                                                                   MessageBody=form.cleaned_data['message'],
-                                                                   AccountKey=settings.THUNDERTEXTING_KEY,
-                                                                   Reference='test1')
-            except Exception, e:
-                response = r.read()
-            """
-            
-            """
-            # ThunderTexting, SOAP batch send
-            try:
-                from suds.client import Client
-                url = 'http://thundertexting.com/SendSMS.asmx?WSDL'
-                client = Client(url)
-
-                numbers = []
-                for r in registrations:
-                    if r.cellphone and not r.cellphone_optout:
-                        numbers.append(r.cellphone)
-                
-                # cell number should already be normalized to 123-456-7890
-                response = client.service.SendBulkMessage(CellNumbers=numbers,
-                                                          MessageBody=form.cleaned_data['message'],
-                                                          AccountKey=settings.THUNDERTEXTING_KEY,
-                                                          Reference=datetime.now())
-            except Exception, e:
-                response = r.read()
-            """
-            
-            """
-            for r in registrations:
-                if hasattr(r, 'user'):
-                    if r.cellphone and not r.cellphone_optout:
-                        response = "%s<br/>%s %s - %s\n" % (response, r.user.first_name, r.user.last_name, r.type)
-                else:
-                    response = "%s<br/>%s\n" % (response, r.cellphone)
-                    
-            if not response:
-                response = "No recipients matched your query."
-            """
-                
     else:
         form = ConferenceSmsForm()
         if s:
@@ -218,50 +180,12 @@ def send_sms(request, session=None):
     else:
         context['form'] = form
         
-    return render_to_response("conference/schedule/sms.html",
+    return render_to_response("conference/schedule2/sms.html",
                               context,
                               context_instance = RequestContext(request))
 
 # This requires mailbox support; see sms_poll.php and put it on a cron =)
 def stop_sms(request):
-    """
-    ThunderTexting format:
-    
-    Date Received: 1/4/2011 8:48:41 PM
-    From Phone Number: 1416xxxxxxx
-    Their Message: You tell me!
-    
-    Newline test
-    --------------------------
-    This is most likely a response to the following message you sent -  
-    Date Sent: 1/4/2011 8:48:03 PM
-    To Phone Number: 416xxxxxxx
-    Your Message: ok, now what's next...!
-    Your Reference: test1
-    
-    if request.method != 'POST' or not request.POST.get('message', None):
-        return HttpResponse("not supported")
-
-    result = ""
-    
-    message = request.POST.get('message', None)
-    lines = message.split("\n")
-    date = lines[0]
-    fromnumber = lines[1]
-    
-    tempa, tempb, fromnumber = fromnumber.partition(':')
-    fromnumber = fromnumber.strip()
-    
-    if fromnumber[0:1] == '1':
-        fromnumber = fromnumber[1:]
-    
-    txtmessage = lines[2]
-    for i in range(3, len(lines)):
-        if lines[i].startswith('----'):
-            break
-        txtmessage = txtmessage + "\n" + lines[i]
-    """
-    
     """
     Twilio format.  So much easier.
     """
@@ -283,25 +207,26 @@ def stop_sms(request):
     elif tonumber[0:2] == '+1':
         tonumber = tonumber[2:]
 
-    if fromnumber == '5193627821' or tonumber == '5193627821':
-        return HttpResponse("")
+#    if fromnumber == '5193627821' or tonumber == '5193627821':
+#        return HttpResponse("")
         
     txtmessage = txtmessage.strip().lower()
     
     if txtmessage.find('stop') != -1:
         result = result + "stopping\n"
-        r = ConferenceRegistration.objects.filter(cellphone=fromnumber, cancelled=False)
+        r = ConferenceRegistration.objects.filter(cellphone=fromnumber, cancelled=False, submitted=True)
         
         if fromnumber and r.count():
             for reg in r:
                 result = result + "goodbye %s\n" % reg.user.email
                 reg.cellphone_optout = datetime.now()
                 reg.save()
-                provider = reg.cellphone_from
-                if provider:
-                    provider.accounts = provider.accounts - 1
-                    provider.save()
-                
+                #provider = reg.cellphone_from
+                #if provider:
+                #    provider.accounts = provider.accounts - 1
+                #    provider.save()
+
+        """                
         numbers = ConferenceCellNumber.objects.filter(cellphone=fromnumber, cellphone_optout__isnull=True)
         if fromnumber and numbers.count():
             for n in numbers:
@@ -311,6 +236,7 @@ def stop_sms(request):
                 if provider:
                     provider.accounts = provider.accounts - 1
                     provider.save()
+        """
                     
         xmlresponse = """<?xml version="1.0" encoding="UTF-8" ?>
 <Response>
@@ -329,7 +255,15 @@ def stop_sms(request):
             reg = r[0]
             reg.cellphone_optout = None
             reg.save()
-            
+
+            xmlresponse = """<?xml version="1.0" encoding="UTF-8" ?>
+<Response>
+    <Sms>Welcome to the EWB National Conference 2011 notices list.  To unsubscribe, reply with STOP</Sms>
+</Response>
+"""
+            return HttpResponse(xmlresponse)
+    
+            """            
             if reg.cellphone_from:
                 provider = reg.cellphone_from
             else:
@@ -338,7 +272,9 @@ def stop_sms(request):
                 reg.save()
             provider.accounts = provider.accounts + 1
             provider.save()
-        
+            """
+
+        """
         elif numbers.count():
             result = result + "already found %s\n" % fromnumber
             n = numbers[0]
@@ -358,13 +294,14 @@ def stop_sms(request):
             provider, created = ConferencePhoneFrom.objects.get_or_create(number=tonumber)
             ConferenceCellNumber.objects.create(cellphone=fromnumber, cellphone_from=provider)
             result = result + "adding %s\n" % fromnumber
+        """
     
-        xmlresponse = """<?xml version="1.0" encoding="UTF-8" ?>
-<Response>
-    <Sms>Welcome to the EWB National Conference 2011 notices list.  To unsubscribe, reply with STOP</Sms>
-</Response>
-"""
-        return HttpResponse(xmlresponse)
+#        xmlresponse = """<?xml version="1.0" encoding="UTF-8" ?>
+#<Response>
+#    <Sms>Welcome to the EWB National Conference 2011 notices list.  To unsubscribe, reply with STOP</Sms>
+#</Response>
+#"""
+#        return HttpResponse(xmlresponse)
     
     #else:
     #    result = result + "dunno what to do\n"
@@ -374,3 +311,4 @@ def stop_sms(request):
 
         
     return HttpResponse(result)
+    

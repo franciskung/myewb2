@@ -383,6 +383,7 @@ API_KEY = ""
 TWILIO_API_VERSION = '2010-04-01'
 TWILIO_ACCOUNT_SID = ''
 TWILIO_ACCOUNT_TOKEN = ''
+TWILIO_PHONE_NUMBER = ''
 THUNDERTEXTING_KEY = ''
 
 # local_settings.py can be used to override environment-specific settings

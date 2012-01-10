@@ -21,6 +21,7 @@
     <strong>Time: </strong> {{ session.timeslot.day|date:"l"}}, {{ session.timeslot.time|time:"g:i" }} - {{ session.timeslot.endtime|time:"g:i A" }}<br/>
     <strong>Common session: </strong> {% if session.common %}yes{% else %}no{% endif %}<br/>
     <br/>
+
     {% if not session.common %}
         <strong>Recommended if any of...:</strong><br/>
     	{% for c in session.conferencesessioncriteria_set.all %}
@@ -54,6 +55,10 @@
     	{% endfor %}
     	
     	<br/><br/>
+    	
+        <a href="{% url conference_send_sms session.id %}"><strong>send a text to all attendees</strong></a><br/>
+        <br/>
+    
         <strong>Attendees</strong><br/>
         {% for u in session.attendees.all %}
             {{ u.visible_name }}<br/>
