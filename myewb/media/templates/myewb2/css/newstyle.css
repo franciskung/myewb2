@@ -1209,6 +1209,44 @@ li.attachmentItem img {
     height: 16px;
 }
 
+div.createaccount {
+float:right;
+margin-right:20%;
+}
+
+div#content div.createaccount input[type="button"] {
+font-size: 1.2em;
+padding:1.5em 2.5em;
+}
+
+form.login {
+    width: 53%;
+}
+
+form.login .inlineLabels label {
+    width: 10em;
+    text-align: right;
+    font-weight: bold;
+    margin-top: 0.6em;
+}
+form.login .inlineLabels input[type="text"], form.login .inlineLabels input[type="password"] {
+width: 180px;
+}
+
+
+form.login label[for="id_remember"] {
+    visibility: hidden;
+}
+form.login label[for="id_remember"].remember-me-label {
+display:inline;
+float:none;
+font-weight:normal;
+visibility:visible;
+}
+
+form.login fieldset.inlineLabels p {
+clear:both;
+}
 
 
 
