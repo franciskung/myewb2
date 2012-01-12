@@ -35,11 +35,12 @@
             <li><strong><a href="{% url acct_logout %}">Sign out</a></strong></li>
         {% else %}
             <li><strong><a href="{% url acct_login %}">Sign in to myEWB</a></strong></li>
+            <li><a href="{% url acct_signup %}">Create an account</a></li>
         {% endif %}
         <br/>
                 
         <li><a href="#">Fran&ccedil;ais</a></li>
-        <li><a href="#">Change time zone ({% if detected_timezone %}{{detected_timezone}}{% endif %})</a></li>
+        <li><a href="#">Change time zone{% if detected_timezone %} ({{detected_timezone}}){% endif %}</a></li>
         <br/>
 
       </ul>

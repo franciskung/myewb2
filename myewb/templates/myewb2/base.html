@@ -72,7 +72,7 @@
           </a></li>
           <li><a href="{% url jobboard_list %}" class="border-green{% block nav_class_volunteer %}{% endblock %}">
           		<img src="{{ STATIC_URL }}images/icons3/Tag.png"/>
-          		Applications
+          		<span class="twoline">Get Involved</span>
           </a></li>
         </ul>
         {% endspaceless %}
@@ -80,7 +80,7 @@
         <div class="myewb-header-right">
           <div class="searchbox">
             <form method="get" action="{% url search %}" id="mainsearchform">
-               <input type="text" value="search" style="width: 200px; color: #a0a0a0; margin: 5px 10px;" id="global_search_box" name="q"/>
+               <input type="text" value="search" id="global_search_box" name="q"/>
                     
                {% if user.is_authenticated %}
                     
@@ -94,9 +94,9 @@
               {% endif %}
 
           </div>
-          <div class="profile-pic" style='position: relative;'>
-            
-            {% if user.is_authenticated %}
+
+          {% if user.is_authenticated %}
+            <div class="profile-pic" style='position: relative;'>
                 <a class="profile-pic-link" href="{% url profile_detail user %}" id="profile_image">
                   <span data-background-src="{% avatar_url user 40 %}" class="avatar-40"></span>
 
@@ -123,11 +123,8 @@
                     <a href="{% url acct_logout %}">Sign out</a>
                     <br/>
                 </div>
-            {% endif %}
-            
-            
-            
-          </div>
+              </div>
+          {% endif %}
         </div>
         
       </div>
