@@ -2,14 +2,13 @@
 {% load extra_tagging_tags %}
 
 <dt><a href="{{ community.get_absolute_url }}">{{ community.name }}{#} ({{ community.slug }})#}</a></dt>
-<dd>{{ community.description|truncatewords_html:20 }}
+{{ community.description|truncatewords_html:20 }}
     <div class="community_stats">
-        {% trans "Members:" %} <b>{{ community.member_count }}</b>
-&nbsp;
-        {% trans "Posts:" %} <b>{{ community.topic_count }}</b> ({{community.recent_topic_count}} recent)
+        {% trans "Members:" %} <b>{{ community.member_count }}</b><br/>
+        {% trans "Posts:" %} <b>{{ community.topic_count }}</b> ({{community.recent_topic_count}} recent)<br/>
         <br />
         <a href="{{ community.get_absolute_url }}members/new">Join this group &raquo;</a><br/>
         
         {% show_tags_for community %} {# @@@ #}
     </div>
-</dd>
+

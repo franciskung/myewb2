@@ -11,30 +11,42 @@
 {% load sorting_tags %}
 {% load cache %}
 
-{% block head_title %}{% blocktrans %}Communities{% endblocktrans %}{% endblock %}
+{% block head_title %}{% blocktrans %}Groups{% endblocktrans %}{% endblock %}
 
 {% block body %}
 
-{% cache CACHE_TIMEOUT "communitylist" user request.page request.field search_terms %}
+{% cache CACHE_TIMEOUT "grouplist" user request.page request.field search_terms %}
 
-    <h1 class="h2bold">{% trans "My Groups" %}</h1>
+    <h1>{% trans "My Groups" %}</h1>
+    
+    {% autosort groups %}
+    {% autopaginate groups 10 %}
+    {% if groups %}
     
     <div class="chapterlist communitieslist">
 
-	    {% if user.is_authenticated and user.get_networks %}
-		    {% for group in user.get_communities %}
-	            {% show_community group %}
-			{% endfor %}
-	
-	    {% else %}
-	        {% url acct_signup as signup_url %}
-	        {% url acct_login as login_url %}
-	        <p>Not much to see here...</p>
-	        <p>You should really <a href="{{ login_url }}">log in </a>.</p>
-		{% endif %}
-	    
+
+
+
+        {% for group in groups %}
+        <div class="groupitem">
+            {% show_community group %}
+        </div>
+
+        {% endfor %}
+        
     </div>
-	
+
+        <br class="clear"/>
+        {% paginate %}
+
+    {% else %}
+        {% url acct_signup as signup_url %}
+        {% url acct_login as login_url %}
+        <p>Not much to see here...</p>
+        <p>You should really <a href="{{ login_url }}">log in </a>.</p>
+    {% endif %}
+    
 {% endcache %}
 
 {% endblock %}
@@ -88,6 +100,5 @@
 	    {% endif %}
 	</div>
 
-
-
 {% endblock %}
+

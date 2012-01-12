@@ -27,8 +27,8 @@
 
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
 
-        <li id="li-group-postsearch" class="ui-corner-top ui-state-default "><a href="{% url search %}?q=" id="show-postsearch">Search posts and events</a></li>
-        <li id="li-group-peoplesearch" class="ui-corner-top ui-state-default ui-tabs-selected ui-state-active"><a href="#people-search" id="show-peoplesearch">People Search</a></li>
+        <li id="li-group-postsearch" class="ui-corner-top ui-state-default "><a href="{% url search %}?q=" id="show-postsearch">Search content</a></li>
+        <li id="li-group-peoplesearch" class="ui-corner-top ui-state-default ui-tabs-selected ui-state-active"><a href="#people-search" id="show-peoplesearch">Search people</a></li>
 
     </ul>
 
@@ -37,6 +37,7 @@
 
         <div id="div-people-search" class="group-subsection" style="display: block;">
     
+        <br/>
     
     	{% show_profile_search search_terms %}
     

@@ -30,21 +30,21 @@
 <div id="search-tabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
 
 <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
-        <li id="li-group-postsearch" class="ui-corner-top ui-state-default ui-tabs-selected ui-state-active"><a href="#post-search" id="show-postsearch">Search posts and events</a></li>
+        <li id="li-group-postsearch" class="ui-corner-top ui-state-default ui-tabs-selected ui-state-active"><a href="#post-search" id="show-postsearch">Search content</a></li>
         
         
 {% if user.is_authenticated %}
 
-        <li id="li-group-peoplesearch" class="ui-corner-top ui-state-default "><a href="{% url profiles_index %}?search=" id="show-peoplesearch">People Search</a></li>
+        <li id="li-group-peoplesearch" class="ui-corner-top ui-state-default "><a href="{% url profiles_index %}?search=" id="show-peoplesearch">Search people</a></li>
 
 {% endif %}
     </ul>
-    
+
     <div class="ui-tabs-panel ui-widget-content ui-corner-bottom">
 
         <div id="div-post-search" class="group-subsection" style="display: block;">
     
-    
+        <br/>    
     
         <form method="get" action=".">
             <table class="standard standard-right search-form shorter">

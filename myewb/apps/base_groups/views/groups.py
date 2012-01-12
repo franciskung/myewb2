@@ -42,7 +42,7 @@ def groups_index(request, model=None, member_model=None, form_class=None,
     """
     
     if model is None:       # i dunno how the bots are finding this, but they are, and it's causing errors.
-        return HttpResponseRedirect(reverse('communities_index'))       # it's not meant to be a visible page.
+        #return HttpResponseRedirect(reverse('communities_index'))       # it's not meant to be a visible page.
         model = BaseGroup
         
     # keep this here to be RESTful (allow POST to index for creating new objects)
@@ -51,22 +51,28 @@ def groups_index(request, model=None, member_model=None, form_class=None,
                          form_class=form_class, template_name=new_template_name,
                          index_template_name=template_name, options=options)
 
-    # retrieve basic objects
     user = request.user
-    if hasattr(model.objects, 'listing'):
-        groups = model.objects.listing()
-    else:
-        groups = model.objects.filter(is_active=True)
-
+    
     # if running a search, filter by search term
     search_terms = request.GET.get('search', '')
-    groups = group_search_filter(groups, search_terms)
+    if search_terms:
+        # retrieve basic objects
+        if hasattr(model.objects, 'listing'):
+            groups = model.objects.listing()
+        else:
+            groups = model.objects.filter(is_active=True)
+
+        # run search
+        groups = group_search_filter(groups, search_terms)
+
+        # visibility check
+        # (should we move this into the manager instead?)
+        if not user.has_module_perms("base_groups"):
+            groups = enforce_visibility(groups, user)
+
+    else:
+        groups = model.objects.filter(member_users=user, is_active=True).exclude(model="LogisticalGroup")
     
-    # visibility check
-    # (should we move this into the manager instead?)
-    if not user.has_module_perms("base_groups"):
-        groups = enforce_visibility(groups, user)
-        
     # add some meta-data
     groups = get_recent_counts(get_counts(groups, BaseGroup), BaseGroup).order_by('-recent_topic_count')
     
