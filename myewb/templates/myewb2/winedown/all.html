@@ -1,5 +1,7 @@
 {% extends 'site_base.html' %}
 
+{% load pagination_tags %}
+
 {% block body %}
 
 	<h1 class="h2bold">EWB Cheers</h1>
@@ -24,12 +26,46 @@
 	</p>
 
 	<h2 class="h2bold">Recent Cheers</h2>
-	
+
+	{% comment %}
 	{% for c in cheers %}
 	    <div style="padding-bottom: 10px;">
 	        <a href="{{ c.content_object.absolute_url }}">{{ c.guess_title }}</a>
 	        <div style="padding-left: 15px;">cheers'ed by {{ c.count }} people!</div>
 	    </div>
 	{% endfor %}
+	{% endcomment %}
 
+    {% autopaginate cheers 25 %}
+
+	{% include 'winedown/latest.html' %}
+
+    {% paginate %}
+
+    <script type='text/javascript'>
+        function install_cheers() {
+            $('.cheers').unbind('click');
+            $('.cheers_detail').unbind('click');
+
+            $('.cheers').colorbox({opacity: '0.5', width: '75%', height: '75%'});
+            $('.cheers_detail').colorbox({opacity: '0.5', width: '75%', height: '75%'});
+            
+            $('.cheers_remove').click(function() {
+                if (confirm("Are you sure you want to remove this?"))
+                {
+                    $.get($(this).attr('href'),
+                          function() {
+                            refresh_cheerslist();
+                          });
+                }
+                return false;
+            });
+        }
+
+        $().ready(function() {
+            install_cheers();
+        });
+         
+    </script>
+    
 {% endblock %}
