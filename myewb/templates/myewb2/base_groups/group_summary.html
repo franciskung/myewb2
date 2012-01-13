@@ -9,11 +9,11 @@
 
 <h2 class="chapterspecific-title h2bold">
 	{{ group.name }}
-   	<select class='normalize'>
+   	<select class='normalize' id="group_dashboard_selector">
    		<option>-- switch to --</option>
    		{% get_dashboard_groups for request.user as groups %}
    		{% for g in groups %}
-   		    {% ifnotequal g group %}
+   		    {% ifnotequal g.slug group.slug %}
    		        <option value="{{ g.slug }}">{{ g.name }}</option>
    		    {% endifnotequal %}
    		{% endfor %}
@@ -84,4 +84,12 @@
 
 </div>
 <div class="clear"></div>
+
+<script type='text/javascript'>
+    $().ready(function() {
+        $('#group_dashboard_selector').change(function() {
+            chapter_dashboard($(this).val());
+        });
+    });
+</script>
 

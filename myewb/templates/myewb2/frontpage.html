@@ -134,40 +134,35 @@ function load_homepage_posts()   // now, this'll be a behind-the-scenes function
 
 
 
-function chapter_dashboard()
+function chapter_dashboard(grpname)
 {
-	{% if request.user.is_authenticated %}
-		{% if request.user.get_profile.get_chapter %}
-		    fetchUrl = "{% url group_summary request.user.get_profile.get_chapter.slug %}";
-		
-            $.ajax({
-                url: fetchUrl,
-                success: function(data) {
-                    $(document).ready(function() {
-                          $('#chapter_dashboard').html(data);
-              
-    			          $('#dashboard_links a').mouseover(function() {
-    						var myname = $(this).attr('id').substr(10);
-    						$('.dashboard-detail').hide();
-    						$('#' + myname).show();
-    
-    						$('#dashboard_links a').removeClass('current');
-    						$(this).addClass('current');
-    					  });
-                    });
-                }
+    var fetchUrl = "{% url groups_index %}" + grpname + "/summary/";
+    $.ajax({
+        url: fetchUrl,
+        success: function(data) {
+            $(document).ready(function() {
+                  $('#chapter_dashboard').html(data);
+      
+		          $('#dashboard_links a').mouseover(function() {
+					var myname = $(this).attr('id').substr(10);
+					$('.dashboard-detail').hide();
+					$('#' + myname).show();
+
+					$('#dashboard_links a').removeClass('current');
+					$(this).addClass('current');
+				  });
             });
-		{% else %}
-			return false;
-		{% endif %}
-	{% else %}
-		return false;
-	{% endif %}
+        }
+    });
 }
 	
 $(document).ready(function() {
 
-	chapter_dashboard();
+	{% if request.user.is_authenticated %}
+		{% if request.user.get_profile.get_chapter %}
+        	chapter_dashboard('{{ request.user.get_profile.get_chapter.slug }}');
+        {% endif %}
+    {% endif %}
     load_homepage_posts();
     refresh_cheerslist();
 
