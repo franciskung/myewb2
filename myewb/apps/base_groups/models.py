@@ -46,7 +46,8 @@ class BaseGroupManager(models.Manager):
             mrecords = GroupMember.objects.filter(filter1, filter2)
             groups = []
             for m in mrecords:
-                groups.append(m.group)
+                if m.group not in groups:
+                    groups.append(m.group)
 
             chapter = u.get_profile().get_chapter()
             if chapter and chapter not in groups:
