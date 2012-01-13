@@ -17,6 +17,7 @@ from django.contrib.auth.models import  User
 from django.contrib.sites.models import Site
 from django.utils.translation import ugettext_lazy as _
 from django.db import models, connection
+from django.db.models import Q
 from django.db.models.signals import post_save, pre_delete
 from django.conf import settings
 
@@ -40,7 +41,9 @@ class BaseGroupManager(models.Manager):
         u = get_object_or_none(User, username=user)
 
         if u:
-            mrecords = GroupMember.objects.filter(user=u, dashboard=True)
+            filter1 = Q(user=u)
+            filter2 = Q(dashboard=True) | Q(is_admin=True)
+            mrecords = GroupMember.objects.filter(filter1, filter2)
             groups = []
             for m in mrecords:
                 groups.append(m.group)
@@ -200,7 +203,7 @@ class BaseGroup(Group):
         members_with_emails = self.members.filter(emails_enabled=True).select_related(depth=1)
         return [member.user.email for member in members_with_emails if member.user.email and not member.user.nomail]
 
-    def add_member(self, user):
+    def add_member(self, user, dashboard=False):
         """
         Adds a member to a group.  If the the user is already a member, doesn't do anything.
         """
@@ -209,6 +212,10 @@ class BaseGroup(Group):
             member = members[0]
         else:
             member = GroupMember.objects.create(user=user, group=self)
+
+        if (member.dashboard and not dashboard) or (dashboard and not member.dashboard):
+            member.dashboard = dashboard
+            member.save()
             
         # this check assumes the *only* way to ever add a member to a group 
         # is to call this method...! otherwise it would be better implemented
