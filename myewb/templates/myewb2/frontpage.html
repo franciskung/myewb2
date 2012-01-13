@@ -295,13 +295,15 @@ $(document).ready(function() {
 
     <h2 class="h2bold" id="latest_discussions">
     	Latest Discussions
-    	
+
+        {% comment %}    	
     	<select class='normalize'>
     		<option>-- switch to --</option>
     		<option>Active discussions</option>
     		<option>Relevant discussions</option>
     		<option>My watchlist</option>
     	</select>
+        {% endcomment %}    	
     </h2>
     {% if request.user.is_authenticated %}
         <a href="{% url topic_new %}" id="new_discussion">Start a new discussion &raquo;</a>
