@@ -1302,6 +1302,10 @@ div.provincelinklist a {
 display: block;
 }
 
+table.ui-datepicker-calendar  th {
+ background: url('images/bg-highlight.png') repeat-x center center #E2E2E2;
+}
+
 
 /* =============================================================================
    Non-semantic helper classes
