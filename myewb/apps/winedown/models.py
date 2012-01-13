@@ -106,6 +106,13 @@ class CheersContainer(models.Model):
         cheers2.reverse()
         return cheers2
 
+    def num_cheers(self):
+        ct = ContentType.objects.get(app_label='winedown', model='Tweet')
+        if self.content_type == ct:
+            return self.count - 1
+        else:
+            return self.count
+
 class Cheers(models.Model):
     owner = models.ForeignKey(User, blank=True, null=True)
     date = models.DateTimeField(auto_now_add=True)
