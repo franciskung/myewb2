@@ -47,6 +47,10 @@
 </head>
 <body>
 
+<div style='background: #db7403; margin: 0 -10px; text-align: center;'>
+<a href="{% url themeswitch %}" class="colorbox" id="newlook" style='color: #ffffff;'>we have a new look...!</a>
+</div>
+
 
 <div class="grey-background">
   <div class="container_12">
@@ -278,6 +282,9 @@
             $('#righttoolbars').hide();
             $('#maincontent-nobars').removeClass('grid_10').removeClass('suffix_1').addClass('grid_16');
         }
+
+        $('#newlook').colorbox({opacity: '0.5', width: '600px', height: '50%'});
+        
     });
 </script>
 

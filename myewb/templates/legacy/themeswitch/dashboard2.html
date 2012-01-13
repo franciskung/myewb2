@@ -1,0 +1,129 @@
+<style>
+	#themeswitch_dashboard {
+		font-family: sans;
+		font-size: 14px;
+		color: #000000;
+		padding: 15px;
+	}
+	
+	#themeswitch_dashboard a, #themeswitch_dashboard a:visited, #themeswitch_dashboard a:active {
+		color: blue;
+		text-decoration: none;
+	}
+	
+	#themeswitch_dashboard a:hover {
+		text-decoration: underline;
+	}
+</style>
+
+<div id="themeswitch_dashboard">
+
+<h1>Help us pick a new myEWB!</h1>
+
+<p>
+	Check out the different concepts and let us know what you'd like to see in a new myEWB!
+</p>
+
+<p>
+	Each option combines a different layout, navigation, and front-page focus.  Eventually we 
+	can mix and match (so don't get too caught up on any one aspect) =)  Likewise, details
+	like the colour combinations, round corners vs square corners, etc, are easily changed.
+</p>
+
+<p><strong>
+Once you've checked out the different options,
+<a href="http://www.surveymonkey.com/s/3GSM3Z7" target="_new">fill out this survey</a></strong>.
+It should take no more than 10 minutes!</p>
+
+<br/>
+
+<div style="float: left; width: 40%;">
+	<img src="{{ STATIC_URL }}images/themes/myewb2.png" style="float: left; width: 75px; height: 75px; padding-right: 15px;"/>
+	<a href="{% url themeswitch_select 'myewb2' %}"><strong>New layout 1</strong></a><br/>
+	Final candidate 1...
+	
+	<div style="clear: left;"></div>
+</div>
+
+<div style="margin-left: 50%;">
+	<img src="{{ STATIC_URL }}images/themes/myewb2b.png" style="float: left; width: 75px; height: 75px; padding-right: 15px;"/>
+	<a href="{% url themeswitch_select 'myewb2b' %}"><strong>New layout 2</strong></a><br/>
+	Final candidate 2...
+	
+	<div style="clear: left;"></div>
+</div>
+<br/><hr/><br/>
+
+{% comment %}
+<div style="margin-left: 50%;">
+{#<div style="width: 50%; margin: 0 auto;"> #}
+	<img src="{{ STATIC_URL }}images/themes/myewb1.png" style="float: left; width: 75px; height: 75px; padding-right: 15px;"/>
+	<a href="{% url themeswitch_select 'myewb1' %}"><strong>The original myEWB</strong></a><br/>
+	Back to the original myEWB
+	
+	<div style="clear: left;"></div>
+</div>
+<br/><hr/><br/>
+{% endcomment %}
+
+<div style="float: left; width: 40%;">
+	<img src="{{ STATIC_URL }}images/themes/myhome.png" style="float: left; width: 75px; height: 75px; padding-right: 15px;"/>
+	<a href="{% url themeswitch_select 'myhome' %}"><strong>Front page v2</strong></a><br/>
+	Keeps a dashboard-like front page, but with a new, cleaner layout
+	
+	<br/><br/>
+	<a href="http://www.surveymonkey.com/s/33QD5TR" target="_new">What do you think??</a>
+	
+	<div style="clear: left;"></div>
+</div>
+
+<div style="margin-left: 50%;">
+	<img src="{{ STATIC_URL }}images/themes/activityfeeds.png" style="float: left; width: 75px; height: 75px; padding-right: 15px;"/>
+	<a href="{% url themeswitch_select 'activityfeeds' %}"><strong>Activity Feeds</strong></a><br/>
+	Makes myEWB all about people: what are others doing???
+	
+	<br/><br/>
+	<a href="http://www.surveymonkey.com/s/33S7N2D" target="_new">What do you think??</a>
+	
+	<div style="clear: left;"></div>
+</div>
+
+<div style="clear: left;"></div>
+<br/><br/>
+
+<div style="float: left; width: 40%;">
+	<img src="{{ STATIC_URL }}images/themes/badges.png" style="float: left; width: 75px; height: 75px; padding-right: 15px;"/>
+	<a href="{% url themeswitch_select 'badges' %}"><strong>Learning passport & badges</strong></a><br/>
+	Changes the front-page to focus on your interests & learning
+	
+	<br/><br/>
+	<a href="http://www.surveymonkey.com/s/33SN85Q" target="_new">What do you think??</a>
+	
+	<div style="clear: left;"></div>
+</div>
+
+<div style="margin-left: 50%;">
+	<img src="{{ STATIC_URL }}images/themes/winedown.png" style="float: left; width: 75px; height: 75px; padding-right: 15px;"/>
+	<a href="{% url themeswitch_select 'winedown' %}"><strong>National Wine-Down</strong></a><br/>
+	Highlights and news from across the country!
+	
+	<br/><br/>
+	<a href="http://www.surveymonkey.com/s/33RM6CG" target="_new">What do you think??</a>
+	
+	<div style="clear: left;"></div>
+</div>
+<br/><br/>
+
+<div style="width: 50%; margin: 0 auto;">
+	<img src="{{ STATIC_URL }}images/themes/ewbbook.png" style="float: left; width: 75px; height: 75px; padding-right: 15px;"/>
+	<a href="{% url themeswitch_select 'ewbbook' %}"><strong>EWBbook</strong></a><br/>
+	The "ewbbook" concept from April Fool's Day (for nostalgia. not an actual option, since it was a facebook parody =) )
+</div>
+<br/>
+
+<p><strong>
+Once you've checked out the different options,
+<a href="http://www.surveymonkey.com/s/3GSM3Z7" target="_new">fill out this survey</a></strong>.
+It should take no more than 10 minutes!</p>
+
+</div>
