@@ -103,7 +103,7 @@ class CheersContainer(models.Model):
                 
             cheers2.append(c)
             
-        cheers2.reverse()
+#        cheers2.reverse()
         return cheers2
 
     def num_cheers(self):
