@@ -24,6 +24,7 @@ from mailer import send_mail
 from emailconfirmation.models import EmailAddress
 
 from siteutils.helpers import get_email_user
+from siteutils.shortcuts import get_object_or_none
 from manager_extras.models import ExtraUserManager
 from groups.base import Group
 #from whiteboard.models import Whiteboard
@@ -33,6 +34,29 @@ if "notification" in settings.INSTALLED_APPS:
     from notification import models as notification
 else:
     notification = None
+
+class BaseGroupManager(models.Manager):
+    def dashboard(self, user):
+        u = get_object_or_none(User, username=user)
+
+        if u:
+            mrecords = GroupMember.objects.filter(user=u, dashboard=True)
+            groups = []
+            for m in mrecords:
+                groups.append(m.group)
+
+            chapter = u.get_profile().get_chapter()
+            if chapter and chapter not in groups:
+                groups.insert(0, chapter)
+                
+            return groups
+            
+            #return self.get_query_set().filter(member_users=u,
+            #                                   groupmember__dashboard=True)
+
+        else:
+            return []        
+    
 
 class BaseGroup(Group):
     """Base group (from which networks, communities, projects, etc. derive).
@@ -45,7 +69,7 @@ class BaseGroup(Group):
                                verbose_name=_('parent'), null=True, blank=True)
     
     member_users = models.ManyToManyField(User, through="GroupMember", verbose_name=_('members'))
-    
+
     # if true, members can only join if invited
     invite_only = models.BooleanField(_('invite only'), default=False)
     
@@ -77,6 +101,8 @@ class BaseGroup(Group):
     is_active = models.BooleanField(_("Is active? (false means deleted group"),
                                     default=True,
                                     editable=False)
+
+    objects = BaseGroupManager()
 
     def is_visible(self, user):
         visible = False
@@ -366,6 +392,7 @@ class BaseGroupMember(models.Model):
     admin_order = models.IntegerField(_('admin order (smallest numbers come first)'), default=999, blank=True, null=True)
     joined = models.DateTimeField(_('joined'), default=datetime.datetime.now)
     imported = models.BooleanField(default=False, editable=False)
+    dashboard = models.BooleanField(_('Dashboard'), default=False)
     
     class Meta:
         abstract = True

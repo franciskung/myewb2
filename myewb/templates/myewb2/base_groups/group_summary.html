@@ -1,3 +1,4 @@
+{% load base_groups_tags %}
 {% load group_tags %}
 {% load networks_tags %}
 {% load events_tags %}
@@ -10,9 +11,12 @@
 	{{ group.name }}
    	<select class='normalize'>
    		<option>-- switch to --</option>
-   		<option>Group X</option>
-   		<option>Group Y</option>
-   		<option>Group Z</option>
+   		{% get_dashboard_groups for request.user as groups %}
+   		{% for g in groups %}
+   		    {% ifnotequal g group %}
+   		        <option value="{{ g.slug }}">{{ g.name }}</option>
+   		    {% endifnotequal %}
+   		{% endfor %}
    	</select>
 </h2>
 
