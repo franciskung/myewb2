@@ -25,7 +25,9 @@
 
 	<ul id="dashboard_links">
 		<li><a href="#" id="dashboard_new_posts" class="current">New posts <span class="numero">{{ recent_posts.count }}</span></a></li>
-                <li><a href="#" id="dashboard_champ_entries">New champ entries <span class="numero">{{ champ_entries.count }}</span></a></li>
+		        {% if group.is_chapter and is_exec %}
+                    <li><a href="#" id="dashboard_champ_entries">New champ entries <span class="numero">{{ champ_entries.count }}</span></a></li>
+                {% endif %}
                 <li><a href="#" id="dashboard_files_uploaded">Updated files <span class="numero">{{ files_uploaded.count }}</span></a></li>
                 <li><a href="#" id="dashboard_events">Events this week <span class="numero">{{ events.count }}</span></a></li>
 {#                <li><a href="#" id="dashboard_new_members">New members <span class="numero">{{ new_members.count }}</span></a></li> #}
