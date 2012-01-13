@@ -4,8 +4,6 @@
 
 {% block viewport %}600px{% endblock %}
 
-{% block head_title %}My Schedule{% endblock %}
-
 {% block body2 %}
 	<style>
 		table.scheduler {
@@ -70,7 +68,7 @@
 
 	</style>
     <h3>
-        My Conference Schedule
+        Mon horaire
         {% if false and not request.is_mobile and not printable %}
             &nbsp;
             <a href="{% url conference_schedule_final %}?printable=true" target="_new" style="border: none;">
@@ -83,11 +81,11 @@
     </h3>
     
     <p style="font-weight: bold; position: relative; top: -10px;">
-    	<a href="{% url conference_schedule_rebuild %}" id="rebuild_schedule">Rebuild my schedule</a>
+    	<a href="{% url conference_schedule_rebuild %}" id="rebuild_schedule">Rebâtir mon horaire</a>
    	</p>
    	
 	<div style="border: 1px solid #a0a0a0; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; float: right; width: 250px; padding: 10px; padding-top: 0px;">
-		<h4 style='font-size: 1.1em;'>Prep Material</h4>
+		<h4 style='font-size: 1.1em;'>Matériel de préparation</h4>
 		
 		{% for s in sessions %}
 			{% comment %}
@@ -141,7 +139,7 @@
     	{% for s in sessions %}
     		<div class="schedule_table_session" style='top: {% abs_top s.timeslot.time.hour s.timeslot.time.minute %}px; left: {% abs_left s.dayverbose %}px; height: {% abs_height s.timeslot.length %}px'>
     			<a href="{{ s.url }}" class="sessionlink">
-    				<strong>{{ s.name_fr }}</strong>
+    				<strong>{{ s.name_fr|default:s.name }}</strong>
     				<br/>
     				<span class="room">{{ s.room }}</span>
     			</a>
@@ -152,7 +150,7 @@
     <script>
     	$().ready(function() {
         		$('#rebuild_schedule').click(function() {
-            		return confirm("Are you sure you want to erase your schedule and start over?");
+            		return confirm("Êtes-vous sûr(e) que vous voulez effacer votre horaire et recommencer?");
         		});
         		
         		$('.sessionlink').colorbox({'width': '75%',

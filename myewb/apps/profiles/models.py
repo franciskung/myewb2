@@ -25,8 +25,8 @@ from emailconfirmation.models import EmailAddress
 from pinax.apps.profiles.models import Profile, create_profile
 
 from base_groups.models import GroupMember
-from communities.models import ExecList
-from networks.models import Network  
+#from communities.models import ExecList
+#from networks.models import Network  
 from profiles import signals
 #from networks import emailforwards
 from datetime import date, datetime
@@ -132,7 +132,7 @@ class MemberProfile(Profile):
     watchlist_as_emails = models.BooleanField(_('watchlist replies as emails'), null=False, blank=True, default=True)
     messages_as_emails = models.BooleanField(_('private messages as emails'), null=False, blank=True, default=True)
     
-    chapter = models.ForeignKey(Network, null=True, blank=True, default=None)
+    chapter = models.ForeignKey("networks.Network", null=True, blank=True, default=None)
 
     #addresses = generic.GenericRelation(Address)
     addresses = models.ManyToManyField(Address)
@@ -307,6 +307,7 @@ class MemberProfile(Profile):
 
             # if, somehow, you're on an exec list but not marked as a leader
             if self.chapter is None:
+                from communities.models import ExecList
                 execs = ExecList.objects.filter(member_users=user, is_active=True)
                 if execs.count():
                     self.chapter = execs[0].parent.network

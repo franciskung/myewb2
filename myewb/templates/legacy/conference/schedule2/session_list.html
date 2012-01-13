@@ -6,6 +6,9 @@
 {% block body2 %}
     <h3>Session listing</h3>
     
+    <a href="{% url conference_send_sms %}"><strong>send a text to all conference delegates</strong></a><br/>
+    <br/>
+    
     <table style='border: 1px solid;'>
 	    {% for timeslot in times %}
 	    	<tr>

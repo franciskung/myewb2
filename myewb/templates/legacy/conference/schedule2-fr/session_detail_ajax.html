@@ -1,9 +1,11 @@
-    <h3>{{ session.name_fr }}</h3>
+{% load conference_tags %}
 
-    {{ session.timeslot.day|date:"l"}}, {{ session.timeslot.time|time:"g:i A" }} - {{ session.timeslot.endtime|time:"g:i A" }}{% if session.room %} ({{ session.room }}){% endif %}<br/>
+    <h3>{{ session.name_fr|default:session.name }}</h3>
+
+    {{ session.timeslot.day|date_fr}}, {{ session.timeslot.time|time_fr }} - {{ session.timeslot.endtime|time_fr }}{% if session.room %} ({{ session.room }}){% endif %}<br/>
     
     <p>
-        {{ session.description_fr|safe|linebreaksbr }}
+        {{ session.description_fr|default:session.description|safe|linebreaksbr }}
     </p>
     <br style="clear: both;">
     <hr/>

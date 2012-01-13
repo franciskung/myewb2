@@ -30,7 +30,7 @@
         <p>{% blocktrans %}<a href="{{ signup_url }}">Sign up</a> and <a href="{{ login_url }}">log in </a> to join a chapter.{% endblocktrans %}</p>
     {% endif %}
 
-	{% cache CACHE_TIMEOUT "chapterlist" %}    
+	{% cache CACHE_TIMEOUT "chapterlist2" %}    
 
     {% autosort groups %}
     {#{% autopaginate groups 10 %}#}
@@ -136,6 +136,7 @@ var cityArray = new Array();
     	<h2 id="ON">Ontario</h2>
         {% for group in groups %}
         	{% ifequal group.chapter_info.province "ON" %}
+			{% ifnotequal group.slug "yorku" %}
 
 		        <dl>
 		            {% show_network group %}
@@ -149,7 +150,8 @@ var cityArray = new Array();
     cityArray["{{group.chapter_info.city }}"]["{{group.slug }}"] = "{{group.name }}";
 //]]>
 </script>
-		        
+
+		        {% endifnotequal %}
 	        {% endifequal %}
         {% endfor %}
 

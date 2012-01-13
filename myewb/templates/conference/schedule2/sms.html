@@ -1,0 +1,50 @@
+{% extends "conference/schedule2/base.html" %}
+
+{% block body2 %}
+	<h1>Send a SMS blast</h1>
+
+	{% if session %}
+		<p>
+			<strong>Sending to all attendees of <em>{{ session.name }}</em> ({{ session.attendees.count }} people)</strong>
+			<br/>
+			<a href="{% url conference_send_sms %}">click here to text all delegates</a>
+		</p>
+	{% else %}
+		<p>
+			To text all attendees of a session, use the link on the "edit session" page.
+		</p>
+	{% endif %}
+		
+	{% if response %}
+		<p><strong>Sending attempted.  Reponse was:</strong></p>
+		
+		<p>
+			{{ response|safe }}
+		</p>
+	{% endif %}
+	
+	{% if form %}
+	    <form action="" method="post">
+	        <table>
+	            {{ form.as_table }}
+	            <tr>
+	                <th>&nbsp;</th>
+	                <td>
+	                	<br/>
+	                	<em>This will send immediately. Only click it when you are ready...!!</em>
+	                	<br/>
+	                	<input type="submit" value="Send" onclick="return confirm('Are you sure you want to send?');"/>
+	                </td>
+	            </tr>
+	        </table>
+	    </form>
+	{% endif %}
+
+	<hr/>	
+	{% if session %}
+		<a href="{% url conference_session_edit session.id %}">&laquo; back to <em>{{ session.name }}</em></a><br/>
+	{% endif %}
+	<a href="{% url conference_session_list %}">&laquo; back to the main admin page</a><br/>
+	<a href="{% url conference_schedule %}">&laquo; back to my schedule</a><br/>
+	
+{% endblock %}

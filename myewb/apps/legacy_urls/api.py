@@ -43,7 +43,7 @@ urlpatterns += patterns('legacy_urls.api',
 def login(request, details=False):
     if request.method == 'POST':
         if request.POST.get('user', None) and request.POST.get('password', None) and \
-        (request.META['REMOTE_ADDR'] == '127.0.0.1' or request.META['REMOTE_ADDR'] == '69.77.162.110'):
+        (request.META['REMOTE_ADDR'] == '127.0.0.1' or request.META['REMOTE_ADDR'] == '69.77.162.110' or request.META['REMOTE_ADDR'] == '206.223.179.178'):
             
             username = request.POST['user']
             password = request.POST['password']
