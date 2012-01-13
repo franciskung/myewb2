@@ -1,6 +1,5 @@
 {% load i18n %}
 {% load timezone_filters %}
-{% load pagination_tags %}
 
 <p>
     <a href="{% url messages_outbox %} ">{% trans "Sent Messages" %}</a> | 
@@ -19,8 +18,7 @@
         </thead>
         
         <tbody>
-            {% autopaginate messages 10 %}
-            {% for message in messages %}
+            {% for message in messages|slice:":10" %}
                 <tr class="{% cycle "" "bkgd-light" %}">
                     <td>
                         {% if not message.read_at %}<strong>{% endif %}

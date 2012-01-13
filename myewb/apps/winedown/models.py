@@ -125,6 +125,9 @@ class Cheers(models.Model):
     
     objects = CheersManager()
 
+    class Meta:
+        ordering = ['-date']
+
 class Tweet(models.Model):
     author = models.ForeignKey(User, blank=True, null=True)
     author_name = models.CharField(max_length=255)

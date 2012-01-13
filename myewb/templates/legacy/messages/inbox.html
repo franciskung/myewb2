@@ -19,10 +19,16 @@
         <tbody>
             {% for message in message_list %}
                 <tr class="{% cycle "" "bkgd-light" %}">
-                    <td>{{ message.sender.visible_name }}</td>
+                    <td>
+                        {% if not message.read_at %}<strong>{% endif %}
+                        {{ message.sender.visible_name }}
+                        {% if not message.read_at %}</strong>{% endif %}
+                    </td>
                     <td>
                         {% if message.replied %}<em>{% endif %}
+                        {% if not message.read_at %}<strong>{% endif %}
                         <a class="message-link {% if message.new %}new{% endif %}" href="{{ message.get_absolute_url }}">{% if message.subject.strip %}{{ message.subject }}{% else %}(No subject.){% endif %}</a>
+                        {% if not message.read_at %}</strong>{% endif %}
                         {% if message.replied %}</em>{% endif %}
                     </td>
                     <td>{{ message.sent_at|localtime:account.timezone|date:_("DATETIME_FORMAT") }}</td>

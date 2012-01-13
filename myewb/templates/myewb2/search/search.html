@@ -1,0 +1,263 @@
+{% extends 'topics/base.html' %}
+
+{% load i18n %}
+{% load avatar_tags %}
+{% load uni_form_tags %}
+{% load pagination_tags %}
+{% load base_groups_tags %}
+{% load group_tags %}
+{% load events_tags %}
+{% load whiteboard_tags %}
+
+{% block extra_head %}
+    {{ block.super }}
+    
+    <link rel="alternate" type="application/rss+xml" title="myEWB Front Page" href="{% url topic_feed_all %}" />
+	<link rel="stylesheet" href="{{ STATIC_URL }}css/toolbars.css" />    
+
+
+
+	
+{% endblock %}
+
+{% block head_title %}{% trans "Search" %}{% endblock %}
+
+{% block body %}
+
+    <h1>Search</h1>
+
+
+<div id="search-tabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+
+<ul class="tabs">
+        <li id="li-group-postsearch" class="current"><a href="#post-search" id="show-postsearch">Search content</a></li>
+        
+        
+{% if user.is_authenticated %}
+
+        <li id="li-group-peoplesearch" class=""><a href="{% url profiles_index %}?search=" id="show-peoplesearch">Search people</a></li>
+
+{% endif %}
+    </ul>
+
+    <div class="ui-tabs-panel ui-widget-content ui-corner-bottom">
+
+        <div id="div-post-search" class="group-subsection" style="display: block;">
+    
+        <br/>    
+    
+        <form method="get" action=".">
+            <table class="standard standard-right search-form shorter">
+                {{ form.as_table }}
+                <tr>
+                    <td>&nbsp;</td>
+                    <td>
+                        <input type="submit" value="Search">
+                    </td>
+                </tr>
+            </table>
+        </form>
+    
+        </div>
+    
+    </div>
+</div>
+
+
+        <h1>Results</h1>
+        
+        
+		{% if results %}
+		    {% autopaginate results 10 %}
+ 
+	        {% for result in results %}
+	          	{# is there a better way? #}
+
+				{# POSTS #}
+	          	{% ifequal result.model_name "grouptopic" %}
+				    {% with result.object as topic %}
+				        {% include "topics/topic_item.html" %}
+				    {% endwith %}
+				{% endifequal %}
+
+				{# REPLIES #}
+	          	{% ifequal result.model_name "threadedcomment" %}
+				{# this should really be template-ized and loaded. currently this search version is the most up-to-date, and is being copied to the other locations (events_for_day, and event_detail) #}
+				<div class="post">
+					<div class="postheader blue" style="position: relative;"> <!-- header row -->
+    					<a class="postheaderlink" href="{{ result.object.get_absolute_url }}">Reply: {{ result.object.content_object.title }}</a>
+					</div>
+	
+					<div class="postsubheader blue blue-border bkgd-light"> <!-- stat row -->
+						<table width="100%" style="margin:0; padding: 0;">
+							<tr>
+								<td>By <a href="{% url profile_detail result.object.user.username %}">{{ result.object.user.visible_name }}</a> on {{ result.object.date_submitted|date }} at {{ result.object.date_submitted|time }}</td>
+								<td align="right" width="50%">
+									{% ifnotequal result.object.content_object.parent.slug "ewb" %}
+								    	<a href="{{ result.object.content_object.parent.get_absolute_url }}#group-posts">{{ result.object.content_object.parent }}</a>
+								    {% endifnotequal %}
+								</td>
+							</tr>
+						</table>
+					</div>
+	
+			    	<div class="postcontent blue-border">
+						<a href="{% url profile_detail result.object.user.username %}">
+						    {# {% avatar topic.creator 40 %} #}
+						    <img src="{% avatar_url result.object.user 40 %}" class="posthumbnail" title="{{result.object.visible_name}}" alt="{{result.object.user.visible_name}}"/>
+						</a>
+				
+				
+				        <div class="textbody">
+
+    				        {{ result.object.comment|safe }}
+	
+				        </div>
+				        
+    					<br class="clear"/>
+						<div class="whiteboard-editing-box" style="font-size: 10px; padding-right: 10px;">
+							<a href="{{ result.object.content_object.get_absolute_url }}#reply-{{ result.object.id }}">See full post &raquo;</a>
+				    	</div>
+    					<br class="clear"/>
+					</div>
+				</div>		  
+				{% endifequal %}
+
+				{# WHITEBOARDS #}
+				{% ifequal result.model_name "whiteboard" %}
+				<div class="post">
+					<div class="postheader orange {# some way of checking if this is a chapter or a community? #}" style="position: relative;"> <!-- header row -->
+    					<a class="postheaderlink" href="{{ result.object.parent_group.get_absolute_url }}#group-whiteboard">Whiteboard for {{ result.object.parent_group }}</a>
+					</div>
+	
+    				<div class="postcontent orange-border">
+					    
+				        {% get_membership result.object.parent_group request.user as member %}
+				        
+				        <div class="textbody">
+				        
+    				        {% show_whiteboard_force result.object result.object.parent_group member %}
+    				        
+    				    </div>
+    				</div>
+				</div>
+				{% endifequal %}		    
+				        
+				{# EVENTS #}
+				{% ifequal result.model_name "event" %}
+					
+				{# this should really be template-ized and loaded. currently this search version is the most up-to-date, and is being copied to the other locations (events_for_day, and event_detail) #}
+				<div class="post">
+					<div class="postheader red" style="position: relative;"> <!-- header row -->
+    					<a class="postheaderlink" href="{{ result.object.get_absolute_url }}">Event: {{ result.object.title }}</a>
+					</div>
+	
+					<div class="postsubheader red red-border bkgd-light"> <!-- stat row -->
+						<table width="100%" style="margin:0; padding: 0;">
+						<tr>
+						<td>
+							<span class="lighter">Starts: </span>{{result.object.start|date:"D, M j \a\t P"}} &nbsp;
+							<span class="lighter">Ends: </span>{{result.object.end|date:"D, M j \a\t\ P"}}
+						</td>
+						<td align="right" width="50%">
+							<a href="{% link_to_events_for result.object.content_object 'css_class' 1 %}">More events for 
+	
+							{% if result.object.content_object.visible_name %}
+								{{result.object.content_object.visible_name}}
+							{% else %}
+								{{result.object.content_object }}
+							{% endif %}
+							</a>
+
+						</td>
+						</tr>
+						</table>
+					</div>
+	
+			    	<div class="postcontent red-border">
+						{% if result.object.location %}<p>Location: {{result.object.location}}</p>{% endif %}
+                    <div class="textbody">
+						<p>{{result.object.description|safe}}</p>
+				    </div>
+
+						<div class="whiteboard-editing-box">
+							<a href="{{ result.object.get_absolute_url }}">See full event details &raquo;</a>
+				    	</div>
+    					<br class="clear"/>
+					</div>
+				</div>		  
+				{% endifequal %}
+				
+				{# CHAMP ACTIVITY #}
+				{% ifequal result.model_name "activity" %}
+				<div class="post">
+					<div class="postheader yellow" style="position: relative;"> <!-- header row -->
+    					<a class="postheaderlink" href="{{ result.object.get_absolute_url }}">CHAMP activity: {{ result.object.name }}</a>
+					</div>
+	
+					<div class="postsubheader yellow yellow-border bkgd-light"> <!-- stat row -->
+						<table width="100%" style="margin:0; padding: 0;">
+						<tr>
+						<td>
+							By <a href="{% url profile_detail result.object.creator.username %}">{{ result.object.creator.visible_name }}</a>
+							on {{result.object.date|date}}
+						</td>
+						<td align="right" width="50%">
+							{{ result.object.group.network.chapter_info.chapter_name }}
+						</td>
+						</tr>
+						</table>
+					</div>
+	
+			    	<div class="postcontent yellow-border">
+	                    <div class="textbody">
+							<p>{{ result.object.get_description }}</p>
+					    </div>
+    					<br class="clear"/>
+					</div>
+				</div>		  
+				{% endifequal %}
+				
+            {% endfor %}
+
+	        {% paginate %}
+
+        {% else %}
+      	  <p>No results found.</p>
+        {% endif %}
+
+{% endblock %}
+
+{% block extra_body %}
+
+  <script type="text/javascript" src="{{STATIC_URL}}js/ui.datepicker.js"></script>
+
+  <script type="text/javascript">
+  $(document).ready(function(){
+    var datepicker = $("input#id_start_date, input#id_end_date").datepicker({});
+    
+    
+    // maintain search term state
+    $('#id_q').change(function() {
+        
+        $('#show-peoplesearch').attr('href', '{% url profiles_index %}?search=' + $(this).val());
+        
+    });
+    // initial load
+    $('#show-peoplesearch').attr('href', '{% url profiles_index %}?search=' + $('#id_q').val());
+
+    var is_checked = false;
+    $('.search-form input:checkbox').each(function() {
+        is_checked = is_checked | $(this).attr('checked');
+    });
+	if (!is_checked)
+	    $('.search-form input:checkbox').attr('checked', 'checked');
+    
+  });
+  </script>
+  
+    <script type="text/javascript" src="{{STATIC_URL}}js/tabselection.js"></script> 
+
+
+{% endblock %}
+  
