@@ -81,11 +81,11 @@
     </h3>
     
     <p style="font-weight: bold; position: relative; top: -10px;">
-    	<a href="{% url conference_schedule_rebuild %}" id="rebuild_schedule">Rebuild my schedule</a>
+    	<a href="{% url conference_schedule_rebuild %}" id="rebuild_schedule">Rebâtir mon horaire</a>
    	</p>
    	
 	<div style="border: 1px solid #a0a0a0; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; float: right; width: 250px; padding: 10px; padding-top: 0px;">
-		<h4 style='font-size: 1.1em;'>Prep Material</h4>
+		<h4 style='font-size: 1.1em;'>Matériel de préparation</h4>
 		
 		{% for s in sessions %}
 			{% comment %}
@@ -150,7 +150,7 @@
     <script>
     	$().ready(function() {
         		$('#rebuild_schedule').click(function() {
-            		return confirm("Are you sure you want to erase your schedule and start over?");
+            		return confirm("Êtes-vous sûr(e) que vous voulez effacer votre horaire et recommencer?");
         		});
         		
         		$('.sessionlink').colorbox({'width': '75%',

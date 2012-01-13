@@ -119,8 +119,10 @@ def wo_professionals(filters):
     wo_professionals = 0
     wo_presentations = 0
     for w in wo_metrics:
-        wo_professionals += w.attendance 
-        wo_presentations += w.presentations
+        if w.attendance:
+            wo_professionals += w.attendance 
+        if w.presentations:
+            wo_presentations += w.presentations
     return wo_professionals
 
 def wo_presentations(filters):
@@ -128,8 +130,10 @@ def wo_presentations(filters):
     wo_professionals = 0
     wo_presentations = 0
     for w in wo_metrics:
-        wo_professionals += w.attendance 
-        wo_presentations += w.presentations
+        if w.attendance:
+            wo_professionals += w.attendance 
+        if w.presentations:
+            wo_presentations += w.presentations
     return wo_presentations
     
 def so_students(filters):

@@ -2,6 +2,41 @@
 
 <link rel="stylesheet" href="{{ STATIC_URL }}css/myewb-frontright.css?d=20100608c" />
 
+<style>
+/* hi Francis!  : )   */
+a.bigorangebutton {
+background-image:url(https://perspectives.ewb.ca/theworks/css/images/textures/Orange-Noise.png);
+}
+
+ 
+</style>
+
+
+
+
+
+{% comment %}
+<script type="text/javascript">
+
+/* 
+from http://api.jquery.com/load/
+Due to browser security restrictions, most "Ajax" requests are subject to the same origin policy; the request can not successfully retrieve data from a different domain, subdomain, or protocol. */
+
+function loadBlogs() {
+    var blogsUrl = "http://blogs.ewb.ca/world/htmlapi.php?view=list&noheaders=1";
+    $('#blogcontainerdiv').load(blogsUrl);
+
+}
+
+
+$(document).ready(function() {
+    loadBlogs();
+}
+
+</script>
+{% endcomment %}
+
+
 {# <div id="toolbarcolumn_right2"> #}
 {% comment %}
         <div>
@@ -39,8 +74,13 @@
                         <li>&raquo; <a href="http://chapters.ewb.ca/" target="_blank">Chapter resources</a></li>
                         <li>&raquo; <a href="http://wiki.ewb.ca/" target="_blank">Orange Wiki of Change</a></li>
                         <li>&raquo; <a href="http://vision.ewb.ca/" target="_blank">EWB Vision</a></li>
+			<li>&raquo; <a href="http://blogs.ewb.ca/board/" target="_blank">Board of Directors</a></li>
 
                     </ul>
+                    
+<div style="text-align: right; padding: 3px 0; margin-top: 0; margin-right: 6px; font-size: 11px;"><a href="http://sites.ewb.ca" class="more" target="_blank">All EWB websites &raquo;</a></div>
+
+                    
 {% comment %}
                 </div>
         </div>
@@ -54,32 +94,39 @@
 
 {% if not grandfathered %}
 
-<object width="280" height="172"><param name="movie" value="http://www.youtube.com/v/R0NOTiaiG-E&hl=en_US&fs=1&color1=0xe1600f&color2=0xfebd01"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/R0NOTiaiG-E&hl=en_US&fs=1&color1=0xe1600f&color2=0xfebd01" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="280" height="172"></embed></object>
-{#youtube here (removed cuz it takes a while to load!)#}
+{% comment %}
+<object width="277" height="233"><param name="movie" value="http://www.youtube.com/v/nlmAcqCQ85E?fs=1&amp;hl=en_US&amp;rel=0&amp;color1=0x5d1719&amp;color2=0xcd311b"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/nlmAcqCQ85E?fs=1&amp;hl=en_US&amp;rel=0&amp;color1=0x5d1719&amp;color2=0xcd311b" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="277" height="233"></embed></object>
+
+<iframe src="http://player.vimeo.com/video/24621998?title=0&amp;byline=0&amp;color=ffffff" width="225" height="130" frameborder="0" style='margin: 0 25px;'></iframe>
+{% endcomment %}
+
+<iframe width="274" height="169" src="http://www.youtube.com/embed/vTwr8Ktt8Wo" frameborder="0" allowfullscreen></iframe>
+
+{# <iframe src="http://player.vimeo.com/video/30743585?title=0&amp;byline=0&amp;portrait=0&amp;color=ff9933" width="276" height="155" frameborder="0" webkitAllowFullScreen allowFullScreen></iframe> #}
 
 {% endif %}
 
                 </div> <!-- ewbbc-flash -->
             </div> <!-- ewbbc -->
 
-                <div style="text-align: right; padding: 3px 0; margin-top: 0; margin-right: 6px; font-size: 11px;"><a href="http://www.youtube.com/user/ewbcanada" class="more" target="_blank">more videos from EWB &raquo;</a></div>
+                <div style="text-align: right; padding: 3px 0; margin-top: 0; margin-right: 6px; font-size: 11px;"><a href="http://www.youtube.com/user/ewbnetwork" class="more" target="_blank">more videos from EWB &raquo;</a></div>
 
                 </div> <!-- toolbarcontent_right -->
         </div>
         
         
         
-        
+{% comment %}        
         {# profile #}
         <div>
                 <div class="toolbarheader_right"><a href="http://ewb.ca/africa" target="_blank">African Leader profile</a></div>
                 <div class="toolbarcontent_right">
-                    <img src="{{ MEDIA_URL }}images/frontpage-right/ajuratu.jpg" style="float:right; padding-left:4px; padding-bottom:4px;"/><span><strong>Ajuratu Alurigo</strong> is a tomato farmer in Bukere, Northern Ghana, and part of the Women in Extension Volunteers group in the area.<br/><em>"Now I am trained to help my community grow their produce in a better way. I don't want my community to suffer any more, and I believe that by working together as a united people we can do anything. Someday we will be strong and our communities will prosper."</em></span>                    
+                    <img src="{{ MEDIA_URL }}images/frontpage-right/apiiga.jpg" style="float:right; padding-left:4px; padding-bottom:4px;"/><span><strong>S.Y. Apiiga</strong> runs a radio program in Ghana that shares agricultural information with tens of thousands of small-scale farmers.<br/><em>"I am passionate about sharing knowledge! For 20 years I shared and published information for my fellow animal scientists.  Recently however, I realized that my knowledge can best be used if it is shared directly to whom it is most valuable: farmers."</em></span>                    
                     
                 </div>
         </div>
         
-        
+{% endcomment %}        
 
 {% comment %}
         <div>
@@ -100,25 +147,32 @@
 {% endcomment %}
 
         <div>
-                <div class="toolbarheader_right"><a href="http://blogs.ewb.ca/" target="_blank" class="barheaderlink" title="Blogs below last updated: June 9, 2010 - Click here for the latest!">EWB Blogs</a></div>
+                <div class="toolbarheader_right"><a href="http://blogs.ewb.ca/" target="_blank" class="barheaderlink" title="Click to visit blogs.ewb.ca">Latest EWB Blogs</a></div>
                 <div class="toolbarcontent_right">
-                <ul class="postlinklist">
-                        <li>&raquo; <a title="from Colleen Duncan's blog" href="http://www.whereintheworldiscolleen.com/archives/1148" target="_blank">What Motivates You?</a></li>
-                        
-                        <li>&raquo; <a title="from Duncan McNicholl's blog" rel="bookmark" href="http://waterwellness.ca/2010/06/07/carving-a-canoe/" target="_blank">Carving a Canoe</a></li>
+                
+                
+             <iframe id="blogs_src_iframe" src="http://blogs.ewb.ca/world/htmlapi.php{#?view=listenhanced#}?num=10" width="100%" height="225" frameborder="0" style="margin:-6px;overflow:auto;width:299px;">
+  <p>Read the latest stories from our EWB overseas staff and volunteers at <a href="http://blogs.ewb.ca" target="_blank">blogs.ewb.ca</a>!</p>
+</iframe>   
 
 
-                        {#<p style="text-align: right; padding-top: 0; margin-top: 0; padding-right: 0px; margin-right: 6px;"><a href="http://blogs.ewb.ca/ceo" class="more" target="_blank">more from the co-CEOs &raquo;</a></p>#}
+<div id="blogcontainerdiv"></div>
 
-                        <li>&raquo; <a title="from Sarah's JF blog" rel="bookmark" href="http://sarahsgonetoghana.wordpress.com/2010/06/04/all-gingered-up/">All 'Gingered'&nbsp;Up</a></li>
-                        
-                        <li>&raquo; <a title="from Erin's JF blog" href="http://setforchange.wordpress.com/2010/06/04/fertile-ground/" target="_blank">Fertile Ground</a></li>
-                        
-                        <li>&raquo; <a title="from Lucas's JF blog" href="http://ualberta.ewb.ca/node/138" target="_blank">Agrodealers</a></li>
-                        
-                        
-                </ul>
-{#                <span class="lighter">Updated May 21, 2010<br/><a href="mailto:feedback@my.ewb.ca?subject=Blogs">Suggestions for blogs to highlight?</a></span> #}
+                
+<div style="text-align: right; padding: 3px 0; margin-top: 0; margin-right: 6px; font-size: 11px;"><a href="http://blogs.ewb.ca" class="more" target="_blank">more EWB blogs &raquo;</a></div>
+                
+{#                <span class="lighter">Now updated automagically! Find the latest stories from our JFs and African Programs staff at <a href="http://blogs.ewb.ca" target="_blank">blogs.ewb.ca</a>.</span> #}
+                
+                
+
+
+
+
+
+
+
+
+
                 </div>
         </div>
 
@@ -154,7 +208,7 @@
 				  title: 'What are you doing? Tweet it with #ewb',
 				  subject: 'Across The Country',
 				  width: 301,
-				  height: 750,
+				  height: 500,
 				  theme: {
 				    shell: {
 				      background: '#001f65',
@@ -181,6 +235,15 @@
 				</div>
 
                 </div>
+	</div>
+
+        <div>
+                <div class="toolbarheader_right"><a href="http://www.facebook.com/ewbcanada" class="barheaderlink">On Facebook</a></div>
+                <div class="toolbarcontent_right" style="padding: 0px;">
+
+<iframe src="http://www.facebook.com/plugins/likebox.php?href=http%3A%2F%2Fwww.facebook.com%2Fewbcanada&amp;width=288&amp;colorscheme=light&amp;show_faces=true&amp;stream=true&amp;header=false&amp;height=550" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:288px; height:550px;" allowTransparency="true"></iframe>
+		</div>
+
         </div>
 {# </div> #}
 

@@ -41,7 +41,7 @@ def do_send_sms(args):
         try:
             response = account.request('/%s/Accounts/%s/SMS/Messages' % (api, sid),
                                        'POST', x)
-            #print x['To']
+#            print x['To']
         except Exception, e:
             response = e.read()
 
@@ -52,7 +52,7 @@ def do_send_sms(args):
                       recipients=['franciskung@ewb.ca',],
                       use_template=False)
 
-        break
+#        break
 
 
 @login_required
@@ -240,7 +240,7 @@ def stop_sms(request):
                     
         xmlresponse = """<?xml version="1.0" encoding="UTF-8" ?>
 <Response>
-    <Sms>You have been unsubscribed.  To re-subscribe to EWB National Conference 2011 notices, reply with START</Sms>
+    <Sms>You have been unsubscribed.  To re-subscribe to EWB National Conference 2012 notices, reply with START</Sms>
 </Response>
 """
         return HttpResponse(xmlresponse)
@@ -258,7 +258,7 @@ def stop_sms(request):
 
             xmlresponse = """<?xml version="1.0" encoding="UTF-8" ?>
 <Response>
-    <Sms>Welcome to the EWB National Conference 2011 notices list.  To unsubscribe, reply with STOP</Sms>
+    <Sms>Welcome to the EWB National Conference 2012 notices list.  To unsubscribe, reply with STOP</Sms>
 </Response>
 """
             return HttpResponse(xmlresponse)

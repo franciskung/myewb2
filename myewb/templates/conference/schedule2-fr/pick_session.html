@@ -63,7 +63,7 @@
 				<form method="post" action="{% url conference_session_save %}" class="select_session">
 					<input type="hidden" name="session" value="{{ r.id }}"/>
 					<input type="hidden" name="timeslot" value="{{ r.timeslot.id }}"/>
-	            	<input type="submit" value="choisir"/>
+	            	<input type="submit" value="choisir cet atelier"/>
 	          	</form>
 	        </div>
 	    {% endfor %}
@@ -82,7 +82,7 @@
 	{% endcomment %}
 
     <br/><br/>
-    <strong>Other sessions at this time</strong>
+    <strong>Autres ateliers dans ce bloc</strong>
 
     <ul style='list-style-type: disc; margin-left: 25px;'>
     {% for s in sessions %}
@@ -125,7 +125,7 @@
 			<form method="post" action="{% url conference_session_save %}" class="select_session">
 				<input type="hidden" name="session" value="{{ s.id }}"/>
 				<input type="hidden" name="timeslot" value="{{ s.timeslot.id }}"/>
-            	<input type="submit" value="choisir"/>
+            	<input type="submit" value="choisir cet atelier"/>
           	</form>
 	        </div>
 	    {% endfor %}
