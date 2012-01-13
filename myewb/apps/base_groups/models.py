@@ -50,6 +50,8 @@ class BaseGroupManager(models.Manager):
                     groups.append(m.group)
 
             chapter = u.get_profile().get_chapter()
+            if chapter:
+                chapter = BaseGroup.objects.get(slug=chapter.slug)
             if chapter and chapter not in groups:
                 groups.insert(0, chapter)
                 
