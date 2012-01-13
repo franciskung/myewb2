@@ -1,8 +1,8 @@
 {% load i18n %}
 {% load timezone_filters %}
+{% load pagination_tags %}
 
 <p>
-    <a href="{% url messages_inbox %} ">{% trans "Full Inbox" %}</a> | 
     <a href="{% url messages_outbox %} ">{% trans "Sent Messages" %}</a> | 
     <a href="{% url messages_compose %} ">{% trans "New Message" %}</a> | 
     <a href="{% url messages_trash %} ">{% trans "Trash" %}</a>
@@ -19,6 +19,7 @@
         </thead>
         
         <tbody>
+            {% autopaginate messages 10 %}
             {% for message in messages %}
                 <tr class="{% cycle "" "bkgd-light" %}">
                     <td>{{ message.sender.visible_name }}</td>
@@ -32,6 +33,8 @@
             {% endfor %}
         </tbody>
     </table>
+    <br/><br/>
+    <a href="{% url messages_inbox %} ">Go to the full inbox</a>
 {% else %}
     <em>Your inbox is empty.</em>
 {% endif %}
