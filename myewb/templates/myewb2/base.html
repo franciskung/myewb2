@@ -212,6 +212,13 @@
 <!-- (this handles the search bar -->
 <script type="text/javascript">
     $().ready(function() {
+        $(document).bind('cbox_load', function() {
+            $('#fontpageflash').hide();
+        });
+        $(document).bind('cbox_closed', function() {
+            $('#fontpageflash').show();
+        });
+        
         var is_searching = false;
         var is_focused = false;
         {% if user.is_authenticated %}
