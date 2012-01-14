@@ -46,7 +46,7 @@ DEFAULT_OPTIONS = {}
 
 def communities_index(request, form_class=CommunityForm, template_name=INDEX_TEMPLATE,
         new_template_name=NEW_TEMPLATE):
-    return groups_index(request, Community, GroupMember, form_class, template_name, new_template_name, DEFAULT_OPTIONS)
+    return groups_index(request, Community, GroupMember, form_class, template_name, new_template_name, DEFAULT_OPTIONS, True)
 
 @login_required
 def new_community(request, form_class=CommunityForm, template_name=NEW_TEMPLATE, 

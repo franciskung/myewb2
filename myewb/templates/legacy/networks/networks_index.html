@@ -14,7 +14,7 @@
 {% block head_title %}{% blocktrans %}Chapters{% endblocktrans %}{% endblock %}
 
 
-{% block extra_head_base %}
+{% block extra_head %}
     {{ block.super }}
     {# adding the map code just to this page #}
     <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAr4bFrclzv3t-BOujwrE_ChQ0Fohs0N8x-JP4ajf_M3hambhEhxQGoPFQ1wxpT0v6W-JM-Y1BcHXU7A" type="text/javascript"></script>
@@ -69,7 +69,6 @@ var cityArray = new Array();
 //]]>
 </script>
 
-		        
 	        {% endifequal %}
         {% endfor %}
 

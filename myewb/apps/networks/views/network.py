@@ -49,7 +49,7 @@ DEFAULT_OPTIONS = {"check_create": True}
 
 def networks_index(request, form_class=NetworkForm, template_name=INDEX_TEMPLATE,
         new_template_name=NEW_TEMPLATE):
-    return groups_index(request, Network, GroupMember, form_class, template_name, new_template_name, DEFAULT_OPTIONS)
+    return groups_index(request, Network, GroupMember, form_class, template_name, new_template_name, DEFAULT_OPTIONS, True)
 
 @permission_required('networks.add')
 def new_network(request, form_class=NetworkForm, template_name=NEW_TEMPLATE, 

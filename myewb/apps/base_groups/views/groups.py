@@ -36,7 +36,7 @@ from whiteboard.models import Whiteboard
 
 def groups_index(request, model=None, member_model=None, form_class=None,
                  template_name='base_groups/groups_index.html',
-                 new_template_name=None, options=None):
+                 new_template_name=None, options=None, show_all=False):
     """
     Display a listing of available groups
     """
@@ -70,6 +70,8 @@ def groups_index(request, model=None, member_model=None, form_class=None,
         if not user.has_module_perms("base_groups"):
             groups = enforce_visibility(groups, user)
 
+    elif show_all:
+        groups = model.objects.filter(is_active=True).exclude(model="LogisticalGroup")
     else:
         groups = model.objects.filter(member_users=user, is_active=True).exclude(model="LogisticalGroup")
     
