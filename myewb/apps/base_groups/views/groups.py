@@ -72,11 +72,14 @@ def groups_index(request, model=None, member_model=None, form_class=None,
 
     elif show_all:
         groups = model.objects.filter(is_active=True).exclude(model="LogisticalGroup")
+    elif not user or not user.is_authenticated():
+        groups = []
     else:
         groups = model.objects.filter(member_users=user, is_active=True).exclude(model="LogisticalGroup")
     
     # add some meta-data
-    groups = get_recent_counts(get_counts(groups, BaseGroup), BaseGroup).order_by('-recent_topic_count')
+    if groups:
+        groups = get_recent_counts(get_counts(groups, BaseGroup), BaseGroup).order_by('-recent_topic_count')
     
     # and throw in a province list (useful for the chapter listing)
     provinces = []
