@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404, render_to_response
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseForbidden
@@ -28,7 +29,11 @@ def add_filter(request, open_jobs, field, filters):
                 kwargs["%s__lte" % field] = value
             else:
                 kwargs["%s__gte" % field] = value
-            open_jobs = open_jobs.filter(**kwargs)
+                
+            try:
+                open_jobs = open_jobs.filter(**kwargs)
+            except ValidationError:
+                pass
 
     return open_jobs, filters
     
