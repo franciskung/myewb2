@@ -1,0 +1,128 @@
+{% load i18n %}
+{% load git_revision %}
+{% load avatar_tags %}
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+    
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+
+{% block entire_body %}
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+	<title>{% if SITE_NAME %}{{ SITE_NAME }} &raquo; {% endif %}{% block head_title %}{% endblock %}</title>
+	<meta name="description" content="">
+	<meta name="author" content="">
+
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/uni-form/uni-form.css" />    
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/uni-form/default.uni-form.css" />            
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/jquery-ui.css" />
+	<link rel="stylesheet" href="{{ STATIC_URL }}templates/myewb2/css/segmented_control.css">
+	<link rel="stylesheet" href="{{ STATIC_URL }}templates/myewb2/css/newstyle.css">
+	<link rel="stylesheet" href="{{ STATIC_URL }}templates/myewb2/css/960.css">
+	<link href='http://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:800' rel='stylesheet' type='text/css'>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="{{ STATIC_URL }}templates/myewb2/js/libs/jquery-1.6.2.min.js"><\/script>')</script>
+    <script src="{{ STATIC_URL }}templates/myewb2/js/libs/modernizr-2.0.6.min.js"></script>
+
+    {# really only used for tabs... but... yeah. #}
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/tabs.css" />
+    <script src="http://cdn.jquerytools.org/1.2.6/jquery.tools.min.js"></script>
+
+    {# I use this often enough, I'd love to just include it once and for all...!! #}
+{#    <link type="text/css" href="{{STATIC_URL}}css/colorbox.css?v=5" rel="stylesheet" />#}
+    <link type="text/css" href="{{STATIC_URL}}css/colorboxnew.css?v=5" rel="stylesheet" />
+    <script type="text/javascript" src="{{STATIC_URL}}js/colorbox.js?v=6"></script>
+
+	{% block extra_head %}
+	{% endblock %}
+
+	<script type="text/javascript" src="{{ STATIC_URL }}tiny_mce/jquery.tinymce.js"></script> 
+	{# didn't seem to work well with browser caching when added down the page #}
+
+	<script type="text/javascript" src="{{ STATIC_URL }}tiny_mce/tiny_mce.js"></script> 
+	{# doubledeclaration re: http://tinymce.moxiecode.com/punbb/viewtopic.php?id=21343 #}
+	{# TODO: this should be specifically loaded only when needed #}
+
+
+</head>
+<body>
+
+<div class="grey-background">
+  <div class="container_12">
+  
+    <div class="grid_12">
+      <!-- Heading -->
+      
+      <div class="myewb-header">
+
+        
+      </div>
+      
+      
+    </div>
+    <!-- end .grid_12 -->
+  
+    <div class="clear"></div>
+
+  </div>
+</div>
+
+<div id="maincontent" class="topround">
+
+    {% block body_base %}
+     
+        <div class="maincontent-background">
+        <div class="container_16">
+            <div class="grid_10 suffix_1" id="maincontent-nobars">
+                {% block body %} 
+                {% endblock %}
+                <br/><br/>
+            </div>
+
+           	<div class="grid_5" id="righttoolbars">
+            	{% block toolbar_left %}
+            	{% endblock %}
+            	{% block toolbar_right %}
+            	{% endblock %}
+           	</div>
+        </div>
+        </div>
+        
+    {% endblock %}   
+      
+    {% include "components/divider.html" %}
+
+
+
+
+</div>
+
+<!-- scripts concatenated and minified via ant build script-->
+<script src="{{ STATIC_URL }}templates/myewb2/js/plugins.js"></script>
+<script src="{{ STATIC_URL }}templates/myewb2/js/script.js"></script>
+<!-- end scripts-->
+
+{% block extra_body %}
+{% endblock %}
+
+
+<!--[if lt IE 7 ]>
+	<script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.2/CFInstall.min.js"></script>
+	<script>window.attachEvent("onload",function(){CFInstall.check({mode:"overlay"})})</script>
+<![endif]-->
+
+</body>
+
+{% endblock %}
+
+</html>
