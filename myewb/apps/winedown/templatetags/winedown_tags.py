@@ -7,7 +7,7 @@ from winedown.models import Cheers
 register = Library()
 
 @register.inclusion_tag("winedown/cheers_for_content.html", takes_context=True)
-def show_cheers_for_content(context, content, num=10):
+def show_cheers_for_content(context, content, num=None):
     """
     Show all cheers attached to an object.
     """
