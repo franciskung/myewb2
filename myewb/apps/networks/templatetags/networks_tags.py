@@ -24,7 +24,7 @@ def link_to_current_champ(user):
     if user.is_authenticated():
         chapter = user.get_profile().get_chapter()
     else:
-        chaper = None
+        chapter = None
         
     if chapter and chapter.is_chapter():
         return reverse('champ_dashboard', kwargs={'group_slug': chapter.slug,
