@@ -14,6 +14,7 @@ def attachablecomments(context, obj):
     return {
         'object': obj, 
         'request': context['request'],
+        'perms': context['perms'],
         'user': context['user'],
         'attach_forms': attach_forms,
     }

@@ -15,12 +15,12 @@
 <div class="post" id="replies">
 
     {% if responses %}
-		<br style='clear: both;'/>
 		
     	<h2 class="h2bold">
 		    Replies
     	</h2>
 		{% paginate %}
+		<br style='clear: both;'/>
     {% endif %}
 
     {% for response in responses %}
