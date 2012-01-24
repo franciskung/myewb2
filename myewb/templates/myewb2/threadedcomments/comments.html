@@ -15,12 +15,12 @@
 <div class="post" id="replies">
 
     {% if responses %}
-		{% paginate %}
 		<br style='clear: both;'/>
 		
     	<h2 class="h2bold">
 		    Replies
     	</h2>
+		{% paginate %}
     {% endif %}
 
     {% for response in responses %}
@@ -34,10 +34,25 @@
 		    <div class="border-bottom">
 			    <div class="minipost-inside">
 			    <div class="minipost-heading">
+    				{% if perms.group_topics %}
+                    <div class="minipost-rightcontainer">
+                        <div class="minipost-replydetails">
+                        <form class="uniForm delete_comment" method="POST" action="{% url tc_comment_delete response.id %}">
+                            <fieldset class="inlineLabels">
+                            <div class="form_block">
+                                <br/>
+                                <input type="submit" value="{% trans "Delete reply" %}" />
+                            </div>
+                            </fieldset>
+                        </form>
+                        </div>
+                    </div>
+                    {% endif %}
+
 	        		<div class="minipost-title" style='line-height: 2.5em;'>
-	          <a href="{% url profile_detail response.user %}">{{ response.user.visible_name }}</a>
-	          {% mktime response.date_submitted %}
-			        </div>
+        	            <a href="{% url profile_detail response.user %}">{{ response.user.visible_name }}</a>
+        	            {% mktime response.date_submitted %}
+    		        </div>
 	      		</div>
 	      		</div>
 	    	</div>
@@ -69,13 +84,6 @@
                                 {% endfor %}
                             </ul>
                         </div>
-                    {% endif %}
-                <td align="right" valign="top" width="300" style="font-size: 10px; padding-right: 10px;">
-                    {% if grpadmin %}
-                        <form method="POST" action="{% url tc_comment_delete response.id %}">
-                            <input type="submit" value="{% trans "Delete Post" %}" />
-                            <input type="hidden" name="next" value="{{ request.path }}" />
-                        </form>
                     {% endif %}
                 </td>
             </tr>
@@ -121,3 +129,14 @@
 {% else %}
     <h3>Please <a href="{% url acct_login %}?url={{request.path}}">Sign in</a> (or <a href="{% url acct_signup %}">Sign Up</a>) to respond</h3>
 {% endif %}
+
+{% if perms.group_topics %}
+<script type='text/javascript'>
+$().ready(function() {
+    $('.delete_comment').submit(function() {
+        return confirm('Are you sure you want to delete this reply?');
+    });
+});
+</script>
+{% endif %}
+
