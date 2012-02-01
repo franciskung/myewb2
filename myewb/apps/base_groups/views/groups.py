@@ -8,6 +8,10 @@ Last modified on 2009-12-09
 @author Joshua Gorner, Benjamin Best, Francis Kung
 """
 
+# necessary to trigger the BaseGroup.add_to_class calls early enough, otherwise they
+# don't appear in BaseGroup subclasses.  bah.  such a hack.  hope this doesn't cause circular imports....
+from mailchimp import models
+
 from datetime import datetime, timedelta
 
 from django.shortcuts import render_to_response, get_object_or_404
