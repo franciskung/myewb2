@@ -185,7 +185,13 @@ def group_detail(request, group_slug, model=None, member_model=None,
 
     # membership status
     if group.user_is_member(request.user):
-        member = group.members.get(user=request.user)
+        try:
+            member = group.members.get(user=request.user)
+        except MultiplObjectsReturned:
+            members = group.members.filter(user=request.user)
+            for m in members[1:]:
+                m.delete()
+            member = members[0]
     elif group.user_is_pending_member(request.user):
         member = group.pending_members.get(user=request.user)
     else:
