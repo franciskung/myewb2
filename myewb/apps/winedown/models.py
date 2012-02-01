@@ -52,6 +52,9 @@ class CheersManager(models.Manager):
         return self.create_from_container(container, user, comment)
         
     def create_from_container(self, container, user, comment=None):
+        if not user or not user.is_authenticated():
+            return None
+    
         try:
             c, created = Cheers.objects.get_or_create(owner=user, content=container)
         except Cheers.MultipleObjectsReturned:
