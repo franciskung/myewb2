@@ -13,6 +13,7 @@ from datetime import datetime, timedelta
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
+from django.core.exceptions import MultipleObjectsReturned
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import User
@@ -187,7 +188,7 @@ def group_detail(request, group_slug, model=None, member_model=None,
     if group.user_is_member(request.user):
         try:
             member = group.members.get(user=request.user)
-        except MultiplObjectsReturned:
+        except MultipleObjectsReturned:
             members = group.members.filter(user=request.user)
             for m in members[1:]:
                 m.delete()
