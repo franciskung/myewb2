@@ -17,8 +17,17 @@ from siteutils.helpers import fix_encoding
 class CheersManager(models.Manager):
     def get_container(self, obj):
         ctype = ContentType.objects.get_for_model(obj)
-        container, created = CheersContainer.objects.get_or_create(content_type=ctype,
-                                                                   object_id = obj.id)
+        
+        try:
+            container, created = CheersContainer.objects.get_or_create(content_type=ctype,
+                                                                       object_id = obj.id)
+        except CheersContainer.MultipleObjectsReturned:
+            containers = CheersContainer.objects.filter(content_type=ctype,
+                                                        object_id = obj.id)
+            for c in containers[1:]:
+                c.delete()
+            container = containers[0]
+            
         return container
 
     def get_for_object(self, obj):
@@ -43,7 +52,15 @@ class CheersManager(models.Manager):
         return self.create_from_container(container, user, comment)
         
     def create_from_container(self, container, user, comment=None):
-        c, created = Cheers.objects.get_or_create(owner=user, content=container)
+        try:
+            c, created = Cheers.objects.get_or_create(owner=user, content=container)
+        except Cheers.MultipleObjectsReturned:
+            cheerses = Cheers.objects.filter(owner=user, content=container)
+            for c in cheerses[1:]:
+                c.delete()
+                
+            c = cheerses[0]
+            created = False
         
         if created:
             c.comment = comment
