@@ -91,7 +91,7 @@ def login_facebook(request):
             profile.last_name=info['last_name']
         if not profile.facebook_id:
             profile.facebook_id = info['id']
-        if not profile.date_of_birth:
+        if not profile.date_of_birth and info.get('birthday', None):
             profile.date_of_birth = datetime.datetime.strptime(info['birthday'], '%m/%d/%Y')
         if not profile.gender:
             if info['gender'] == 'male':
