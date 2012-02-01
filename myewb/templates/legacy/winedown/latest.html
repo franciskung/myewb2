@@ -38,7 +38,11 @@
                 <img style="width: 30px; height: 30px; float: left;" src="{% avatar_url author 30 %}" class="avatar-myewb"/>
 
                 <div style="margin-left: 35px;">
-                    <a href="{% url profile_detail author %}">{{ author.visible_name }}</a><br/>
+                    {% if author.username %}
+                        <a href="{% url profile_detail author.username %}">{{ author.visible_name }}</a><br/>
+                    {% else %}
+                        {{ author.visible_name }}<br/>
+                    {% endif %}
                     <a href="{{ c.content_object.get_absolute_url }}" class="quietlink">{{ c.guess_title }}</a>
                     <div style='color: #a0a0a0; font-size: 10px;'>
                         {% mktime c.latest %}<br/>
