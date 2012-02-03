@@ -1168,7 +1168,7 @@ select.normalize {
 	padding: 3px;
 }
 
-#new_discussion {
+.new_discussion {
 	position: relative;
 	top: -10px;
 	left: 37px;

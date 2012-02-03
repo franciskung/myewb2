@@ -33,30 +33,62 @@
                     </div>
                 {% endifnotequal %}
             </div>
+            
         {% else %}
-            {% with c.guess_author as author %}
-                <img style="width: 30px; height: 30px; float: left;" src="{% avatar_url author 30 %}" class="avatar-myewb"/>
+            {% ifequal c.content_type.model 'customcheers' %}
+                <img style="width: 30px; height: 30px; float: left;" src="{% avatar_url c.content_object.author 30 %}" class="avatar-myewb"/>
 
                 <div style="margin-left: 35px;">
-                    {% if author.username %}
-                        <a href="{% url profile_detail author.username %}">{{ author.visible_name }}</a><br/>
-                    {% else %}
-                        {{ author.visible_name }}<br/>
-                    {% endif %}
-                    <a href="{{ c.content_object.get_absolute_url }}" class="quietlink">{{ c.guess_title }}</a>
+                    <a href="{% url profile_detail c.content_object.author.username %}">{{ c.content_object.author.visible_name }}</a><br/>
+                    <a href="{{ c.content_object.get_absolute_url }}" class="quietlink cheers_detail">{{ c.content_object.text }}</a>
                     <div style='color: #a0a0a0; font-size: 10px;'>
-                        {% mktime c.latest %}<br/>
-                        <a href="{% url winedown_summary c.id %}" style='color: #a0a0a0; font-size: 10px;' class="cheers_detail">cheers'ed by {{ c.count }} {% ifequal c.count 1 %}person{% else %}people{% endifequal %}!</a>
-                        {% if cheers_link %}
-                            &nbsp;
-                            <a href="{{ cheers_link }}" class="cheers" id="cheers-{{ c.id }}" style='font-size: 10px;'>Add your cheers</a>
-                        {% endif %}
+                        {% mktime c.latest %}
+                        {% ifequal c.count 1 %}
+                            {% if cheers_link %}
+                                &nbsp;
+                                <a href="{{ cheers_link }}" class="cheers" id="cheers-{{ c.id }}">Add your cheers</a>
+                            {% endif %}
+                        {% endifequal %}
                         {% if perms.winedown %}
-                            (<a href="{% url winedown_remove c.id %}" class='cheers_remove' style='font-size: 10px;'>x</a>)
+                            (<a href="{% url winedown_remove c.id %}" class='cheers_remove'>x</a>)
                         {% endif %}
                     </div>
+                    {% ifnotequal c.count 1 %}
+                        <div style='color: #a0a0a0; font-size: 10px;'>
+                            <a href="{% url winedown_summary c.id %}" class="cheers_detail" style='color: #a0a0a0;'>cheers'ed by {{ c.num_cheers }} {% ifequal c.num_cheers 1 %}person{% else %}people{% endifequal %}!</a>
+                            {% if cheers_link %}
+                                &nbsp;
+                                <a href="{{ cheers_link }}" class="cheers" id="cheers-{{ c.id }}">Add your cheers</a>
+                            {% endif %}
+                        </div>
+                    {% endifnotequal %}
                 </div>
-            {% endwith %}
+                
+            {% else %}
+                {% with c.guess_author as author %}
+                    <img style="width: 30px; height: 30px; float: left;" src="{% avatar_url author 30 %}" class="avatar-myewb"/>
+
+                    <div style="margin-left: 35px;">
+                        {% if author.username %}
+                            <a href="{% url profile_detail author.username %}">{{ author.visible_name }}</a><br/>
+                        {% else %}
+                            {{ author.visible_name }}<br/>
+                        {% endif %}
+                        <a href="{{ c.content_object.get_absolute_url }}" class="quietlink">{{ c.guess_title }}</a>
+                        <div style='color: #a0a0a0; font-size: 10px;'>
+                            {% mktime c.latest %}<br/>
+                            <a href="{% url winedown_summary c.id %}" style='color: #a0a0a0; font-size: 10px;' class="cheers_detail">cheers'ed by {{ c.count }} {% ifequal c.count 1 %}person{% else %}people{% endifequal %}!</a>
+                            {% if cheers_link %}
+                                &nbsp;
+                                <a href="{{ cheers_link }}" class="cheers" id="cheers-{{ c.id }}" style='font-size: 10px;'>Add your cheers</a>
+                            {% endif %}
+                            {% if perms.winedown %}
+                                (<a href="{% url winedown_remove c.id %}" class='cheers_remove' style='font-size: 10px;'>x</a>)
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endwith %}
+            {% endifequal %}
         {% endifequal %}
     </div>
 {% endfor %}

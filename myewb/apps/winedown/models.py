@@ -133,6 +133,9 @@ class CheersContainer(models.Model):
         else:
             return self.count
 
+# a cheers: represents a "like" or "tumbs-up".
+# cheers don't stand alone; they are always attached to a container
+# (normally a post or a tweet)
 class Cheers(models.Model):
     owner = models.ForeignKey(User, blank=True, null=True)
     date = models.DateTimeField(auto_now_add=True)
@@ -147,6 +150,14 @@ class Cheers(models.Model):
 
     class Meta:
         ordering = ['-date']
+        
+# ability to do a free-form cheers container... it's like a tweet,
+# except you don't need to be on twitter
+class CustomCheers(models.Model):
+    author = models.ForeignKey(User)
+    date = models.DateTimeField(db_index=True, auto_now_add=True)
+    text = models.TextField(max_length=120, verbose_name="")
+    
 
 class Tweet(models.Model):
     author = models.ForeignKey(User, blank=True, null=True)
