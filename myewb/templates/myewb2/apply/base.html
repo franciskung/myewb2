@@ -11,6 +11,18 @@
 		<script type="text/javascript" src="{{STATIC_URL}}js/admin/RelatedObjectLookups.js"></script> 
 {% endcomment %}
 		{{ form.media }} 
+
+		<script type="text/javascript" src="{{ STATIC_URL }}js/jquery-ui.js"></script>
+        <link rel="stylesheet" href="{{ STATIC_URL }}css/jquery-ui.css" />
+
+        <style>
+            #application-tabs a {
+                height: auto;
+                line-height: 1.4em;
+            }
+        </style>
+
+
 {% endblock %}
 
 {% block body_class %}volunteering purple{% endblock %}
