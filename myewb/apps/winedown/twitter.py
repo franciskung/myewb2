@@ -44,8 +44,12 @@ def load_tweets():
         # retweet?  see what we can find...!
         text = r['text']
         if text[0:4] == 'RT @':
-            original_tweeter = text.split(':')[0].split('@')[1].strip()
-            original_tweet = text.split(':', 1)[1].strip()
+            try:
+                original_tweeter = text.split(':')[0].split('@')[1].strip()
+                original_tweet = text.split(':', 1)[1].strip()
+            except IndexError:      # mis-formed retweets...?
+                original_tweeter = text.split('@')[1].split(' ', 1)[0].strip()
+                original_tweet = text.split('@')[1].split(' ', 1)[1].strip()
             
             tweet = get_object_or_none(Tweet, author_username=original_tweeter, text=original_tweet)
             
