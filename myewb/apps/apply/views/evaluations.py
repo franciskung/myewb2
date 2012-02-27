@@ -132,11 +132,11 @@ def evaluation_pdf(request, app_id):
     p.append(Spacer(0, 20))
 
     p.append(Paragraph("Resume", h2))
-    p.append(Paragraph(application.resume_text, lindent))
+    p.append(Paragraph(application.resume_text.replace("<br>", "<br/>").replace("</p>", "<br/><br/>"), lindent))
     p.append(Spacer(0, 20))
 
     p.append(Paragraph("References", h2))
-    p.append(Paragraph(application.references, lindent))
+    p.append(Paragraph(application.references.replace("<br>", "<br/>").replace("</p>", "<br/><br/>"), lindent))
     p.append(Spacer(0, 20))
     
     p.append(Paragraph("Application Questions", h2))
@@ -144,7 +144,7 @@ def evaluation_pdf(request, app_id):
         p.append(Paragraph("<strong>%s</strong>" % question.question, normalStyle))
         answer = Answer.objects.filter(application=application, question=question)
         if answer:
-            p.append(Paragraph(answer[0].answer, lindent))
+            p.append(Paragraph(answer[0].answer.replace("\n", "<br/>"), lindent))
         else:
             p.append(Paragraph("<em>No answer</em>", lindent))
         p.append(Spacer(0, 20))
