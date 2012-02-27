@@ -74,6 +74,7 @@ th, td {
        			    <th>{{ c.column_header }}</th>
        			{% endfor %}
        			<th>Last emailed</th>
+       			<th style='width: 25px;'>&nbsp;</th>
 			</tr>
 			</thead>
 			
@@ -95,6 +96,11 @@ th, td {
     					{% else %}
     						never
     					{% endif %}
+    				</td>
+    				<td>
+    				    <a href="{% url evaluation_pdf app.id %}">
+    				        <img src="{{ STATIC_URL }}images/pdf-icon.jpg" style='width: 16px; height: 16px;'/>
+    				    </a>
     				</td>
 				</tr>
 			{% endfor %}

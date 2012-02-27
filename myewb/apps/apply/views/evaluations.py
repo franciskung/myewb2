@@ -50,6 +50,126 @@ def evaluation_detail(request, app_id):
                               context_instance=RequestContext(request))
 
 @permission_required('apply.admin')
+def evaluation_pdf(request, app_id):
+    application = get_object_or_404(Application, id=app_id)
+    evaluation, created = Evaluation.objects.get_or_create(application=application)
+    
+    try:
+        from reportlab.pdfgen import canvas
+        from reportlab.lib.pagesizes import letter
+        from reportlab.lib.styles import getSampleStyleSheet
+        from reportlab.platypus import Paragraph, Image, Spacer, SimpleDocTemplate
+        from reportlab.lib import enums
+        import settings, copy
+        from datetime import date
+    except:
+        return HttpResponse("Missing library")
+    
+    width, pageHeight = letter
+    response = HttpResponse(mimetype='application/pdf')
+    response['Content-Disposition'] = "attachment; filename=application_%s.pdf" %  app_id
+    
+    stylesheet = getSampleStyleSheet()
+    normalStyle = copy.deepcopy(stylesheet['Normal'])
+    normalStyle.fontName = 'Times-Roman'
+    normalStyle.fontSize = 12
+    normalStyle.leading = 15
+    
+    centreAlign = copy.deepcopy(normalStyle)
+    centreAlign.alignment = enums.TA_CENTER
+
+    rightAlign = copy.deepcopy(normalStyle)
+    rightAlign.alignment = enums.TA_RIGHT
+
+    lindent = copy.deepcopy(normalStyle)
+    lindent.leftIndent = 12
+
+    h1 = copy.deepcopy(normalStyle)
+    h1.fontName = 'Times-Bold'
+    h1.fontSize = 18
+    h1.leading = 22
+    h1.backColor = '#d0d0d0'
+    h1.borderPadding = 3
+    h1.spaceBefore = 3
+    h1.spaceAfter = 3
+
+    h2 = copy.deepcopy(normalStyle)
+    h2.fontName = 'Times-Bold'
+    h2.fontSize = 14
+    h2.leading = 18
+    h2.backColor = '#e8e8e8'
+    h2.borderPadding = 3
+    h2.spaceBefore = 3
+    h2.spaceAfter = 3
+
+    page = SimpleDocTemplate(response, pagesize=letter, title="EWB application")
+    p = []
+    
+    p.append(Paragraph("<strong><em>PRIVATE AND CONFIDENTIAL</em></strong>", centreAlign))
+    p.append(Spacer(0, 10))
+    p.append(Paragraph("Engineers Without Borders Canada", normalStyle))
+    p.append(Spacer(0, 6))
+    p.append(Paragraph("<strong>%s</strong>" % application.session.name, normalStyle))
+    p.append(Spacer(0, -40))
+    img = Image(settings.MEDIA_ROOT + '/images/emaillogo.jpg', 100, 51)
+    img.hAlign = 'RIGHT'
+    p.append(img)
+    #p.line(50, height - 90, width - 50, height - 90)
+    p.append(Spacer(0, 10))
+
+    p.append(Paragraph("Application for", normalStyle))
+    p.append(Spacer(0, 5))
+    p.append(Paragraph(application.profile.first_name + ' ' + application.profile.last_name, h1))
+    
+    p.append(Paragraph("<strong>Submitted " + str(application.updated.date()) + "</strong>", normalStyle))
+    p.append(Spacer(0, -13))
+    p.append(Paragraph("Printed: " + str(date.today()), rightAlign))
+    p.append(Spacer(0, 14))
+    
+    p.append(Paragraph("<strong>English language</strong>&nbsp;&nbsp;&nbsp;&nbsp;Reading: %d&nbsp;&nbsp;&nbsp;Writing: %d&nbsp;&nbsp;&nbsp;Speaking %d" % (application.en_reading, application.en_writing, application.en_speaking), normalStyle))
+    p.append(Paragraph("<strong>French language</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reading: %d&nbsp;&nbsp;&nbsp;Writing: %d&nbsp;&nbsp;&nbsp;Speaking %d" % (application.fr_reading, application.fr_writing, application.fr_speaking), normalStyle))
+    #p.append(Paragraph("<strong>GPA             </strong>   %d" % application.gpa, normalStyle))
+    p.append(Spacer(0, 20))
+
+    p.append(Paragraph("Resume", h2))
+    p.append(Paragraph(application.resume_text, lindent))
+    p.append(Spacer(0, 20))
+
+    p.append(Paragraph("References", h2))
+    p.append(Paragraph(application.references, lindent))
+    p.append(Spacer(0, 20))
+    
+    p.append(Paragraph("Application Questions", h2))
+    for question in application.session.application_questions():
+        p.append(Paragraph("<strong>%s</strong>" % question.question, normalStyle))
+        answer = Answer.objects.filter(application=application, question=question)
+        if answer:
+            p.append(Paragraph(answer[0].answer, lindent))
+        else:
+            p.append(Paragraph("<em>No answer</em>", lindent))
+        p.append(Spacer(0, 20))
+        
+
+    """
+    for m in activity.get_metrics():
+        metricname = ''
+        for mshort, mlong in ALLMETRICS:
+            if mshort == m.metricname:
+                metricname = mlong
+                
+        p.append(Paragraph(metricname, h2))
+        for x, y in m.get_values().items():
+            if x and y:
+                p.append(Paragraph(fix_encoding(str(x)), bold))
+                p.append(Paragraph(fix_encoding(str(y)), lindent))
+                p.append(Spacer(0, 10))
+            
+        p.append(Spacer(0, 10))
+    """    
+    
+    page.build(p)
+    return response
+@permission_required('apply.admin')
 def evaluation_comment(request, app_id):
     application = get_object_or_404(Application, id=app_id)
     
