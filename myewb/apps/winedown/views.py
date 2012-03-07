@@ -1,10 +1,10 @@
-from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.decorators import permission_required, login_required
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext, Context, loader
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotFound
 from django.core.urlresolvers import reverse
 
-from winedown.forms import CheersForm
+from winedown.forms import CheersForm, CustomCheersForm
 from winedown.models import Cheers, CheersContainer
 
 def cheers(request, content_id):
@@ -63,6 +63,30 @@ def cheers_summary(request, content_id=None):
     
     return render_to_response('winedown/summary.html',
                               {'container': container},
+                              context_instance=RequestContext(request)
+                             )
+
+@login_required
+def cheers_new(request):
+    if request.method == 'POST':
+        form = CustomCheersForm(request.POST)
+        
+        if form.is_valid():
+            newcheers = form.save(commit=False)
+            newcheers.author = request.user
+            newcheers.save()
+            
+            container = Cheers.objects.get_container(newcheers)
+            container.count = 1
+            container.save()
+            
+            return HttpResponse('success')
+            
+    else:
+        form = CustomCheersForm()
+        
+    return render_to_response('winedown/custom.html',
+                              {'form': form},
                               context_instance=RequestContext(request)
                              )
                              

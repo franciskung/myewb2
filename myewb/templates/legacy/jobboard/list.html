@@ -286,13 +286,13 @@
 {% endblock %}
 
 {% block extra_body %}
-	<link type="text/css" href="{{STATIC_URL}}css/colorbox.css" rel="stylesheet" />
+{#	<link type="text/css" href="{{STATIC_URL}}css/colorbox.css" rel="stylesheet" />#}
 	<style>
 		div.ui-datepicker {z-index:10000000;}
 	</style>
 	
 	<script type="text/javascript" src="{{STATIC_URL}}js/ui.datepicker.js"></script>
-	<script type="text/javascript" src="{{STATIC_URL}}js/colorbox.js"></script>
+{#	<script type="text/javascript" src="{{STATIC_URL}}js/colorbox.js"></script>#}
 	<script type='text/javascript'>
 		var jobs_modified = false;
 		$(document).ready(function() {

@@ -97,6 +97,7 @@ urlpatterns += patterns('apply.views.evaluations',
   url(r'^evaluations/(?P<app_id>\d+)/comment/$', 'evaluation_comment', name="evaluation_comment"),
   url(r'^evaluations/(?P<app_id>\d+)/intanswer/$', 'evaluation_interview_answer', name="evaluation_interview_answer"),
   url(r'^evaluations/(?P<app_id>\d+)/criteria/(?P<criteria_id>\d+)/$', 'evaluation_criteria', name="evaluation_criteria"),
+  url(r'^evaluations/(?P<app_id>\d+)/pdf/$', 'evaluation_pdf', name="evaluation_pdf"),
 )
 
 

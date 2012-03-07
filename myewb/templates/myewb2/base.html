@@ -27,8 +27,8 @@
 	<link rel="stylesheet" href="{{ STATIC_URL }}templates/myewb2/css/segmented_control.css">
 	<link rel="stylesheet" href="{{ STATIC_URL }}templates/myewb2/css/newstyle.css">
 	<link rel="stylesheet" href="{{ STATIC_URL }}templates/myewb2/css/960.css">
-	<link href='http://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet' type='text/css'>
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans:800' rel='stylesheet' type='text/css'>
+	<link href='{% if request.is_secure %}https{% else %}http{% endif %}://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet' type='text/css'>
+    <link href='{% if request.is_secure %}https{% else %}http{% endif %}://fonts.googleapis.com/css?family=Open+Sans:800' rel='stylesheet' type='text/css'>
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
 <script>window.jQuery || document.write('<script src="{{ STATIC_URL }}templates/myewb2/js/libs/jquery-1.6.2.min.js"><\/script>')</script>
@@ -36,7 +36,7 @@
 
     {# really only used for tabs... but... yeah. #}
     <link rel="stylesheet" href="{{ STATIC_URL }}css/tabs.css" />
-    <script src="http://cdn.jquerytools.org/1.2.6/jquery.tools.min.js"></script>
+    <script src="{% if request.is_secure %}https{% else %}http{% endif %}://cdn.jquerytools.org/1.2.6/jquery.tools.min.js"></script>
 
     {# I use this often enough, I'd love to just include it once and for all...!! #}
 {#    <link type="text/css" href="{{STATIC_URL}}css/colorbox.css?v=5" rel="stylesheet" />#}

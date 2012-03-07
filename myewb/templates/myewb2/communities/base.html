@@ -33,6 +33,7 @@
 {% block toolbar_left %}
     {{ block.super }}
 
+    {% ifnotequal group.model 'Network' %}
     {% if group and group.is_active %}
 	    {% if is_admin %}
             <div class="toolbarheader bkgd" id="box-admin-options">{% trans "Admin Options" %}</div>
@@ -56,6 +57,7 @@
             </div>
         {% endif %}
 	{% endif %}
+    {% endifnotequal %}
 {% endblock %}
 
 

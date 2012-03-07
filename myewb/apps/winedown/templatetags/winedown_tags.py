@@ -7,7 +7,7 @@ from winedown.models import Cheers
 register = Library()
 
 @register.inclusion_tag("winedown/cheers_for_content.html", takes_context=True)
-def show_cheers_for_content(context, content, num=10):
+def show_cheers_for_content(context, content, num=None):
     """
     Show all cheers attached to an object.
     """
@@ -99,7 +99,8 @@ class CheersLinkNode(template.Node):
         if user.is_authenticated():
             mycheers = Cheers.objects.get_for_object(obj).filter(owner=user)
             if mycheers.count() == 0:
-                link = Cheers.objects.create_link(obj)
+                if hasattr(obj, 'author') and obj.author != user:
+                    link = Cheers.objects.create_link(obj)
         
         context[self.context_name] = link
         return ''

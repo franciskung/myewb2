@@ -21,7 +21,11 @@ def show_network(context, network):
 
 @register.simple_tag
 def link_to_current_champ(user):
-    chapter = user.get_profile().get_chapter()
+    if user.is_authenticated():
+        chapter = user.get_profile().get_chapter()
+    else:
+        chapter = None
+        
     if chapter and chapter.is_chapter():
         return reverse('champ_dashboard', kwargs={'group_slug': chapter.slug,
                                                   'year': schoolyear.school_year()})

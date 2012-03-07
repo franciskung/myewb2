@@ -7,6 +7,7 @@ Copyright 2010 Engineers Without Borders Canada
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
+from django.core.exceptions import MultipleObjectsReturned
 from django.db import models
 
 import settings, os, shutil, datetime, re
@@ -23,8 +24,16 @@ class WorkspaceManager(models.Manager):
         Returns the workspace for a particular object (usually a group),
         creating one if needed.
         """
-        w, c = self.get_query_set().get_or_create(content_type = ContentType.objects.get_for_model(object),
-                                                  object_id = object.id)
+        try:
+            w, c = self.get_query_set().get_or_create(content_type = ContentType.objects.get_for_model(object),
+                                                      object_id = object.id)
+        except MultipleObjectsReturned:
+            workspaces = self.get_query_set().filter(content_type = ContentType.objects.get_for_model(object),
+                                                     object_id = object.id)
+            for workspace in workspaces[1:]:
+                workspace.delete()
+            
+            w = workspaces[0]
         
         return w
 

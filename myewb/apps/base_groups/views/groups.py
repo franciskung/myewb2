@@ -8,11 +8,16 @@ Last modified on 2009-12-09
 @author Joshua Gorner, Benjamin Best, Francis Kung
 """
 
+# necessary to trigger the BaseGroup.add_to_class calls early enough, otherwise they
+# don't appear in BaseGroup subclasses.  bah.  such a hack.  hope this doesn't cause circular imports....
+from mailchimp import models
+
 from datetime import datetime, timedelta
 
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
+from django.core.exceptions import MultipleObjectsReturned
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import User
@@ -185,9 +190,22 @@ def group_detail(request, group_slug, model=None, member_model=None,
 
     # membership status
     if group.user_is_member(request.user):
-        member = group.members.get(user=request.user)
+        try:
+            member = group.members.get(user=request.user)
+        except MultipleObjectsReturned:
+            members = group.members.filter(user=request.user)
+            for m in members[1:]:
+                m.delete()
+            member = members[0]
     elif group.user_is_pending_member(request.user):
-        member = group.pending_members.get(user=request.user)
+        try:
+            member = group.pending_members.get(user=request.user)
+        except MultipleObjectsReturned:
+            members = group.pending_members.filter(user=request.user)
+            for m in members[1:]:
+                m.delete()
+            member = members[0]
+            
     else:
         member = None
         

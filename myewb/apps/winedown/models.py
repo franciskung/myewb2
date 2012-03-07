@@ -17,8 +17,17 @@ from siteutils.helpers import fix_encoding
 class CheersManager(models.Manager):
     def get_container(self, obj):
         ctype = ContentType.objects.get_for_model(obj)
-        container, created = CheersContainer.objects.get_or_create(content_type=ctype,
-                                                                   object_id = obj.id)
+        
+        try:
+            container, created = CheersContainer.objects.get_or_create(content_type=ctype,
+                                                                       object_id = obj.id)
+        except CheersContainer.MultipleObjectsReturned:
+            containers = CheersContainer.objects.filter(content_type=ctype,
+                                                        object_id = obj.id)
+            for c in containers[1:]:
+                c.delete()
+            container = containers[0]
+            
         return container
 
     def get_for_object(self, obj):
@@ -43,7 +52,18 @@ class CheersManager(models.Manager):
         return self.create_from_container(container, user, comment)
         
     def create_from_container(self, container, user, comment=None):
-        c, created = Cheers.objects.get_or_create(owner=user, content=container)
+        if not user or not user.is_authenticated():
+            return None
+    
+        try:
+            c, created = Cheers.objects.get_or_create(owner=user, content=container)
+        except Cheers.MultipleObjectsReturned:
+            cheerses = Cheers.objects.filter(owner=user, content=container)
+            for c in cheerses[1:]:
+                c.delete()
+                
+            c = cheerses[0]
+            created = False
         
         if created:
             c.comment = comment
@@ -113,6 +133,9 @@ class CheersContainer(models.Model):
         else:
             return self.count
 
+# a cheers: represents a "like" or "tumbs-up".
+# cheers don't stand alone; they are always attached to a container
+# (normally a post or a tweet)
 class Cheers(models.Model):
     owner = models.ForeignKey(User, blank=True, null=True)
     date = models.DateTimeField(auto_now_add=True)
@@ -127,6 +150,14 @@ class Cheers(models.Model):
 
     class Meta:
         ordering = ['-date']
+        
+# ability to do a free-form cheers container... it's like a tweet,
+# except you don't need to be on twitter
+class CustomCheers(models.Model):
+    author = models.ForeignKey(User)
+    date = models.DateTimeField(db_index=True, auto_now_add=True)
+    text = models.TextField(max_length=120, verbose_name="")
+    
 
 class Tweet(models.Model):
     author = models.ForeignKey(User, blank=True, null=True)

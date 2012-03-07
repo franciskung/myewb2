@@ -9,8 +9,13 @@
 		<script type="text/javascript" src="/admin/jsi18n/"></script>
 		<script type="text/javascript" src="{{STATIC_URL}}js/core.js"></script>
 		<script type="text/javascript" src="{{STATIC_URL}}js/admin/RelatedObjectLookups.js"></script> 
+
+		<script type="text/javascript" src="{{ STATIC_URL }}js/jquery-ui.js"></script>
+        <link rel="stylesheet" href="{{ STATIC_URL }}css/jquery-ui.css" />
+
 {% endcomment %}
 		{{ form.media }} 
+
 {% endblock %}
 
 {% block body_class %}volunteering purple{% endblock %}

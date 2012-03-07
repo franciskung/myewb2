@@ -412,9 +412,9 @@ class ExpenditureStaffForm(ModelForm):
         cleaned_data = self.cleaned_data
         submitted = self.cleaned_data['submitted']
         group = self.cleaned_data['group']
-        bank_date = self.cleaned_data['bank_date']
+        bank_date = self.cleaned_data.get('bank_date', None)
         account = self.cleaned_data['account']
-        if submitted == 'Y':
+        if submitted == 'Y' and bank_date:
             try:
                 monthlyreport = MonthlyReport.objects.get(group=group, type=account, date__month=bank_date.month, date__year=bank_date.year)
             except ObjectDoesNotExist:

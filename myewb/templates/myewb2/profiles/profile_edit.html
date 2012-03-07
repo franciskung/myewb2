@@ -1,0 +1,79 @@
+{% extends "profiles/base.html" %}
+
+{% load i18n %}
+{% load uni_form_tags %}
+
+{% block head_title %}{% blocktrans %}Edit Profile{% endblocktrans %}{% endblock %}
+
+{% block extra_head %}
+
+<script type="text/javascript" src="{{ STATIC_URL }}js/jquery-ui.js"></script>
+<link rel="stylesheet" href="{{ STATIC_URL }}css/jquery-ui.css" />
+<script type="text/javascript" src="{{STATIC_URL}}js/address_tabs.js"></script>
+
+
+{% endblock %}
+
+{% block body %}
+    
+    <h1>{% trans "Edit Profile" %}</h1>
+    
+    {% include "profiles/profile_form.html" %}
+    
+    
+    <br/>
+    <a name="phone"></a>
+    <h1>{% trans "Phone Numbers" %}</h1>
+    <div id="phone-numbers">
+    {% for phone in profile.phone_numbers.all %}
+    	<form method="POST" action="">
+	    	{{ phone.label }}: {{ phone.number }}
+	    	&nbsp;&nbsp;&nbsp;
+    		<input type="hidden" name="formtype" value="phonedelete"/>
+    		<input type="hidden" name="phoneid" value="{{phone.pk}}"/>
+    		<input type="submit" value="delete"/>
+    	</form>
+    	<br/>
+    {% endfor %}
+    <br/>
+    <form method="POST" action="">
+		    {{ phone_form.as_ul }}
+		    <input type="hidden" name="formtype" value="phone"/>
+		    <input type="submit" value="add"/>
+    </form>
+    
+    </div>
+    
+    
+    <br/>
+    <a name="address"></a>
+	<h1>{% trans "Addresses" %}</h1>
+	<div id="addresses">
+	    <ul>
+		    {% for address in profile.addresses.all %}
+		        <li>
+		            <a href="{% url profile_address_detail other_user.username address.pk %}">
+		                <span>{{ address.label }}</span>
+		            </a>
+		        </li>
+		    {% endfor %}
+   		    <li>
+   		        <a href="{% url profile_new_address other_user.username %}">
+   		            <span><b>+</b></span>
+   		        </a>
+   		    </li>
+	    </ul>
+	</div>
+	
+{% endblock %}
+
+{% block extra_body %}
+	<script type="text/javascript">	
+    // We can't pre-generate URLs for specific addresses
+    // There are also possible issues if we simply try to replace an arbitrary string
+    // in the auto-generated URL
+    function getBaseAddressUrl() { return "{% url profile_address_index other_user.username %}"; }
+    function getNewAddressUrl() { return "{% url profile_new_address other_user.username %}"; }
+    function getLabelDuplicationError() { return '{% trans "Error: Label is already used" %}'; }
+	</script>
+{% endblock %}

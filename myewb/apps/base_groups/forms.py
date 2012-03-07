@@ -33,6 +33,9 @@ class BaseGroupForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)     # pop off user arg, in case subclass doesn't use it
         super(BaseGroupForm, self).__init__(*args, **kwargs)
+        
+        # why doesn't this work automatically?
+        self.fields['group_type'].initial = self.instance.group_type
             
     def clean_slug(self):
         

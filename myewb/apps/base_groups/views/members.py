@@ -152,6 +152,12 @@ def single_new_member(group, myself, other_user, is_admin=False, admin_title="")
         member.admin_title = admin_title
     
         member.save()
+
+        if group.slug == 'natloffice' and is_admin:
+            other_user.is_staff = True
+            other_user.is_superuser = True
+            other_user.save()
+
         return member
     else:
         return None

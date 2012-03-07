@@ -1,0 +1,42 @@
+<h1>Cheers!</h1>
+
+<p>A <em>cheers</em> is a quick shout-out that you want to share with the EWB community!</p>
+
+<p>You can also use twitter to add your <em>cheers</em> (just use the #ewb hashtag), and you can 
+<em>cheers</em> any myEWB post by clicking on the lightbulb icon.</p>
+
+<form action="#" method="post" id="cheerscomment">
+    {{ form.as_p}}
+    <em id="charremainingcontainer"><span id="charremaining">120</span> characters remaining...</em>
+
+    <p>
+    <input type="submit" value="cheers!"/>
+    </p>
+</form>
+
+<script type="text/javascript">
+    $().ready(function() {
+        $('#cheerscomment textarea').keyup(function() {
+            var l = 120 - $(this).val().length;
+            if (l < 0)
+                $('#charremainingcontainer').addClass('redwarning');
+            else
+                $('#charremainingcontainer').removeClass('redwarning');
+
+            $('#charremaining').html(l);
+        });
+        
+        $('#cheerscomment').submit(function() {
+            $.post('{% url winedown_cheers_new %}',
+                   $(this).serialize(),
+                   function(data) {
+                        if (typeof window.refresh_cheerslist == 'function') {
+                            refresh_cheerslist();
+                        }
+                       $.colorbox.close();
+                   });
+            return false;
+        });
+    });
+</script>
+

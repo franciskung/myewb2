@@ -13,7 +13,7 @@
 	</table>	
 	{% endblock subtitle %}
 	<br /><br />
-	<table class="cellpadding8 standard" width="900" style="margin: 0 auto;">
+	<table class="cellpadding8 standard" style="margin: 0 auto;">
 		<tr>
 		<th>Location</th>
 		<th>Bank Date</th>
@@ -31,8 +31,8 @@
 		<td>{{t.bank_date}}</td>
 		<td>{{t.category.name}}</td>
 		<td>{{t.description}}</td>
-		<td align = "right">{% ifequal t.type "IN" %}{{ t.amount|floatformat:2 }}{% endifequal %}</td>
-		<td align = "right">{% ifequal t.type "EX" %}{{ t.amount|floatformat:2 }}{% endifequal %}</td>
+		<td>{% ifequal t.type "IN" %}{{ t.amount|floatformat:2 }}{% endifequal %}</td>
+		<td>{% ifequal t.type "EX" %}{{ t.amount|floatformat:2 }}{% endifequal %}</td>
 		<td><a href="{% url view_id id=t.id group_slug=group.slug %}">View</a></td>
 		<td><a href="{% url edit_id id=t.id group_slug=group.slug %}">Edit</a></td>
 		<td>{% ifequal t.submitted "N" %}<a href="{% url confirm_delete_id id=t.id group_slug=group.slug %}">Delete {% endifequal %}</a></td>
@@ -43,8 +43,8 @@
 		<td></td>
 		<td></td>
 		<td></td>
-		<td align = "right">{{total_in.total|floatformat:2}}</td>
-		<td align = "right">{{total_ex.total|floatformat:2}}</td>
+		<td>{{total_in.total|floatformat:2}}</td>
+		<td>{{total_ex.total|floatformat:2}}</td>
 		<td></td>
 		<td></td>
 		<td></td>
