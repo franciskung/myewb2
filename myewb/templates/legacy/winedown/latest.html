@@ -42,50 +42,16 @@
                     <a href="{% url profile_detail c.content_object.author.username %}">{{ c.content_object.author.visible_name }}</a><br/>
                     <a href="{{ c.content_object.get_absolute_url }}" class="quietlink cheers_detail">{{ c.content_object.text }}</a>
                     <div style='color: #a0a0a0; font-size: 10px;'>
-<<<<<<< HEAD
-<<<<<<< HEAD
                         {% mktime c.latest %}
-=======
-                        {% mktime c.latest %}<br/>
-                        <a href="{% url winedown_summary c.id %}" style='color: #a0a0a0; font-size: 10px;' class="cheers_detail">cheers'ed by {{ c.count }} {% ifequal c.count 1 %}person{% else %}people{% endifequal %}!</a>
-                        {% if cheers_link %}
-                            &nbsp;
-                            <a href="{{ cheers_link }}" class="cheers" id="cheers-{{ c.id }}" style='font-size: 10px;'>Add your cheers</a>
-                        {% endif %}
->>>>>>> origin/newlayout
-=======
-                        {% mktime c.latest %}
-                        {% ifequal c.count 1 %}
-                            {% if cheers_link %}
-                                &nbsp;
-                                <a href="{{ cheers_link }}" class="cheers" id="cheers-{{ c.id }}">Add your cheers</a>
-                            {% endif %}
-                        {% endifequal %}
->>>>>>> origin/newlayout
                         {% if perms.winedown %}
                             (<a href="{% url winedown_remove c.id %}" class='cheers_remove'>x</a>)
                         {% endif %}
                     </div>
-<<<<<<< HEAD
-<<<<<<< HEAD
                     <a href="{% url winedown_summary c.id %}" style='color: #a0a0a0; font-size: 10px;' class="cheers_detail">cheers'ed by {{ c.count }} {% ifequal c.count 1 %}person{% else %}people{% endifequal %}!</a>
                     {% if cheers_link %}
                         &nbsp;
                         <a href="{{ cheers_link }}" class="cheers" id="cheers-{{ c.id }}" style='font-size: 10px;'>Add your cheers</a>
                     {% endif %}
-=======
->>>>>>> origin/newlayout
-=======
-                    {% ifnotequal c.count 1 %}
-                        <div style='color: #a0a0a0; font-size: 10px;'>
-                            <a href="{% url winedown_summary c.id %}" class="cheers_detail" style='color: #a0a0a0;'>cheers'ed by {{ c.num_cheers }} {% ifequal c.num_cheers 1 %}person{% else %}people{% endifequal %}!</a>
-                            {% if cheers_link %}
-                                &nbsp;
-                                <a href="{{ cheers_link }}" class="cheers" id="cheers-{{ c.id }}">Add your cheers</a>
-                            {% endif %}
-                        </div>
-                    {% endifnotequal %}
->>>>>>> origin/newlayout
                 </div>
                 
             {% else %}
