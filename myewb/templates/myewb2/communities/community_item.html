@@ -1,0 +1,14 @@
+{% load i18n %}
+{% load extra_tagging_tags %}
+
+<strong><a href="{{ community.get_absolute_url }}">{{ community.name }}{#} ({{ community.slug }})#}</a></strong>
+
+<div>
+{{ community.description|truncatewords_html:20 }}
+</div><br/>
+
+<div class="community_stats" style="font-size: 12px;">
+    <b>{{ community.member_count }}</b> member{{ community.member_count|pluralize }} - 
+    <b>{{ community.topic_count }}</b> post{{ community.topic_count|pluralize }}
+</div>
+

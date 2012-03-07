@@ -17,6 +17,7 @@ from django.contrib.auth.models import  User
 from django.contrib.sites.models import Site
 from django.utils.translation import ugettext_lazy as _
 from django.db import models, connection
+from django.db.models import Q
 from django.db.models.signals import post_save, pre_delete
 from django.conf import settings
 
@@ -24,6 +25,7 @@ from mailer import send_mail
 from emailconfirmation.models import EmailAddress
 
 from siteutils.helpers import get_email_user
+from siteutils.shortcuts import get_object_or_none
 from manager_extras.models import ExtraUserManager
 from groups.base import Group
 #from whiteboard.models import Whiteboard
@@ -33,6 +35,34 @@ if "notification" in settings.INSTALLED_APPS:
     from notification import models as notification
 else:
     notification = None
+
+class BaseGroupManager(models.Manager):
+    def dashboard(self, user):
+        u = get_object_or_none(User, username=user)
+
+        if u:
+            filter1 = Q(user=u)
+            filter2 = Q(dashboard=True) | Q(is_admin=True)
+            mrecords = GroupMember.objects.filter(filter1, filter2)
+            groups = []
+            for m in mrecords:
+                if m.group not in groups:
+                    groups.append(m.group)
+
+            chapter = u.get_profile().get_chapter()
+            if chapter:
+                chapter = BaseGroup.objects.get(slug=chapter.slug)
+            if chapter and chapter not in groups:
+                groups.insert(0, chapter)
+                
+            return groups
+            
+            #return self.get_query_set().filter(member_users=u,
+            #                                   groupmember__dashboard=True)
+
+        else:
+            return []        
+    
 
 class BaseGroup(Group):
     """Base group (from which networks, communities, projects, etc. derive).
@@ -45,7 +75,7 @@ class BaseGroup(Group):
                                verbose_name=_('parent'), null=True, blank=True)
     
     member_users = models.ManyToManyField(User, through="GroupMember", verbose_name=_('members'))
-    
+
     # if true, members can only join if invited
     invite_only = models.BooleanField(_('invite only'), default=False)
     
@@ -77,6 +107,8 @@ class BaseGroup(Group):
     is_active = models.BooleanField(_("Is active? (false means deleted group"),
                                     default=True,
                                     editable=False)
+
+    objects = BaseGroupManager()
 
     def is_visible(self, user):
         visible = False
@@ -174,7 +206,7 @@ class BaseGroup(Group):
         members_with_emails = self.members.filter(emails_enabled=True).select_related(depth=1)
         return [member.user.email for member in members_with_emails if member.user.email and not member.user.nomail]
 
-    def add_member(self, user):
+    def add_member(self, user, dashboard=False):
         """
         Adds a member to a group.  If the the user is already a member, doesn't do anything.
         """
@@ -183,6 +215,10 @@ class BaseGroup(Group):
             member = members[0]
         else:
             member = GroupMember.objects.create(user=user, group=self)
+
+        if (member.dashboard and not dashboard) or (dashboard and not member.dashboard):
+            member.dashboard = dashboard
+            member.save()
             
         # this check assumes the *only* way to ever add a member to a group 
         # is to call this method...! otherwise it would be better implemented
@@ -366,6 +402,7 @@ class BaseGroupMember(models.Model):
     admin_order = models.IntegerField(_('admin order (smallest numbers come first)'), default=999, blank=True, null=True)
     joined = models.DateTimeField(_('joined'), default=datetime.datetime.now)
     imported = models.BooleanField(default=False, editable=False)
+    dashboard = models.BooleanField(_('Dashboard'), default=False)
     
     class Meta:
         abstract = True

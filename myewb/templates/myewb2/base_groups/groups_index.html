@@ -11,30 +11,59 @@
 {% load sorting_tags %}
 {% load cache %}
 
-{% block head_title %}{% blocktrans %}Communities{% endblocktrans %}{% endblock %}
+{% block head_title %}{% blocktrans %}Groups{% endblocktrans %}{% endblock %}
 
 {% block body %}
 
-{% cache CACHE_TIMEOUT "communitylist" user request.page request.field search_terms %}
+{% cache CACHE_TIMEOUT "grouplist" user request.page request.field search_terms %}
 
-    <h1 class="h2bold">{% trans "My Groups" %}</h1>
+    <h1>{% trans "My Groups" %}</h1>
+
+    {% if groups %}
+        {% autosort groups %}
+        {% autopaginate groups 10 %}
     
     <div class="chapterlist communitieslist">
 
-	    {% if user.is_authenticated and user.get_networks %}
-		    {% for group in user.get_communities %}
-	            {% show_community group %}
-			{% endfor %}
-	
-	    {% else %}
-	        {% url acct_signup as signup_url %}
-	        {% url acct_login as login_url %}
-	        <p>Not much to see here...</p>
-	        <p>You should really <a href="{{ login_url }}">log in </a>.</p>
-		{% endif %}
-	    
+
+
+
+        {% for group in groups %}
+        <div class="groupitem">
+            {% show_community group %}
+        </div>
+
+        {% endfor %}
+        
     </div>
-	
+
+        <br class="clear"/>
+        {% paginate %}
+
+    {% else %}
+		<p>
+		myEWB has two types of groups: <strong>chapters</strong> and <strong>communities</strong>.
+		</p>
+
+        <p>
+        <strong>Chapters</strong> are structured groups spread across the country, centered
+        in universities and cities. They meet regularly, and run their own programs
+        and events.
+        </p>
+
+        <p>
+        <strong>Communities</strong> are generally online groups around a specific
+        interest or topic.  They range from roles within the organization
+        (ie "All chapter executive members"), to international development topics
+        (ie "Fair Trade")
+        </p>
+
+        {% url acct_signup as signup_url %}
+        {% url acct_login as login_url %}
+        <p><a href="{{ login_url }}">Sign in to myEWB</a> to start participating
+        in myEWB communities!</p>
+    {% endif %}
+    
 {% endcache %}
 
 {% endblock %}
@@ -66,11 +95,6 @@
 				You can create new communities and invite members to contribute.
 		        <p><a href="{% url new_community %}">Create a new community</a></p>
 		</div>
-	{% else %}
-		<div class="toolbarheader bkgd" id="box-about-communities">{% trans "About EWB Communities" %}</div>
-		<div class="toolbarcontent">
-		myEWB communities are where EWB members come together to discuss issues important to them and to the organization.  Any logged-in myEWB member can also create new communities. Sign in, create a community of your own, and share it with others!
-		</div>
 	{% endif %}
 
 	<div class="toolbarheader bkgd" id="box-my-communities">{% trans "Active Groups" %}</div>
@@ -88,6 +112,5 @@
 	    {% endif %}
 	</div>
 
-
-
 {% endblock %}
+

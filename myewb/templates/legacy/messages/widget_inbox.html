@@ -2,7 +2,6 @@
 {% load timezone_filters %}
 
 <p>
-    <a href="{% url messages_inbox %} ">{% trans "Full Inbox" %}</a> | 
     <a href="{% url messages_outbox %} ">{% trans "Sent Messages" %}</a> | 
     <a href="{% url messages_compose %} ">{% trans "New Message" %}</a> | 
     <a href="{% url messages_trash %} ">{% trans "Trash" %}</a>
@@ -19,12 +18,18 @@
         </thead>
         
         <tbody>
-            {% for message in messages %}
+            {% for message in messages|slice:":10" %}
                 <tr class="{% cycle "" "bkgd-light" %}">
-                    <td>{{ message.sender.visible_name }}</td>
+                    <td>
+                        {% if not message.read_at %}<strong>{% endif %}
+                        {{ message.sender.visible_name }}
+                        {% if not message.read_at %}</strong>{% endif %}
+                    </td>
                     <td>
                         {% if message.replied %}<em>{% endif %}
+                        {% if not message.read_at %}<strong>{% endif %}
                         <a class="message-link {% if message.new %}new{% endif %}" href="{{ message.get_absolute_url }}">{% if message.subject.strip %}{{ message.subject }}{% else %}(No subject.){% endif %}</a>
+                        {% if not message.read_at %}</strong>{% endif %}
                         {% if message.replied %}</em>{% endif %}
                     </td>
                     <td>{{ message.sent_at|localtime:user.get_profile.timezone|date:_("DATETIME_FORMAT") }}</td>
@@ -32,6 +37,8 @@
             {% endfor %}
         </tbody>
     </table>
+    <br/><br/>
+    <a href="{% url messages_inbox %} ">Go to the full inbox</a>
 {% else %}
     <em>Your inbox is empty.</em>
 {% endif %}

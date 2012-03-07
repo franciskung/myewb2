@@ -49,7 +49,7 @@ DEFAULT_OPTIONS = {"check_create": True}
 
 def networks_index(request, form_class=NetworkForm, template_name=INDEX_TEMPLATE,
         new_template_name=NEW_TEMPLATE):
-    return groups_index(request, Network, GroupMember, form_class, template_name, new_template_name, DEFAULT_OPTIONS)
+    return groups_index(request, Network, GroupMember, form_class, template_name, new_template_name, DEFAULT_OPTIONS, True)
 
 @permission_required('networks.add')
 def new_network(request, form_class=NetworkForm, template_name=NEW_TEMPLATE, 
@@ -247,13 +247,13 @@ def update_magic_lists(request, group_slug, username, form_class):
                         # TODO: don't hard-code slug?
                         try:    # all execs
                             allexec = ExecList.objects.get(slug='exec')
-                            allexec.add_member(other_user)
+                            allexec.add_member(other_user, dashboard=True)
                         except:
                             pass
                         
                         try:    # chapter-specific execs
                             chapterexec = ExecList.objects.get(parent=group)
-                            chapterexec.add_member(other_user)
+                            chapterexec.add_member(other_user, dashboard=True)
                         except:
                             pass
                         
@@ -261,14 +261,14 @@ def update_magic_lists(request, group_slug, username, form_class):
                             # TODO: don't hard-code slug?
                             try:
                                 stuexec = ExecList.objects.get(slug='unichaptersexec')
-                                stuexec.add_member(other_user)
+                                stuexec.add_member(other_user, dashboard=True)
                             except:
                                 pass
                         else:
                             # TODO: don't hard-code slug?
                             try:
                                 proexec = ExecList.objects.get(slug='prochaptersexec')
-                                proexec.add_member(other_user)
+                                proexec.add_member(other_user, dashboard=True)
                             except:
                                 pass
 
@@ -300,7 +300,7 @@ def update_magic_lists(request, group_slug, username, form_class):
                     
                         # add to list if not already on it
                         if list not in currentlists:
-                            obj = list.add_member(other_user)
+                            obj = list.add_member(other_user, dashboard=True)
                     
                     # get current lists, remove from rep lists as needed
                     for list in currentlists:
@@ -308,3 +308,4 @@ def update_magic_lists(request, group_slug, username, form_class):
                             list.remove_member(other_user)
                         
     return True
+

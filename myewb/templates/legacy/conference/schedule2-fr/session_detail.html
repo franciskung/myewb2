@@ -4,7 +4,7 @@
 {% load avatar_tags %}
 
 {% block body2 %}
-    <h3>{{ session.name_fr }}</h3>
+    <h3>{{ session.name_fr|default:session.name }}</h3>
 
     {% comment %}
     {% if not request.is_mobile and not session.fixed %}
@@ -32,7 +32,7 @@
     {% endif %}
     {% endcomment %}
     
-    {{ session.timeslot.day|date:"l"}}, {{ session.timeslot.time|time:"g:i A" }} - {{ session.timeslot.endtime|time:"g:i A" }}{% if session.room %} ({{ session.room }}){% endif %}<br/>
+    {{ session.timeslot.day|date_fr}}, {{ session.timeslot.time|time_fr }} - {{ session.timeslot.endtime|time_fr }}{% if session.room %} ({{ session.room }}){% endif %}<br/>
     {% comment %}
     {% if session.popular and not session.common %}
         <br/>
@@ -49,11 +49,12 @@
     {% endcomment %}
     
     <p>
-        {{ session.description_fr|safe|linebreaksbr }}
+        {{ session.description_fr|default:session.description|safe|linebreaksbr }}
     </p>
     <br style="clear: both;">
     <hr/>
     
+    {% comment %}
     {% if request.is_mobile and not session.fixed %}
     	{% if session.capacity %}
 	        <p>
@@ -73,6 +74,7 @@
         <br style="clear: both;"/>
         <hr/>
     {% endif %}
+    {% endcomment %}
     
     <p>
         {% if request.user.is_authenticated %}

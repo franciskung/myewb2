@@ -103,8 +103,15 @@ class CheersContainer(models.Model):
                 
             cheers2.append(c)
             
-        cheers2.reverse()
+#        cheers2.reverse()
         return cheers2
+
+    def num_cheers(self):
+        ct = ContentType.objects.get(app_label='winedown', model='Tweet')
+        if self.content_type == ct:
+            return self.count - 1
+        else:
+            return self.count
 
 class Cheers(models.Model):
     owner = models.ForeignKey(User, blank=True, null=True)
@@ -117,6 +124,9 @@ class Cheers(models.Model):
     model = models.CharField(max_length=50, default='Cheers')
     
     objects = CheersManager()
+
+    class Meta:
+        ordering = ['-date']
 
 class Tweet(models.Model):
     author = models.ForeignKey(User, blank=True, null=True)

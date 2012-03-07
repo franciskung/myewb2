@@ -39,10 +39,11 @@ body, button, input, select, textarea { font-family: sans-serif; color: #444; }
  * These selection declarations have to be separate
  * No text-shadow: twitter.com/miketaylr/status/12228805301
  * Also: hot pink!
- */
+ *
 
 ::-moz-selection { background: #fe57a1; color: #fff; text-shadow: none; }
 ::selection { background: #fe57a1; color: #fff; text-shadow: none; }
+*/
 
 
 /* =============================================================================
@@ -327,26 +328,26 @@ body {
 
 
 /*overflow: hidden;*/
-height: 67px;
+height: 75px;
 padding: 0;
 }
 
 .myewb-logo {
 float: left;
-height: 67px;
+height: 75px;
 overflow: hidden;
 padding-right: 10px;
 }
 
 .myewb-top-links {
 float: left;
-height: 67px;
+height: 75px;
 overflow: hidden;
 }
 
 .myewb-top-links img {
 	display: block;
-	margin: 10px auto -3px auto;
+	margin: 16px auto -3px auto;
 	height: 33px;
 	width: 33px;
     opacity: 0.8;
@@ -355,12 +356,13 @@ overflow: hidden;
 
 .myewb-top-links li {
 display: inline;
+text-align: center;
 }
 
 .myewb-header-right {
 float: right;
 min-width: 100px;
-height: 54px;
+height: 62px;
 }
 .myewb-header-right .searchbox {
 float: left;
@@ -373,17 +375,21 @@ padding-top: 18px;
   background: #ffffff url('../../../images/icons/Search.ico') no-repeat center left;
   background-size: 15px;
   padding-left: 20px;
+  width: 200px;
+  color: #a0a0a0;
+  margin: 10px;
 }
 
 
 .myewb-header-right .profile-pic {
 float: right;
-width: 52px;
+width: 60px;
+padding-right: 10px;
 }
 
 .myewb-header-right .profile-pic-link {
-padding: 16px 20px 0 20px;
-height: 51px;
+padding: 20px 20px 0 20px;
+height: 57px;
 }
 
 /*
@@ -438,7 +444,7 @@ box-shadow: 0px 0px 1px #CF6904;
 display: block;
 float: left;
 padding: 0 17px;
-height: 67px;
+height: 75px;
 
 color: #ffffff;
 text-decoration: none;
@@ -450,7 +456,7 @@ background-color: #DB7403;
 
 .myewb-header a.current {
 
-height: 59px;
+height: 67px;
 border-bottom: 10px solid #db7403; 
 
 }
@@ -460,9 +466,8 @@ padding-bottom: 2px;
 }
 
 .myewb-logo a {
-    font-size: 2.5em;
-    line-height: 67px;
-    /*padding-top: 17px;*/
+    font-size: 3em;
+    line-height: 90px;
     
 }
 
@@ -1206,8 +1211,101 @@ li.attachmentItem img {
     height: 16px;
 }
 
+div.createaccount {
+float:right;
+margin-right:20%;
+}
+
+div#content div.createaccount input[type="button"] {
+font-size: 1.2em;
+padding:1.5em 2.5em;
+}
+
+form.login {
+    width: 53%;
+}
+
+form.login .inlineLabels label {
+    width: 10em;
+    text-align: right;
+    font-weight: bold;
+    margin-top: 0.6em;
+}
+form.login .inlineLabels input[type="text"], form.login .inlineLabels input[type="password"] {
+width: 180px;
+}
 
 
+form.login label[for="id_remember"] {
+    visibility: hidden;
+}
+form.login label[for="id_remember"].remember-me-label {
+display:inline;
+float:none;
+font-weight:normal;
+visibility:visible;
+}
+
+form.login fieldset.inlineLabels p {
+clear:both;
+}
+
+div.groupitem {
+border:1px solid #ddd;
+float:left;
+margin-right:25px;
+padding:10px;
+width:225px;
+min-height:95px;
+margin-bottom: 25px;
+}
+
+/*
+Styles for the chapter list page
+possibly also to be used by the mailinglist/communities page
+*/
+div.chapterlist h2 {
+clear:both;
+}
+div.chapterlist dl {
+border:1px solid #ddd;
+float:left;
+margin-right:10px;
+padding:10px;
+width:225px;
+min-height:95px;
+}
+div.communitieslist dl {
+min-height:130px;
+}
+
+
+div.chapterlist dt {
+font-size: 1.3em;
+font-weight: bold;
+}
+div.chapterlist dt a {
+}
+
+div.chapterlist dd {
+margin:0;
+}
+
+div.chapterlist dd a {
+}
+
+div.chapterlist dd a.networks-chaptersite-link {
+display:inline-block;
+margin-top:7px;
+}
+
+div.provincelinklist a {
+display: block;
+}
+
+table.ui-datepicker-calendar  th {
+ background: url('images/bg-highlight.png') repeat-x center center #E2E2E2;
+}
 
 
 /* =============================================================================

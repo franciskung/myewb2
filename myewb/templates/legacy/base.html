@@ -47,6 +47,11 @@
     </head>
 
     <body id="bodybackground" class="{% block body_class %}{% endblock %}">
+
+<div style='text-align: center;'>
+<a href="{% url themeswitch %}" class="colorbox" id="newlook">myEWB has a new look...!</a>
+</div>
+
         {% comment %}
         <h1 class="debug">myEWB dev version -- {% git_date %} (<a href="http://github.com/ewbcanada/myewb2/tree/{% git_rev %}">git rev {% git_rev %}</a>)</h1>
         <br/>
@@ -171,6 +176,8 @@
             {% block extra_body %}{% endblock %}
         {% endblock %}
         
+    <link type="text/css" href="{{STATIC_URL}}css/colorbox.css?v=5" rel="stylesheet" />
+    <script type="text/javascript" src="{{STATIC_URL}}js/colorbox.js?v=6"></script>
         <script type="text/javascript">
         	var is_searching = false;
         	var is_focused = false;
@@ -213,6 +220,9 @@
             	$('#mainsearchform').submit();
         	});
         	{% endif %}
+
+            $('#newlook').colorbox({opacity: '0.5', width: '600px', height: '50%'});
+        
         	
         </script>
         

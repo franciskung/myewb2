@@ -18,8 +18,8 @@
     <div class="createaccount">
 		        {% ifsetting ACCOUNT_OPEN_SIGNUP %}
 		        {% url acct_signup as signup_url %}
-		        <span class="noaccountquestion">Don't have an account yet?</span>
-		        <input type="button" onclick="window.location='{{ signup_url }}'" value="{% trans "Sign up for myEWB!" %}" />
+		        <span class="noaccountquestion">Don't have an account yet?</span><br/>
+		        <a href="{{ signup_url }}"><strong>{% trans "Sign up for myEWB!" %}</strong></a>
 		        {% endifsetting %}
     </div>
 

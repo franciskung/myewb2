@@ -13,6 +13,9 @@ from django.db.models.signals import post_save
 from django.utils.translation import ugettext_lazy as _
 from base_groups.models import BaseGroup, GroupMember, add_creator_to_group
 
+# ugly to add a dependency, but need to do this so the add_to_class calls happen before the subclassing...
+from mailchimp.models import MailchimpEvent
+
 class CommunityManager(models.Manager):
     def listing(self):
         return self.get_query_set().filter(parent__isnull=True, is_active=True)

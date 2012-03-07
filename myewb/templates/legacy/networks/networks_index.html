@@ -14,7 +14,7 @@
 {% block head_title %}{% blocktrans %}Chapters{% endblocktrans %}{% endblock %}
 
 
-{% block extra_head_base %}
+{% block extra_head %}
     {{ block.super }}
     {# adding the map code just to this page #}
     <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAr4bFrclzv3t-BOujwrE_ChQ0Fohs0N8x-JP4ajf_M3hambhEhxQGoPFQ1wxpT0v6W-JM-Y1BcHXU7A" type="text/javascript"></script>
@@ -30,7 +30,7 @@
         <p>{% blocktrans %}<a href="{{ signup_url }}">Sign up</a> and <a href="{{ login_url }}">log in </a> to join a chapter.{% endblocktrans %}</p>
     {% endif %}
 
-	{% cache CACHE_TIMEOUT "chapterlist" %}    
+	{% cache CACHE_TIMEOUT "chapterlist2" %}    
 
     {% autosort groups %}
     {#{% autopaginate groups 10 %}#}
@@ -69,7 +69,6 @@ var cityArray = new Array();
 //]]>
 </script>
 
-		        
 	        {% endifequal %}
         {% endfor %}
 
@@ -136,6 +135,7 @@ var cityArray = new Array();
     	<h2 id="ON">Ontario</h2>
         {% for group in groups %}
         	{% ifequal group.chapter_info.province "ON" %}
+			{% ifnotequal group.slug "yorku" %}
 
 		        <dl>
 		            {% show_network group %}
@@ -149,7 +149,8 @@ var cityArray = new Array();
     cityArray["{{group.chapter_info.city }}"]["{{group.slug }}"] = "{{group.name }}";
 //]]>
 </script>
-		        
+
+		        {% endifnotequal %}
 	        {% endifequal %}
         {% endfor %}
 

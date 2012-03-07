@@ -11,6 +11,7 @@ Last modified on 2009-07-29
 from django import template
 from django.contrib.contenttypes.models import ContentType
 from group_topics.models import GroupTopic
+from base_groups.models import BaseGroup
 
 register = template.Library()
 
@@ -245,3 +246,31 @@ def do_can_bulk_add(parser, token):
     return CanBulkAddNode(group_name, username, context_name)
 
 register.tag('can_bulk_add', do_can_bulk_add)
+
+
+class GetDashboardGroupsNode(template.Node):
+    def __init__(self, username, context_name):
+        self.user = template.Variable(username)
+        self.context_name = context_name
+
+    def render(self, context):
+        try:
+            user = self.user.resolve(context)
+        except template.VariableDoesNotExist:
+            return u''
+        
+        context[self.context_name] = BaseGroup.objects.dashboard(user)
+        return u''
+
+def do_get_dashboard_groups(parser, token):
+    """
+    Provides the template tag {% get_dashboard_groups for USER as VARIABLE %}
+    """
+    try:
+        _tagname, _for, username, _as, context_name = token.split_contents()
+    except ValueError:
+        raise template.TemplateSyntaxError(u'%(tagname)r tag syntax is as follows: '
+            '{%% %(tagname)r for USERNAME as VARIABLE %%}' % {'tagname': _tagname})
+    return GetDashboardGroupsNode(username, context_name)
+
+register.tag('get_dashboard_groups', do_get_dashboard_groups)

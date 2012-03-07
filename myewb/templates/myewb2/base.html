@@ -9,6 +9,7 @@
 <!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
 
+{% block entire_body %}
 
 <head>
 	<meta charset="utf-8">
@@ -22,6 +23,7 @@
 
     <link rel="stylesheet" href="{{ STATIC_URL }}css/uni-form/uni-form.css" />    
     <link rel="stylesheet" href="{{ STATIC_URL }}css/uni-form/default.uni-form.css" />            
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/jquery-ui.css" />
 	<link rel="stylesheet" href="{{ STATIC_URL }}templates/myewb2/css/segmented_control.css">
 	<link rel="stylesheet" href="{{ STATIC_URL }}templates/myewb2/css/newstyle.css">
 	<link rel="stylesheet" href="{{ STATIC_URL }}templates/myewb2/css/960.css">
@@ -37,14 +39,27 @@
     <script src="http://cdn.jquerytools.org/1.2.6/jquery.tools.min.js"></script>
 
     {# I use this often enough, I'd love to just include it once and for all...!! #}
-    <link type="text/css" href="{{STATIC_URL}}css/colorbox.css?v=5" rel="stylesheet" />
+{#    <link type="text/css" href="{{STATIC_URL}}css/colorbox.css?v=5" rel="stylesheet" />#}
+    <link type="text/css" href="{{STATIC_URL}}css/colorboxnew.css?v=5" rel="stylesheet" />
     <script type="text/javascript" src="{{STATIC_URL}}js/colorbox.js?v=6"></script>
 
 	{% block extra_head %}
 	{% endblock %}
 
+	<script type="text/javascript" src="{{ STATIC_URL }}tiny_mce/jquery.tinymce.js"></script> 
+	{# didn't seem to work well with browser caching when added down the page #}
+
+	<script type="text/javascript" src="{{ STATIC_URL }}tiny_mce/tiny_mce.js"></script> 
+	{# doubledeclaration re: http://tinymce.moxiecode.com/punbb/viewtopic.php?id=21343 #}
+	{# TODO: this should be specifically loaded only when needed #}
+
+
 </head>
 <body>
+
+<div style='background: #db7403; margin: 0 -10px; text-align: center;'>
+<a href="{% url themeswitch %}" class="colorbox" id="newlook" style='color: #ffffff;'>we have a new look...!</a>
+</div>
 
 
 <div class="grey-background">
@@ -62,7 +77,7 @@
           		<img src="{{ STATIC_URL }}images/icons3/Chat%202.png"/>
           		Discussions
           </a></li>
-          <li><a href="{% url communities_index %}" class="border-lightblue{% block nav_class_groups %}{% endblock %}">
+          <li><a href="{% url groups_index %}" class="border-lightblue{% block nav_class_groups %}{% endblock %}">
           		<img src="{{ STATIC_URL }}images/icons3/Buddy%20Group.png"/>
           		Groups
           </a></li>
@@ -72,7 +87,7 @@
           </a></li>
           <li><a href="{% url jobboard_list %}" class="border-green{% block nav_class_volunteer %}{% endblock %}">
           		<img src="{{ STATIC_URL }}images/icons3/Tag.png"/>
-          		Applications
+          		<span class="twoline">Get Involved</span>
           </a></li>
         </ul>
         {% endspaceless %}
@@ -80,7 +95,7 @@
         <div class="myewb-header-right">
           <div class="searchbox">
             <form method="get" action="{% url search %}" id="mainsearchform">
-               <input type="text" value="search" style="width: 200px; color: #a0a0a0; margin: 5px 10px;" id="global_search_box" name="q"/>
+               <input type="text" value="search" id="global_search_box" name="q"/>
                     
                {% if user.is_authenticated %}
                     
@@ -94,16 +109,16 @@
               {% endif %}
 
           </div>
-          <div class="profile-pic" style='position: relative;'>
-            
-            {% if user.is_authenticated %}
+
+          {% if user.is_authenticated %}
+            <div class="profile-pic" style='position: relative;'>
                 <a class="profile-pic-link" href="{% url profile_detail user %}" id="profile_image">
                   <span data-background-src="{% avatar_url user 40 %}" class="avatar-40"></span>
 
-	                <div id="inbox_count" style="position: absolute; top: 32px; left: 37px; font-weight: bold; padding: 0px; text-align: center;">
+	                <div id="inbox_count" style="position: absolute; top: 39px; left: 37px; font-weight: bold; padding: 0px; text-align: center;">
                         {% if messages_inbox_count %}
                             <img src="{{ STATIC_URL }}images/icons3/Mail2.png" style='height: 30px; width: 30px;'/>
-		                    <span style='position: absolute; top: 10px; left: 0px; color: #db7403;'>{{ messages_inbox_count }}</span>
+		                    <span style='position: absolute; top: 8px; left: 0px; color: #db7403; box-shadow: 0 0 0; -webkit-box-shadow: 0 0 0; -moz-box-shadow: 0 0 0;'>{{ messages_inbox_count }}</span>
         		        {% endif %}
 		            </div>
                 </a>
@@ -123,11 +138,8 @@
                     <a href="{% url acct_logout %}">Sign out</a>
                     <br/>
                 </div>
-            {% endif %}
-            
-            
-            
-          </div>
+              </div>
+          {% endif %}
         </div>
         
       </div>
@@ -210,6 +222,13 @@
 <!-- (this handles the search bar -->
 <script type="text/javascript">
     $().ready(function() {
+        $(document).bind('cbox_load', function() {
+            $('#fontpageflash').hide();
+        });
+        $(document).bind('cbox_closed', function() {
+            $('#fontpageflash').show();
+        });
+        
         var is_searching = false;
         var is_focused = false;
         {% if user.is_authenticated %}
@@ -280,16 +299,14 @@
             $('#righttoolbars').hide();
             $('#maincontent-nobars').removeClass('grid_10').removeClass('suffix_1').addClass('grid_16');
         }
+
+        $('#newlook').colorbox({opacity: '0.5', width: '600px', height: '50%'});
+        
     });
 </script>
 
 
-<script>
-	var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']]; // Change UA-XXXXX-X to be your site's ID
-	(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];g.async=1;
-	g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
-	s.parentNode.insertBefore(g,s)}(document,'script'));
-</script>
+{% include "google_analytics.html" %}
 
 <!--[if lt IE 7 ]>
 	<script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.2/CFInstall.min.js"></script>
@@ -297,4 +314,7 @@
 <![endif]-->
 
 </body>
+
+{% endblock %}
+
 </html>

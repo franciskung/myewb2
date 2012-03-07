@@ -1,4 +1,4 @@
-import re
+import re, locale
 
 # I love django, I love django... and djangosnippets!!!
 # http://djangosnippets.org/snippets/2001/
@@ -60,4 +60,12 @@ class MobileDetectionMiddleware(object):
                     is_mobile = True
 
         request.is_mobile = is_mobile
+        
+        # this doesn't really belong here, but it's better than the overhead of
+        # loading yet another middleware class...
+        mylocale = request.session.get('django_language', 'en_US')
+        try:
+            locale.setlocale(locale.LC_ALL, mylocale)
+        except:
+            locale.setlocale(locale.LC_ALL, 'en_US')
 

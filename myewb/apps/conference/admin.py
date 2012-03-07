@@ -30,6 +30,7 @@ admin.site.register(ConferenceTimeslot, TimeslotAdmin)
 
 class SessionAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'timeslot')
+    exclude = ('attendees',)
     
 admin.site.register(ConferenceSession, SessionAdmin)
 

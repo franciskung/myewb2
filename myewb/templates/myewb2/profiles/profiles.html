@@ -1,0 +1,100 @@
+{% extends "profiles/base.html" %}
+
+{% load i18n %}
+{% load pagination_tags %}
+{% load avatar_tags %}
+{% load humanize %}
+{% load profile_tags %}
+
+{% block head_title %}{% blocktrans %}All Profiles{% endblocktrans %}{% endblock %}
+
+
+{% block extra_head %}
+    {{ block.super }}
+ 
+
+
+	
+{% endblock %}
+
+
+{% block body %}
+    <h1>{% trans "Profile Search" %}</h1>
+
+
+
+<div id="search-tabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+
+<ul class="tabs">
+
+        <li id="li-group-postsearch"><a href="{% url search %}?q=" id="show-postsearch">Search content</a></li>
+        <li id="li-group-peoplesearch" class="current"><a href="#people-search" id="show-peoplesearch">Search people</a></li>
+
+    </ul>
+
+    <div class="ui-tabs-panel ui-widget-content ui-corner-bottom">
+
+
+        <div id="div-people-search" class="group-subsection" style="display: block;">
+    
+        <br/>
+    
+    	{% show_profile_search search_terms %}
+    
+        </div>
+
+    </div>
+</div>
+    
+    {% if users %}
+    
+        <h1>Results</h1>
+	    {% autopaginate users %}
+    
+    	{% for user in users %}
+	        <div class="profile clearfix" style="height: 45px;">
+            	{# @@@ factor out style into css file #}
+            	<div style="float: left;">{% avatar user 40 %}</div>
+            	<div style="padding: 5px; margin-left: 50px;">
+	                <a href="{% url profile_detail user.username %}">{{ user.visible_name }}</a>
+	                {% if perms.profiles %}
+	                	{% if not user.is_active and user.is_bulk and user.emailaddress_set.count %}
+	                		<em>({{user.emailaddress_set.all.0.email }})</em> 
+	                	{% endif %}
+	                {% endif %}
+	                </a>
+	            </div>
+        	</div>
+    	{% endfor %}
+
+	    {% paginate %}
+    {% else %}
+    	{% if search_terms %}
+    		No results
+    	{% endif %}
+    {% endif %}
+    
+{% endblock %}
+
+{% block extra_body %}
+  <script type="text/javascript">
+  $(document).ready(function(){
+    
+    // maintain search term state
+    $('#profile-search-box').change(function() {
+        
+        $('#show-postsearch').attr('href', '{% url search %}?q=' + $(this).val());
+        
+    });
+    // initial load
+    $('#show-postsearch').attr('href', '{% url search %}?q=' + $('#profile-search-box').val());
+
+    
+  });
+  </script>
+  
+    <script type="text/javascript" src="{{STATIC_URL}}js/tabselection.js"></script> 
+
+
+{% endblock %}
+  

@@ -3,10 +3,10 @@
 {% load winedown_tags %}
 
 {% for c in cheers %}
-    <div style='padding: 12px 0 12px 5px; border-bottom: 1px solid #d0d0d0;' id="cheersline-{{c.id}}">
+    <div style='padding: 12px 0 12px 5px; border-bottom: 1px solid #d0d0d0; position: relative;' id="cheersline-{{c.id}}">
         {% get_cheers_link c request.user as cheers_link %}
         {% ifequal c.content_type.model 'tweet' %}
-            <img style="width: 30px; height: 30px; float: left;" src="{{ c.content_object.author_image }}"/>
+            <img style="width: 30px; height: 30px; float: left;" src="{{ c.content_object.author_image }}" class="avatar-twitter"/>
 
             <div style="margin-left: 35px;">
                 <a href="http://twitter.com/intent/user?screen_name={{ c.content_object.author_username }}" target="_new">@{{ c.content_object.author_username }}</a>
@@ -25,7 +25,7 @@
                 </div>
                 {% ifnotequal c.count 1 %}
                     <div style='color: #a0a0a0; font-size: 10px;'>
-                        <a href="{% url winedown_summary c.id %}" class="cheers_detail" style='color: #a0a0a0;'>cheers'ed by {{ c.count }} {% ifequal c.count 1 %}person{% else %}people{% endifequal %}!</a>
+                        <a href="{% url winedown_summary c.id %}" class="cheers_detail" style='color: #a0a0a0;'>cheers'ed by {{ c.num_cheers }} {% ifequal c.num_cheers 1 %}person{% else %}people{% endifequal %}!</a>
                         {% if cheers_link %}
                             &nbsp;
                             <a href="{{ cheers_link }}" class="cheers" id="cheers-{{ c.id }}">Add your cheers</a>
@@ -35,25 +35,48 @@
             </div>
         {% else %}
             {% with c.guess_author as author %}
-                <img style="width: 30px; height: 30px; float: left;" src="{% avatar_url author 30 %}"/>
+                <img style="width: 30px; height: 30px; float: left;" src="{% avatar_url author 30 %}" class="avatar-myewb"/>
 
                 <div style="margin-left: 35px;">
                     <a href="{% url profile_detail author %}">{{ author.visible_name }}</a><br/>
                     <a href="{{ c.content_object.get_absolute_url }}" class="quietlink">{{ c.guess_title }}</a>
                     <div style='color: #a0a0a0; font-size: 10px;'>
+<<<<<<< HEAD
                         {% mktime c.latest %}
+=======
+                        {% mktime c.latest %}<br/>
+                        <a href="{% url winedown_summary c.id %}" style='color: #a0a0a0; font-size: 10px;' class="cheers_detail">cheers'ed by {{ c.count }} {% ifequal c.count 1 %}person{% else %}people{% endifequal %}!</a>
+                        {% if cheers_link %}
+                            &nbsp;
+                            <a href="{{ cheers_link }}" class="cheers" id="cheers-{{ c.id }}" style='font-size: 10px;'>Add your cheers</a>
+                        {% endif %}
+>>>>>>> origin/newlayout
                         {% if perms.winedown %}
                             (<a href="{% url winedown_remove c.id %}" class='cheers_remove' style='font-size: 10px;'>x</a>)
                         {% endif %}
                     </div>
+<<<<<<< HEAD
                     <a href="{% url winedown_summary c.id %}" style='color: #a0a0a0; font-size: 10px;' class="cheers_detail">cheers'ed by {{ c.count }} {% ifequal c.count 1 %}person{% else %}people{% endifequal %}!</a>
                     {% if cheers_link %}
                         &nbsp;
                         <a href="{{ cheers_link }}" class="cheers" id="cheers-{{ c.id }}" style='font-size: 10px;'>Add your cheers</a>
                     {% endif %}
+=======
+>>>>>>> origin/newlayout
                 </div>
             {% endwith %}
         {% endifequal %}
     </div>
 {% endfor %}
+
+<script type='text/javascript'>
+    $().ready(function() {
+        var twitteroverlay = '<img src="{{ STATIC_URL }}images/icons-social/twitter-20.png" style="position: absolute; top: 37px; left: 22px; width: 15px; height: 15px;"/>';
+        $('.avatar-twitter').after(twitteroverlay).removeClass('avatar-twitter');
+        
+        var myewboverlay = '<img src="{{ STATIC_URL }}images/icons-social/myewb-20.png" style="position: absolute; top: 37px; left: 22px; width: 15px; height: 15px;"/>';
+        $('.avatar-myewb').after(myewboverlay).removeClass('avatar-myewb');
+        
+    });
+</script>
 

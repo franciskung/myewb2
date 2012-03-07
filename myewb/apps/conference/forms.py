@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """myEWB conference registration forms
 
 This file is part of myEWB
@@ -1031,18 +1033,20 @@ class ConferenceSessionForm(forms.ModelForm):
                   'description', 'description_fr', 'prep', 'prep_fr']
 
 SMS_CHOICES = (('all', 'All conference delegates'),
-               ('internal', 'Internal (EWB member + alumni) delegates'),
-               ('external', 'External delegates'),
+#               ('internal', 'Internal (EWB member + alumni) delegates'),
+#               ('external', 'External delegates'),
                ('alumni', 'Alumni delegates'),
-               ('hotel', 'Internal delegates with a hotel room'),
-               ('nohotel', 'Internal delegates without a hotel room (incl alumni)'),
-               ('nohotel-all', 'All delegates without a hotel room (internal and external)'))
+               ('hotel', 'Delegates with a hotel room'),
+#               ('nohotel', 'Internal delegates without a hotel room (incl alumni)'),
+#               ('nohotel-all', 'All delegates without a hotel room (internal and external)'))
+               ('nohotel', 'All delegates without a hotel room'))
 class ConferenceSmsForm(forms.Form):
     grouping = forms.ChoiceField(choices=SMS_CHOICES,
                                  widget=forms.RadioSelect,
                                  required=True)
     message = forms.CharField(max_length=160,
-                              widget=forms.Textarea)
+                              widget=forms.Textarea,
+                              help_text='Maximum 160 characters.')
 
 class ConferenceQuestionnaireForm(forms.ModelForm):
     roles = forms.MultipleChoiceField(required=False,
@@ -1054,30 +1058,31 @@ class ConferenceQuestionnaireForm(forms.ModelForm):
             exclude = ('registration',)
 
 class ConferenceQuestionnaireFormFrench(forms.ModelForm):
-    first_conference = forms.BooleanField(label='(fr)Is this your first EWB National Conference?')
+    first_conference = forms.BooleanField(label='Est-ce votre premier congrès?',
+                                          required=False)
     
     chaptertype = forms.ChoiceField(choices=CHAPTERTYPE_CHOICES_FR,
-                                    label='(fr)What type of chapter are you from?')
+                                    label='De quel type de section faites-vous partie?')
     
     roles = forms.MultipleChoiceField(required=False,
                                       widget=forms.CheckboxSelectMultiple,
                                       choices=ROLES_CHOICES_FR,
-                                      label='(fr)What role(s) do you currently hold in EWB, if any?')
+                                      label='Quel est votre rôle actuellement dans ISF :')
     
-    leadership_years = forms.ChoiceField(choices=((1, '1 or less'),
+    leadership_years = forms.ChoiceField(choices=((1, '<= 1'),
                                                   (2, '2 - 3'), 
-                                                  (3, '3 or more')), 
-                                         label='(fr)How many years have you held a leadership position in EWB?')
+                                                  (3, '> 3 ')), 
+                                         label='Nombre d’années d’expérience dans une position de leadership dans ISF')
     
-    leadership_day = forms.BooleanField(label='(fr)Are you attending leadership day?',
+    leadership_day = forms.BooleanField(label='Êtes-vous inscrit à la Journée du leadership ayant lieu le 11 janvier 2012?',
                                         required=False)
     
-    innovation_challenge = forms.BooleanField(label='(fr)Are you participating in the Innovation Challenge?',
+    innovation_challenge = forms.BooleanField(label='Êtes-vous inscrit à la "Innovation Challenge"?',
                                               required=False)
     
-    prep = forms.ChoiceField(choices=((0, 'Under 5 hours'),
-                                      (5, 'Over 5 hours')),
-                             label='(fr)How many hours of prep are you able to commit to before conference?')
+    prep = forms.ChoiceField(choices=((0, '< 5 heures'),
+                                      (5, '> 5 heures')),
+                             label='Combien d’heures vous engagez-vous à investir dans votre préparation (lecture/écoute/réflexion) pour le congrès?')
 
     class Meta:
             model = ConferenceQuestionnaire

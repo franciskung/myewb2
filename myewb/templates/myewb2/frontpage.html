@@ -50,8 +50,8 @@ function install_cheers() {
     });
     */
     
-    $('.cheers').colorbox({opacity: '0.5', width: '50%', height: '50%'});
-    $('.cheers_detail').colorbox({opacity: '0.5', width: '50%', height: '50%'});
+    $('.cheers').colorbox({opacity: '0.5', width: '600px', height: '75%'});
+    $('.cheers_detail').colorbox({opacity: '0.5', width: '600px', height: '75%'});
     
     $('.cheers_remove').click(function() {
         if (confirm("Are you sure you want to remove this?"))
@@ -134,40 +134,35 @@ function load_homepage_posts()   // now, this'll be a behind-the-scenes function
 
 
 
-function chapter_dashboard()
+function chapter_dashboard(grpname)
 {
-	{% if request.user.is_authenticated %}
-		{% if request.user.get_profile.get_chapter %}
-		    fetchUrl = "{% url group_summary request.user.get_profile.get_chapter.slug %}";
-		
-            $.ajax({
-                url: fetchUrl,
-                success: function(data) {
-                    $(document).ready(function() {
-                          $('#chapter_dashboard').html(data);
-              
-    			          $('#dashboard_links a').mouseover(function() {
-    						var myname = $(this).attr('id').substr(10);
-    						$('.dashboard-detail').hide();
-    						$('#' + myname).show();
-    
-    						$('#dashboard_links a').removeClass('current');
-    						$(this).addClass('current');
-    					  });
-                    });
-                }
+    var fetchUrl = "{% url groups_index %}" + grpname + "/summary/";
+    $.ajax({
+        url: fetchUrl,
+        success: function(data) {
+            $(document).ready(function() {
+                  $('#chapter_dashboard').html(data);
+      
+		          $('#dashboard_links a').mouseover(function() {
+					var myname = $(this).attr('id').substr(10);
+					$('.dashboard-detail').hide();
+					$('#' + myname).show();
+
+					$('#dashboard_links a').removeClass('current');
+					$(this).addClass('current');
+				  });
             });
-		{% else %}
-			return false;
-		{% endif %}
-	{% else %}
-		return false;
-	{% endif %}
+        }
+    });
 }
 	
 $(document).ready(function() {
 
-	chapter_dashboard();
+	{% if request.user.is_authenticated %}
+		{% if request.user.get_profile.get_chapter %}
+        	chapter_dashboard('{{ request.user.get_profile.get_chapter.slug }}');
+        {% endif %}
+    {% endif %}
     load_homepage_posts();
     refresh_cheerslist();
 
@@ -218,7 +213,7 @@ $(document).ready(function() {
                     
                 {% endif %}
         {% else %}
-            <h2 class="chapterspecific-title h2bold">myEWB: Engineers Without Borders Canada</h2>
+            <h2 class="chapterspecific-title h2bold">Engineers Without Borders Canada</h2>
 
             <p>Welcome to myEWB, the online community for Engineers Without Borders Canada!</p>
 
@@ -268,7 +263,9 @@ $(document).ready(function() {
     <div class="grid_5" style="margin-right: -2px;">
         <h2 class="chapterspecific-title h2bold">EWB Canada</h2>
 
+        <div id="fontpageflash">
         <iframe width="240" height="140" src="http://www.youtube.com/embed/Oh8yJ6GmIxI?rel=0" frameborder="0" allowfullscreen></iframe>
+        </div>
 
     </div>
 
@@ -295,13 +292,15 @@ $(document).ready(function() {
 
     <h2 class="h2bold" id="latest_discussions">
     	Latest Discussions
-    	
+
+        {% comment %}    	
     	<select class='normalize'>
     		<option>-- switch to --</option>
     		<option>Active discussions</option>
     		<option>Relevant discussions</option>
     		<option>My watchlist</option>
     	</select>
+        {% endcomment %}    	
     </h2>
     {% if request.user.is_authenticated %}
         <a href="{% url topic_new %}" id="new_discussion">Start a new discussion &raquo;</a>
@@ -344,14 +343,14 @@ $(document).ready(function() {
 </div>
 
 
-
+{% comment %}
 <div class="bigfooter-background">
 
 
   {% include "components/bigfooter.html" %}
 
 </div>
-
+{% endcomment %}
 
 
 {% endblock %}
