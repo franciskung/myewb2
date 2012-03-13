@@ -31,9 +31,12 @@ class CheersManager(models.Manager):
         return container
 
     def get_for_object(self, obj):
-        container = self.get_container(obj)
-        c = self.get_query_set().filter(content=container)
-        return c
+        if obj:
+            container = self.get_container(obj)
+            c = self.get_query_set().filter(content=container)
+            return c
+        else:
+            return []
         
     def latest(self):
         c = CheersContainer.objects.filter(count__gt=0, hidden=False).order_by('-latest')
