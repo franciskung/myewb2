@@ -34,7 +34,7 @@ class CheersManager(models.Manager):
         if obj:
             container = self.get_container(obj)
             c = self.get_query_set().filter(content=container)
-        else
+        else:
             c = self.get_query_set().none()
         return c
         
