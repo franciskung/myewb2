@@ -200,7 +200,8 @@ def fundraising_dollars_nonevent(filters):
     fundraising_dollars_recurring = 0
     fundraising_dollars_nonevent = 0
     for f in fundraising_metrics:
-        fundraising_dollars += f.revenue
+        if f.revenue:
+            fundraising_dollars += f.revenue
         if f.recurring == 'one-off':
             fundraising_dollars_oneoff += f.revenue
         elif f.recurring == 'recurring':
