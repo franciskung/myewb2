@@ -170,7 +170,7 @@ class MemberProfile(Profile):
     def unverified_email_addresses(self):
         return EmailAddress.objects.filter(verified=False, user=self.user)
     
-    def save(self, force_insert=False, force_update=False):
+    def save(self, *args, **kwargs):
         if self.first_name or self.last_name:
             # Because nothing is set, this block should NOT be called on the save resulting from create_member_profile
             # If it does it could cause recursion problems
@@ -195,7 +195,7 @@ class MemberProfile(Profile):
             
         self.user2 = self.user
         
-        return models.Model.save(self, force_insert, force_update)
+        return super(Profile, self).save(*args, **kwargs)
 
     def location(self):
       current_address = default_address()
