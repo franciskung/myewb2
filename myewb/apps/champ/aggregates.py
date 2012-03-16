@@ -158,7 +158,8 @@ def fundraising_dollars(filters):
     fundraising_metrics = run_query(FundraisingMetrics.objects.all(), filters)
     fundraising_dollars = 0
     for f in fundraising_metrics:
-        fundraising_dollars += f.revenue
+        if f.revenue:    
+            fundraising_dollars += f.revenue
     return fundraising_dollars
 
 def fundraising_dollars_oneoff(filters):
@@ -168,13 +169,14 @@ def fundraising_dollars_oneoff(filters):
     fundraising_dollars_recurring = 0
     fundraising_dollars_nonevent = 0
     for f in fundraising_metrics:
-        fundraising_dollars += f.revenue
-        if f.recurring == 'one-off':
-            fundraising_dollars_oneoff += f.revenue
-        elif f.recurring == 'recurring':
-            fundraising_dollars_recurring += f.revenue
-        elif f.recurring == 'funding':
-            fundraising_dollars_nonevent += f.revenue
+        if f.revenue:
+            fundraising_dollars += f.revenue
+            if f.recurring == 'one-off':
+                fundraising_dollars_oneoff += f.revenue
+            elif f.recurring == 'recurring':
+                fundraising_dollars_recurring += f.revenue
+            elif f.recurring == 'funding':
+                fundraising_dollars_nonevent += f.revenue
     return fundraising_dollars_oneoff
 
 def fundraising_dollars_recurring(filters):
@@ -184,13 +186,14 @@ def fundraising_dollars_recurring(filters):
     fundraising_dollars_recurring = 0
     fundraising_dollars_nonevent = 0
     for f in fundraising_metrics:
-        fundraising_dollars += f.revenue
-        if f.recurring == 'one-off':
-            fundraising_dollars_oneoff += f.revenue
-        elif f.recurring == 'recurring':
-            fundraising_dollars_recurring += f.revenue
-        elif f.recurring == 'funding':
-            fundraising_dollars_nonevent += f.revenue
+        if f.revenue:
+            fundraising_dollars += f.revenue
+            if f.recurring == 'one-off':
+                fundraising_dollars_oneoff += f.revenue
+            elif f.recurring == 'recurring':
+                fundraising_dollars_recurring += f.revenue
+            elif f.recurring == 'funding':
+                fundraising_dollars_nonevent += f.revenue
     return fundraising_dollars_recurring
 
 def fundraising_dollars_nonevent(filters):
@@ -202,12 +205,12 @@ def fundraising_dollars_nonevent(filters):
     for f in fundraising_metrics:
         if f.revenue:
             fundraising_dollars += f.revenue
-        if f.recurring == 'one-off':
-            fundraising_dollars_oneoff += f.revenue
-        elif f.recurring == 'recurring':
-            fundraising_dollars_recurring += f.revenue
-        elif f.recurring == 'funding':
-            fundraising_dollars_nonevent += f.revenue
+            if f.recurring == 'one-off':
+                fundraising_dollars_oneoff += f.revenue
+            elif f.recurring == 'recurring':
+                fundraising_dollars_recurring += f.revenue
+            elif f.recurring == 'funding':
+                fundraising_dollars_nonevent += f.revenue
     return fundraising_dollars_nonevent
 
 def publicity_hits(filters):
