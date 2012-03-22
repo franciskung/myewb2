@@ -233,7 +233,7 @@ def create_google_account(self, username):
             guser = service.RetrieveUser(username)
         except:
             pword = self.password
-            if not pword:
+            if not pword or pword == '!':
                 pword = 'uselesshash'
                 
             try:
