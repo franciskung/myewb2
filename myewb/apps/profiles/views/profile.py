@@ -889,7 +889,7 @@ def create_ewbmail_account(request, username):
                 request.user.message_set.create(message='Account successfully created.')
                 return HttpResponseRedirect(reverse('profile_detail', kwargs={'username': user.username}))
             else:
-                request.user.message_set.create(message='Unable to create account - the username is probably already in use.')
+                request.user.message_set.create(message='Unable to create account - the username is probably already in use. Also make sure the user has a first and last name entered in their profile.')
     else:
         initial_username = "%s%s" % (user.first_name, user.last_name)
         initial_username = initial_username.lower().replace(' ', '')

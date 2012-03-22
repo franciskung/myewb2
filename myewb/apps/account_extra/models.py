@@ -232,17 +232,24 @@ def create_google_account(self, username):
         try:
             guser = service.RetrieveUser(username)
         except:
-            guser = service.CreateUser(user_name=username,
-                                       family_name=self.last_name,
-                                       given_name=self.first_name,
-                                       password=self.password)  # yes, this is a useless hash value.
-            self.google_username=username                       # account is not active until they log in...
-            self.google_sync=False
-            self.save()
-            EmailAddress.objects.get_or_create(user=self,
-                                               email="%s@ewb.ca" % username,
-                                               verified=True)
-            return True
+            pword = self.password
+            if not pword:
+                pword = 'uselesshash'
+                
+            try:
+                guser = service.CreateUser(user_name=username,
+                                           family_name=self.last_name,
+                                           given_name=self.first_name,
+                                           password=pword)  # yes, this is a useless hash value.
+                self.google_username=username                       # account is not active until they log in...
+                self.google_sync=False
+                self.save()
+                EmailAddress.objects.get_or_create(user=self,
+                                                   email="%s@ewb.ca" % username,
+                                                   verified=True)
+                return True
+            except:
+                return False
         else:
             return False    # account already exists
         
