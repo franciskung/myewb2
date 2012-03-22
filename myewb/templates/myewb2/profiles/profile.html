@@ -39,7 +39,7 @@ Copyright 2009 Engineers Without Borders (Canada) Organisation and/or volunteer 
     <br/><br/>
     
     {% if has_visibility and not is_me %}
-	    <div>
+	    <div style='text-align: center;'>
 		    <form method="GET" action="{% url messages_compose_to other_user.username %}">
                     <input type="submit" value="{% trans "Send a message to " %}{{ other_user.visible_name}}"/>
             </form>
@@ -52,7 +52,7 @@ Copyright 2009 Engineers Without Borders (Canada) Organisation and/or volunteer 
             {% endif %}
             
 	    </div>
-	    <br/>
+	    <br/><br/>
     {% endif %}
     
     {% if is_me or has_visibility or perms.profiles %}
