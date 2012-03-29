@@ -196,8 +196,14 @@ if(!(-e "$path/running.txt"))
 		
 		if ($list_id)
 		{
-		    $bulk->header('List-ID', '<' . $list_id . '>');
+		    $bulk->header('List-ID', '<' . $totalshortname . '.my.ewb.ca>');
 		    $bulk->header('List-Post', '<' . $list_id . '>');
+		    $bulk->header('List-Help', '<http://my.ewb.ca/groups/' . $totalshortname . '/>');
+		    $bulk->header('List-Unsubscribe', '<http://my.ewb.ca/groups/' . $totalshortname . '/>');
+		    $bulk->header('List-Subscribe', '<http://my.ewb.ca/groups/' . $totalshortname . '/>');
+		    $bulk->header('List-Owner', '<http://my.ewb.ca/groups/' . $totalshortname . '/>');
+		    $bulk->header('List-Help', '<http://my.ewb.ca/groups/' . $totalshortname . '/>');
+            $bulk->header('Mailing-list', 'list ' . $list_id . '; contact info@my.ewb.ca');
 		}
 		
 		if ($reply_to)
