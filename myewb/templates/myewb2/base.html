@@ -25,7 +25,7 @@
     <link rel="stylesheet" href="{{ STATIC_URL }}css/uni-form/default.uni-form.css" />            
     <link rel="stylesheet" href="{{ STATIC_URL }}css/jquery-ui.css" />
 	<link rel="stylesheet" href="{{ STATIC_URL }}templates/myewb2/css/segmented_control.css">
-	<link rel="stylesheet" href="{{ STATIC_URL }}templates/myewb2/css/newstyle.css">
+	<link rel="stylesheet" href="{{ STATIC_URL }}templates/myewb2/css/newstyle.css?v=2">
 	<link rel="stylesheet" href="{{ STATIC_URL }}templates/myewb2/css/960.css">
 	<link href='{% if request.is_secure %}https{% else %}http{% endif %}://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet' type='text/css'>
     <link href='{% if request.is_secure %}https{% else %}http{% endif %}://fonts.googleapis.com/css?family=Open+Sans:800' rel='stylesheet' type='text/css'>
@@ -163,13 +163,6 @@
 
 <div id="maincontent" class="topround">
 
-    <div class="site_wide_announcements roundtop">
-        <div class="message-close"><a href="#">x</a></div>
-        <div class="message-header">title</div>
-        <div class="message">
-            content
-        </div>
-    </div>
     {% for announcement in site_wide_announcements %}
         <div id="site_wide_announcements_{{announcement.pk}}" class="site_wide_announcements roundtop">
             <div class="message-close"><a href="#" onclick="$.get('{% url announcement_hide announcement.pk %}'); $('#site_wide_announcements_{{announcement.pk}}').slideUp(); return false;">x</a></div>
