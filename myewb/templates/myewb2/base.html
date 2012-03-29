@@ -163,6 +163,38 @@
 
 <div id="maincontent" class="topround">
 
+    <div class="site_wide_announcements roundtop">
+        <div class="message-close"><a href="#">x</a></div>
+        <div class="message-header">title</div>
+        <div class="message">
+            content
+        </div>
+    </div>
+    {% for announcement in site_wide_announcements %}
+        <div id="site_wide_announcements_{{announcement.pk}}" class="site_wide_announcements roundtop">
+            <div class="message-close"><a href="#" onclick="$.get('{% url announcement_hide announcement.pk %}'); $('#site_wide_announcements_{{announcement.pk}}').slideUp(); return false;">x</a></div>
+            <div class="message-header">{{announcement.title}}</div>
+            <div class="message">
+                {{ announcement.content|safe }}
+            </div>
+        </div>
+    {% endfor %}
+
+    {% if messages %}
+        <div id="messages" class="roundtop">
+            <div class="message-header">Messages</div>
+            <div class="message-close"><a href="#" onclick="$('#messages').slideUp(); return false;">x</a></div>
+            <div class="message">
+                {% for message in messages %}
+                    <div class="message">{{ message|safe }}</div>
+                    {% if not forloop.last %}<hr/>{% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+
+
     {% block body_base %}
      
         <div class="maincontent-background">
