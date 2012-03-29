@@ -131,6 +131,7 @@ if(!(-e "$path/running.txt"))
 		}
 
 		$toaddress = "";
+		$list_id = undef;
 		if($totalshortname)
 		{
 			$toaddress = $totalshortname . '@my.ewb.ca';
@@ -142,6 +143,7 @@ if(!(-e "$path/running.txt"))
 			{
 	                        $subject = "[" . $ewbprefix . "-" . $totalshortname . "] " . $subject;
 			}
+			$list_id = $toaddress;
 		}
 		elsif (@recipients == 1)
 		{
@@ -189,8 +191,14 @@ if(!(-e "$path/running.txt"))
 			$bulk->header($headerinfo[$i], $headerinfo[$i+1]);
 		}
 
-		# add our own custom message-id
+		# add our own custom message-id and list-did
 		$bulk->header('Message-ID', '<' . $message_id . '>');
+		
+		if ($list_id)
+		{
+		    $bulk->header('List-ID', '<' . $list_id . '>');
+		    $bulk->header('List-Post', '<' . $list_id . '>');
+		}
 		
 		if ($reply_to)
 		{
