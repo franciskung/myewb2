@@ -38,7 +38,7 @@ function refresh_cheerslist(cheersUrl)
     $('#cheerslist').load(cheersUrl,
                           function() {
                             cheers_timeout_id = setTimeout('refresh_cheerslist("' + cheersUrl + '")', 10 * 60 * 1000, true);
-                            install_cheers();
+                            install_cheers(cheersUrl);
                           });
 }
 

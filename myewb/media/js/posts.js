@@ -4,7 +4,7 @@ var timeout_id = 0;
 var cheers_timeout_id = 0;
 
 // this goes into the external javascript file later
-function install_cheers() {
+function install_cheers(cheersUrl) {
     $('.cheers').unbind('click');
     $('.cheers_detail').unbind('click');
     $('.cheers_remove').unbind('click');
@@ -28,7 +28,7 @@ function install_cheers() {
         {
             $.get($(this).attr('href'),
                   function() {
-                    refresh_cheerslist();
+                    refresh_cheerslist(cheersUrl);
                   });
         }
         return false;
