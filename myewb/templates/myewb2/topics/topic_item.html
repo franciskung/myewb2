@@ -67,9 +67,9 @@
             {% topic_on_watchlist user topic as on_list %}
             {% spaceless %}
             {% if on_list %}
-                <a href="#" id="toggle_watchlist-{{ topic.pk }}" class="more watchlist-toggle toggle-remove">
+                <a href="{% url topic_watchlist_remove user.pk %}" id="toggle_watchlist-{{ topic.pk }}" class="more watchlist-toggle toggle-remove">
             {% else %}
-                <a href="#" id="toggle_watchlist-{{ topic.pk }}" class="more watchlist-toggle toggle-add faded">
+                <a href="{% url topic_watchlist_add user.pk %}" id="toggle_watchlist-{{ topic.pk }}" class="more watchlist-toggle toggle-add faded">
             {% endif %}
             <img src="{{STATIC_URL}}images/icons3/Favorite.png" style="height: 30px; width: 30px;"/>
             </a>

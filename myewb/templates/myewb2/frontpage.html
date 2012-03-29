@@ -25,146 +25,32 @@
 	<link rel="stylesheet" href="{{ STATIC_URL }}css/toolbars.css" />   
 	<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.ba-bbq.min.js"></script>
 	{% endcomment %}
+
+	<script type="text/javascript" src="{{ STATIC_URL }}js/posts.js"></script>
 	
 	{# JS here for the frontpage ajax updates #}
 <script type="text/javascript">
 // Frontpage Ajax updates
-
-
-var timeout_id = 0;
-var cheers_timeout_id = 0;
-
-// this goes into the external javascript file later
-function install_cheers() {
-    $('.cheers').unbind('click');
-    $('.cheers_detail').unbind('click');
-
-    /*    
-    $('.cheers').click(function() {
-        var cheerslink = $(this);
-        $.get($(this).attr('href'), function(data) {
-            $('.cheerscount', cheerslink.parent()).html(data);
-            cheerslink.hide();
-        });
-        return false;
-    });
-    */
-    
-    $('.cheers').colorbox({opacity: '0.5', width: '600px', height: '50%'});
-    $('.cheers_detail').colorbox({opacity: '0.5', width: '600px', height: '50%'});
-    
-    $('.cheers_remove').click(function() {
-        if (confirm("Are you sure you want to remove this?"))
-        {
-            $.get($(this).attr('href'),
-                  function() {
-                    refresh_cheerslist();
-                  });
-        }
-        return false;
-    });
-}
-
-// so does this
-function install_watchlists() {
-    $('.watchlist-toggle').unbind('click');
-    
-    $('.watchlist-toggle').click(function() {
-        {% if user.is_authenticated %}
-        var my_id = $(this).attr('id').substr(17);
-
-        if($(this).hasClass('toggle-remove')) {
-            // remove it from the watchlist when clicked
-            var my_obj = $(this);
-            $.get('{% url topic_watchlist_remove user.pk %}' + my_id + '/',
-                function() {
-                    my_obj.removeClass('toggle-remove');
-                    my_obj.addClass('toggle-add');
-                    my_obj.addClass('faded');
-                });
-        } else {
-            var my_obj = $(this);
-            $.get('{% url topic_watchlist_add user.pk %}' + my_id + '/',
-                function() {
-                    my_obj.removeClass('toggle-add');
-                    my_obj.addClass('toggle-remove');
-                    my_obj.removeClass('faded');
-                });
-        }
-        {% endif %}
-        return false;
-    });
-}
-
-function refresh_cheerslist()
+	
+function refresh_cheerslist(cheersUrl)
 {
     clearTimeout(cheers_timeout_id);
-    $('#cheerslist').load('{% url winedown_latest %}',
+    $('#cheerslist').load(cheersUrl,
                           function() {
                             cheers_timeout_id = setTimeout('refresh_cheerslist()', 10 * 60 * 1000, true);
                             install_cheers();
                           });
 }
 
-function load_homepage_posts()   // now, this'll be a behind-the-scenes function that's only called by hashchanges.
-{
-  clearTimeout(timeout_id);
-
-  fetchUrl = "/?ajax=1";
-
-  $.ajax({
-    url: fetchUrl,
-    success: function(data) {
-    
-      $(document).ready(function() {
-        $('#topiclisting').html(data);
-        
-        runDelayedAvatarLoad();
-
-        install_watchlists();
-        install_cheers();
-      });
-    }
-    
-  });
-
-  // and set a timer to auto-refresh... every half hour, let's say?
-  timeout_id = setTimeout('load_homepage_posts()', 30 * 60 * 1000, true);
-}
-
-
-
-function chapter_dashboard(grpname)
-{
-    var fetchUrl = "{% url groups_index %}" + grpname + "/summary/";
-    $.ajax({
-        url: fetchUrl,
-        success: function(data) {
-            $(document).ready(function() {
-                  $('#chapter_dashboard').html(data);
-      
-		          $('#dashboard_links a').mouseover(function() {
-					var myname = $(this).attr('id').substr(10);
-					$('.dashboard-detail').hide();
-					$('#' + myname).show();
-
-					$('#dashboard_links a').removeClass('current');
-					$(this).addClass('current');
-				  });
-            });
-        }
-    });
-}
-	
 $(document).ready(function() {
 
 	{% if request.user.is_authenticated %}
 		{% if request.user.get_profile.get_chapter %}
-        	chapter_dashboard('{{ request.user.get_profile.get_chapter.slug }}');
+		    chapter_dashboard("{% url groups_index %}{{ request.user.get_profile.get_chapter.slug }}/summary/");
         {% endif %}
     {% endif %}
     load_homepage_posts();
-    refresh_cheerslist();
+    refresh_cheerslist("{% url winedown_latest %}");
 
 });
  

@@ -20,6 +20,20 @@
 {% load time_filters %}
 
 
+{% block extra_head %}
+    {{ block.super }}
+    
+	<script type="text/javascript" src="{{ STATIC_URL }}js/posts.js"></script>
+	
+    <script type="text/javascript">
+        $(document).ready(function() {
+            install_cheers();
+            install_watchlists();
+        });
+    </script>
+{% endblock %}
+
+
 {% block body %}
 
 <div class="minipost">
@@ -118,9 +132,9 @@
                     {% topic_on_watchlist user topic as on_list %}
                     {% spaceless %}
                     {% if on_list %}
-                        <a href="#" id="toggle_watchlist-{{ topic.pk }}" class="more watchlist-toggle toggle-remove">
+                        <a href="{% url topic_watchlist_remove user.pk %}" id="toggle_watchlist-{{ topic.pk }}" class="more watchlist-toggle toggle-remove">
                     {% else %}
-                        <a href="#" id="toggle_watchlist-{{ topic.pk }}" class="more watchlist-toggle toggle-add faded">
+                        <a href="{% url topic_watchlist_add user.pk %}" id="toggle_watchlist-{{ topic.pk }}" class="more watchlist-toggle toggle-add faded">
                     {% endif %}
                     <img src="{{STATIC_URL}}images/icons3/Favorite.png" style="height: 30px; width: 30px;"/>
                     </a>
@@ -259,31 +273,6 @@
     </script>	
 	{% endif %}	
 
-	{% if user.is_authenticated %}
-	<script type="text/javascript">
-		$(document).ready(function() {
-			$('.watchlist-toggle').click(function() {
-			
-			  if($(this).hasClass('toggle-remove')) {
-			      // remove it from the watchlist when clicked
-	                $(this).html("removing...");
-					$(this).load('{% url topic_watchlist_remove user.pk topic.pk %}');
-					
-					$(this).removeClass('toggle-remove');
-					$(this).addClass('toggle-add');
-			  } else {
-	                $(this).html("adding...");
-					$(this).load('{% url topic_watchlist_add user.pk topic.pk %}');
-					
-					$(this).removeClass('toggle-add');
-					$(this).addClass('toggle-remove');
-			  }
-			  return false;
-			});
-		});
-	</script>
-	{% endif %}
-	
 	{% if perms.group_topics %}
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -310,13 +299,16 @@
 	</script>
 	{% endif %}
 	
-	<script type="text/javascript" src="{{STATIC_URL}}js/colorbox.js"></script>
 	<script type="text/javascript">
 		$('.preview-img').colorbox({transition: "elastic", width:"80%", height:"80%"});
 
 		{% ifnotequal request.page 1 %}
 			$.scrollTo('#replies');
 		{% endifnotequal %}
+		
+		function post_cheers_sidebar(cheersId) {
+		    $('#post-cheers').load($('#cheers_for_content_link').attr('href'));
+		}
 	</script>
 {% endblock %}
 
@@ -328,7 +320,9 @@
     	<a href="{{ topic.group.get_absolute_url }}#group-posts">{{ topic.group }}</a>
     	<br/><br/>
     {% endifnotequal %}
-          
-    {% show_cheers_for_content topic %}
+
+    <div id="post-cheers">          
+        {% show_cheers_for_content topic %}
+    </div>
 {% endblock %}
 

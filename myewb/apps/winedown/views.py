@@ -65,7 +65,22 @@ def cheers_summary(request, content_id=None):
                               {'container': container},
                               context_instance=RequestContext(request)
                              )
-
+                             
+def cheers_summary_sidebar(request, content_id=None):
+    if content_id:
+        pass
+    elif not content_id and request.GET.get('id'):
+        content_id=request.GET['id']
+    else:
+        return HttpResponseNotFound('bad ID')
+        
+    container = get_object_or_404(CheersContainer, id=content_id)
+    
+    return render_to_response('winedown/sidebar.html',
+                              {'obj': container.content_object},
+                              context_instance=RequestContext(request)
+                             )
+                             
 @login_required
 def cheers_new(request):
     if request.method == 'POST':

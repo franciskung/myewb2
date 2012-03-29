@@ -20,6 +20,7 @@ def show_cheers_for_content(context, content, num=None):
     return {
         "cheers": cheers,
         "num": num,
+        "container": Cheers.objects.get_container(content),
         "STATIC_URL": settings.STATIC_URL,
         "request": context['request']
     }

@@ -43,7 +43,9 @@ share it with the EWB community!</p>
                         if (typeof window.refresh_cheerslist == 'function') {
                             refresh_cheerslist();
                         }
-                       
+                        if (typeof window.post_cheers_sidebar == 'function') {
+                            post_cheers_sidebar();
+                        }
                        $.colorbox.close();
                    });
             return false;
