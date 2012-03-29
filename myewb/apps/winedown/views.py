@@ -12,8 +12,8 @@ def cheers(request, content_id):
     
     comment = None
     if request.method == 'POST':
-        if request.POST.get('comment', None):
-            comment = request.POST['comment']
+        if request.POST.get('cheers-comment', None):
+            comment = request.POST['cheers-comment']
         
         c = Cheers.objects.create_from_container(container, request.user, comment=comment)
         
@@ -23,7 +23,7 @@ def cheers(request, content_id):
             return HttpResponseRedirect(reverse('winedown_all'))
 
     else:
-        form = CheersForm()
+        form = CheersForm(prefix="cheers")
 
         if request.is_ajax():
             template = "winedown/new-ajax.html"
@@ -84,7 +84,7 @@ def cheers_summary_sidebar(request, content_id=None):
 @login_required
 def cheers_new(request):
     if request.method == 'POST':
-        form = CustomCheersForm(request.POST)
+        form = CustomCheersForm(request.POST, prefix="cheers")
         
         if form.is_valid():
             newcheers = form.save(commit=False)
@@ -98,7 +98,7 @@ def cheers_new(request):
             return HttpResponse('success')
             
     else:
-        form = CustomCheersForm()
+        form = CustomCheersForm(prefix="cheers")
         
     return render_to_response('winedown/custom.html',
                               {'form': form},
