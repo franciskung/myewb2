@@ -77,6 +77,7 @@ def topic(request, topic_id, group_slug=None, edit=False, template_name="topics/
     
     # update "featured posts" score
     topic.update_score(settings.FEATURED_VIEW_SCORE)
+    topic.view(request.user)
         
     # find membership status
     member = False
@@ -510,3 +511,21 @@ def update_modifier(request, topic_id):
         return HttpResponse(topic.score)
     else:
         return HttpResponse("denied")
+        
+def views(request, topic_id):
+    """
+    Gets details of topic views
+    """
+    if request.user.has_module_perms("group_topics"):
+        topic = get_object_or_404(GroupTopic, pk=topic_id)
+        views = topic.view_set.all()
+            
+        return render_to_response("topics/views.html",
+                                  {"topic": topic,
+                                   "views": views},
+                                  context_instance=RequestContext(request)
+                                 )
+        
+    else:
+        return HttpResponse("denied")
+

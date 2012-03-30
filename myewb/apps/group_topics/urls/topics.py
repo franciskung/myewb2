@@ -36,4 +36,7 @@ urlpatterns = patterns('',
     url(r'^(?P<topic_id>\d+)/modifier/$', 'group_topics.views.topics.update_modifier', name="topic_update_modifier"),
     url(r'^newposts/$', 'group_topics.views.topics.topics', {'template_name': 'frontpage.html', 'mode': 'newposts'}, name="topic_since_login"),
     url(r'^newreplies/$', 'group_topics.views.topics.topics', {'template_name': 'frontpage.html', 'mode': 'newreplies'}, name="topic_replies_since_login"),
+    
+    url(r'^(?P<topic_id>\d+)/views/$', 'group_topics.views.topics.views', name="topic_views"),
+    
 )

@@ -1,0 +1,56 @@
+{% extends "ajaxbase.html" %}
+
+{% load pagination_tags %}
+{% load avatar_tags %}
+{% load time_filters %}
+
+{% block body_base %}
+    <div class="maincontent-background" style='padding: 25px;'>
+
+        <h2>
+            Views for<br/>
+            <em>{{ topic.title }}</em>
+        </h2>
+
+        <p>
+            <strong>{{ topic.view_set.count }} views total</strong>
+        </p>
+
+        {% autopaginate views 50 %}
+
+        {% for view in views %}
+
+            <div style='height: 50px; width: 200px; float: left; margin: 10px;'>
+            {% if view.user %}
+                <img style="width: 30px; height: 30px; float: left;" src="{% avatar_url view.user 30 %}"/>
+
+                <div style="margin-left: 35px;">
+                    <a href="{% url profile_detail view.user.username %}">{{ view.user.visible_name }}</a><br/>
+                    <div style='color: #a0a0a0; font-size: 10px;'>
+                        {% mktime view.time %}
+                    </div>
+                </div>
+                
+            {% else %}
+                <div style="width: 30px; height: 30px; float: left; background: #a0a0a0;">&nbsp;</div>
+
+                <div style="margin-left: 35px;">
+                    Guest user<br/>
+                    <div style='color: #a0a0a0; font-size: 10px;'>
+                        {% mktime view.time %}
+                    </div>
+                </div>
+                
+            {% endif %}
+            </div>
+
+        {% endfor %}
+
+        {% paginate %}
+        
+        <div style='clear: both; height: 1px;'></div>
+
+    </div>
+        
+
+{% endblock %}

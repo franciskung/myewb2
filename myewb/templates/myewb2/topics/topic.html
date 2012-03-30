@@ -110,6 +110,15 @@
         <div style="float: right; width: auto; font-size: 10px; font-weight: normal; padding: 5px; margin: 0 0 10px 10px;" class="standardbox standardbox-title">
 
 		<div style="width: auto; line-height: 2em; padding-bottom: 10px;">
+			{% if perms.group_topics %}
+			    <a href="{% url topic_views topic.id %}" id="topic_views">
+    			    <strong>Views: {{ topic.view_set.count }}</strong>
+			    </a>
+            {% else %}
+			    <strong>Views: {{ topic.view_set.count }}</strong>
+            {% endif %}
+		    <br/>
+
 		    Share this post<br/>
 			<!-- AddThis Button BEGIN -->
 			<div class="addthis_toolbox addthis_default_style " style="width: 115px; height: 16px;">
@@ -185,28 +194,15 @@
                     </fieldset>
                 </form>
                 
-                {# <p><a href="{{ request.path }}edit/">Edit Post</a></p> #}
-                
                 {% endif %}
                 
-				{% if user.is_authenticated %}
-					{% topic_on_watchlist user topic as on_list %}
-					<br/>
-					<span id="toggle_watchlist_container">
-					{% if on_list %}
-	    				<a href="#" id="toggle_watchlist-{{ topic.pk }}" class="more watchlist-toggle toggle-remove">[remove from watch-list]</a>
-	    			{% else %}
-	    				<a href="#" id="toggle_watchlist-{{ topic.pk }}" class="more watchlist-toggle toggle-add">[add to watch-list]</a>
-	    			{% endif %}
-    				</span>
-				{% endif %}
-				
 				<div align="right" style="font-size: 1-px; margin-bottom: 15px;">
-	        printable verison:{#<br/>#}
-	        <a href="{% url topic_printable_with_replies topic.id %}" class="more">with replies</a> |
-	        <a href="{% url topic_printable topic.id %}" class="more">without replies</a>
-	    </div>
-				
+        	        printable verison:{#<br/>#}
+	                <a href="{% url topic_printable_with_replies topic.id %}" class="more">with replies</a> |
+	                <a href="{% url topic_printable topic.id %}" class="more">without replies</a>
+        	    </div>
+
+                {% comment %}				
 				{% if perms.group_topics %}
 
 					<div id="simple_hotlist">
@@ -228,6 +224,7 @@
 						
 					</div>
 				{% endif %}
+				{% endcomment %}
 				<br/>
 				
 			</td>
@@ -301,6 +298,7 @@
 	
 	<script type="text/javascript">
 		$('.preview-img').colorbox({transition: "elastic", width:"80%", height:"80%"});
+		$('#topic_views').colorbox({iframe: true, width: "80%", height: "80%"});
 
 		{% ifnotequal request.page 1 %}
 			$.scrollTo('#replies');
