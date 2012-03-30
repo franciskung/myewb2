@@ -310,7 +310,8 @@ class MemberProfile(Profile):
                 from communities.models import ExecList
                 execs = ExecList.objects.filter(member_users=user, is_active=True)
                 if execs.count():
-                    self.chapter = execs[0].parent.network
+                    if hasattr(execs[0].parent, 'network'):
+                        self.chapter = execs[0].parent.network
 
             # last resort... take the first chapter they joined as the primary
             if self.chapter is None:
