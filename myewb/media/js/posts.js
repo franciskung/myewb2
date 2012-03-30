@@ -62,6 +62,8 @@ function install_watchlists() {
         }
         return false;
     });
+
+	$('.topic_views').colorbox({iframe: true, width: "80%", height: "80%"});
 }
 
 function load_homepage_posts()   // now, this'll be a behind-the-scenes function that's only called by hashchanges.

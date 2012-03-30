@@ -80,6 +80,16 @@
           Cheers<br/>
           {% show_cheers_widget topic %}
         </div>
+
+        <div style='clear: both; text-align: center;'>
+		    {% if perms.group_topics %}
+		        <a href="{% url topic_views topic.id %}" class="topic_views">
+			        Views: {{ topic.view_set.count }}
+		        </a>
+            {% else %}
+		        Views: {{ topic.view_set.count }}
+            {% endif %}
+        </div>
       </div>
 
       <a href="{{ topic.get_absolute_url }}" class="quietlink">

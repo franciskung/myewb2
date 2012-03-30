@@ -110,15 +110,6 @@
         <div style="float: right; width: auto; font-size: 10px; font-weight: normal; padding: 5px; margin: 0 0 10px 10px;" class="standardbox standardbox-title">
 
 		<div style="width: auto; line-height: 2em; padding-bottom: 10px;">
-			{% if perms.group_topics %}
-			    <a href="{% url topic_views topic.id %}" id="topic_views">
-    			    <strong>Views: {{ topic.view_set.count }}</strong>
-			    </a>
-            {% else %}
-			    <strong>Views: {{ topic.view_set.count }}</strong>
-            {% endif %}
-		    <br/>
-
 		    Share this post<br/>
 			<!-- AddThis Button BEGIN -->
 			<div class="addthis_toolbox addthis_default_style " style="width: 115px; height: 16px;">
@@ -155,6 +146,16 @@
             </div>
         {% endif %}
           
+        <div style='clear: both; text-align: center;'>
+		    {% if perms.group_topics %}
+		        <a href="{% url topic_views topic.id %}" class="topic_views">
+			        <strong>Views: {{ topic.view_set.count }}</strong>
+		        </a>
+            {% else %}
+		        <strong>Views: {{ topic.view_set.count }}</strong>
+            {% endif %}
+	    </div>
+
     </div>
 
           {{ topic.body|safe }}
@@ -298,7 +299,6 @@
 	
 	<script type="text/javascript">
 		$('.preview-img').colorbox({transition: "elastic", width:"80%", height:"80%"});
-		$('#topic_views').colorbox({iframe: true, width: "80%", height: "80%"});
 
 		{% ifnotequal request.page 1 %}
 			$.scrollTo('#replies');
