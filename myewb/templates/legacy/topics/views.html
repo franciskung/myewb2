@@ -14,6 +14,9 @@
 
         <p>
             <strong>{{ topic.view_set.count }} views total</strong>
+            {% if has_guests %}
+                (<a href="{% url topic_views topic.id %}?guests=no">exclude guests</a>)
+            {% endif %}
         </p>
 
         {% autopaginate views 50 %}

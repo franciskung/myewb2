@@ -518,11 +518,18 @@ def views(request, topic_id):
     """
     if request.user.has_module_perms("group_topics"):
         topic = get_object_or_404(GroupTopic, pk=topic_id)
-        views = topic.view_set.all()
+        
+        has_guests = False
+        if request.GET.get('guests', None) == 'no':
+            views = topic.view_set.filter(user__isnull=False)
+        else:
+            views = topic.view_set.all()
+            has_guests = True
             
         return render_to_response("topics/views.html",
                                   {"topic": topic,
-                                   "views": views},
+                                   "views": views,
+                                   "has_guests": has_guests},
                                   context_instance=RequestContext(request)
                                  )
         
