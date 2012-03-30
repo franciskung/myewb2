@@ -275,11 +275,11 @@ class GroupTopic(Topic):
         self.score_modifier = new_modifier
         self.save()
         
-    def view(self, user):
+    def view(self, user, ip):
         if user.is_authenticated():
-            self.view_set.create(user=user, post=self)
+            self.view_set.create(user=user, post=self, ip=ip)
         else:
-            self.view_set.create(user=None, post=self)
+            self.view_set.create(user=None, post=self, ip=ip)
 
     class Meta:
         ordering = ('-modified', )
@@ -322,6 +322,7 @@ class View(models.Model):
     user = models.ForeignKey(User, db_index=True, editable=False, null=True)
     post = models.ForeignKey(GroupTopic, db_index=True, editable=False)
     time = models.DateTimeField(editable=False, auto_now_add=True)
+    ip = models.CharField(max_length=15)
 
     class Meta:
         ordering = ['-time',]

@@ -77,7 +77,7 @@ def topic(request, topic_id, group_slug=None, edit=False, template_name="topics/
     
     # update "featured posts" score
     topic.update_score(settings.FEATURED_VIEW_SCORE)
-    topic.view(request.user)
+    topic.view(request.user, request.META['REMOTE_ADDR'])
         
     # find membership status
     member = False
