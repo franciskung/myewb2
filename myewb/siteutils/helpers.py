@@ -1,5 +1,7 @@
 import re, csv, codecs
 encoder = codecs.getencoder("utf8")
+decoder = codecs.getdecoder("utf8")
+ascii = codecs.getencoder("iso-8859-1")
 
 from lxml.html.clean import clean_html, autolink_html, Cleaner
 
@@ -156,9 +158,21 @@ def autolink_email(text):
 
 def fix_encoding(text):
     try:
-        return encoder(text)[0]
+        return encoder(text, 'ignore')[0]
     except:
-        return text
+        try:
+            return encoder(decoder(text, 'ignore')[0], 'ignore')[0]
+        except:
+            return text
+        
+def to_ascii(text):
+    try:
+        return ascii(text, 'ignore')[0]
+    except:
+        try:
+            return ascii(decoder(text, 'ignore')[0], 'ignore')[0]
+        except:
+            return fix_encoding(text)
 
 # Thanks to http://djangosnippets.org/snippets/1040/
 from django.db.models import AutoField
