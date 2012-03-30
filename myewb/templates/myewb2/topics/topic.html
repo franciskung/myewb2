@@ -19,6 +19,7 @@
 {% load filesize_tags %}
 {% load time_filters %}
 
+{% block head_title %}{{ topic.title }}{% endblock %}
 
 {% block extra_head %}
     {{ block.super }}
