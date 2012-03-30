@@ -87,7 +87,9 @@
 			        Views: {{ topic.view_set.count }}
 		        </a>
             {% else %}
-		        Views: {{ topic.view_set.count }}
+                {% if request.user.is_authenticated %}
+    		        Views: {{ topic.view_set.count }}
+    		    {% endif %}
             {% endif %}
         </div>
       </div>
