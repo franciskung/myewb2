@@ -564,6 +564,9 @@ div.message {
     text-align: center;
 }
 
+.message hr {
+    margin: 0;
+}
 
 
 /* === Chapter Dashboard === */
