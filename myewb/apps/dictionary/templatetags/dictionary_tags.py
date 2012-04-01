@@ -9,7 +9,7 @@ from datetime import datetime
 from django.contrib.contenttypes.models import ContentType
 from siteutils import helpers
 from dictionary.models import Term, Container, Match
-import settings, types
+import settings, types, re
 
 from dictionary.models import Term, Match, Container
 
@@ -73,12 +73,16 @@ class DictionaryNode(template.Node):
                     replace = original_text[idx:last_idx]
                 
                 #url = "<a href=\"%s\" class=\"dictionary\">%s</a>" % (reverse('dictionary_view', kwargs={'slug': match.term.slug}), match.term.title)
-                url = "<span href=\"%s\" rel=\"%s\" class=\"dictionary\">%s</span>" % \
+                #url = "<span href=\"%s\" rel=\"%s\" class=\"dictionary\">%s</span>" % \
+                #    (reverse('dictionary_view', kwargs={'slug': match.term.slug}),
+                #     reverse('dictionary_ajax', kwargs={'slug': match.term.slug}),
+                #     match.term.title)
+                url = "<span href=\"%s\" rel=\"%s\" class=\"dictionary\">" % \
                     (reverse('dictionary_view', kwargs={'slug': match.term.slug}),
-                     reverse('dictionary_ajax', kwargs={'slug': match.term.slug}),
-                     match.term.title)
+                     reverse('dictionary_ajax', kwargs={'slug': match.term.slug}))
                 
-                result = replace.replace(match.term.title, url, 1) + result
+                #result = replace.replace(match.term.title, url, 1) + result
+                result = re.sub(r"(%s)" % match.term.title, r"%s\1</span>" % url, replace, 1, re.I) + result
                 last_idx = idx
                 
             if self.dostriptags:

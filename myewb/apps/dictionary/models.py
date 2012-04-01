@@ -52,7 +52,7 @@ class ContainerManager(models.Manager):
         for t in terms:
         
             # regex is nice and efficient for the search (we ensure we only do full-word matches)
-            regex = re.compile("\W%s\W" % t.title)
+            regex = re.compile("\W%s\W" % t.title, re.I)
             hits = regex.finditer(text)
             
             # run through hits
