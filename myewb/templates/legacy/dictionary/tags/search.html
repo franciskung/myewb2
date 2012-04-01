@@ -1,0 +1,6 @@
+<form action="{% url dictionary_search %}" method="get">
+
+<input type="text" name="term" style='width: 200px;' {% if search %}value="{{ search }}"{% endif %}/>
+<input type="submit" value="search" style='width: 60px;'/>
+
+</form>

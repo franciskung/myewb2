@@ -1,22 +1,34 @@
 # -*- coding: utf-8 -*-
+import re
 
 from django import forms
 from django.forms import widgets
+from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
 
-from lxml.html.clean import clean_html, autolink_html
+from wiki.models import Article
 
-from whiteboard.models import Whiteboard
-from wiki.utils import get_ct
+try:
+    WIKI_WORD_RE = settings.WIKI_WORD_RE
+except AttributeError:
+    WIKI_WORD_RE = r'(?:[A-Z]+[a-z]+){2,}'
 
-# hmm,why can't I extend wiki.forms.ArticleForm ? =(
-class WhiteboardForm(forms.ModelForm):
+
+wikiword_pattern = re.compile('^' + WIKI_WORD_RE + '$')
+
+
+class ArticleForm(forms.ModelForm):
+
+
     content = forms.CharField(
-        widget=forms.Textarea(attrs={'rows': '20', 'class':'tinymce '}))
+        widget=forms.Textarea(attrs={'rows': '20'}))
+
+    summary = forms.CharField(
+        required=False, max_length=150,
+        widget=forms.Textarea(attrs={'rows': '5'}))
 
     comment = forms.CharField(required=False, max_length=50)
-
     user_ip = forms.CharField(widget=forms.HiddenInput)
 
     content_type = forms.ModelChoiceField(
@@ -29,36 +41,21 @@ class WhiteboardForm(forms.ModelForm):
     action = forms.CharField(widget=forms.HiddenInput)
 
     class Meta:
-        model = Whiteboard
+        model = Article
         exclude = ('creator', 'creator_ip', 'removed',
-                   'group', 'created_at', 'last_update',
-                   'summary', 'title', 'markup', 'tags', 'parent_group',
-                   'converted', 'slug')
+                   'group', 'created_at', 'last_update', 'wiki')
 
-    def clean_content(self):
-        """ Do our usual HTML cleanup.
-        Do we want to mangle the markup field to always be "html"?
-        """
-        self.cleaned_data['content'] = clean_html(self.cleaned_data['content'])
-        self.cleaned_data['content'] = autolink_html(self.cleaned_data['content'])
-        return self.cleaned_data['content']
-        
-        
     def clean_title(self):
-        """ Whiteboard title is always the group slug.
-        Really, whiteboards don't need titles, but using the slug enforces
-        uniqueness... (can relax this if we do full wikis for groups)
-        (actually, is this even called, since "title" is in the exclude list?)
+        """ Page title must be a WikiWord.
         """
-        
-        ctype = get_ct(self.cleaned_data['content_type'])
-        group = ctype.get_object_for_this_type(pk=self.cleaned_data['object_id'])
-        self.cleaned_data['title'] = group.slug
+        title = self.cleaned_data['title']
+        if not wikiword_pattern.match(title):
+            raise forms.ValidationError(_('Must be a WikiWord.'))
 
-        return self.cleaned_data['title']
+        return title
 
     def clean(self):
-        super(WhiteboardForm, self).clean()
+        super(ArticleForm, self).clean()
         kw = {}
 
         if self.cleaned_data['action'] == 'create':
@@ -69,7 +66,7 @@ class WhiteboardForm(forms.ModelForm):
             except KeyError:
                 pass # some error in this fields
             else:
-                if Whiteboard.objects.filter(**kw).count():
+                if Article.objects.filter(**kw).count():
                     raise forms.ValidationError(
                         _("An article with this title already exists."))
 
@@ -91,7 +88,7 @@ class WhiteboardForm(forms.ModelForm):
             new = False
 
         # 2 - Save the Article
-        article = super(WhiteboardForm, self).save()
+        article = super(ArticleForm, self).save()
 
         # 3 - Set creator and group
         editor = getattr(self, 'editor', None)
@@ -109,3 +106,7 @@ class WhiteboardForm(forms.ModelForm):
             comment, editor_ip, editor)
 
         return article, changeset
+
+
+class SearchForm(forms.Form):
+    search_term = forms.CharField(required=True)

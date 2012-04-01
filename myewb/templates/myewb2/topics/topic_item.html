@@ -10,6 +10,7 @@
 {% load cache %}
 {% load time_filters %}
 {% load winedown_tags %}
+{% load dictionary_tags %}
 
 <div class="minipost">
   
@@ -95,7 +96,9 @@
       </div>
 
       <a href="{{ topic.get_absolute_url }}" class="quietlink">
-        {{ topic.intro|striptags }}
+        {% dictionary_striptags topic intro as intro %}
+        {{ intro|safe }}
+{#        {{ topic.intro|striptags }}#}
       </a>
 
       {% ifnotequal topic.group.slug "ewb" %}

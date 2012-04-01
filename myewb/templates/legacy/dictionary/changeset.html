@@ -1,0 +1,27 @@
+{% extends "dictionary/base.html" %}
+{% load i18n %}
+{% load uni_form_tags %}
+{% load time_filters %}
+
+
+{% block body %}
+
+    <h1>URBAN DICTIONARY - EWB EDITION</h1>
+
+    <h2>{{ article.title }}</h2>
+
+    {{ changeset.display_diff|safe }}
+
+
+	<br/><br/>
+	<p>
+		<a href="{% url dictionary_view article.slug %}">Back to article</a>
+	</p>
+
+{% endblock %}
+
+{% block toolbar_left %}
+{% endblock %}
+{% block toolbar_right %}
+{% endblock %}
+

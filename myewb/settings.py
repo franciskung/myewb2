@@ -244,6 +244,7 @@ INSTALLED_APPS = (
     'confcomm',
     'jobboard',
     'winedown',
+    'dictionary',
 
     # our own third-party libs
     'contrib.django_evolution',

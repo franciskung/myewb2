@@ -1,0 +1,13 @@
+{% load dictionary_tags %}
+
+<div style='padding-bottom: 3px;'>
+    <strong>Latest entries...</strong><br/>
+</div>
+
+{% for t in terms %}
+    <div style='padding: 3px 0;'>
+        <strong><a href="{% url dictionary_view t.slug %}">{{ t.title }}</a></strong><br/>
+        {{ t.content|striptags|truncate }}
+    </div>
+    
+{% endfor %}

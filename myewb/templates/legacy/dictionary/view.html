@@ -1,0 +1,70 @@
+{% extends "dictionary/base.html" %}
+{% load i18n %}
+{% load uni_form_tags %}
+{% load time_filters %}
+{% load dictionary_tags %}
+{% load avatar_tags %}
+
+
+{% block body_content %}
+
+    <h2 style='margin-bottom: 6px;'>{{ article.title }}</h2>
+
+    <div style='margin-bottom: 12px;'>
+	{% if article.latest_changeset %}
+        <span class="lighter">Last edited by <a href="{% url profile_detail  article.latest_changeset.editor.username %}" class="nodeco">{{ article.latest_changeset.editor.visible_name }}</a> {% mktime article.last_update %}</span>
+        
+    {% else %}
+        <span class="lighter">Created by <a href="{% url profile_detail article.creator.username %}" class="nodeco">{{ article.creator.visible_name }}</a> {% mktime article.last_update %}</span>
+        
+    {% endif %}
+    </div>
+        
+    <div style='border: 1px solid #db7403; background: #f8efda; padding: 0 15px;'>
+        {% dictionary article content as content %}
+		{{ content|safe }}
+    </div>
+
+
+    <br/>
+    <div class="whiteboard-editing-box">
+		{% if allow_write %}
+            <br/>
+			<a href="{% url dictionary_edit article.slug %}">{% trans "Edit this article" %}</a>
+			|
+			<a href="{% url dictionary_article_history article.slug %}">{% trans "Editing history" %}</a>
+		{% endif %}
+	</div>
+	<br/>
+	
+	<h2>Recent posts containing this word...</h2>
+	{% dictionary_posts article as posts %}
+	{% for p in posts %}
+        <div style="padding-bottom: 15px; clear: left;">
+            {% ifequal p.content_text_field 'body' %}
+            	<a href="{% url profile_detail p.content_object.creator %}"  class="avatar-whos-online" data-background-src="{% avatar_url p.content_object.creator 25 %}" style="margin-right: 10px; margin-bottom: 15px;"></a>
+
+            	<div style="margin-left: 40px;">
+                    <a href="{{ p.content_object.get_absolute_url }}">{{ p.content_object.title }}</a>
+            	    <br/>
+                    {{ p.content_object.creator.visible_name }}
+                </div>
+            {% endifequal %}
+            
+            {% ifequal p.content_text_field 'comment' %}
+            	<a href="{% url profile_detail p.content_object.user %}"  class="avatar-whos-online" data-background-src="{% avatar_url p.content_object.user 25 %}" style="margin-right: 10px; margin-bottom: 15px;"></a>
+
+            	<div style="margin-left: 40px;">
+                    reply to <a href="{{ p.content_object.content_object.get_absolute_url }}">{{ p.content_object.content_object.title }}</a>
+            	    <br/>
+                    {{ p.content_object.user.visible_name }}
+                </div>
+            {% endifequal %}
+            
+        </div>
+	    
+	{% endfor %}
+	
+	<br class="clear"/>
+
+{% endblock %}

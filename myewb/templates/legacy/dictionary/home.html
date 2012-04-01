@@ -1,0 +1,33 @@
+{% extends 'dictionary/base.html' %}
+
+{% load time_filters %}
+{% load pagination_tags %}
+{% load dictionary_tags %}
+
+{% block body_content %}
+
+    {% dictionary_search %}
+
+    {% autopaginate terms 10 %}
+
+    {% for t in terms %}
+        <h2 style='margin-bottom: 0;'><a href="{% url dictionary_view t.slug %}">{{ t.title }}</a></h2>
+
+        <div style='margin-bottom: 7px;'>
+	    {% if article.latest_changeset %}
+            <span class="lighter">Last edited by <a href="{% url profile_detail t.latest_changeset.editor.username %}" class="nodeco">{{ t.latest_changeset.editor.visible_name }}</a> {% mktime t.last_update %}</span>
+            
+        {% else %}
+            <span class="lighter">Created by <a href="{% url profile_detail t.creator.username %}" class="nodeco">{{ t.creator.visible_name }}</a> {% mktime t.last_update %}</span>
+            
+        {% endif %}
+        </div>
+
+        <div style='border: 1px solid #db7403; background: #f8efda; padding: 0 15px;'>
+            {{ t.content|safe }}
+        </div>
+    {% endfor %}
+
+    {% paginate %}
+
+{% endblock %}

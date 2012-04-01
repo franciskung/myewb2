@@ -1,0 +1,28 @@
+{% extends "dictionary/base.html" %}
+{% load i18n %}
+{% load uni_form_tags %}
+
+{% block body_content %}
+
+	<form class="uniForm" method="POST" enctype="multipart/form-data" action="">
+		<fieldset class="inlineLabels">
+			{{ form|as_uni_form }}
+			
+			<p class="form_block">
+				<input type="submit" value="{% trans "save" %}"/>
+			</p>
+		</fieldset>
+	</form>
+
+{% endblock %}
+
+{% block toolbar_left %}
+{% endblock %}
+{% block toolbar_right %}
+{% endblock %}
+
+{% block extra_body %}
+	{{ block.super }}
+	{% include "tinymce.html" %}
+    {% include "comments-js.html" %}
+{% endblock %}

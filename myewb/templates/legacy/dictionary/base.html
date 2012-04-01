@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% load dictionary_tags %}
+
+{% block head_title %}
+    EWB Dictionary
+{% endblock %}
+
+{% block body %}
+<a href="{% url dictionary_home %}"><img src="{{ STATIC_URL}}images/logos/urbandictionary.png"/></a>
+
+{% block body_content %}
+{% endblock %}
+
+{% endblock %}
+
+
+{% block toolbar_right %}
+<br/><br/><br/><br/>
+<br/><br/><br/>
+
+<strong>Add a new entry</strong>
+<form method="POST" action="{% url dictionary_new %}">
+<input type="text" name="term" /><br/>
+<input type="submit" value="Go"/>
+</form>
+
+<hr/>
+
+{% dictionary_latest_short %}
+
+{% endblock %}
+

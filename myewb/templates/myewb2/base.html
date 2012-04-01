@@ -53,12 +53,24 @@
 	{# doubledeclaration re: http://tinymce.moxiecode.com/punbb/viewtopic.php?id=21343 #}
 	{# TODO: this should be specifically loaded only when needed #}
 
+    <script type="text/javascript" src="{{STATIC_URL}}js/jquery.hoverIntent.minified.js"></script>
+    <link type="text/css" href="{{STATIC_URL}}css/dictionarypopup.css?v=1" rel="stylesheet" />
+    <script type="text/javascript" src="{{STATIC_URL}}js/dictionarypopup.js?v=1"></script>
+
     <meta property="og:image" content="http://my.ewb.ca{{ STATIC_URL }}images/ewb_logo.png" />
 
-
+    <style>
+        .dictionary {
+            color: #cb5e00;
+            cursor: pointer;
+        }
+        .dictionry:hover {
+            text-decoration: underline;
+        }
+    </style>
 
 </head>
-<body>
+<body style="position: relative;">
 
 <div style='background: #db7403; margin: 0 -10px; text-align: center;'>
 <a href="{% url themeswitch %}" class="colorbox" id="newlook" style='color: #ffffff;'>we have a new look...!</a>
@@ -329,6 +341,17 @@
         }
 
         $('#newlook').colorbox({opacity: '0.5', width: '600px', height: '50%'});
+        
+        $('body').delegate('.dictionary', 'click',
+            function(event) {
+                event.stopPropagation();
+                window.location = $(this).attr('href');
+                return false;
+            });
+        $('body').delegate('.dictionary', 'onmouseover',
+            function() {
+                return;
+            });
         
     });
 </script>

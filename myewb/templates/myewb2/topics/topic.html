@@ -18,6 +18,7 @@
 {% load icon_tags %}
 {% load filesize_tags %}
 {% load time_filters %}
+{% load dictionary_tags %}
 
 {% block head_title %}{{ topic.title }}{% endblock %}
 
@@ -161,7 +162,9 @@
 
     </div>
 
-          {{ topic.body|safe }}
+          {% dictionary topic body as body %}
+          {{ body|safe }}
+          {#{{ topic.body|safe }}#}
 
     	<div style='clear: right;'></div>
     	

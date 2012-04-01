@@ -8,6 +8,7 @@
 {% load icon_tags %}
 {% load filesize_tags %}
 {% load time_filters %}
+{% load dictionary_tags %}
 
 {% get_threaded_comment_tree for object as responses %}
 {% autopaginate responses %}
@@ -58,7 +59,9 @@
 	    	</div>
 	      
 	    	<div class="minipost-text">
-            	{{ response.comment|safe }}
+	    	    {% dictionary response comment as comment %}
+	    	    {{ comment|safe }}
+            	{#{{ response.comment|safe }}#}
             </div>
 
             <br style="clear:both; height: 1px; line-height: 1px;" />

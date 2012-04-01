@@ -82,6 +82,7 @@ urlpatterns = patterns('',
     (r'^jobboard/', include('jobboard.urls')),
     (r'^themeswitch/', include('themeswitch.urls')),
     (r'^cheers/', include('winedown.urls')),
+    (r'^dictionary/', include('dictionary.urls')),
     
     url(r'^unsubscribe/$', 'networks.views.network.unsubscribe', name='network_unsubscribe',),
     

@@ -13,6 +13,7 @@
 {% load networks_tags %}
 {% load winedown_tags %}
 {#{% load fake_ads %}#}
+{% load dictionary_tags %}
 
 {% block extra_head %}
     {{ block.super }}
@@ -75,6 +76,7 @@ $(document).ready(function() {
 <div class="chapterdash-background">
   <div class="container_16 second-container">
 
+        {% comment %}
     <div class="grid_11 border-right" id="chapter_dashboard">
 
         {% if request.user.is_authenticated %}
@@ -106,14 +108,6 @@ $(document).ready(function() {
             {% if login_form %}
                 <form class="uniForm" id="mainpagelogin" method="POST" action="{% url acct_login %}">
                 <fieldset class="inlineLabels">
-                    {#{{ login_form.as_p }}#}
-                    {% comment %}
-                    {% for field in login_form %}
-                        {{ field.label_tag }}:
-                        {{ field }}<br/>
-                    {% endfor %}
-                    {% endcomment %}
-
                     <div style="float: right; width: 40%; margin-top: 5px;">
                     <input type="submit" value="{% trans "sign in" %} &raquo;" />
                     <br/><br/>
@@ -144,6 +138,7 @@ $(document).ready(function() {
                 </form>
             {% endif %}
     	{% endif %}
+    	
     </div>
 
     <div class="grid_5" style="margin-right: -2px;">
@@ -156,8 +151,52 @@ $(document).ready(function() {
         </div>
 
     </div>
+    {% endcomment %}
 
+    <div class="grid_16">
+    	<div style='width: 325px; float: left;'>
+        	<a href="{% url dictionary_home %}"><img src="{{ STATIC_URL }}images/logos/urbandictionary.png"/></a>
+        	<br/>
+    	    {% dictionary_search %}
 
+    	</div>
+    	<div style='margin-left: 325px; margin-top: 10px;'>
+    	    {% dictionary_latest_long %}
+    	    
+            <div style='padding: 5px 0;'>
+                <a href="{% url dictionary_home %}">See more Urban Dictionary: EWB &raquo;</a>
+            </div>
+    	    
+    	</div>
+    	
+    	<div style='clear: both; height: 5px;'></div>
+    	<hr/>
+    	
+        {% if not request.user.is_authenticated %}
+            <form class="uniForm" id="mainpagelogin" method="POST" action="{% url acct_login %}" style='text-align: center;'>
+                <strong>Sign in to myEWB</strong><br/>
+                <label for="id_login_name" style='display: inline; float: none;'>Email:</label>
+                <input id="id_login_name" type="text" name="login_name" maxlength="75" style='display: inline; float: none;'/>
+                
+                &nbsp;&nbsp;&nbsp;&nbsp;
+
+                <label for="id_password" style='display: inline; float: none;'>Password:</label>
+                <input type="password" name="password" id="id_password" style='display: inline; float: none;'/>
+                
+                &nbsp;&nbsp;&nbsp;&nbsp;
+
+                <input type="submit" value="{% trans "sign in" %} &raquo;" style='display: inline; float: none;'/>
+                
+                <br/>
+
+                <a href="{% url acct_passwd_reset %}">{% trans "Forgot your password?" %}</a>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <a href="{% url acct_signup %}">{% trans "Create an account" %}</a>
+            </form>
+
+        {% endif %}
+
+    </div>
   </div>
 </div>
 

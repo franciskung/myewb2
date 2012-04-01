@@ -1,0 +1,64 @@
+{% extends "dictionary/base.html" %}
+{% load i18n %}
+{% load uni_form_tags %}
+{% load time_filters %}
+
+
+{% block body_content %}
+
+    <h2>{{ article.title }}</h2>
+
+	<form action="{% url dictionary_revert_to_revision article.slug %}" method="post">
+	  <table style="width: 100%" class="standard">
+	    <tr class="tbheader">
+          <th>{% trans "At" %}</th>
+          <th>{% trans "User" %}</th>
+          <th>{% trans "Comment" %}</th>
+          <th>{% trans "Revert" %}</th>
+	    </tr>
+	    {% for change in changes %}
+	    <tr style="background-color: {% cycle '#ffffff' '#e5e5e5' %};">
+	        <td><a href="{% url dictionary_changeset article.slug change.revision %}">
+	                {{ change.modified|date:"M d, Y" }}</a>
+	        </td>
+	        <td>
+	        {% if change.is_anonymous_change %}
+	            {{ change.editor_ip }}
+	        {% else %}
+	            <a href="{% url profile_detail change.editor.username %}">{{ change.editor.visible_name }}</a>
+	        {% endif %}
+	        </td>
+	        <td>
+	          {% if change.comment %}<i>'{{ change.comment}}'</i> {% endif %}
+	        </td>
+	        <td>
+	            {% if forloop.first %}
+	                {% trans "Current revision" %}
+	            {% else %}
+	                 <input id="id_revision" name="revision"
+	                        {% ifequal forloop.counter 2 %}checked{% endifequal %}
+	                        type="radio" value="{{ change.revision }}">
+	            {% endif %}
+	        </td>
+	    </tr>
+	    {% endfor %}
+	  </table>
+
+	  {% ifnotequal changes.count 1 %}
+	       <input type="submit" value="{% trans "Revert" %}">
+	  {% endifnotequal %}
+
+	</form>
+
+	<br/><br/>
+	<p>
+		<a href="{% url dictionary_view article.slug %}">Back to article</a>
+	</p>
+
+{% endblock %}
+
+{% block toolbar_left %}
+{% endblock %}
+{% block toolbar_right %}
+{% endblock %}
+
