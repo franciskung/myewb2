@@ -173,7 +173,7 @@ def article_list(request,
     return HttpResponseNotAllowed(['GET'])
 
 
-@login_required
+#@login_required
 def view_article(request, slug,
                  ArticleClass=Article, # to create an unsaved instance
                  group_slug=None, bridge=None,
