@@ -12,7 +12,7 @@
 	  <table style="width: 100%" class="standard">
 	    <tr class="tbheader">
           <th>{% trans "At" %}</th>
-          <th>{% trans "User" %}</th>
+{#          <th>{% trans "User" %}</th>#}
           <th>{% trans "Comment" %}</th>
           <th>{% trans "Revert" %}</th>
 	    </tr>
@@ -21,6 +21,7 @@
 	        <td><a href="{% url dictionary_changeset article.slug change.revision %}">
 	                {{ change.modified|date:"M d, Y" }}</a>
 	        </td>
+	        {% comment %}
 	        <td>
 	        {% if change.is_anonymous_change %}
 	            {{ change.editor_ip }}
@@ -28,6 +29,7 @@
 	            <a href="{% url profile_detail change.editor.username %}">{{ change.editor.visible_name }}</a>
 	        {% endif %}
 	        </td>
+	        {% endcomment %}
 	        <td>
 	          {% if change.comment %}<i>'{{ change.comment}}'</i> {% endif %}
 	        </td>

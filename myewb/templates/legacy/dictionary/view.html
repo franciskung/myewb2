@@ -11,6 +11,7 @@
     <h2 style='margin-bottom: 6px;'>{{ article.title }}</h2>
 
     <div style='margin-bottom: 12px;'>
+    {% comment %}
 	{% if article.latest_changeset %}
         <span class="lighter">Last edited by <a href="{% url profile_detail  article.latest_changeset.editor.username %}" class="nodeco">{{ article.latest_changeset.editor.visible_name }}</a> {% mktime article.last_update %}</span>
         
@@ -18,6 +19,15 @@
         <span class="lighter">Created by <a href="{% url profile_detail article.creator.username %}" class="nodeco">{{ article.creator.visible_name }}</a> {% mktime article.last_update %}</span>
         
     {% endif %}
+    {% endcomment %}
+
+	    {% if article.latest_changeset %}
+            <span class="lighter">Last edited by <a href="{{ STATIC_URL }}images/logos/happyface.jpg" class="nodeco">{{ article.nickname }}</a> {% mktime article.last_update %}</span>
+            
+        {% else %}
+            <span class="lighter">Created by <a href="{{ STATIC_URL }}images/logos/happyface.jpg" class="nodeco">{{ article.nickname }}</a> {% mktime article.last_update %}</span>
+            
+        {% endif %}
     </div>
         
     <div style='border: 1px solid #db7403; background: #f8efda; padding: 0 15px;'>

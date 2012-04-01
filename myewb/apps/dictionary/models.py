@@ -27,6 +27,7 @@ class Term(Article):
     """
 
     refreshing = models.BooleanField(default=True, editable=False)
+    nickname = models.CharField(max_length=50, default='')
     
     objects = QuerySetManager()
     
