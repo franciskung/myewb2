@@ -82,7 +82,9 @@ class DictionaryNode(template.Node):
                      reverse('dictionary_ajax', kwargs={'slug': match.term.slug}))
                 
                 #result = replace.replace(match.term.title, url, 1) + result
-                result = re.sub(r"(%s)" % match.term.title, r"%s\1</span>" % url, replace, 1, re.I) + result
+                #result = re.sub(r"(%s)" % match.term.title, r"%s\1</span>" % url, replace, 1, re.I) + result
+                expr = re.compile(r"(%s)" % match.term.title, re.I)
+                result = expr.sub(r"%s\1</span>" % url, replace, 1) + result
                 last_idx = idx
                 
             if self.dostriptags:
