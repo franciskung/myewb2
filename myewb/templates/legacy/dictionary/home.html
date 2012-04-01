@@ -7,6 +7,14 @@
 {% block body_content %}
 
     {% dictionary_search %}
+    
+    <div style='height: 10px;'></div>
+
+    <form method="POST" action="{% url dictionary_new %}">
+    <input type="text" name="term" style='width: 200px;' />
+    <input type="submit" value="Add a new entry!"/>
+    </form>
+
 
     {% autopaginate terms 10 %}
 
@@ -36,6 +44,8 @@
         <div style='border: 1px solid #db7403; background: #f8efda; padding: 0 15px;'>
             {{ t.content|safe }}
         </div>
+        
+        <div style='height: 5px;'></div>
     {% endfor %}
 
     {% paginate %}

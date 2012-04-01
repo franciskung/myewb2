@@ -57,7 +57,7 @@
             	<div style="margin-left: 40px;">
                     <a href="{{ p.content_object.get_absolute_url }}">{{ p.content_object.title }}</a>
             	    <br/>
-                    {{ p.content_object.creator.visible_name }}
+                    {{ p.content_object.creator.visible_name }}, {% mktime p.content_object.created %}
                 </div>
             {% endifequal %}
             
@@ -67,7 +67,7 @@
             	<div style="margin-left: 40px;">
                     reply to <a href="{{ p.content_object.content_object.get_absolute_url }}">{{ p.content_object.content_object.title }}</a>
             	    <br/>
-                    {{ p.content_object.user.visible_name }}
+                    {{ p.content_object.user.visible_name }}, {% mktime p.content_object.date_submitted %}
                 </div>
             {% endifequal %}
             
