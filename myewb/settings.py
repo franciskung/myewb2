@@ -93,6 +93,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'siteutils.httpbl.HttpBLMiddleware',
 #    'django_openid.consumer.SessionConsumer',
     'account.middleware.LocaleMiddleware',
     'django.middleware.doc.XViewMiddleware',
@@ -394,6 +395,13 @@ TWILIO_ACCOUNT_SID = ''
 TWILIO_ACCOUNT_TOKEN = ''
 TWILIO_PHONE_NUMBER = ''
 THUNDERTEXTING_KEY = ''
+
+# Project Honeypot blacklisting settings
+HTTPBLAGE = 14
+HTTPBLTHREAT = 30
+HTTPBLCLASS = 6
+HTTPBLREDIRECT = '/bl.html'
+HTTPBLKEY = '' # replace this in local_settings
 
 # local_settings.py can be used to override environment-specific settings
 # like database and email that differ between development and production.
