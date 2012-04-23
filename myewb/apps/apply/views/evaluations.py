@@ -119,7 +119,15 @@ def evaluation_pdf(request, app_id):
 
     p.append(Paragraph("Application for", normalStyle))
     p.append(Spacer(0, 5))
-    p.append(Paragraph(application.profile.first_name + ' ' + application.profile.last_name, h1))
+
+    parsed_name = ''
+    if application.profile.first_name:
+        parsed_name = application.profile.first_name
+    if application.profile.first_name and application.profile.last_name:
+        parsed_name = parsed_name + ' '
+    if application.profile.last_name:
+        parsed_name = parsed_name + application.profile.last_name
+    p.append(Paragraph(parsed_name, h1))
     
     p.append(Paragraph("<strong>Submitted " + str(application.updated.date()) + "</strong>", normalStyle))
     p.append(Spacer(0, -13))
