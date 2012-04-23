@@ -1,8 +1,11 @@
 # thanks http://code.google.com/p/django-httpbl-middleware/
 
 from django.conf import settings
+from django.core.urlresolvers import reverse
 from django.http import HttpResponseNotFound, HttpResponsePermanentRedirect
 import socket
+
+from httpbl.models import Whitelist
 
 class HttpBLMiddleware(object):
    """
@@ -23,6 +26,10 @@ class HttpBLMiddleware(object):
          self.classification = classification
 
    def process_request(self, request):
+      # skip check if already displaying the blacklist page
+      if request.META.get('PATH_INFO', '') == reverse('httpbl_blacklist') or \
+        request.META.get('PATH_INFO', '') == reverse('httpbl_validate'):
+         return None
 
       if settings.HTTPBLKEY:
          ip = request.META.get('REMOTE_ADDR')
@@ -45,9 +52,7 @@ class HttpBLMiddleware(object):
          resultlist = result.split('.')
 
          if (int(resultlist[1]) <= self.age and int(resultlist[2]) >= self.threat and int(resultlist[3]) & self.classification > 0):
-            if settings.HTTPBLREDIRECT:
-               return HttpResponsePermanentRedirect(settings.HTTPBLREDIRECT)
-            else:
-               return HttpResponseNotFound('<h1>Not Found</h1>')
+           if Whitelist.objects.filter(ip=ip).count() == 0:
+              return HttpResponsePermanentRedirect(reverse('httpbl_blacklist'))
 
       return None

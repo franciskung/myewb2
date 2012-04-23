@@ -93,7 +93,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'siteutils.httpbl.HttpBLMiddleware',
+    'httpbl.middleware.HttpBLMiddleware',
 #    'django_openid.consumer.SessionConsumer',
     'account.middleware.LocaleMiddleware',
     'django.middleware.doc.XViewMiddleware',
@@ -246,6 +246,7 @@ INSTALLED_APPS = (
     'jobboard',
     'winedown',
     'dictionary',
+    'httpbl',
 
     # our own third-party libs
     'contrib.django_evolution',

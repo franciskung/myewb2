@@ -83,6 +83,7 @@ urlpatterns = patterns('',
     (r'^themeswitch/', include('themeswitch.urls')),
     (r'^cheers/', include('winedown.urls')),
     (r'^dictionary/', include('dictionary.urls')),
+    (r'^blacklist/', include('httpbl.urls')),
     
     url(r'^unsubscribe/$', 'networks.views.network.unsubscribe', name='network_unsubscribe',),
     

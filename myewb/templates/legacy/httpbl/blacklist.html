@@ -1,0 +1,43 @@
+{% extends "site_base.html" %}
+
+
+{% block body %}
+
+    <h2 class="h2bold">Access Restricted</h2>
+    
+    <p>
+        It seems like there's been some suspicious activity from your internet address,
+        so your access to myEWB is temporarily blocked.
+    </p>
+    
+    <p>
+        There are a few possible reasons:<br/>
+        it could be that that the last person to use your address was a spammer
+        (internet addresses are automatically redistributed  every so often),<br/>
+        or you may have a virus on your computer.
+    </p>
+    
+    <p>
+        If you're reading this message, however, there's a pretty good chance that
+        you're a real person and not some automatic spam-bot.<br/>
+        So, just type "myEWB" (without the quotes) into the box below, and we'll 
+        clear it up right away!
+    </p>
+    
+    <p>
+        Thanks, and sorry for the inconvenience.  Down with spam!!!
+    </p>
+    
+    <div style='border-radius: 1em; -webkit-border-radius: 1em; -moz-border-radius: 1em; border: 1px solid; background: #d0d0d0; width: 250px; padding: 1.5em; margin: 1.5em;'>
+        <em>I'm a real person - honest!</em>
+        <form method="post" action="{% url httpbl_validate %}">
+        <input type="text" name="text"/>
+        <input type="submit" value="validate"/>
+        </form>
+    </div>
+
+
+
+   
+{% endblock %}
+
