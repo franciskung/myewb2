@@ -101,10 +101,10 @@ class Article(models.Model):
             return reverse('wiki_article', args=(self.slug,))
         return self.group.get_absolute_url() + 'wiki/' + self.slug
 
-    def save(self, force_insert=False, force_update=False):
+    def save(self, force_insert=False, force_update=False, **kwargs):
         self.last_update = datetime.now()
         self.slug = slugify(self.title)
-        super(Article, self).save(force_insert, force_update)
+        super(Article, self).save(force_insert, force_update, **kwargs)
 
     def remove(self):
         """ Mark the Article as 'removed'. If the article is
@@ -269,7 +269,7 @@ class ChangeSet(models.Model):
             notification.send([self.editor], "wiki_revision_reverted",
                               {'revision': self, 'article': self.article})
 
-    def save(self, force_insert=False, force_update=False):
+    def save(self, force_insert=False, force_update=False, **kwargs):
         """ Saves the article with a new revision.
         """
         if self.id is None:
@@ -278,7 +278,7 @@ class ChangeSet(models.Model):
                     article=self.article).latest().revision + 1
             except self.DoesNotExist:
                 self.revision = 1
-        super(ChangeSet, self).save(force_insert, force_update)
+        super(ChangeSet, self).save(force_insert, force_update, **kwargs)
 
     def display_diff(self):
         ''' Returns a HTML representation of the diff.
