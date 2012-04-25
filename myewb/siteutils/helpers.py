@@ -57,7 +57,7 @@ def is_visible(user, obj):
     
     return True
 
-def get_email_user(email):
+def get_email_user(email, verified_only=True):
     email_user = None
     users_with_the_email = User.objects.filter(email=email)
     if users_with_the_email.count() > 0:
@@ -66,6 +66,11 @@ def get_email_user(email):
         users_with_the_email = EmailAddress.objects.get_users_for(email)
         if len(users_with_the_email) > 0:
             email_user = users_with_the_email[0]
+            
+    if not email_user and not verified_only:
+        unverified_emails = EmailAddress.objects.filter(email=email)
+        if len(unverified_emails) > 0:
+            email_user = unverified_emails[0].user
             
     return email_user
 

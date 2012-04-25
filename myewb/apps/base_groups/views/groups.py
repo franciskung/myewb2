@@ -425,7 +425,7 @@ def bulk_remove(request, group_slug, model=BaseGroup, form_class=GroupBulkImport
             emails = raw_emails.split()   # splits by whitespace characters
             
             for email in emails:
-                email_user = get_email_user(email)
+                email_user = get_email_user(email, verified_only=False)
                 if email_user is not None:
                     group.remove_member(email_user)
             return HttpResponseRedirect(reverse('%s_detail' % model._meta.verbose_name, kwargs={'group_slug': group.slug}))
