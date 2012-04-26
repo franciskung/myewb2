@@ -76,7 +76,6 @@ $(document).ready(function() {
 <div class="chapterdash-background">
   <div class="container_16 second-container">
 
-        {% comment %}
     <div class="grid_11 border-right" id="chapter_dashboard">
 
         {% if request.user.is_authenticated %}
@@ -151,8 +150,16 @@ $(document).ready(function() {
         </div>
 
     </div>
-    {% endcomment %}
 
+    <div class="grid_16" style='border-radius: 0.5em; padding: 1em; margin: 1em; margin-bottom: -0.5em; margin-left: 0; background: #f8efda;'>
+        <h2 class="h2bold" style='width: auto; float: left; margin: 0; padding-right: 20px; font-size: 1.5em;'>
+        EWB Dictionary
+        </h2>
+        <div style='padding-top: 3px;'>
+	    {% dictionary_search %}
+	    </div>
+    </div>
+    {% comment %}
     <div class="grid_16">
     	<div style='width: 325px; float: left;'>
         	<a href="{% url dictionary_home %}"><img src="{{ STATIC_URL }}images/logos/urbandictionary.png"/></a>
@@ -197,6 +204,7 @@ $(document).ready(function() {
         {% endif %}
 
     </div>
+    {% endcomment %}
   </div>
 </div>
 
@@ -249,7 +257,7 @@ $(document).ready(function() {
 
   	<a href="{% url winedown_all %}" style="float: right; font-size: 10px; margin-top: 2.5em;">What is this?</a>
     <h2 class="h2bold">
-        EWB Cheers
+        Cheers
     </h2>
     {% if request.user.is_authenticated %}
         <a href="{% url winedown_cheers_new %}" class="new_discussion cheers">Add your cheers &raquo;</a>
