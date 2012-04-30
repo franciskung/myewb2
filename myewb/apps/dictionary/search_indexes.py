@@ -11,7 +11,7 @@ else:
 
 class TermIndex(index_class):
     text = CharField(document=True, use_template=True)
-    author = CharField(model_attr='creator')
+    #author = CharField(model_attr='creator')
     pub_date = DateTimeField(model_attr='created_at')
     
     def prepare_author(self, obj):

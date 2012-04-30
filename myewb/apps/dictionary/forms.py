@@ -14,8 +14,8 @@ from wiki.utils import get_ct
 # hmm,why can't I extend wiki.forms.ArticleForm ? =(
 class TermForm(WhiteboardForm):
 
-    nickname = forms.CharField(label='Your nickname', required=True, max_length=50,
-                               help_text='You need a nickname to hide under...!')
+#    nickname = forms.CharField(label='Your nickname', required=True, max_length=50,
+#                               help_text='You need a nickname to hide under...!')
     
     comment = forms.CharField(required=False, max_length=50, widget=forms.HiddenInput)
 
@@ -24,7 +24,7 @@ class TermForm(WhiteboardForm):
         exclude = ('creator', 'creator_ip', 'removed',
                    'group', 'created_at', 'last_update',
                    'summary', 'slug', 'markup', 'tags', 'parent_group',
-                   'converted', 'comment')
+                   'converted', 'comment', 'nickname')
 
     def clean_title(self):
         return self.cleaned_data['title']
