@@ -111,7 +111,7 @@ class DictionaryNode(template.Node):
                     
                 cache.set(cache_key, result)
         except:
-            print sys.exc_info()[0]
+            pass
             
         context[self.context_name] = result
         
@@ -162,7 +162,7 @@ class DictionaryPostNode(template.Node):
         containers = Container.objects.filter(match__term=term)
         q1 = Q(content_text_field='body')
         q2 = Q(content_text_field='comment')
-        containers = containers.filter(q1 | q2).distinct().order_by('-refreshed')[0:15]
+        containers = containers.filter(q1 | q2).distinct().order_by('-content_date')[0:15]
         context[self.context_name] = containers
         
         return u''

@@ -76,9 +76,23 @@ class ContainerManager(models.Manager):
         container = Container.objects.filter(content_type=ctype, object_id=obj.id, content_text_field=field)
         
         if not container:
+            # guess at date fields...            
+            content_date = datetime.now()
+            if hasattr(obj, 'created'):
+                content_date = obj.created
+            elif hasattr(obj, 'date_submitted'):
+                content_date = obj.date_submitted
+            elif hasattr(obj, 'created_at'):
+                content_date = obj.created_at
+            elif hasattr(obj, 'date'):
+                content_date = obj.date
+
             ctype = ContentType.objects.get_for_model(obj)
-            container = self.create(content_type=ctype, object_id=obj.id, content_text_field=field)
+            container = self.create(content_type=ctype, object_id=obj.id, content_text_field=field, content_date=content_date)
             terms = Term.objects.all()
+
+            container.save()
+            
         else:
             container = container[0]
             terms = Term.objects.filter(last_update__gt=container.refreshed)
@@ -100,6 +114,7 @@ class Container(models.Model):
     object_id = models.PositiveIntegerField(db_index=True)
     content_object = generic.GenericForeignKey('content_type', 'object_id')
     content_text_field = models.CharField(max_length=50)
+    content_date = models.DateTimeField(default=datetime.now())
     
     date = models.DateTimeField(auto_now_add=True)
     refreshed = models.DateTimeField(default=datetime.now())
