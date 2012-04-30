@@ -76,8 +76,9 @@ $(document).ready(function() {
 <div class="chapterdash-background">
   <div class="container_16 second-container">
 
-    <div class="grid_11 border-right" id="chapter_dashboard">
+    <div class="grid_11 border-right">
 
+        <div id="chapter_dashboard" style='height: 175px;'>
         {% if request.user.is_authenticated %}
                 {% if request.user.get_profile.get_chapter %}
 			&nbsp;
@@ -137,28 +138,31 @@ $(document).ready(function() {
                 </form>
             {% endif %}
     	{% endif %}
+    	</div>
     	
+    	<div style='padding: 10px 10px 0 0;'>
+        <div style='border-radius: 0.5em; padding: 1em; background: #f8efda;'>
+            <h2 class="h2bold" style='width: auto; float: left; margin: 0; padding-right: 20px; font-size: 1.5em;'>
+            EWB Dictionary
+            </h2>
+            <div style='padding-top: 3px;'>
+	        {% dictionary_search %}
+	        </div>
+        </div>
+        </div>
     </div>
 
     <div class="grid_5" style="margin-right: -2px;">
         <h2 class="chapterspecific-title h2bold">EWB Canada</h2>
 
-        <div style='width: 240px; height: 140px; background: #303030;'>
+        <div style='width: 280px; height: 200px; background: #303030;'>
         <div id="fontpageflash">
-        <iframe width="240" height="140" src="http://www.youtube.com/embed/videoseries?list=UU7ItoGjleOzzuMFe-DckXTg&amp;hl=en_US" frameborder="0" allowfullscreen></iframe>
+        <iframe width="280" height="200" src="http://www.youtube.com/embed/videoseries?list=UU7ItoGjleOzzuMFe-DckXTg&amp;hl=en_US" frameborder="0" allowfullscreen></iframe>
         </div>
         </div>
 
     </div>
 
-    <div class="grid_16" style='border-radius: 0.5em; padding: 1em; margin: 1em; margin-bottom: -0.5em; margin-left: 0; background: #f8efda;'>
-        <h2 class="h2bold" style='width: auto; float: left; margin: 0; padding-right: 20px; font-size: 1.5em;'>
-        EWB Dictionary
-        </h2>
-        <div style='padding-top: 3px;'>
-	    {% dictionary_search %}
-	    </div>
-    </div>
     {% comment %}
     <div class="grid_16">
     	<div style='width: 325px; float: left;'>
