@@ -25,7 +25,7 @@ def dictionary_latest_long():
     
 @register.inclusion_tag('dictionary/tags/latest_short.html')
 def dictionary_latest_short():
-    terms = Term.objects.all().order_by('-last_update')[0:10]
+    terms = Term.objects.all().order_by('-last_update')[0:5]
     return {'terms': terms}
 
 class DictionaryNode(template.Node):
@@ -48,7 +48,7 @@ class DictionaryNode(template.Node):
             if type(original_text) == types.MethodType:
                 original_text = original_text()
 
-        """                
+            """                
         # use this to hackily disable dictionary matching
         except:
             pass 
@@ -58,9 +58,10 @@ class DictionaryNode(template.Node):
         context[self.context_name] = original_text
         
         return u''
-        """
         
         try:
+            """
+                
             container = Container.objects.refresh(obj, self.field)
             
             #matches = Match.objects.filter(container=container).order_by('-position')
@@ -147,7 +148,7 @@ class DictionaryPostNode(template.Node):
         containers = Container.objects.filter(match__term=term)
         q1 = Q(content_text_field='body')
         q2 = Q(content_text_field='comment')
-        containers = containers.filter(q1 | q2).distinct().order_by('-refreshed')[0:25]
+        containers = containers.filter(q1 | q2).distinct().order_by('-refreshed')[0:15]
         context[self.context_name] = containers
         
         return u''

@@ -10,10 +10,12 @@
     
     <div style='height: 10px;'></div>
 
+    {% comment %}
     <form method="POST" action="{% url dictionary_new %}">
     <input type="text" name="term" style='width: 200px;' />
     <input type="submit" value="Add a new entry!"/>
     </form>
+    {% endcomment %}
 
 
     {% autopaginate terms 10 %}

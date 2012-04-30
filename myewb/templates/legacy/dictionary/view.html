@@ -4,10 +4,9 @@
 {% load time_filters %}
 {% load dictionary_tags %}
 {% load avatar_tags %}
-
+{% load attachablecomments_tags %}
 
 {% block body_content %}
-
     <h2 style='margin-bottom: 6px;'>{{ article.title }}</h2>
 
     <div style='margin-bottom: 12px;'>
@@ -47,12 +46,27 @@
 	</div>
 	<br/>
 	
-	<h2>Recent posts containing this word...</h2>
+	<h2>Comments</h2>
+	
+    {% quietcomments article %}
+	
+
+{% endblock %}
+
+
+{% block toolbar_right %}
+    {{ block.super }}
+
+
+    <hr/>
+    <strong>Recent posts...</strong>
+    <br/><br/>
+
 	{% dictionary_posts article as posts %}
 	{% for p in posts %}
-        <div style="padding-bottom: 15px; clear: left;">
-            {% ifequal p.content_text_field 'body' %}
+        {% ifequal p.content_text_field 'body' %}
             {% if p.content_object.visible %}
+            <div style="padding-bottom: 15px; clear: left;">
             	<a href="{% url profile_detail p.content_object.creator %}"  class="avatar-whos-online" data-background-src="{% avatar_url p.content_object.creator 25 %}" style="margin-right: 10px; margin-bottom: 15px;"></a>
 
             	<div style="margin-left: 40px;">
@@ -60,25 +74,31 @@
             	    <br/>
                     {{ p.content_object.creator.visible_name }}, {% mktime p.content_object.created %}
                 </div>
+            </div>
             {% endif %}
-            {% endifequal %}
+        {% endifequal %}
             
-            {% ifequal p.content_text_field 'comment' %}
+        {% ifequal p.content_text_field 'comment' %}
             {% if p.content_object.content_object.visible %}
+            <div style="padding-bottom: 15px; clear: left;">
             	<a href="{% url profile_detail p.content_object.user %}"  class="avatar-whos-online" data-background-src="{% avatar_url p.content_object.user 25 %}" style="margin-right: 10px; margin-bottom: 15px;"></a>
 
             	<div style="margin-left: 40px;">
-                    reply to <a href="{{ p.content_object.content_object.get_absolute_url }}">{{ p.content_object.content_object.title }}</a>
+                    <a href="{{ p.content_object.content_object.get_absolute_url }}">{{ p.content_object.content_object.title }}</a> (reply)
             	    <br/>
                     {{ p.content_object.user.visible_name }}, {% mktime p.content_object.date_submitted %}
                 </div>
+            </div>
             {% endif %}
-            {% endifequal %}
+        {% endifequal %}
             
-        </div>
-	    
 	{% endfor %}
 	
 	<br class="clear"/>
-
 {% endblock %}
+
+{% block extra_body %}
+	{{ block.super }}
+	{% include "tinymce.html" %}
+{% endblock %}
+

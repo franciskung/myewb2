@@ -16,10 +16,13 @@
 <div class="post" id="replies">
 
     {% if responses %}
-		
-    	<h2 class="h2bold">
-		    Replies
-    	</h2>
+
+        {% if not quiet %}		
+        	<h2 class="h2bold">
+		        Replies
+        	</h2>
+        {% endif %}
+        
 		{% paginate %}
 		<br style='clear: both;'/>
     {% endif %}
@@ -65,6 +68,8 @@
             </div>
 
             <br style="clear:both; height: 1px; line-height: 1px;" />
+            
+            {% if not quiet %}
 
             <table width="100%" style="margin:0; padding: 0; margin-top: 6px;"> <!-- tags and drill-in link table -->
             <tr>
@@ -91,6 +96,8 @@
                 </td>
             </tr>
             </table>
+            
+            {% endif %}
         </div>
         </div>
     
@@ -103,10 +110,14 @@
 	{# FIXME: is there any way to use a proper django form, instead of hardcoding? #}
 	{# FIXME: this is also loaded for EVERY comment, which gets really slow if there #}
 	{#        are a lot of comments (esp with the tinymce editor #}
+	{% if not quiet %}
 	<h2 class="h2bold">{% trans "Add a reply" %}</h2>
+	{% endif %}
+	
 	<div class="post-reply-container">
         <form method="POST" enctype="multipart/form-data" action="{% get_comment_url object %}">
                     <textarea id="id_comment" class="tinymce" rows="8" cols="80" style="width:99%" name="comment"></textarea>
+                    {% if not quiet %}
                     <br/><br/>
                     <div id="attachFiles">                    
                         {% for af in attach_forms %}
@@ -122,6 +133,8 @@
                     <input id="id_tags" type="text" class="textinput" name="tags" maxlength="255" />
                 </p>
                 
+                    {% endif %}
+                    
                 <div class="form_block">
                     <input type="hidden" id="attachCount" name="attach_count" value="0">
                     <input type="hidden" name="next" value="{{ request.path }}" />

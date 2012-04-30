@@ -11,6 +11,7 @@ from datetime import datetime
 
 from mailer import send_mail
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models.signals import post_save
@@ -29,11 +30,16 @@ def send_to_watchlist(self):
     Will need to change this function if we ever decide to allow comments
     on other types of objects.
     """
+    
+    # only run this if it is attached to a GroupTopic
+    # (yeah, this is bad design... TODO refactor to be cleaner)
+    topic_type = ContentType.objects.get_for_model(GroupTopic)
+    if self.content_type != topic_type:
+        return False
 
     # build email
     topic = self.content_object
     attachments = Attachment.objects.attachments_for_object(self)
-    
     ctx = {'group': topic.group,
            'title': topic.title,
            'topic_id': topic.pk,
@@ -112,6 +118,12 @@ def update_scores(sender, instance, **kwargs):
     """
     Updates the parent topic's score for the featured posts list
     """
+    # only run this if it is attached to a GroupTopic
+    # (yeah, this is bad design... TODO refactor to be cleaner)
+    topic_type = ContentType.objects.get_for_model(GroupTopic)
+    if instance.content_type != topic_type:
+        return False
+
     topic = instance.content_object
     topic.update_score(settings.FEATURED_REPLY_SCORE)
 post_save.connect(update_scores, sender=ThreadedComment, dispatch_uid='updatetopicreplyscore')
@@ -120,6 +132,12 @@ def update_reply_date(sender, instance, created, **kwargs):
     """
     Updates the parent topic's "last reply" date
     """
+    # only run this if it is attached to a GroupTopic
+    # (yeah, this is bad design... TODO refactor to be cleaner)
+    topic_type = ContentType.objects.get_for_model(GroupTopic)
+    if instance.content_type != topic_type:
+        return False
+
     if created:
         topic = instance.content_object
         topic.last_reply = datetime.now()
