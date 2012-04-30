@@ -34,8 +34,11 @@
 		{{ content|safe }}
     </div>
 
+    <h3>
+        <a href="{% url search %}?q={{ article.title|urlencode }}">search all of myEWB for <em>{{ article.title }}</em></a>
+    </h3>
 
-    <br/>
+
     <div class="whiteboard-editing-box">
 		{% if allow_write %}
             <br/>

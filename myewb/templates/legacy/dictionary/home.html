@@ -17,6 +17,24 @@
     </form>
     {% endcomment %}
 
+    {% if search %}
+        {% if not terms %}
+            <h2>We didn't find <em>{{search}}</em> in the EWB Dictionary!</h2>
+            
+            <h2>Do you want to...<br/>
+                <ul>
+                <li><a href="{% url dictionary_edit slug=search|slugify %}">add it to the dictionary?</a></li>
+                <li><a href="{% url search %}?q={{ search|urlencode }}">search all of myEWB for it?</a></li>
+                </ul>
+            </h2>
+            
+
+        {% else %}
+            <p>
+            <strong>Searching for <em>{{ search }}</em>...</strong>
+            </p>
+        {% endif %}
+    {% endif %}
 
     {% autopaginate terms 10 %}
 
