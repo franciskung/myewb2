@@ -52,6 +52,7 @@
 	{% for p in posts %}
         <div style="padding-bottom: 15px; clear: left;">
             {% ifequal p.content_text_field 'body' %}
+            {% if p.content_object.visible %}
             	<a href="{% url profile_detail p.content_object.creator %}"  class="avatar-whos-online" data-background-src="{% avatar_url p.content_object.creator 25 %}" style="margin-right: 10px; margin-bottom: 15px;"></a>
 
             	<div style="margin-left: 40px;">
@@ -59,9 +60,11 @@
             	    <br/>
                     {{ p.content_object.creator.visible_name }}, {% mktime p.content_object.created %}
                 </div>
+            {% endif %}
             {% endifequal %}
             
             {% ifequal p.content_text_field 'comment' %}
+            {% if p.content_object.content_object.visible %}
             	<a href="{% url profile_detail p.content_object.user %}"  class="avatar-whos-online" data-background-src="{% avatar_url p.content_object.user 25 %}" style="margin-right: 10px; margin-bottom: 15px;"></a>
 
             	<div style="margin-left: 40px;">
@@ -69,6 +72,7 @@
             	    <br/>
                     {{ p.content_object.user.visible_name }}, {% mktime p.content_object.date_submitted %}
                 </div>
+            {% endif %}
             {% endifequal %}
             
         </div>

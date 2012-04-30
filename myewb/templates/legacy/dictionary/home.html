@@ -42,7 +42,9 @@
         </div>
 
         <div style='border: 1px solid #db7403; background: #f8efda; padding: 0 15px;'>
-            {{ t.content|safe }}
+            {% dictionary t content as content %}
+            {{ content|safe }}
+            {#{{ t.content|safe }}#}
         </div>
         
         <div style='height: 5px;'></div>

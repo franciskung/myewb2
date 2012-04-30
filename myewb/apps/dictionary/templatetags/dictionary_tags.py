@@ -47,16 +47,20 @@ class DictionaryNode(template.Node):
             original_text = getattr(obj, self.field)
             if type(original_text) == types.MethodType:
                 original_text = original_text()
+
+        """                
+        # use this to hackily disable dictionary matching
+        except:
+            pass 
             
-            
-            """
-            container = Container.objects.filter(content_object=obj, content_text_field=field)
-            
-            if not container:
-                container = Container.objects.populate(obj, field)
-            else:
-                container = container[0]
-            """
+        if self.dostriptags:
+            original_text = striptags(original_text)
+        context[self.context_name] = original_text
+        
+        return u''
+        """
+        
+        try:
             container = Container.objects.refresh(obj, self.field)
             
             #matches = Match.objects.filter(container=container).order_by('-position')
@@ -143,7 +147,7 @@ class DictionaryPostNode(template.Node):
         containers = Container.objects.filter(match__term=term)
         q1 = Q(content_text_field='body')
         q2 = Q(content_text_field='comment')
-        containers = containers.filter(q1 | q2).distinct().order_by('-refreshed')
+        containers = containers.filter(q1 | q2).distinct().order_by('-refreshed')[0:25]
         context[self.context_name] = containers
         
         return u''
