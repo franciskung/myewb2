@@ -1,4 +1,7 @@
+import sys
+
 from django import template
+from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.template.defaultfilters import striptags, stringfilter
 from django.db.models import Q
@@ -61,43 +64,54 @@ class DictionaryNode(template.Node):
         
         try:
             """
-                
+            
             container = Container.objects.refresh(obj, self.field)
             
-            #matches = Match.objects.filter(container=container).order_by('-position')
-            matches = container.match_set.order_by('-position')
-
-            # run through all matches in reverse order, copying chunks of the 
-            # original text (with dictionary term linked) to the result, one at a time            
-            last_idx = len(original_text)
-            for match in matches:
-                idx = match.position + 1
-                if self.dostriptags:
-                    replace = striptags(original_text[idx:last_idx])
-                else:
-                    replace = original_text[idx:last_idx]
-                
-                #url = "<a href=\"%s\" class=\"dictionary\">%s</a>" % (reverse('dictionary_view', kwargs={'slug': match.term.slug}), match.term.title)
-                #url = "<span href=\"%s\" rel=\"%s\" class=\"dictionary\">%s</span>" % \
-                #    (reverse('dictionary_view', kwargs={'slug': match.term.slug}),
-                #     reverse('dictionary_ajax', kwargs={'slug': match.term.slug}),
-                #     match.term.title)
-                url = "<span href=\"%s\" rel=\"%s\" class=\"dictionary\">" % \
-                    (reverse('dictionary_view', kwargs={'slug': match.term.slug}),
-                     reverse('dictionary_ajax', kwargs={'slug': match.term.slug}))
-                
-                #result = replace.replace(match.term.title, url, 1) + result
-                #result = re.sub(r"(%s)" % match.term.title, r"%s\1</span>" % url, replace, 1, re.I) + result
-                expr = re.compile(r"(%s)" % match.term.title, re.I)
-                result = expr.sub(r"%s\1</span>" % url, replace, 1) + result
-                last_idx = idx
-                
             if self.dostriptags:
-                result = striptags(original_text[0:last_idx]) + result
+                cache_key = "dictionary_%d_notags" % container.id
             else:
-                result = original_text[0:last_idx] + result
+                cache_key = "dictionary_%d_tags" % container.id
+                
+            result = cache.get(cache_key)
+            
+            if not result:
+                result = ""
+                #matches = Match.objects.filter(container=container).order_by('-position')
+                matches = container.match_set.order_by('-position')
+
+                # run through all matches in reverse order, copying chunks of the 
+                # original text (with dictionary term linked) to the result, one at a time            
+                last_idx = len(original_text)
+                for match in matches:
+                    idx = match.position + 1
+                    if self.dostriptags:
+                        replace = striptags(original_text[idx:last_idx])
+                    else:
+                        replace = original_text[idx:last_idx]
+                    
+                    #url = "<a href=\"%s\" class=\"dictionary\">%s</a>" % (reverse('dictionary_view', kwargs={'slug': match.term.slug}), match.term.title)
+                    #url = "<span href=\"%s\" rel=\"%s\" class=\"dictionary\">%s</span>" % \
+                    #    (reverse('dictionary_view', kwargs={'slug': match.term.slug}),
+                    #     reverse('dictionary_ajax', kwargs={'slug': match.term.slug}),
+                    #     match.term.title)
+                    url = "<span href=\"%s\" rel=\"%s\" class=\"dictionary\">" % \
+                        (reverse('dictionary_view', kwargs={'slug': match.term.slug}),
+                         reverse('dictionary_ajax', kwargs={'slug': match.term.slug}))
+                    
+                    #result = replace.replace(match.term.title, url, 1) + result
+                    #result = re.sub(r"(%s)" % match.term.title, r"%s\1</span>" % url, replace, 1, re.I) + result
+                    expr = re.compile(r"(%s)" % match.term.title, re.I)
+                    result = expr.sub(r"%s\1</span>" % url, replace, 1) + result
+                    last_idx = idx
+                    
+                if self.dostriptags:
+                    result = striptags(original_text[0:last_idx]) + result
+                else:
+                    result = original_text[0:last_idx] + result
+                    
+                cache.set(cache_key, result)
         except:
-            pass
+            print sys.exc_info()[0]
             
         context[self.context_name] = result
         

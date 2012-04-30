@@ -1,5 +1,6 @@
 from django.db import models
 
+from django.core.cache import cache
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
@@ -86,6 +87,11 @@ class ContainerManager(models.Manager):
             self.search(container, terms)
             container.refreshed = datetime.now()
             container.save()
+            
+            # invalidate cache
+            # (keys are shared with templatetags/dictionary_tags)
+            cache.delete("dictionary_%d_tags" % container.id)
+            cache.delete("dictionary_%d_notags" % container.id)
 
         return container    
 
