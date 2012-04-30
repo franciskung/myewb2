@@ -68,9 +68,11 @@
         
         
 		{% if results %}
+		    er?
 		    {% autopaginate results 10 %}
  
 	        {% for result in results %}
+	            {{ result }}
 	          	{# is there a better way? #}
 
 				{# POSTS #}
@@ -218,13 +220,34 @@
 				</div>		  
 				{% endifequal %}
 				
+				-- {{ result.model_name }} --
+				{# DICTIONARY TERMS #}
+				{% ifequal result.model_name "term" %}
+				<div class="post">
+					<div class="postheader orange {# some way of checking if this is a chapter or a community? #}" style="position: relative;"> <!-- header row -->
+    					<a class="postheaderlink" href="{{ result.object.parent_group.get_absolute_url }}#group-whiteboard">Dictionary: {{ result.object.title }}</a>
+					</div>
+	
+    				<div class="postcontent orange-border">
+					    
+				        <div class="textbody">
+    				        {{ result.object.content|safe }}
+    				    </div>
+    				    <br class="clear"/>
+    				</div>
+				</div>
+				{% endifequal %}		    
+				        
             {% endfor %}
 
 	        {% paginate %}
 
         {% else %}
+        nope
       	  <p>No results found.</p>
         {% endif %}
+
+        done
 
 {% endblock %}
 

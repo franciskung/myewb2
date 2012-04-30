@@ -218,6 +218,22 @@
 				</div>		  
 				{% endifequal %}
 				
+				{# DICTIONARY TERMS #}
+				{% ifequal result.model_name "term" %}
+				<div class="post">
+					<div class="postheader orange {# some way of checking if this is a chapter or a community? #}" style="position: relative;"> <!-- header row -->
+    					<a class="postheaderlink" href="{% url dictionary_view result.object.slug %}">Dictionary: {{ result.object.title }}</a>
+					</div>
+	
+    				<div class="postcontent orange-border">
+				        
+				        <div class="textbody">
+				            {{ result.object.content|safe }}
+    				    </div>
+    				</div>
+				</div>
+				{% endifequal %}		    
+				        
             {% endfor %}
 
 	        {% paginate %}
