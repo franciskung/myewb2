@@ -1,13 +1,15 @@
 {% load time_filters %}
 
 <div class='personPopupResult' style="position: relative;">
-    <div style='widht: 160px; float: right; padding: 5px;'>
-        <img src="{{ STATIC_URL }}images/logos/urbandictionary.png" style='width: 150px;'/>
+    <div style='width: 110px; float: left; padding: 5px;'>
+        <img src="{{ STATIC_URL }}images/logos/ewbdictionary.png" style='width: 100px;'/>
     </div>
     
-    <h2 style='width: 450px; '><a href="{% url dictionary_view article.slug %}">{{ article.title }}</a></h2>
+    <h2 style='float: left;'>
+        <a href="{% url dictionary_view article.slug %}">{{ article.title }}</a>
+    </h2>
 
-    <div class="textbody" style='max-height: 100px; overflow-y: scroll; position: relative;'>
+    <div class="textbody" style='max-height: 100px; overflow-y: scroll; position: relative; clear: left;'>
         {{ article.content|safe }}
     </div>
 
