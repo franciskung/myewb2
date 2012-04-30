@@ -33,13 +33,15 @@ def search(request):
     
     if search:
         terms = Term.objects.filter(title__contains=search).order_by('title')
+        
+        if terms.count() == 1:
+            return HttpResponseRedirect(reverse('dictionary_view', kwargs={'slug': terms[0].slug}))
     
     """
     if search and not terms and request.user.is_authenticated():
         request.user.message_set.create(message="Didn't find any matches... expand the dictionary and add it!")
         return HttpResponseRedirect(reverse('dictionary_edit', kwargs={'slug': slugify(search)}))
     """
-    
         
     return render_to_response("dictionary/home.html", {
         'terms': terms,

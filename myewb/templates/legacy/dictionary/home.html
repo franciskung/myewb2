@@ -42,23 +42,13 @@
         <h2 style='margin-bottom: 0;'><a href="{% url dictionary_view t.slug %}">{{ t.title }}</a></h2>
 
         <div style='margin-bottom: 7px;'>
-        {% comment %}
-	    {% if t.latest_changeset %}
-            <span class="lighter">Last edited by <a href="{% url profile_detail t.latest_changeset.editor.username %}" class="nodeco">{{ t.latest_changeset.editor.visible_name }}</a> {% mktime t.last_update %}</span>
-            
-        {% else %}
-            <span class="lighter">Created by <a href="{% url profile_detail t.creator.username %}" class="nodeco">{{ t.creator.visible_name }}</a> {% mktime t.last_update %}</span>
-            
-        {% endif %}
-        {% endcomment %}
-
-	    {% if t.latest_changeset %}
-            <span class="lighter">Last edited by <a href="{{ STATIC_URL }}images/logos/happyface.jpg" class="nodeco">{{ t.nickname }}</a> {% mktime t.last_update %}</span>
-            
-        {% else %}
-            <span class="lighter">Created by <a href="{{ STATIC_URL }}images/logos/happyface.jpg" class="nodeco">{{ t.nickname }}</a> {% mktime t.last_update %}</span>
-            
-        {% endif %}
+	        {% if t.latest_changeset %}
+                <span class="lighter">Last edited by <a href="{% url profile_detail t.latest_changeset.editor.username %}" class="nodeco">{{ t.latest_changeset.editor.visible_name }}</a> {% mktime t.last_update %}</span>
+                
+            {% else %}
+                <span class="lighter">Created by <a href="{% url profile_detail t.creator.username %}" class="nodeco">{{ t.creator.visible_name }}</a> {% mktime t.last_update %}</span>
+                
+            {% endif %}
         </div>
 
         <div style='border: 1px solid #db7403; background: #f8efda; padding: 0 15px;'>
