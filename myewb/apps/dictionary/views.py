@@ -32,7 +32,7 @@ def search(request):
     search = request.GET.get('term', None)
     
     if search:
-        terms = Term.objects.filter(title__contains=search).order_by('title')
+        terms = Term.objects.filter(title__icontains=search).order_by('title')
         
         if terms.count() == 1:
             return HttpResponseRedirect(reverse('dictionary_view', kwargs={'slug': terms[0].slug}))
