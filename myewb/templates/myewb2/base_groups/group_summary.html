@@ -14,7 +14,7 @@
    		{% get_dashboard_groups for request.user as groups %}
    		{% for g in groups %}
    		    {% ifnotequal g.slug group.slug %}
-   		        <option value="{{ g.slug }}">{{ g.name }}</option>
+   		        <option value="{% url group_summary g.slug %}">{{ g.name }}</option>
    		    {% endifnotequal %}
    		{% endfor %}
    	</select>
