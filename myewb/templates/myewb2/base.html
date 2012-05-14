@@ -265,6 +265,18 @@
 <!-- TODO - put this in an external file minimize -->
 <!-- (this handles the search bar -->
 <script type="text/javascript">
+    function keepalive()
+    {
+        jQuery.get('{% url whosonline_refresh %}',
+                function(data)
+                {
+            		$('#box-online-contents').html(data);
+            		//var new_inbox = $('#box-online-contents div#inbox_count_ajax').html()
+               		//$('#inbox_count').html(new_inbox);
+                });
+        setTimeout('keepalive()', 5 * 60 * 1000);
+    }
+                    
     $().ready(function() {
         $(document).bind('cbox_load', function() {
             $('#fontpageflash').hide();
@@ -356,7 +368,10 @@
             function() {
                 return;
             });
-        
+            
+            
+        if ($('#box-online-contents').length > 0)
+            setTimeout('keepalive()', 5 * 60 * 1000);
     });
 </script>
 
