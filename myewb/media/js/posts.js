@@ -22,12 +22,13 @@ function install_cheers(cheersUrl) {
     
     $('.cheers').colorbox({opacity: '0.5', width: '600px', height: '50%'});
     $('.cheers_detail').colorbox({opacity: '0.5', width: '600px', height: '50%'});
-    
+
     $('.cheers_remove').click(function() {
         if (confirm("Are you sure you want to remove this?"))
         {
             $.get($(this).attr('href'),
                   function() {
+                    alert('Removed!');
                     refresh_cheerslist(cheersUrl);
                   });
         }

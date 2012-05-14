@@ -41,7 +41,7 @@ share it with the EWB community!</p>
                        cheerslink.replaceWith(cheersimg + newcount);
 
                         if (typeof window.refresh_cheerslist == 'function') {
-                            refresh_cheerslist();
+                            refresh_cheerslist("{% url winedown_latest %}");
                         }
                         if (typeof window.post_cheers_sidebar == 'function') {
                             post_cheers_sidebar();
