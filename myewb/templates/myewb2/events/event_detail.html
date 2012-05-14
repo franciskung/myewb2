@@ -15,8 +15,8 @@
        				<div class="minipost-title" style="padding-left: 0;">
          					<h2 class="h2bold">{{ object.title }}</h2>
 					    <p>
-					    	Starts: </span>{{object.start|date:"D, M j \a\t P"}} <br/>
-					    	Ends: </span>{{object.end|date:"D, M j \a\t\ P"}}
+					    	Starts: </span>{{object.start|date:"D, M j, Y \a\t P"}} <br/>
+					    	Ends: </span>{{object.end|date:"D, M j, Y \a\t\ P"}}
 					    </p>
 						{% if object.location %}
 							<p>Location: {{object.location}}</p>
