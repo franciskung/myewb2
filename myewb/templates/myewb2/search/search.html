@@ -8,6 +8,8 @@
 {% load group_tags %}
 {% load events_tags %}
 {% load whiteboard_tags %}
+{% load time_filters %}
+{% load dictionary_tags %}
 
 {% block extra_head %}
     {{ block.super }}
@@ -83,155 +85,194 @@
 				{# REPLIES #}
 	          	{% ifequal result.model_name "threadedcomment" %}
 				{# this should really be template-ized and loaded. currently this search version is the most up-to-date, and is being copied to the other locations (events_for_day, and event_detail) #}
-				<div class="post">
-					<div class="postheader blue" style="position: relative;"> <!-- header row -->
-    					<a class="postheaderlink" href="{{ result.object.get_absolute_url }}">Reply: {{ result.object.content_object.title }}</a>
-					</div>
-	
-					<div class="postsubheader blue blue-border bkgd-light"> <!-- stat row -->
-						<table width="100%" style="margin:0; padding: 0;">
-							<tr>
-								<td>By <a href="{% url profile_detail result.object.user.username %}">{{ result.object.user.visible_name }}</a> on {{ result.object.date_submitted|date }} at {{ result.object.date_submitted|time }}</td>
-								<td align="right" width="50%">
-									{% ifnotequal result.object.content_object.parent.slug "ewb" %}
-								    	<a href="{{ result.object.content_object.parent.get_absolute_url }}#group-posts">{{ result.object.content_object.parent }}</a>
-								    {% endifnotequal %}
-								</td>
-							</tr>
-						</table>
-					</div>
-	
-			    	<div class="postcontent blue-border">
-						<a href="{% url profile_detail result.object.user.username %}">
-						    {# {% avatar topic.creator 40 %} #}
-						    <img src="{% avatar_url result.object.user 40 %}" class="posthumbnail" title="{{result.object.visible_name}}" alt="{{result.object.user.visible_name}}"/>
-						</a>
-				
-				
-				        <div class="textbody">
+                <div class="minipost">
+                <div class="minipostcontents">
+                <div class="minipost-thumb">
+                  <a class="avatar-40 delay-load" title="{{result.object.user.visible_name}}" href="{% url profile_detail result.object.user.username %}" data-background-src="{% avatar_url result.object.user 40 %}"></a>
+                </div>
+    
+                <div class="border-bottom">
+                  <div class="minipost-inside">
+                    <div class="minipost-heading">
 
-    				        {{ result.object.comment|safe }}
-	
-				        </div>
-				        
-    					<br class="clear"/>
-						<div class="whiteboard-editing-box" style="font-size: 10px; padding-right: 10px;">
-							<a href="{{ result.object.content_object.get_absolute_url }}#reply-{{ result.object.id }}">See full post &raquo;</a>
-				    	</div>
-    					<br class="clear"/>
-					</div>
-				</div>		  
+                      <div class="minipost-title">
+                        <h3>
+                        <a class="postheaderlink" href="{{ result.object.get_absolute_url }}">Reply: {{ result.object.content_object.title }}</a>
+                        </h3>
+                      </div>
+
+                      <div class="minipost-authortime">
+                        <a href="{% url profile_detail topic.creator %}">{{ result.object.user.visible_name }}</a>
+                        {% mktime result.object.date_submitted %}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="minipost-text">
+                  <a href="{{ result.object.get_absolute_url }}" class="quietlink">
+                    {% dictionary_striptags result.object comment as comment %}
+                    {{ comment|safe }}
+                  </a>
+
+                  {% ifnotequal result.object.content_object.group.slug "ewb" %}
+                    <div style='clear: right; margin-top: 10px;'>
+                      Posted to 
+                      <em><a href="{{ result.object.content_object.group.get_absolute_url }}#group-posts">{{ result.object.content_object.group }}</a></em>
+                    </div>
+                  {% else %}
+                    <div style='clear: right;'></div>
+                  {% endifnotequal %}
+                  
+                </div>
+                </div>
+                </div>
+
+
 				{% endifequal %}
 
 				{# WHITEBOARDS #}
 				{% ifequal result.model_name "whiteboard" %}
-				<div class="post">
-					<div class="postheader orange {# some way of checking if this is a chapter or a community? #}" style="position: relative;"> <!-- header row -->
-    					<a class="postheaderlink" href="{{ result.object.parent_group.get_absolute_url }}#group-whiteboard">Whiteboard for {{ result.object.parent_group }}</a>
-					</div>
-	
-    				<div class="postcontent orange-border">
-					    
+                <div class="minipost">
+                  
+                  <div class="minipostcontents">
+
+                  <div class="border-bottom">
+                  <div class="minipost-inside" style='margin-left: 0;'>
+                  <div class="minipost-heading">
+                  <div class="minipost-title">
+                    <h3>
+                    <a class="postheaderlink" href="{{ result.object.parent_group.get_absolute_url }}#group-whiteboard">Whiteboard for {{ result.object.parent_group }}</a>
+                    </h3>
+                  </div>
+
+                  </div>
+                  </div>
+                  </div>
+
+                  <div class="minipost-text">
+                      <a href="{{ result.object.parent_group.get_absolute_url }}#group-whiteboard" class="quietlink">
 				        {% get_membership result.object.parent_group request.user as member %}
-				        
-				        <div class="textbody">
-				        
-    				        {% show_whiteboard_force result.object result.object.parent_group member %}
-    				        
-    				    </div>
-    				</div>
-				</div>
+                        {% show_whiteboard_force result.object result.object.parent_group member %}
+                      </a>
+
+                      {% ifnotequal topic.group.slug "ewb" %}
+                        <div style='clear: right; margin-top: 10px;'>
+                          Posted to 
+                          <em><a href="{{ topic.group.get_absolute_url }}#group-posts">{{ topic.group }}</a></em>
+                        </div>
+                      {% else %}
+                        <div style='clear: right;'></div>
+                      {% endifnotequal %}
+                      
+                  </div>
+                  </div>
+                </div>
+
 				{% endifequal %}		    
 				        
 				{# EVENTS #}
 				{% ifequal result.model_name "event" %}
 					
 				{# this should really be template-ized and loaded. currently this search version is the most up-to-date, and is being copied to the other locations (events_for_day, and event_detail) #}
-				<div class="post">
-					<div class="postheader red" style="position: relative;"> <!-- header row -->
+				
+                <div class="minipost">
+                  
+                  <div class="minipostcontents">
+
+                  <div class="border-bottom">
+                  <div class="minipost-inside" style='margin-left: 0;'>
+                  <div class="minipost-heading">
+                  <div class="minipost-title">
+                    <h3>
     					<a class="postheaderlink" href="{{ result.object.get_absolute_url }}">Event: {{ result.object.title }}</a>
-					</div>
-	
-					<div class="postsubheader red red-border bkgd-light"> <!-- stat row -->
-						<table width="100%" style="margin:0; padding: 0;">
-						<tr>
-						<td>
-							<span class="lighter">Starts: </span>{{result.object.start|date:"D, M j \a\t P"}} &nbsp;
-							<span class="lighter">Ends: </span>{{result.object.end|date:"D, M j \a\t\ P"}}
-						</td>
-						<td align="right" width="50%">
-							<a href="{% link_to_events_for result.object.content_object 'css_class' 1 %}">More events for 
-	
-							{% if result.object.content_object.visible_name %}
-								{{result.object.content_object.visible_name}}
-							{% else %}
-								{{result.object.content_object }}
-							{% endif %}
-							</a>
+                    </h3>
+                  </div>
 
-						</td>
-						</tr>
-						</table>
-					</div>
-	
-			    	<div class="postcontent red-border">
-						{% if result.object.location %}<p>Location: {{result.object.location}}</p>{% endif %}
-                    <div class="textbody">
-						<p>{{result.object.description|safe}}</p>
-				    </div>
+                  <div class="minipost-authortime">
+					<span class="lighter">Starts: </span>{{result.object.start|date:"D, M j \a\t P"}} &nbsp;
+					<span class="lighter">Ends: </span>{{result.object.end|date:"D, M j \a\t\ P"}}
+                  </div>
+                  
+                  </div>
+                  </div>
+                  </div>
 
-						<div class="whiteboard-editing-box">
-							<a href="{{ result.object.get_absolute_url }}">See full event details &raquo;</a>
-				    	</div>
-    					<br class="clear"/>
-					</div>
-				</div>		  
+                  <div class="minipost-text">
+                      <a href="{{ result.object.get_absolute_url }}" class="quietlink">
+                        {% dictionary_striptags result.object description as intro %}
+					    <p>{{ intro|safe }}</p>
+                      </a>
+
+                  </div>
+                  </div>
+                </div>
 				{% endifequal %}
 				
 				{# CHAMP ACTIVITY #}
 				{% ifequal result.model_name "activity" %}
-				<div class="post">
-					<div class="postheader yellow" style="position: relative;"> <!-- header row -->
+                <div class="minipost">
+                  
+                  <div class="minipostcontents">
+
+                  <div class="border-bottom">
+                  <div class="minipost-inside" style='margin-left: 0;'>
+                  <div class="minipost-heading">
+                  <div class="minipost-title">
+                    <h3>
     					<a class="postheaderlink" href="{{ result.object.get_absolute_url }}">CHAMP activity: {{ result.object.name }}</a>
-					</div>
-	
-					<div class="postsubheader yellow yellow-border bkgd-light"> <!-- stat row -->
-						<table width="100%" style="margin:0; padding: 0;">
-						<tr>
-						<td>
-							By <a href="{% url profile_detail result.object.creator.username %}">{{ result.object.creator.visible_name }}</a>
-							on {{result.object.date|date}}
-						</td>
-						<td align="right" width="50%">
-							{{ result.object.group.network.chapter_info.chapter_name }}
-						</td>
-						</tr>
-						</table>
-					</div>
-	
-			    	<div class="postcontent yellow-border">
-	                    <div class="textbody">
-							<p>{{ result.object.get_description }}</p>
-					    </div>
-    					<br class="clear"/>
-					</div>
-				</div>		  
+                    </h3>
+                  </div>
+
+                  <div class="minipost-authortime">
+					By <a href="{% url profile_detail result.object.creator.username %}">{{ result.object.creator.visible_name }}</a>
+					on {{result.object.date|date}} - 
+					{{ result.object.group.network.chapter_info.chapter_name }}
+                  </div>
+                  
+                  </div>
+                  </div>
+                  </div>
+
+                  <div class="minipost-text">
+                      <a href="{{ result.object.get_absolute_url }}" class="quietlink">
+                        {% dictionary_striptags result.object get_description as intro %}
+					    <p>{{ intro|safe }}</p>
+{#							<p>{{ result.object.get_description }}</p>#}
+                      </a>
+
+                  </div>
+                  </div>
+                </div>
 				{% endifequal %}
 				
 				{# DICTIONARY TERMS #}
 				{% ifequal result.model_name "term" %}
-				<div class="post">
-					<div class="postheader orange {# some way of checking if this is a chapter or a community? #}" style="position: relative;"> <!-- header row -->
+                <div class="minipost">
+                  
+                  <div class="minipostcontents">
+
+                  <div class="border-bottom">
+                  <div class="minipost-inside" style='margin-left: 0;'>
+                  <div class="minipost-heading">
+                  <div class="minipost-title">
+                    <h3>
     					<a class="postheaderlink" href="{% url dictionary_view result.object.slug %}">Dictionary: {{ result.object.title }}</a>
-					</div>
-	
-    				<div class="postcontent orange-border">
-				        
-				        <div class="textbody">
-				            {{ result.object.content|safe }}
-    				    </div>
-    				</div>
-				</div>
+                    </h3>
+                  </div>
+                  </div>
+                  </div>
+                  </div>
+
+                  <div class="minipost-text">
+                      <a href="{% url dictionary_view result.object.slug %}" class="quietlink">
+                        {% dictionary_striptags result.object content as intro %}
+					    <p>{{ intro|safe }}</p>
+                      </a>
+
+                  </div>
+                  </div>
+                </div>
 				{% endifequal %}		    
 				        
             {% endfor %}
