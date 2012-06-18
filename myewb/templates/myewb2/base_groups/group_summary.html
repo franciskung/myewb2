@@ -36,7 +36,7 @@
 
 </div>
 
-<div class="grid_7 omega">
+<div class="grid_7 omega" id="dashboard_contents">
 <div id="new_posts" class="dashboard-detail" style="display: block;">
     <div class="dashboard-detail-more">
         <a href="{% groupurl topic_list group %}">go to post list &raquo;</a>
@@ -90,7 +90,18 @@
 <script type='text/javascript'>
     $().ready(function() {
         $('#group_dashboard_selector').change(function() {
+            _gaq.push(['_trackEvent', 'Dashboard', 'Switch', $(this).val());
             chapter_dashboard($(this).val());
+        });
+        
+        $('#dashboard_links a').mouseover(function() {
+            _gaq.push(['_trackEvent', 'Dashboard', 'Hover', $(this).attr('id'));
+        });
+        $('#dashboard_links a').mouseover(function() {
+            _gaq.push(['_trackEvent', 'Dashboard', 'Hover', $(this).attr('id'));
+        });
+        $('#dashboard_contents a').click(function() {
+            _gaq.push(['_trackEvent', 'Dashboard', 'Click', $(this).attr('href'));
         });
     });
 </script>
