@@ -90,18 +90,18 @@
 <script type='text/javascript'>
     $().ready(function() {
         $('#group_dashboard_selector').change(function() {
-            _gaq.push(['_trackEvent', 'Dashboard', 'Switch', $(this).val());
+            _gaq.push(['_trackEvent', 'Dashboard', 'Switch', $(this).val()]);
             chapter_dashboard($(this).val());
         });
         
         $('#dashboard_links a').mouseover(function() {
-            _gaq.push(['_trackEvent', 'Dashboard', 'Hover', $(this).attr('id'));
+            _gaq.push(['_trackEvent', 'Dashboard', 'Hover', $(this).attr('id')]);
         });
         $('#dashboard_links a').mouseover(function() {
-            _gaq.push(['_trackEvent', 'Dashboard', 'Hover', $(this).attr('id'));
+            _gaq.push(['_trackEvent', 'Dashboard', 'Hover', $(this).attr('id')]);
         });
         $('#dashboard_contents a').click(function() {
-            _gaq.push(['_trackEvent', 'Dashboard', 'Click', $(this).attr('href'));
+            _gaq.push(['_trackEvent', 'Dashboard', 'Click', $(this).attr('href')]);
         });
     });
 </script>
