@@ -177,6 +177,13 @@ def parse_body(msg):
         txt = None
         
         for part in msg.get_payload():
+            if part.is_multipart():
+                for part2 in part.get_payload():
+                    if part2.get_content_type() == 'text/html':
+                        html = part2.get_payload(decode=True)
+                    elif part2.get_content_type() == 'text/plain':
+                        txt = part2.get_payload(decode=True)
+
             if part.get_content_type() == 'text/html':
                 html = part.get_payload(decode=True)
             elif part.get_content_type() == 'text/plain':
@@ -231,8 +238,8 @@ def add_post(group, author, subject, body):
     if not group.user_can_email(author):
         raise BounceException("You can only post by email to discussion groups; this group is an announcement group.")
     
-    if group.members.count() > 50:
-        raise BounceException("You can only post by email to small discussion groups (less than 50 people); this prevents mistaken emails or spam from being sent to our larger mailing lists.")
+    if group.members.count() > 150:
+        raise BounceException("You can only post by email to small discussion groups (less than 150 people); this prevents mistaken emails or spam from being sent to our larger mailing lists.")
 
     topic = GroupTopic.objects.create(group=group,
                                       send_as_email=True,
@@ -254,8 +261,8 @@ def add_reply(parent_object, group, author, body):
     if not group.user_can_email(author):
         raise BounceException("You can only reply by email to discussion groups; this group is an announcement group.")
     
-    if group.members.count() > 50:
-        raise BounceException("You can only reply by email to small discussion groups (less than 50 people); this prevents mistaken emails or spam from being sent to our larger mailing lists.")
+    if group.members.count() > 150:
+        raise BounceException("You can only reply by email to small discussion groups (less than 150 people); this prevents mistaken emails or spam from being sent to our larger mailing lists.")
 
     reply = ThreadedComment.objects.create(content_object=parent_object,
                                            user=author,

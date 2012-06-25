@@ -16,6 +16,9 @@
 		<td>Amount</td>
 		<td>{{trans.amount|floatformat:2}}</td>
 		</tr>
+		{% if trans.expenditure %}
+			<tr><td>HST</td><td>{{ trans.expenditure.hst }}</td></tr>
+		{% endif %}
 		<tr>
 		<td>Category</td>
 		<td>{{trans.category}}</td>

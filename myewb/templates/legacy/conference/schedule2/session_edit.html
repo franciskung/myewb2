@@ -61,7 +61,7 @@
     
         <strong>Attendees</strong><br/>
         {% for u in session.attendees.all %}
-            <a href="http://my.ewb.ca/profiles/{{ u.username }}" target="_new">{{ u.visible_name }}</a><br/>
+            <a href="http://my.ewb.ca/profiles/{{ u.username }}" target="_new">{{ u.visible_name }}</a> ({{ u.email }})<br/>
         {% endfor %}
     {% endif %}
 

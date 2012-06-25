@@ -8,6 +8,7 @@ import httplib, json, urllib
 from datetime import datetime
 from django.db.models import Max
 
+from siteutils.helpers import to_ascii, fix_encoding
 from siteutils.shortcuts import get_object_or_none
 from winedown.models import Cheers, Tweet
 
@@ -51,7 +52,7 @@ def load_tweets():
                 original_tweeter = text.split('@')[1].split(' ', 1)[0].strip()
                 original_tweet = text.split('@')[1].split(' ', 1)[1].strip()
             
-            tweet = get_object_or_none(Tweet, author_username=original_tweeter, text=original_tweet)
+            tweet = get_object_or_none(Tweet, author_username=to_ascii(original_tweeter), text=to_ascii(original_tweet))
             
         if tweet:
             tweet.retweet(r)

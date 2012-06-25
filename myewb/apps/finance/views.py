@@ -1294,6 +1294,8 @@ def monthlyreports_id(request, id, group_slug):
     income_total["total"] = 0
     expenditure_total = dict()
     expenditure_total["total"] = 0
+    hst_total = dict()
+    hst_total['total'] = 0
     
     transactions = trans_chap.filter(monthlyreport = id).order_by('bank_date')
     income = income_chap.filter(monthlyreport = id)
@@ -1306,6 +1308,7 @@ def monthlyreports_id(request, id, group_slug):
         expenditure_category = expenditure.values('category__name').annotate(totalcategory=Sum('amount'))
         template_data["expenditure_category"] = expenditure_category
         expenditure_total = expenditure.aggregate(total = Sum('amount'))
+        hst_total = expenditure.aggregate(total = Sum('hst'))
         
         try:
             incomeChart, expenditureChart = create_category_charts(expenditure_category, income_category)
@@ -1333,6 +1336,8 @@ def monthlyreports_id(request, id, group_slug):
         income_total["total"] = 0
     if not expenditure_total["total"]: 
         expenditure_total["total"] = 0
+    if not hst_total['total']:
+        hst_total['total'] = 0
         
 #    determine incoming balance by using sum of all previous transactions on reports
     incoming_balance = income_old["total"] - expenditure_old["total"]
@@ -1346,6 +1351,7 @@ def monthlyreports_id(request, id, group_slug):
     template_data["trans"] = transactions
     template_data["income_total"] = income_total
     template_data["expenditure_total"] = expenditure_total
+    template_data['hst_total'] = hst_total
     template_data["net"] = net
     template_data["incoming_balance"] = incoming_balance
     template_data["outgoing_balance"] = outgoing_balance
