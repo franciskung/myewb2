@@ -221,6 +221,11 @@ def new_topic(request, group_slug=None, bridge=None):
                             sender = '"%s %s" <%s>' % (request.user.get_profile().first_name,
                                                        request.user.get_profile().last_name,
                                                        request.POST['sender'])
+                                                       
+                            if not request.user.get_profile().first_name \
+                            or not request.user.get_profile().last_name:
+                                sender = '%s' % request.POST['sender']
+                                
                             sender_email = request.POST['sender']
                             
                         elif request.user.is_staff and request.POST['sender'] == "info@ewb.ca":
@@ -233,6 +238,11 @@ def new_topic(request, group_slug=None, bridge=None):
                         sender = '"%s %s" <%s>' % (request.user.get_profile().first_name,
                                                    request.user.get_profile().last_name,
                                                    request.user.email)
+
+                        if not request.user.get_profile().first_name \
+                        or not request.user.get_profile().last_name:
+                            sender = '%s' % request.user.email
+                                
                         sender_email = request.user.email
                     
                     if topic.send_as_email or group.user_can_email(request.user):
