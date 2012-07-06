@@ -246,6 +246,7 @@ INSTALLED_APPS = (
     'jobboard',
     'winedown',
     'dictionary',
+    'library',
     'httpbl',
 
     # our own third-party libs
