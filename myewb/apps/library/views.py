@@ -36,6 +36,11 @@ def resource(request, resource_id):
     return render_to_response("library/resource.html", {
         'resource': resource
     }, context_instance=RequestContext(request))
+    
+def download(request, resource_id):
+    resource = Resource.objects.get(id=resource_id)
+    return HttpResponseRedirect(resource.download(request.user))
+    
 
 def upload(request):
     if request.method == 'POST':

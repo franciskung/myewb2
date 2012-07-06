@@ -11,6 +11,7 @@ urlpatterns = patterns('',
     url(r'^search/$', search, name='library_search'),
 
     url(r'^view/(?P<resource_id>\d+)/$', resource, name='library_resource'),
+    url(r'^download/(?P<resource_id>\d+)/$', download, name='library_download'),
     
     url(r'^upload/$', upload, name='library_upload'),
 )

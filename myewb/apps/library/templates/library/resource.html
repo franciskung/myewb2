@@ -1,6 +1,48 @@
 {% extends 'library/base.html' %}
 
-{% block body_content %}
-    <h2>{{ resource.name }}</h2>
+{% load time_filters %}
+{% load dictionary_tags %}
 
+{% block body_content %}
+    <h2 style='margin-bottom: 5px;'>{{ resource.name }}</h2>
+    
+    <em>
+        By
+        <a href="{% url profile_detail resource.creator.username %}" class="nodeco">
+            {{ resource.creator.visible_name }}
+        </a>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        
+        Updated {% mktime resource.modified %}
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        
+        {{ resource.rating }} stars
+    </em>
+    <br/><br/>
+    
+    <div style='border: 1px solid #db7403; background: #f8efda; padding: 10px 15px;'>
+        {% dictionary resource description as content %}
+		{{ content|safe }}
+    </div>
+    <br/>
+
+    <a href="{% url library_download resource.id %}" style='display: block; border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; background: green; width: 200px; padding: 15px 10px; text-align: center;'>
+        <span style='font-size: 14px; font-weight: bold; color: #ffffff;'>DOWNLOAD</span>
+    </a>
+
+    
+
+{% endblock %}
+
+{% block toolbar_right %}
+    <br/><br/><br/><br/>
+
+    <div style='font-style: italic; width: 220px; text-align: center;'>
+        {{ resource.downloads }} downloads    
+    </div>
+    
+    <a href="{% url library_download resource.id %}" style='display: block; border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; background: green; width: 200px; padding: 15px 10px; text-align: center;'>
+        <span style='font-size: 14px; font-weight: bold; color: #ffffff;'>DOWNLOAD</span>
+    </a>
+    
 {% endblock %}

@@ -17,6 +17,21 @@ from events.models import Event
 
 from wiki.models import Article, QuerySetManager
 
+class Activity(models.Model):
+    resource = models.ForeignKey('Resource')
+    user = models.ForeignKey(User, related_name="library_actions")
+    date = models.DateTimeField(auto_now_add=True)
+    
+    LIBRARY_ACTIVITIES = (('download', 'download'),
+                          ('edit', 'edit'),
+                          ('collect', 'collect'),
+                          ('rate', 'rate'))
+    activity_type = models.CharField(max_length=25, choices=LIBRARY_ACTIVITIES)
+    
+    content_type = models.ForeignKey(ContentType, blank=True, null=True)
+    object_id = models.PositiveIntegerField(blank=True, null=True)
+    content_object = generic.GenericForeignKey()
+    
 class Resource(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
@@ -45,6 +60,18 @@ class Resource(models.Model):
     editable = models.BooleanField(default=True)
     rating = models.IntegerField(default=0)
     downloads = models.IntegerField(default=0)
+
+    def download(self, user):
+        self.downloads = self.downloads + 1
+        self.save()
+        
+        a = Activity.objects.create(resource=self,
+                                    user=user,
+                                    activity_type='download')
+        a.save()
+                                    
+        return getattr(self, getattr(self, 'model')).direct_download()
+        
     
 # TODO: regex to use for validating filenames.  For now, anything not alpha-numeric-
 # dash-underscore-period-space gets stripped, but would be good to allow accents eventually.
@@ -70,14 +97,14 @@ class FileResourceManager(models.Manager):
         diskfile.close() 
 
         return resource
-    
+        
 class FileResource(Resource):
     filename = models.CharField(max_length=255)
     
     objects = FileResourceManager()
     
     def save(self, *args, **kwargs):
-        self.model = 'FileResource'
+        self.model = 'fileresource'
         return super(FileResource, self).save(*args, **kwargs)
     
     def get_path(self):
@@ -88,12 +115,18 @@ class FileResource(Resource):
             
         return path + '/' + self.filename    
     
+    def direct_download(self):
+        return os.path.join(settings.STATIC_URL, 'library/files', str(self.id), self.filename)
+    
 class LinkResource(Resource):
     url = models.URLField()
     
     def save(*args, **kwargs):
-        self.model = 'LinkResource'
+        self.model = 'linkresource'
         return super(LinkResource, self).save(*args, **kwargs)
+        
+    def direct_download(self):
+        return self.url
     
 class Collection(models.Model):
     title = models.CharField(max_length='50')
