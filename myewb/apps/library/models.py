@@ -9,7 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from lxml.html.clean import clean_html, autolink_html, Cleaner
 from datetime import datetime
-import re, types
+import settings, os, shutil, datetime, re, types
 
 from group_topics.models import GroupTopic
 from champ.models import Activity
@@ -19,7 +19,7 @@ from wiki.models import Article, QuerySetManager
 
 class Resource(models.Model):
     name = models.CharField(max_length=255)
-    description = models.CharField(max_length=255)
+    description = models.TextField()
     model = models.CharField(max_length=25)
     
     created = models.DateTimeField(auto_now_add=True)
@@ -32,7 +32,8 @@ class Resource(models.Model):
     
     RESOURCE_TYPES = (('article', 'Article'),
                       ('workshop', 'Workshop'))
-    resource_type = models.CharField(max_length=10,
+    resource_type = models.CharField(max_length=25,
+                                     verbose_name='Type',
                                      choices=RESOURCE_TYPES)
 
     RESOURCE_SCOPE = (('chapter', 'Chapter'),
@@ -45,11 +46,54 @@ class Resource(models.Model):
     rating = models.IntegerField(default=0)
     downloads = models.IntegerField(default=0)
     
+# TODO: regex to use for validating filenames.  For now, anything not alpha-numeric-
+# dash-underscore-period-space gets stripped, but would be good to allow accents eventually.
+re_filename = re.compile(r'[^A-Za-z0-9\-_. ]')
+
+class FileResourceManager(models.Manager):
+    # Take the uploaded file (typicall from request.FILES['files'])
+    # and attach it to a new FileResource instance.
+    
+    def upload(self, uploadedfile):
+        # build and validate file name name
+        filename = re_filename.sub(r'', uploadedfile.name)
+            
+        # create wrapper object
+        resource = self.create(filename=filename)
+            
+        # open file
+        diskfile = open(resource.get_path(), 'wb+')
+            
+        # write file to disk
+        for chunk in uploadedfile.chunks():
+            diskfile.write(chunk)
+        diskfile.close() 
+
+        return resource
+    
 class FileResource(Resource):
-    pass
+    filename = models.CharField(max_length=255)
+    
+    objects = FileResourceManager()
+    
+    def save(self, *args, **kwargs):
+        self.model = 'FileResource'
+        return super(FileResource, self).save(*args, **kwargs)
+    
+    def get_path(self):
+        path = os.path.join(settings.MEDIA_ROOT, 'library/files', str(self.id))
+        
+        if not os.path.isdir(path):
+            os.makedirs(path, 0755)
+            
+        return path + '/' + self.filename    
     
 class LinkResource(Resource):
     url = models.URLField()
+    
+    def save(*args, **kwargs):
+        self.model = 'LinkResource'
+        return super(LinkResource, self).save(*args, **kwargs)
     
 class Collection(models.Model):
     title = models.CharField(max_length='50')

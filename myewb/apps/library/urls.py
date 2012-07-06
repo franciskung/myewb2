@@ -7,8 +7,12 @@ from library.views import *
 
 urlpatterns = patterns('',
     url(r'^$', home, name='library_home'),
-    url(r'^search$', search, name='library_search'),
+
+    url(r'^search/$', search, name='library_search'),
+
+    url(r'^view/(?P<resource_id>\d+)/$', resource, name='library_resource'),
     
+    url(r'^upload/$', upload, name='library_upload'),
 )
 
 """
