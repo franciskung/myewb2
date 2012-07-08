@@ -135,15 +135,16 @@ def free_comment(request, content_type=None, object_id=None, edit_id=None, paren
         new_comment.send_to_watchlist()
             
         # handle tags
-        newtags = set(form.cleaned_data['tags'].split(','))
-        oldtags = set(new_comment.content_object.tags.split(','))
-        alltags = newtags | oldtags
-        alltags.remove('')
-        tagstring = ""
-        for t in alltags:
-            tagstring += t + ","
-        new_comment.content_object.tags = tagstring
-        new_comment.content_object.save()
+        if form.cleaned_data.get('tags', None) and hasattr(new_comment.content_object, 'tags'):
+            newtags = set(form.cleaned_data['tags'].split(','))
+            oldtags = set(new_comment.content_object.tags.split(','))
+            alltags = newtags | oldtags
+            alltags.remove('')
+            tagstring = ""
+            for t in alltags:
+                tagstring += t + ","
+            new_comment.content_object.tags = tagstring
+            new_comment.content_object.save()
         
         # and display success messages
         if model == ThreadedComment:

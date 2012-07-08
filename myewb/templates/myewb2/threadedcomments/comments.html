@@ -117,8 +117,8 @@
 	<div class="post-reply-container">
         <form method="POST" enctype="multipart/form-data" action="{% get_comment_url object %}">
                     <textarea id="id_comment" class="tinymce" rows="8" cols="80" style="width:99%" name="comment"></textarea>
-                    {% if not quiet %}
                     <br/><br/>
+                    {% if not quiet %}
                     <div id="attachFiles">                    
                         {% for af in attach_forms %}
                             {{ af.as_p }}

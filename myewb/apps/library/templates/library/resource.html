@@ -2,6 +2,7 @@
 
 {% load time_filters %}
 {% load dictionary_tags %}
+{% load attachablecomments_tags %}
 
 {% block body_content %}
     <h2 style='margin-bottom: 5px;'>{{ resource.name }}</h2>
@@ -22,7 +23,7 @@
     
     <div style='border: 1px solid #db7403; background: #f8efda; padding: 10px 15px;'>
         {% dictionary resource description as content %}
-		{{ content|safe }}
+		{{ content }}
     </div>
     <br/>
 
@@ -30,7 +31,7 @@
         <span style='font-size: 14px; font-weight: bold; color: #ffffff;'>DOWNLOAD</span>
     </a>
 
-    
+    {% quietcomments resource %}
 
 {% endblock %}
 
@@ -46,3 +47,9 @@
     </a>
     
 {% endblock %}
+
+{% block extra_body %}
+	{{ block.super }}
+	{% include "tinymce.html" %}
+{% endblock %}
+
