@@ -50,13 +50,55 @@
 {% block toolbar_right %}
     <br/><br/><br/><br/>
 
-    <div style='font-style: italic; width: 220px; text-align: center;'>
+    <div style='font-style: italic; text-align: center;'>
         {{ resource.downloads }} downloads    
     </div>
     
-    <a href="{% url library_download resource.id %}" style='display: block; border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; background: green; width: 200px; padding: 15px 10px; text-align: center;'>
+    <a href="{% url library_download resource.id %}" style='display: block; border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; background: green; width: 200px; margin: 0 auto; padding: 15px 10px; text-align: center;'>
         <span style='font-size: 14px; font-weight: bold; color: #ffffff;'>DOWNLOAD</span>
     </a>
+    
+    {% if activity %}
+        <br/><br/>
+        
+        <div style='font-weight: bold; margin-left: 40px;'>Recent activity</div>
+            <div class="minipost" style='width: 220px; margin: 5px auto;'>
+            <div class="minipostcontents" style='margin-top: -15px; margin-bottom: -15px;'>
+        
+            {% for a in activity %}
+                <p>
+                    {% ifequal a.activity_type 'download' %}
+                        Downloaded by <a href="{% url profile_detail a.user.username %}">{{ a.user.visible_name }}</a>
+                        <br/>
+                        <span style='font-color: #d0d0d0; font-size: 0.7em; font-style: italic;'>{% mktime_coarse a.date %}</span>
+                    {% endifequal %}
+                        
+                    {% ifequal a.activity_type 'edit' %}
+                        Edited by <a href="{% url profile_detail a.user.username %}">{{ a.user.visible_name }}</a>
+                        <br/>
+                        <span style='font-color: #d0d0d0; font-size: 0.7em; font-style: italic;'>{% mktime_coarse a.date %}</span>
+                    {% endifequal %}
+                    
+                    {% ifequal a.activity_type 'collect' %}
+                        Added to a collection by <a href="{% url profile_detail a.user.username %}">{{ a.user.visible_name }}</a>
+                        <br/>
+                        <span style='font-color: #d0d0d0; font-size: 0.7em; font-style: italic;'>{% mktime_coarse a.date %}</span>
+                    {% endifequal %}
+                    
+                    {% ifequal a.activity_type 'rate' %}
+                        Rated by <a href="{% url profile_detail a.user.username %}">{{ a.user.visible_name }}</a>
+                        <br/>
+                        <span style='font-color: #d0d0d0; font-size: 0.7em; font-style: italic;'>{% mktime_coarse a.date %}</span>
+                    {% endifequal %}
+                </p>
+            {% endfor %}
+            
+            <br style="clear:both; height: 1px; line-height: 1px;" />
+            </div>
+            </div>
+        </div>
+            
+    {% endif %}
     
 {% endblock %}
 

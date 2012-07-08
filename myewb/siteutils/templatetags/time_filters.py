@@ -34,13 +34,15 @@ tznames = {'Canada/Atlantic': 'America/Halifax',
 
 # adapted from django's built-in timesince filter
 class MktimeNode(template.Node):
-    def __init__(self, d):
+    def __init__(self, d, coarse=False):
         self.d = template.Variable(d)
+        self.coarse=coarse
         
     def render(self, context):
         # get necessary variables
         d = self.d.resolve(context)
         request = template.Variable('request').resolve(context)
+        coarse = self.coarse
 
         # something's inconsistent... bail!
         if not d:
@@ -53,7 +55,7 @@ class MktimeNode(template.Node):
                 return u''
 
         # within the past 12 hours, present it as an hour offset
-        if d > (datetime.datetime.now() - datetime.timedelta(seconds=43200)):
+        if d > (datetime.datetime.now() - datetime.timedelta(seconds=43200)) and not coarse:
             delta = datetime.datetime.now() - d     # find the time difference
             hours = delta.seconds / 3600
             minutes = (delta.seconds - (hours * 3600)) / 60
@@ -96,9 +98,11 @@ class MktimeNode(template.Node):
                     delta = new_offset - current_offset
                     d = d + delta
                 
-            if d.date() == datetime.date.today():
+            if d.date() == datetime.date.today() and not coarse:
                 #return "today at %s" % defaultfilters.time(d)
                 return "at %s" % defaultfilters.time(d)
+            elif d.date() == datetime.date.today() and coarse:
+                return "today"
             elif d.date() == (datetime.date.today() - datetime.timedelta(1)):
                 #return "yesterday at %s" % defaultfilters.time(d)
                 return "yesterday"
@@ -113,3 +117,13 @@ def mktime(parser, token):
     except:
         raise template.TemplateSyntaxError, "mis-formed mktime call"
     return MktimeNode(d)
+    
+@register.tag
+def mktime_coarse(parser, token):
+    try:
+        tag_name, d = token.split_contents()
+    except:
+        raise template.TemplateSyntaxError, "mis-formed mktime call"
+    return MktimeNode(d, coarse=True)
+    
+

@@ -5,7 +5,7 @@ from django.template.defaultfilters import slugify
 from django.template import RequestContext
 
 from library.forms import FileResourceForm
-from library.models import Resource, FileResource, Collection
+from library.models import Resource, FileResource, Activity, Collection
 
 def home(request):
     collections = Collection.objects.all().order_by('-modified')
@@ -32,9 +32,11 @@ def search(request):
     
 def resource(request, resource_id):
     resource = Resource.objects.get(id=resource_id)
+    activity = Activity.objects.filter(resource=resource)
     
     return render_to_response("library/resource.html", {
-        'resource': resource
+        'resource': resource,
+        'activity': activity,
     }, context_instance=RequestContext(request))
     
 def download(request, resource_id):
