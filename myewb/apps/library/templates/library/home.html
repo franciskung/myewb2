@@ -142,17 +142,17 @@
 
 {% block toolbar_right %}
     <br/><br/><br/>
-    <a href="{% url library_upload %}" style='display: block; border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; background: green; width: 200px; padding: 10px; text-align: center;'>
+    <a href="{% url library_upload %}" style='display: block; border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; background: green; width: 200px; margin: 0 auto; padding: 10px; text-align: center;'>
         <span style='font-size: 14px; font-weight: bold; color: #ffffff;'>UPLOAD A <br/>NEW FILE</span>
     </a>
     <br/><br/>
     
+    <a href="{% url library_mine %}" style='display: block; border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; background: green; width: 200px; padding: 10px; margin: 0 auto; text-align: center;'>
+        <span style='font-size: 14px; font-weight: bold; color: #ffffff;'>MY FILES</span>
+    </a>
+    <br/><br/>
+    
     <hr/>
-    <strong>Resources</strong>
-    {% for r in resources %}
-        <a href="{% url library_resource r.id %}">{{ r.name }}</a>
-        <br/>
-    {% endfor %}
 
 
 {% endblock %}

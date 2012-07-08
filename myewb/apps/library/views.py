@@ -69,4 +69,13 @@ def upload(request):
         {'form': form},
         context_instance=RequestContext(request))
 
+def mine(request):
+    resources = Resource.objects.filter(creator=request.user)    
+    edited = Activity.objects.select_related('activity').filter(user=request.user, activity_type='edit')
     
+    return render_to_response("library/mine.html", 
+        {'resources': resources,
+         'edited': edited},
+        context_instance=RequestContext(request))
+
+
