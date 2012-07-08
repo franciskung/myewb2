@@ -5,7 +5,7 @@
 {% load attachablecomments_tags %}
 
 {% block body_content %}
-    <h2 style='margin-bottom: 5px;'>{{ resource.name }}</h2>
+    <h2 style='margin-bottom: 5px;'><a href="{% url library_download resource.id %}">{{ resource.name }}</a></h2>
     
     <em>
         By
