@@ -32,7 +32,15 @@
         
         <ul>
         {% for child in collection.get_children %}
-            <li><a href="{% url library_collection child.id %}">{{ child.name }}</a></li>
+            <li>
+                <a href="{% url library_collection child.id %}">{{ child.name }}</a>
+                {% with child.get_total_resources as subresources %}
+                    {% if subresources %}
+                        &nbsp;&nbsp;
+                        ({{ subresources }})
+                    {% endif %}
+                {% endwith %}
+            </li>
         {% endfor %}
         </ul>
         

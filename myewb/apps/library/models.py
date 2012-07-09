@@ -159,3 +159,10 @@ class Collection(models.Model):
     def get_children(self):
         return Collection.objects.filter(parent=self).order_by('ordering', 'name')
 
+    def get_total_resources(self):
+        total = self.resources.count()
+        for c in self.get_children():
+            total += c.get_total_resources()
+            
+        return total
+        
