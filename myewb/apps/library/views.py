@@ -8,7 +8,7 @@ from library.forms import FileResourceForm
 from library.models import Resource, FileResource, Activity, Collection
 
 def home(request):
-    collections = Collection.objects.all().order_by('-modified')
+    collections = Collection.objects.filter(featured=True, parent__isnull=True).order_by('ordering', '-modified')
     
     allresources = Resource.objects.all()
 
@@ -67,6 +67,13 @@ def upload(request):
     
     return render_to_response("library/upload.html", 
         {'form': form},
+        context_instance=RequestContext(request))
+
+def collection(request, collection_id):
+    collection = Collection.objects.get(id=collection_id)
+    
+    return render_to_response("library/collection.html", 
+        {'collection': collection},
         context_instance=RequestContext(request))
 
     

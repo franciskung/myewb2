@@ -129,17 +129,26 @@ class LinkResource(Resource):
         return self.url
     
 class Collection(models.Model):
-    title = models.CharField(max_length='50')
+    name = models.CharField(max_length='50')
     description = models.CharField(max_length='255')
     
-    parent = models.ForeignKey("self", null=True)
+    parent = models.ForeignKey("self", blank=True, null=True)
     ordering = models.IntegerField(null=True)
+    featured = models.BooleanField(default=False)
 
-    resources = models.ManyToManyField(Resource)
+    resources = models.ManyToManyField(Resource, blank=True)
 
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     owner = models.ForeignKey(User, related_name='collections_owned')
     curators = models.ManyToManyField(User, related_name='collections')
     
+    class Meta:
+        ordering = ['ordering', 'name']
     
+    def __unicode__(self):
+        return "%s" % (self.name)
+    
+    def featured_children(self):
+        return Collection.objects.filter(featured=True, parent=self).order_by('ordering')
+        
