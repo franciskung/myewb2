@@ -28,7 +28,7 @@
                     {% endif %}
                 {% endif %}
                 
-                <a href="{% url library_collection bc.id %}">{{ bc.name }}</a>
+                <a href="{% url library_collection bc.id bc.slug %}">{{ bc.name }}</a>
                 
                 {% if forloop.last %}
                     &nbsp;
@@ -77,8 +77,6 @@
             {% for tshort, tlong in resource_types %}
                 <option value='{{ tshort }}'>{{ tlong }}</option>
             {% endfor %}
-            {#<option value='article'>Articles</option>#}
-            {#<option value='workshop'>Workshops</option>#}
         </select>    
         
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -117,7 +115,7 @@
         
         {% for child in collection.get_children %}
             <div style='border: 1px solid #db7403; border-top: 0; background: #f8efda; padding: 10px 15px;'>
-                <a href="{% url library_collection child.id %}">{{ child.name }}</a>
+                <a href="{% url library_collection child.id child.slug %}">{{ child.name }}</a>
                 {% with child.get_total_resources as subresources %}
                     {% if subresources %}
                         &nbsp;

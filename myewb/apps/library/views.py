@@ -145,7 +145,7 @@ def mine(request):
          'edited': edited},
         context_instance=RequestContext(request))
 
-def collection(request, collection_id):
+def collection(request, collection_id, slug=None):
     collection = Collection.objects.get(id=collection_id)
     
     return render_to_response("library/collection.html", 
@@ -197,7 +197,8 @@ def collection_edit(request, collection_id):
             request.user.message_set.create(message='Collection updated')
             
             return HttpResponseRedirect(reverse('library_collection',
-                                                kwargs={'collection_id': collection_id}
+                                                kwargs={'collection_id': collection_id,
+                                                        'slug': collection.slug}
                                                ))
     else:
         form = CollectionForm(instance=collection)

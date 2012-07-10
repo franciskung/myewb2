@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.db.models import Q
+from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
 
 from lxml.html.clean import clean_html, autolink_html, Cleaner
@@ -168,7 +169,10 @@ class Collection(models.Model):
         ordering = ['ordering', 'name']
     
     def __unicode__(self):
-        return "%s" % (self.title)
+        return "%s" % (self.name)
+    
+    def slug(self):
+        return slugify(self.name)
     
     def featured_children(self):
         return Collection.objects.filter(featured=True, parent=self).order_by('ordering')
