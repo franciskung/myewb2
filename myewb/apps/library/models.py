@@ -226,8 +226,8 @@ class Collection(models.Model):
         return m
 
 class Membership(models.Model):
-    resource = models.ForeignKey(Resource)
-    collection = models.ForeignKey(Collection)
+    resource = models.ForeignKey(Resource, related_name='members')
+    collection = models.ForeignKey(Collection, related_name='members')
     
     added = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User)

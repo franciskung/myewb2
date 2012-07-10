@@ -1,0 +1,20 @@
+{% load truncate %}
+
+{% for r in resources %}
+    <div class='minipost'>
+    <div class='minipostcontents'>
+    <div class='minipost-title'>
+        <h3><a href="{% url library_resource r.id %}">{{ r.name }}</a></h3>
+    </div>
+    <div class='minipost-text'>
+        {{ r.description|truncate_head:150 }}
+    </div>
+    </div>
+    </div>
+    
+{% empty %}
+    <p style='padding-left: 25px; font-weight: bold'>
+        No resources found...
+    </p>
+    
+{% endfor %}

@@ -152,6 +152,31 @@ def collection(request, collection_id):
         {'collection': collection,
          'can_edit': collection.user_can_edit(request.user)},
         context_instance=RequestContext(request))
+        
+def collection_sorted(request, collection_id):
+    collection = Collection.objects.get(id=collection_id)
+    
+    resources = Resource.objects.filter(members__collection=collection_id)
+    
+    if request.GET.get('type', None):
+        resources = resources.filter(resource_type=request.GET['type'])
+    if request.GET.get('scope', None):
+        resources = resources.filter(scope='ewb')
+    if request.GET.get('sort_by', None):
+        sorting = request.GET['sort_by']
+        sorting = sorting[8:]
+        
+        if sorting == 'featured':
+            resources = resources.order_by('members__ordering')
+        else:
+            resources = resources.order_by(sorting)
+
+    
+    return render_to_response("library/ajax/collection_sorted.html", 
+        {'collection': collection,
+         'resources': resources},
+        context_instance=RequestContext(request))
+        
 
 def collection_edit(request, collection_id):
     collection = Collection.objects.get(id=collection_id)

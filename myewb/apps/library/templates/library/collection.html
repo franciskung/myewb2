@@ -6,6 +6,14 @@
 {% load truncate %}
 
 {% block body_content %}
+    <style>
+        a.sort_option.current {
+            color: #444;
+        }
+        a.sort_option.current:hover {
+            text-decoration: none;
+        }
+    </style>
     <h2 style='margin-bottom: 5px;'>{{ collection.name }}</h2>
     
     {% with collection.get_breadcrumbs as breadcrumbs %}
@@ -58,21 +66,37 @@
         {% endif %}
         
     </div>
+    <br/>
     
-    <br/><br/>
+    <h2>Resources</h2>
+
+    <div style='padding: 0 10px;'>
+        Type:
+        <select name='sort_type' id='sort_type' class='sort_option'>
+            <option value=''>(all)</option>
+            <option value='article'>Articles</option>
+            <option value='workshop'>Workshops</option>
+        </select>    
+        
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <input type='checkbox' name='sort_scope' id='sort_scope' class='sort_option'/>
+        <label for='sort_scope'>EWB material only</label>
+    </div>
+
+    <div style='padding: 10px;' id="sort_by">
+        Sort by:
+        <a href="#" id='sort_by_featured' class='sort_option current'>Featured</a> |
+        <a href="#" id='sort_by_rating' class='sort_option'>Rating</a> |
+        <a href="#" id='sort_by_name' class='sort_option'>Name</a> |
+        <a href="#" id='sort_by_downloads' class='sort_option'>Downloads</a> |
+        <a href="#" id='sort_by_modified' class='sort_option'>Last updated</a>
+    </div>
     
-    {% for r in collection.get_ordered_resources %}
-        <div class='minipost'>
-        <div class='minipostcontents'>
-        <div class='minipost-title'>
-            <h3><a href="{% url library_resource r.id %}">{{ r.name }}</a></h3>
-        </div>
-        <div class='minipost-text'>
-            {{ r.description|truncate_head:150 }}
-        </div>
-        </div>
-        </div>
-    {% endfor %}
+    <div id="filelist">
+        {% with collection.get_ordered_resources as resources %}
+            {% include 'library/ajax/collection_sorted.html' %}
+        {% endwith %}
+    </div>
 
 {% endblock %}
 
@@ -102,4 +126,29 @@
         
         </div>
     {% endif %}
+{% endblock %}
+
+{% block extra_body %}
+    <script type='text/javascript'>
+        $('a.sort_option').click(function() {
+            $('a.sort_option').removeClass('current');
+            $(this).addClass('current');
+            $(this).change();
+            return false;
+        });
+        $('.sort_option').change(function() {
+            $('#filelist').html("<p><img src='{{ STATIC_URL}}images/ajax-loader.gif'/>  Loading...</p>");
+            $.get('{% url library_collection_sorted collection.id %}',
+                  {type: $('#sort_type').val(),
+                   scope: $('#sort_scope').attr('checked'),
+                   sort_by: $('a.sort_option.current').attr('id')
+                  },
+                  function(data) {
+                    $('#filelist').html(data);
+                    //alert(data);
+                  });
+            
+            return false;
+        });
+    </script>
 {% endblock %}
