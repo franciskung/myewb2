@@ -9,7 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from lxml.html.clean import clean_html, autolink_html, Cleaner
 from datetime import datetime
-import settings, os, shutil, datetime, re, types
+import settings, os, shutil, datetime, re, types, hashlib
 
 from group_topics.models import GroupTopic
 from champ.models import Activity
@@ -97,14 +97,21 @@ class FileResourceManager(models.Manager):
         diskfile = open(resource.get_path(), 'wb+')
             
         # write file to disk
+        md5 = hashlib.md5()
+        
         for chunk in uploadedfile.chunks():
             diskfile.write(chunk)
-        diskfile.close() 
+            md5.update(chunk)
+        diskfile.close()
+        
+        resource.checksum = md5.hexdigest()
+        resource.save()
 
         return resource
         
 class FileResource(Resource):
     filename = models.CharField(max_length=255)
+    checksum = models.CharField(max_length=32, default='')
     
     objects = FileResourceManager()
     
@@ -118,11 +125,11 @@ class FileResource(Resource):
         if not os.path.isdir(path):
             os.makedirs(path, 0755)
             
-        return path + '/' + self.filename    
+        return path + '/' + self.filename
     
     def direct_download(self):
         return os.path.join(settings.STATIC_URL, 'library/files', str(self.id), self.filename)
-    
+        
 class LinkResource(Resource):
     url = models.URLField()
     
