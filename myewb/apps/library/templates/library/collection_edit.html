@@ -52,13 +52,13 @@ background: #ffffff;
 	        <p class="question ui-corner-all" id="ruestion-{{file.id}}">
 	            <span class="ui-icon ui-icon-arrow-4"></span>
         	    {{ file.name }}<br/>
-        	    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        	    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         	    {#<a href="{% url library_resource_edit file.id %}" class="question_edit">(edit)</a>#}
         	    {#<a href="#" class="question_delete" id="question-delete-{{q.id}}">(delete)</a>#}
             </p>
 	        
 	    {% empty %}
-	        No sub-pages...
+	        No files...
 	        <br/><br/><br/>
 	    {% endfor %}
 	    </div>
@@ -85,6 +85,8 @@ background: #ffffff;
             </p>
 	        
 	    {% empty %}
+	        <br/>
+	        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	        No sub-pages...
 	        <br/><br/><br/>
 	    {% endfor %}
