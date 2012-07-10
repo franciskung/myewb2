@@ -18,7 +18,7 @@
                     {% if forloop.last %}
                         &nbsp;
                     {% else %}
-                        &raquo;
+                        <span style='padding: 0 5px;'>&raquo;</span>
                     {% endif %}
                     
                 {% endfor %}
@@ -35,9 +35,10 @@
     <div style='padding: 7px 0; font-style: italic;'>
         Last updated {% mktime collection.modified %}
         
-        <span style='padding-left: 25px;'>
+        {% if can_edit %}
+            <span style='padding: 0 5px;'>&raquo;</span>
             <a href="{% url library_collection_edit collection.id %}">edit now</a>
-        </span>
+        {% endif %}
         
     </div>
     

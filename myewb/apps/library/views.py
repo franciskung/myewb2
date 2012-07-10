@@ -81,8 +81,15 @@ def mine(request):
 def collection(request, collection_id):
     collection = Collection.objects.get(id=collection_id)
     
+    can_edit = False
+    if collection.owner == request.user or \
+       request.user in collection.curators.all() or \
+       request.user.has_module_perms("library"):
+        can_edit = True
+    
     return render_to_response("library/collection.html", 
-        {'collection': collection,},
+        {'collection': collection,
+         'can_edit': can_edit},
         context_instance=RequestContext(request))
 
 def collection_edit(request, collection_id):
