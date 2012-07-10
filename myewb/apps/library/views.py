@@ -78,4 +78,11 @@ def mine(request):
          'edited': edited},
         context_instance=RequestContext(request))
 
+def collection(request, collection_id):
+    collection = Collection.objects.get(id=collection_id)
+    
+    return render_to_response("library/collection.html", 
+        {'collection': collection,},
+        context_instance=RequestContext(request))
+
 

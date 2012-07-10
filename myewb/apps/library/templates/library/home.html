@@ -153,6 +153,11 @@
     <br/><br/>
     
     <hr/>
-
+    <strong>Collections</strong>
+    <br/><br/>
+    
+    {% for c in collections %}
+        <a href="{% url library_collection c.id %}">{{ c.title }}</a>
+    {% endfor %}
 
 {% endblock %}

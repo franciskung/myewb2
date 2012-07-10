@@ -56,6 +56,11 @@ class Resource(models.Model):
                       ('world', 'World'))                                     
     scope = models.CharField(max_length=10,
                              choices=RESOURCE_SCOPE)
+                             
+    RESOURCE_LANGUAGES = (('en', 'English'),
+                          ('fr', 'Francais'))
+    language = models.CharField(max_length=2, default='en',
+                                choices=RESOURCE_LANGUAGES)
 
     editable = models.BooleanField(default=True)
     rating = models.IntegerField(default=0)

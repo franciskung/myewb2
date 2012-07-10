@@ -15,6 +15,8 @@ urlpatterns = patterns('',
     
     url(r'^upload/$', upload, name='library_upload'),
     url(r'^mine/$', mine, name='library_mine'),
+    
+    url(r'^collection/(?P<collection_id>\d+)/$', collection, name='library_collection'),
 )
 
 """
