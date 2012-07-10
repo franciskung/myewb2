@@ -48,17 +48,18 @@
 {% endblock %}
 
 {% block toolbar_right %}
-    <br/><br/><br/><br/>
+    <h1>&nbsp;</h1>
+    <h2 style='margin-bottom: 5px;'>&nbsp;</h2>
+    <br/>
 
     <div style='font-style: italic; text-align: center;'>
         {{ resource.downloads }} downloads    
     </div>
-    
     <a href="{% url library_download resource.id %}" style='display: block; border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; background: green; width: 200px; margin: 0 auto; padding: 15px 10px; text-align: center;'>
         <span style='font-size: 14px; font-weight: bold; color: #ffffff;'>DOWNLOAD</span>
     </a>
 
-    <br/><br/>
+    <br/>
         
 	<!-- AddThis Button BEGIN -->
 	<div class="addthis_toolbox addthis_default_style addthis_32x32_style" style="margin: 0 auto; width: 185px;">
