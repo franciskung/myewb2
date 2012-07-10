@@ -1,0 +1,29 @@
+{% extends 'library/base.html' %}
+
+{% block body_content %}
+    <h2>My Resources</h2>
+    
+    {% if resources %}
+        {% for r in resources %}
+            <a href="{% url library_resource r.id %}">{{ r.name }}</a>
+            <br/><br/>
+        {% endfor %}
+        
+        
+    {% else %}
+        <p>You haven't created any resources yet.</p>
+    {% endif %}
+    
+    
+    <h2>Resources I've Edited</h2>
+    {% if edited %}
+        {% for e in edited %}
+            <a href="{% url library_resource e.id %}">{{ e.name }}</a>
+            <br/><br/>
+        {% endfor %}
+        
+    {% else %}
+        <p>You haven't edited any resources yet.</p>
+    {% endif %}
+
+{% endblock %}
