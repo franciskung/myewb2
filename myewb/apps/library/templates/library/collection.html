@@ -1,0 +1,48 @@
+{% extends 'library/base.html' %}
+
+{% load time_filters %}
+{% load dictionary_tags %}
+{% load attachablecomments_tags %}
+
+{% block body_content %}
+    <h2>{{ collection.name }}</h2>
+    
+    <div style='border: 1px solid #db7403; background: #f8efda; padding: 10px 15px;'>
+        {% dictionary collection description as content %}
+		{{ content }}
+    </div>
+    <div style='padding: 5px 16px; font-style: italic;'>Last updated {% mktime collection.modified %}</div>
+    <br/><br/>
+    
+    <ul>
+    {% for r in resources %}
+        <li><a href="{% url library_resource r.id %}">{{ r.name }}</a></li>
+    {% endfor %}
+    </ul>
+
+{% endblock %}
+
+{% block toolbar_right %}
+    <h1>&nbsp;</h1>
+    <h2>&nbsp;</h2>
+    
+    {% if collection.has_children %}
+        <strong>INSIDE {{ collection.name|upper }}</strong>
+        <br/><br/>
+        
+        <ul>
+        {% for child in collection.get_children %}
+            <li>
+                <a href="{% url library_collection child.id %}">{{ child.name }}</a>
+                {% with child.get_total_resources as subresources %}
+                    {% if subresources %}
+                        &nbsp;&nbsp;
+                        ({{ subresources }})
+                    {% endif %}
+                {% endwith %}
+            </li>
+        {% endfor %}
+        </ul>
+        
+    {% endif %}
+{% endblock %}

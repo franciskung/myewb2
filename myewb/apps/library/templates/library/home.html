@@ -70,7 +70,21 @@
 
     <hr/>
     <h2>Browse the Library</h2>
+    
+    {% for c in collections %}
+        <div style='border: 1px solid #db7403; background: #f8efda; width: 260px; margin-right: 15px; margin-bottom: 15px; padding: 5px; float: left; {% cycle 'clear: left;' ''%}'>
+            <a href="{% url library_collection c.id %}" style='float: right; padding-right: 5px;'>see all &raquo;</a>
 
+            <strong>{{ c.name }}</strong>
+            <br/><br/>
+
+            {% for child in c.featured_children %}
+                <a href="{% url library_collection child.id %}">{{ child.name }}</a><br/>
+            {% endfor %}
+        </div>
+    {% endfor %}
+
+    {% comment %}
     <div style='border: 1px solid #db7403; background: #f8efda; width: 173px; margin-right: 10px; padding: 5px; float: left;'>
         <strong>Essential Resources</strong>
         <br/><br/>
@@ -137,6 +151,7 @@
         <a href="browse.php">zxy</a>
         <br/><br/>
     </div>
+    {% endcomment %}
 
 {% endblock %}
 
