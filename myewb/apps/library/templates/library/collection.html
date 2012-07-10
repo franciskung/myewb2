@@ -3,53 +3,53 @@
 {% load time_filters %}
 {% load dictionary_tags %}
 {% load attachablecomments_tags %}
+{% load truncate %}
 
 {% block body_content %}
-    <h2>{{ collection.name }}</h2>
+    <h2 style='margin-bottom: 5px;'>{{ collection.name }}</h2>
     
     {% with collection.get_breadcrumbs as breadcrumbs %}
         {% if breadcrumbs %}
-            <div style='position: relative; top: -10px;'>
-                In 
-                
-                {% for bc in breadcrumbs %}
-                    {% if forloop.first %}
-                        {% if bc.featured %}
-                            <a href="{% url library_home %}">Library</a>
-                            <span style='padding: 0 5px;'>&raquo;</span>
-                        {% endif %}
-                    {% endif %}
-                    
-                    <a href="{% url library_collection bc.id %}">{{ bc.name }}</a>
-                    
-                    {% if forloop.last %}
-                        &nbsp;
-                    {% else %}
+            In 
+            
+            {% for bc in breadcrumbs %}
+                {% if forloop.first %}
+                    {% if bc.featured %}
+                        <a href="{% url library_home %}">Library</a>
                         <span style='padding: 0 5px;'>&raquo;</span>
                     {% endif %}
-                    
-                {% endfor %}
-            </div>
+                {% endif %}
+                
+                <a href="{% url library_collection bc.id %}">{{ bc.name }}</a>
+                
+                {% if forloop.last %}
+                    &nbsp;
+                {% else %}
+                    <span style='padding: 0 5px;'>&raquo;</span>
+                {% endif %}
+                
+            {% endfor %}
             
         {% else %}
             {% if not collection.parent %}
                 {% if collection.featured %}
-                    <div style='position: relative; top: -10px;'>
-                        <a href="{% url library_home %}">Back to the Library</a>
-                    </div>
+                    <a href="{% url library_home %}">Back to the Library</a>
                 {% endif %}
             {% endif %}
         
         {% endif %}
     {% endwith %}
+    <hr/>
     
-    <div style='border: 1px solid #db7403; background: #f8efda; padding: 10px 15px;'>
+{#    <div style='border: 1px solid #db7403; background: #f8efda; padding: 10px 15px;'>#}
+    <div style='padding: 5px 0 10px 0;'>
         {% dictionary collection description as content %}
-		{{ content }}
+		{{ content|safe }}
     </div>
+    <hr/>
     
     {#<div style='padding: 5px 16px; font-style: italic;'>#}
-    <div style='padding: 7px 0; font-style: italic;'>
+    <div style='font-style: italic;'>
         Last updated {% mktime collection.modified %}
         
         {% if can_edit %}
@@ -61,35 +61,45 @@
     
     <br/><br/>
     
-    <ul>
     {% for r in collection.resources.all %}
-        <li><a href="{% url library_resource r.id %}">{{ r.name }}</a></li>
+        <div class='minipost'>
+        <div class='minipostcontents'>
+        <div class='minipost-title'>
+            <h3><a href="{% url library_resource r.id %}">{{ r.name }}</a></h3>
+        </div>
+        <div class='minipost-text'>
+            {{ r.description|truncate_head:150 }}
+        </div>
+        </div>
+        </div>
     {% endfor %}
-    </ul>
 
 {% endblock %}
 
 {% block toolbar_right %}
-    <h1>&nbsp;</h1>
-    <h2>&nbsp;</h2>
+    <div style='height: 45px;'>&nbsp;</div>
     
     {% if collection.has_children %}
-        <strong>INSIDE {{ collection.name|upper }}</strong>
-        <br/><br/>
+        <div style='border: 1px solid #db7403; background: #f8efda; padding: 10px 15px;'>
+            <strong>
+                INSIDE<br/>
+                <span style='font-size: 1.5em;'>{{ collection.name|upper }}</span>
+            </strong>
+            <br/><br/>
+        </div>
         
-        <ul>
         {% for child in collection.get_children %}
-            <li>
+            <div style='border: 1px solid #db7403; border-top: 0; background: #f8efda; padding: 10px 15px;'>
                 <a href="{% url library_collection child.id %}">{{ child.name }}</a>
                 {% with child.get_total_resources as subresources %}
                     {% if subresources %}
-                        &nbsp;&nbsp;
-                        ({{ subresources }})
+                        &nbsp;
+                        <span style='color: #808080;'>( {{ subresources }} )</span>
                     {% endif %}
                 {% endwith %}
-            </li>
+            </div>
         {% endfor %}
-        </ul>
         
+        </div>
     {% endif %}
 {% endblock %}
