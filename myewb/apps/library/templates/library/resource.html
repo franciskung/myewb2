@@ -31,8 +31,10 @@
         <span style='font-size: 14px; font-weight: bold; color: #ffffff;'>DOWNLOAD</span>
     </a>
 
+    {% if resource.collection_set.all %}
     <br/><br/>
     <strong>Filed under:</strong><br/>
+    {% endif %}
     {# FIXME should be featured & owned collections only...! #}
     {% for c in resource.collection_set.all %}
         {% for bc in c.get_breadcrumbs %}

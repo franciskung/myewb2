@@ -226,6 +226,11 @@ class Collection(models.Model):
             order = order + 1
             m = Membership.objects.create(collection=self, resource=resource, user=user, ordering=order)
             
+            Activity.objects.create(resource=resource,
+                                    user=user,
+                                    activity_type='collect',
+                                    content_object=self)
+            
         return m
 
 class Membership(models.Model):
