@@ -1,0 +1,56 @@
+<div style='padding: 15px; height: 80%; position: relative;'>
+
+    <div style="background: #f0f0f0; padding: 5px; height: 90%; overflow: auto;" class="ui-corner-all">
+	    <div id="explorer">
+	    </div>
+    </div>
+    
+    <div style='height: 2em; float: bottom; width: 90%; padding-top: 5px;'>
+        <form method="post" action="{% url library_organize resource.id %}">
+            <input type="hidden" id="chooseCollection" name="collection_id" value=""/>
+        
+            <input type="submit" value="Add to this collection" id="chooseSubmit" style='float: right; display: none;'/>
+            
+            <span id="collectionName"></span>
+        </form>
+        
+    </div>
+    
+</div>
+
+<link type="text/css" href="{{STATIC_URL}}css/jqueryFileTree.css" rel="stylesheet" />
+<script type="text/javascript" src="{{STATIC_URL}}js/jqueryFileTree.js"></script>
+	
+<script type="text/javascript">
+    function filetree_hooks(c) {
+	    $('li.directory a').each(function() {
+	        if (!$(this).hasClass('listener'))
+	        {
+	            $(this).click(function() {
+	                    
+	                if ($(this).parent().hasClass('expanded'))
+	                {
+	                    var folder = $(this).attr('rel');
+	                    var folderName = $(this).html();
+	                    
+	                    $('#collectionName').html('Collection: <strong>' + folderName + '</strong>');
+	                    $('#chooseCollection').val(folder);
+	                    $('#chooseSubmit').show();
+	                }
+	            });
+	            $(this).addClass('listener');
+	       }
+	   });
+	}
+
+	$().ready(function() {
+		$('#explorer').fileTree({script: '{% url library_folder_browse %}',
+		                         root: '',
+		                         multiFolder: false,
+		                         onload: filetree_hooks},
+								function(file) {
+								    return true;
+								});
+	});
+</script>
+

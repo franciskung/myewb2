@@ -1,5 +1,6 @@
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
+from django.db.models import Q
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template.defaultfilters import slugify
 from django.template import RequestContext
@@ -43,7 +44,73 @@ def download(request, resource_id):
     resource = Resource.objects.get(id=resource_id)
     return HttpResponseRedirect(resource.download(request.user))
     
+def organize(request, resource_id):
+    resource = Resource.objects.get(id=resource_id)
+    
+    if request.method == 'POST':
+        collection_id = request.POST['collection_id']
+        if collection_id[0:1] == '/':
+            collection_id = collection_id[1:]
+        if collection_id[-1:] == '/':
+            collection_id = collection_id[:-1]
+            
+        collection = Collection.objects.get(id=collection_id)
+        
+        if not collection.user_can_edit(request.user):
+            return render_to_response('denied.html', context_instance=RequestContext(request))
 
+        collection.resources.add(resource)
+        
+        if request.is_ajax():
+            return HttpResponse('success')
+        else:
+            request.user.message_set.create(message="Added to <em>%s</em>" % collection.name)
+            return HttpResponseRedirect(reverse('library_resource',
+                                                kwargs={'resource_id': resource_id}))
+
+    collections = Collection.objects.filter(Q(owner=request.user) | Q(curators=request.user))
+                                                
+    if request.is_ajax():
+        return render_to_response("library/ajax/organize.html", {
+            'resource': resource,
+            'collections': collections
+        }, context_instance=RequestContext(request))
+    else:    
+        return render_to_response("library/organize.html", {
+            'resource': resource,
+            'collections': collections,
+        }, context_instance=RequestContext(request))
+    
+def browse(request):
+    collection_id = request.POST.get('dir', None)
+    
+    collection = None
+    if collection_id:
+        if collection_id[0:1] == '/':
+            collection_id = collection_id[1:]
+        if collection_id[-1:] == '/':
+            collection_id = collection_id[:-1]
+            
+        collection = Collection.objects.get(id=collection_id)
+        if not collection.user_can_edit(request.user):
+            collection_id = None
+            collection = None
+            
+    if collection_id and collection:
+        collections = Collection.objects.filter(parent=collection)
+
+    else:
+        collections = Collection.objects.filter(Q(owner=request.user) | Q(curators=request.user))
+        collections = collections.filter(parent__isnull=True)
+    
+    
+    output = "<ul class='jqueryFileTree' style='display: none;'>\n"
+    for c in collections:
+        output = "%s<li class='directory collapsed'><a href='#' rel='/%d/'>%s</a></li>\n" % (output, c.id, c.name)
+    output = output + "</ul>\n"
+    
+    return HttpResponse(output)
+    
 def upload(request):
     if request.method == 'POST':
         form = FileResourceForm(request.POST, request.FILES)
@@ -68,7 +135,7 @@ def upload(request):
     return render_to_response("library/upload.html", 
         {'form': form},
         context_instance=RequestContext(request))
-
+        
 def mine(request):
     resources = Resource.objects.filter(creator=request.user)    
     edited = Activity.objects.select_related('activity').filter(user=request.user, activity_type='edit')
@@ -81,24 +148,16 @@ def mine(request):
 def collection(request, collection_id):
     collection = Collection.objects.get(id=collection_id)
     
-    can_edit = False
-    if collection.owner == request.user or \
-       request.user in collection.curators.all() or \
-       request.user.has_module_perms("library"):
-        can_edit = True
-    
     return render_to_response("library/collection.html", 
         {'collection': collection,
-         'can_edit': can_edit},
+         'can_edit': collection.user_can_edit(request.user)},
         context_instance=RequestContext(request))
 
 def collection_edit(request, collection_id):
     collection = Collection.objects.get(id=collection_id)
 
     # permissions check
-    if collection.owner != request.user and \
-       request.user not in collection.curators.all() and \
-       not request.user.has_module_perms("library"):
+    if not collection.user_can_edit(request.user):
         return render_to_response('denied.html', context_instance=RequestContext(request))
         
     # standard form handling

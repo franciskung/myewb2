@@ -32,6 +32,19 @@
     </a>
 
     <br/><br/>
+    <strong>Filed under:</strong><br/>
+    {# FIXME should be featured & owned collections only...! #}
+    {% for c in resource.collection_set.all %}
+        {% for bc in c.get_breadcrumbs %}
+            <a href="{% url library_collection bc.id %}">{{ bc.name }}</a>
+            <span style='padding: 0 5px;'>&raquo;</span>
+        {% endfor %}
+        <a href="{% url library_collection c.id %}">{{ c.name }}</a>
+        <br/>
+    {% endfor %}
+    
+    <br/><br/>
+    
     <style>
     .minipost {
         margin-bottom: 10px;
@@ -57,6 +70,11 @@
     </div>
     <a href="{% url library_download resource.id %}" style='display: block; border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; background: green; width: 200px; margin: 0 auto; padding: 15px 10px; text-align: center;'>
         <span style='font-size: 14px; font-weight: bold; color: #ffffff;'>DOWNLOAD</span>
+    </a>
+    <br/>
+
+    <a href="{% url library_organize resource.id %}" style='display: block; border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; background: green; width: 200px; margin: 0 auto; padding: 15px 10px; text-align: center;' id='organize'>
+        <span style='font-size: 14px; font-weight: bold; color: #ffffff;'>Add to a collection</span>
     </a>
 
     <br/>
@@ -120,5 +138,9 @@
 {% block extra_body %}
 	{{ block.super }}
 	{% include "tinymce.html" %}
+
+    <script type='text/javascript'>	
+    	$('#organize').colorbox({opacity: '0.5', width: '600px;', height: '50%'});
+    </script>
 {% endblock %}
 

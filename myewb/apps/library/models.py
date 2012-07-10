@@ -182,11 +182,21 @@ class Collection(models.Model):
         crumbs = []
         collection = self
         while collection.parent:
-            print "append %s " % collection.parent.name
             collection = collection.parent
             crumbs.append(collection)
             
         crumbs.reverse()
         return crumbs 
 
+    def user_can_edit(self, user):
+        if user.has_module_perms("library"):
+            return True
             
+        if collection.owner == request.user:
+            return True
+            
+        if request.user in collection.curators.all():
+            return True
+        
+        return False
+
