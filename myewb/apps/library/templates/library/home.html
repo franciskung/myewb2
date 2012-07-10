@@ -156,11 +156,14 @@
 {% endblock %}
 
 {% block toolbar_right %}
-    <br/><br/><br/>
+    <h1>&nbsp;</h1>
+    <h2>&nbsp;</h2>
+    
+    
     <a href="{% url library_upload %}" style='display: block; border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; background: green; width: 200px; margin: 0 auto; padding: 10px; text-align: center;'>
         <span style='font-size: 14px; font-weight: bold; color: #ffffff;'>UPLOAD A <br/>NEW FILE</span>
     </a>
-    <br/><br/>
+    <br/>
     
     <a href="{% url library_mine %}" style='display: block; border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; background: green; width: 200px; padding: 10px; margin: 0 auto; text-align: center;'>
         <span style='font-size: 14px; font-weight: bold; color: #ffffff;'>MY FILES</span>
@@ -168,7 +171,7 @@
     <br/><br/>
     
     <hr/>
-    <strong>Collections</strong>
+    <h2>Collections</h2>
     <br/><br/>
     
     {% for c in collections %}
