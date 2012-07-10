@@ -7,7 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from lxml.html.clean import clean_html, autolink_html
 
-from library.models import FileResource
+from library.models import FileResource, Collection
 
 class FileResourceForm(forms.ModelForm):
     resource = forms.FileField()
@@ -26,3 +26,9 @@ class FileResourceForm(forms.ModelForm):
         # we could also trigger an article refresh here...?
 
         return result, changeset
+        
+class CollectionForm(forms.ModelForm):
+    class Meta:
+        model = Collection
+        fields = ('name', 'description')
+

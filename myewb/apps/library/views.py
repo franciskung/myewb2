@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404, render_to_response
 from django.template.defaultfilters import slugify
 from django.template import RequestContext
 
-from library.forms import FileResourceForm
+from library.forms import FileResourceForm, CollectionForm
 from library.models import Resource, FileResource, Activity, Collection
 
 def home(request):
@@ -85,4 +85,25 @@ def collection(request, collection_id):
         {'collection': collection,},
         context_instance=RequestContext(request))
 
+def collection_edit(request, collection_id):
+    collection = Collection.objects.get(id=collection_id)
+
+    if request.method == 'POST':
+        form = CollectionForm(request.POST, instance=collection)
+        
+        if form.is_valid():
+            form.save()
+            
+            request.user.message_set.create(message='Collection updated')
+            
+            return HttpResponseRedirect(reverse('library_collection',
+                                                kwargs={'collection_id': collection_id}
+                                               ))
+    else:
+        form = CollectionForm(instance=collection)
+        
+    return render_to_response("library/collection_edit.html", 
+        {'collection': collection,
+         'form': form},
+        context_instance=RequestContext(request))
 

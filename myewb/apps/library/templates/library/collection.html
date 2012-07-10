@@ -7,11 +7,40 @@
 {% block body_content %}
     <h2>{{ collection.name }}</h2>
     
+    {% with collection.get_breadcrumbs as breadcrumbs %}
+        {% if breadcrumbs %}
+            <div style='position: relative; top: -10px;'>
+                In 
+                
+                {% for bc in breadcrumbs %}
+                    <a href="{% url library_collection bc.id %}">{{ bc.name }}</a>
+                    
+                    {% if forloop.last %}
+                        &nbsp;
+                    {% else %}
+                        &raquo;
+                    {% endif %}
+                    
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    
     <div style='border: 1px solid #db7403; background: #f8efda; padding: 10px 15px;'>
         {% dictionary collection description as content %}
 		{{ content }}
     </div>
-    <div style='padding: 5px 16px; font-style: italic;'>Last updated {% mktime collection.modified %}</div>
+    
+    {#<div style='padding: 5px 16px; font-style: italic;'>#}
+    <div style='padding: 7px 0; font-style: italic;'>
+        Last updated {% mktime collection.modified %}
+        
+        <span style='padding-left: 25px;'>
+            <a href="{% url library_collection_edit collection.id %}">edit now</a>
+        </span>
+        
+    </div>
+    
     <br/><br/>
     
     <ul>

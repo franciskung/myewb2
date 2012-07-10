@@ -142,7 +142,7 @@ class LinkResource(Resource):
 
 class Collection(models.Model):
     name = models.CharField(max_length=50)
-    description = models.CharField(max_length=255)
+    description = models.TextField()
     
     parent = models.ForeignKey("self", blank=True, null=True)
     ordering = models.IntegerField(null=True)
@@ -177,4 +177,16 @@ class Collection(models.Model):
             total += c.get_total_resources()
             
         return total
-        
+
+    def get_breadcrumbs(self):
+        crumbs = []
+        collection = self
+        while collection.parent:
+            print "append %s " % collection.parent.name
+            collection = collection.parent
+            crumbs.append(collection)
+            
+        crumbs.reverse()
+        return crumbs 
+
+            
