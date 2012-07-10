@@ -13,6 +13,13 @@
                 In 
                 
                 {% for bc in breadcrumbs %}
+                    {% if forloop.first %}
+                        {% if bc.featured %}
+                            <a href="{% url library_home %}">Library</a>
+                            <span style='padding: 0 5px;'>&raquo;</span>
+                        {% endif %}
+                    {% endif %}
+                    
                     <a href="{% url library_collection bc.id %}">{{ bc.name }}</a>
                     
                     {% if forloop.last %}
@@ -23,6 +30,16 @@
                     
                 {% endfor %}
             </div>
+            
+        {% else %}
+            {% if not collection.parent %}
+                {% if collection.featured %}
+                    <div style='position: relative; top: -10px;'>
+                        <a href="{% url library_home %}">Back to the Library</a>
+                    </div>
+                {% endif %}
+            {% endif %}
+        
         {% endif %}
     {% endwith %}
     
