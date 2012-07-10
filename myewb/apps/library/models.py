@@ -15,6 +15,8 @@ from group_topics.models import GroupTopic
 from champ.models import Activity
 from events.models import Event
 
+from siteutils.shortcuts import get_object_or_none
+
 from wiki.models import Article, QuerySetManager
 
 class Activity(models.Model):
@@ -149,8 +151,8 @@ class Collection(models.Model):
     featured = models.BooleanField(default=False)
     autolink = models.BooleanField(default=False)
 
-    resources = models.ManyToManyField(Resource, blank=True)
-
+    resources = models.ManyToManyField(Resource, blank=True, through='Membership')
+    
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     owner = models.ForeignKey(User, related_name='collections_owned')
@@ -199,4 +201,36 @@ class Collection(models.Model):
             return True
         
         return False
+        
+    def get_ordered_resources(self):
+        m = Membership.objects.select_related().filter(collection=self).order_by('ordering')
+        
+        resources = []
+        for mp in m:
+            resources.append(mp.resource)
+        return resources
+        
+    def add_resource(self, resource, user=None):
+        m = get_object_or_none(Membership, collection=self, resource=resource)
+        
+        if not m:
+            orderings = Membership.objects.filter(collection=self)
+            order = 0
+            for o in orderings:
+                if o.ordering > order:
+                    order = o.ordering
+                    
+            order = order + 1
+            m = Membership.objects.create(collection=self, resource=resource, user=user, ordering=order)
+            
+        return m
+
+class Membership(models.Model):
+    resource = models.ForeignKey(Resource)
+    collection = models.ForeignKey(Collection)
+    
+    added = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User)
+    
+    ordering = models.IntegerField(default=0)
 

@@ -6,8 +6,7 @@
         "name" : "Change in Canada",
         "ordering" : 1,
         "owner" : 2,
-        "parent" : null,
-        "resources" : [  ]
+        "parent" : null
       },
     "model" : "library.collection",
     "pk" : 1
@@ -20,8 +19,7 @@
         "name" : "Change in Africa",
         "ordering" : 2,
         "owner" : 2,
-        "parent" : null,
-        "resources" : [  ]
+        "parent" : null
       },
     "model" : "library.collection",
     "pk" : 2
@@ -34,8 +32,7 @@
         "name" : "Creating Change",
         "ordering" : 3,
         "owner" : 2,
-        "parent" : null,
-        "resources" : [  ]
+        "parent" : null
       },
     "model" : "library.collection",
     "pk" : 3
@@ -48,8 +45,7 @@
         "name" : "Leadership Central",
         "ordering" : 4,
         "owner" : 2,
-        "parent" : null,
-        "resources" : [  ]
+        "parent" : null
       },
     "model" : "library.collection",
     "pk" : 4
@@ -62,8 +58,7 @@
         "name" : "Advocacy",
         "ordering" : 1,
         "owner" : 2,
-        "parent" : 1,
-        "resources" : [  ]
+        "parent" : 1
       },
     "model" : "library.collection",
     "pk" : 5
@@ -76,8 +71,7 @@
         "name" : "Fair Trade",
         "ordering" : 2,
         "owner" : 2,
-        "parent" : 1,
-        "resources" : [  ]
+        "parent" : 1
       },
     "model" : "library.collection",
     "pk" : 6
@@ -90,8 +84,7 @@
         "name" : "Global Engineering",
         "ordering" : 3,
         "owner" : 2,
-        "parent" : 1,
-        "resources" : [  ]
+        "parent" : 1
       },
     "model" : "library.collection",
     "pk" : 7
@@ -104,8 +97,7 @@
         "name" : "Workplace Engagement",
         "ordering" : 4,
         "owner" : 2,
-        "parent" : 1,
-        "resources" : [  ]
+        "parent" : 1
       },
     "model" : "library.collection",
     "pk" : 8
@@ -118,8 +110,7 @@
         "name" : "Youth Venture",
         "ordering" : 5,
         "owner" : 2,
-        "parent" : 1,
-        "resources" : [  ]
+        "parent" : 1
       },
     "model" : "library.collection",
     "pk" : 9
@@ -132,8 +123,7 @@
         "name" : "Agricultural Value Chains",
         "ordering" : 1,
         "owner" : 2,
-        "parent" : 2,
-        "resources" : [  ]
+        "parent" : 2
       },
     "model" : "library.collection",
     "pk" : 10
@@ -146,8 +136,7 @@
         "name" : "Business Development Services",
         "ordering" : 2,
         "owner" : 2,
-        "parent" : 2,
-        "resources" : [  ]
+        "parent" : 2
       },
     "model" : "library.collection",
     "pk" : 11
@@ -160,8 +149,7 @@
         "name" : "Government and Rural Infrastructure",
         "ordering" : 3,
         "owner" : 2,
-        "parent" : 2,
-        "resources" : [  ]
+        "parent" : 2
       },
     "model" : "library.collection",
     "pk" : 12
@@ -174,8 +162,7 @@
         "name" : "Water and Sanitation",
         "ordering" : 4,
         "owner" : 2,
-        "parent" : 2,
-        "resources" : [  ]
+        "parent" : 2
       },
     "model" : "library.collection",
     "pk" : 13
@@ -188,8 +175,7 @@
         "name" : "All About EWB",
         "ordering" : 1,
         "owner" : 2,
-        "parent" : 3,
-        "resources" : [  ]
+        "parent" : 3
       },
     "model" : "library.collection",
     "pk" : 14
@@ -202,8 +188,7 @@
         "name" : "Admitting failure",
         "ordering" : 2,
         "owner" : 2,
-        "parent" : 3,
-        "resources" : [  ]
+        "parent" : 3
       },
     "model" : "library.collection",
     "pk" : 15
@@ -216,8 +201,7 @@
         "name" : "How Change Happens",
         "ordering" : 3,
         "owner" : 2,
-        "parent" : 3,
-        "resources" : [  ]
+        "parent" : 3
       },
     "model" : "library.collection",
     "pk" : 16
@@ -230,8 +214,7 @@
         "name" : "Enabling Programs",
         "ordering" : 4,
         "owner" : 2,
-        "parent" : 3,
-        "resources" : [  ]
+        "parent" : 3
       },
     "model" : "library.collection",
     "pk" : 17
@@ -244,8 +227,7 @@
         "name" : "Coaching",
         "ordering" : 1,
         "owner" : 2,
-        "parent" : 4,
-        "resources" : [  ]
+        "parent" : 4
       },
     "model" : "library.collection",
     "pk" : 18
@@ -258,8 +240,7 @@
         "name" : "Facilitation",
         "ordering" : 2,
         "owner" : 2,
-        "parent" : 4,
-        "resources" : [  ]
+        "parent" : 4
       },
     "model" : "library.collection",
     "pk" : 19
@@ -272,8 +253,7 @@
         "name" : "Personal Development",
         "ordering" : 3,
         "owner" : 2,
-        "parent" : 4,
-        "resources" : [  ]
+        "parent" : 4
       },
     "model" : "library.collection",
     "pk" : 20
@@ -286,8 +266,7 @@
         "name" : "Team Building",
         "ordering" : 4,
         "owner" : 2,
-        "parent" : 4,
-        "resources" : [  ]
+        "parent" : 4
       },
     "model" : "library.collection",
     "pk" : 21
@@ -300,8 +279,7 @@
         "name" : "Feedback Culture",
         "ordering" : 5,
         "owner" : 2,
-        "parent" : 4,
-        "resources" : [  ]
+        "parent" : 4
       },
     "model" : "library.collection",
     "pk" : 22

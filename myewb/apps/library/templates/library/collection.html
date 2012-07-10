@@ -61,7 +61,7 @@
     
     <br/><br/>
     
-    {% for r in collection.resources.all %}
+    {% for r in collection.get_ordered_resources %}
         <div class='minipost'>
         <div class='minipostcontents'>
         <div class='minipost-title'>

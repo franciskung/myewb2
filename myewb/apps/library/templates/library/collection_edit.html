@@ -48,12 +48,12 @@ background: #ffffff;
         <br/><br/>
         
         <div id="sortable-files">
-	    {% for file in collection.resources_set.all %}
-	        <p class="question ui-corner-all" id="ruestion-{{child.id}}">
+	    {% for file in collection.get_ordered_resources %}
+	        <p class="question ui-corner-all" id="ruestion-{{file.id}}">
 	            <span class="ui-icon ui-icon-arrow-4"></span>
         	    {{ file.name }}<br/>
         	    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        	    <a href="{% url library_resource_edit child.id %}" class="question_edit">(edit)</a>
+        	    {#<a href="{% url library_resource_edit file.id %}" class="question_edit">(edit)</a>#}
         	    {#<a href="#" class="question_delete" id="question-delete-{{q.id}}">(delete)</a>#}
             </p>
 	        
@@ -91,6 +91,8 @@ background: #ffffff;
 	    </div>
     </div>
     
+    <br style='clear: right;'/><br/>
+    
     
 {% endblock %}
 
@@ -111,6 +113,18 @@ background: #ffffff;
 	        }
 	    });
 
+	    $('#sortable-files').sortable({
+	        revert: true,
+	        handle: 'span',
+	        tolerance: 'pointer',
+	        update: function(event, ui) {
+	            var q_id = ui.item.attr('id').substr(9);
+	            var new_pos = ui.item.parent().children().index(ui.item) + 1;
+                $.post('{% url library_files_reorder collection.id %}',
+                    {'file_id': q_id,
+                     'new_order': new_pos});
+	        }
+	    });
 	});
 </script>
 {% endblock %}

@@ -6,7 +6,7 @@ from django.template.defaultfilters import slugify
 from django.template import RequestContext
 
 from library.forms import FileResourceForm, CollectionForm
-from library.models import Resource, FileResource, Activity, Collection
+from library.models import Resource, FileResource, Activity, Collection, Membership
 
 def home(request):
     collections = Collection.objects.filter(featured=True, parent__isnull=True).order_by('ordering', '-modified')
@@ -59,7 +59,7 @@ def organize(request, resource_id):
         if not collection.user_can_edit(request.user):
             return render_to_response('denied.html', context_instance=RequestContext(request))
 
-        collection.resources.add(resource)
+        collection.add_resource(resource, user=request.user)
         
         if request.is_ajax():
             return HttpResponse('success')
@@ -205,6 +205,37 @@ def collection_reorder(request, collection_id):
             
         return HttpResponse("success")
             
+    return HttpResponse("invalid")
+
+def collection_reorder_files(request, collection_id):
+    if request.method == 'POST' and request.POST.get('file_id', None) and request.POST.get('new_order', None):
+        file_id = request.POST.get('file_id', None)
+        collection = get_object_or_404(Collection, id=collection_id)
+        
+        # TODO perms check here
+        
+        m = Membership.objects.get(collection=collection, resource__id=file_id)
+        current_order = m.ordering
+        new_order = request.POST.get('new_order', None)
+        
+        if current_order != new_order:
+            later_files = Membership.objects.filter(collection=collection,
+                                                    ordering__gt=current_order)
+            for q in later_files:
+                q.ordering = q.ordering - 1
+                q.save()
+                
+            later_files = Membership.objects.filter(collection=collection,
+                                                    ordering__gte=new_order)
+            for q in later_files:
+                q.ordering = q.ordering + 1
+                q.save()
+                
+            m.ordering = new_order
+            m.save()
+            
+        return HttpResponse("success")
+
     return HttpResponse("invalid")
 
 
