@@ -1,14 +1,116 @@
 {% extends 'library/base.html' %}
 
+{% load uni_form_tags %}
+
 {% block body_content %}
+<script type="text/javascript" src="{{ STATIC_URL }}js/jquery-ui.js"></script>
+<link rel="stylesheet" href="{{ STATIC_URL }}css/jquery-ui.css" />
+
+<style>
+span.ui-icon {
+float: left;
+}
+span.ui-icon-arrow-4 {
+background-color: #f0f0f0;
+-moz-border-radius: 3px;
+-webkit-border-radius: 3px;
+margin-right: 6px;
+}
+.ui-icon-arrow-4 {
+float: left;
+cursor: pointer;
+}
+.question, .intquestion, .criteria {
+margin: 5px;
+padding: 5px; 
+border: 1px solid;
+background: #ffffff;
+}
+</style>
+
+
     <h2>Edit Collection</h2>
     
-    <form method="post" action="">
-        {{ form.as_p }}
+    <form method="post" action="" class="uniForm">
+        <fieldset class="inlineLabels">
+            {{ form|as_uni_form }}
         
-        <p>
-            <input type="submit"/>
-        </p>
+            <div class="ctrlHolder">
+                <label></label>
+                <input type="submit" value="save"/>
+            </div>
+        </fieldset>
     </form>
     
+    <div style='width: 45%; float: right;'>
+        <h2>Files</h2>
+        Reorder files by dragging and dropping...
+        <br/><br/>
+        
+        <div id="sortable-files">
+	    {% for file in collection.resources_set.all %}
+	        <p class="question ui-corner-all" id="ruestion-{{child.id}}">
+	            <span class="ui-icon ui-icon-arrow-4"></span>
+        	    {{ file.name }}<br/>
+        	    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        	    <a href="{% url library_resource_edit child.id %}" class="question_edit">(edit)</a>
+        	    {#<a href="#" class="question_delete" id="question-delete-{{q.id}}">(delete)</a>#}
+            </p>
+	        
+	    {% empty %}
+	        No sub-pages...
+	        <br/><br/><br/>
+	    {% endfor %}
+	    </div>
+        
+    </div>
+    
+    <div style='width: 45%;'>
+        <h2>Sub-pages</h2>
+        Reorder sub-pages by dragging and dropping...
+        <br/><br/>
+        
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <a href="{% url library_home %}">add a sub-page</a>
+        <br/>
+
+        <div id="sortable-pages">
+	    {% for child in collection.get_children %}
+	        <p class="question ui-corner-all" id="question-{{child.id}}">
+	            <span class="ui-icon ui-icon-arrow-4"></span>
+        	    {{ child.name }}<br/>
+        	    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        	    <a href="{% url library_collection_edit child.id %}" class="question_edit">(edit)</a>
+        	    {#<a href="#" class="question_delete" id="question-delete-{{q.id}}">(delete)</a>#}
+            </p>
+	        
+	    {% empty %}
+	        No sub-pages...
+	        <br/><br/><br/>
+	    {% endfor %}
+	    </div>
+    </div>
+    
+    
+{% endblock %}
+
+
+{% block extra_body %}
+<script type="text/javascript">
+	$().ready(function() {
+	    $('#sortable-pages').sortable({
+	        revert: true,
+	        handle: 'span',
+	        tolerance: 'pointer',
+	        update: function(event, ui) {
+	            var q_id = ui.item.attr('id').substr(9);
+	            var new_pos = ui.item.parent().children().index(ui.item) + 1;
+                $.post('{% url library_collection_reorder collection.id %}',
+                    {'collection_id': q_id,
+                     'new_order': new_pos});
+	        }
+	    });
+
+	});
+</script>
 {% endblock %}

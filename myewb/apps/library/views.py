@@ -180,3 +180,31 @@ def collection_edit(request, collection_id):
          'form': form},
         context_instance=RequestContext(request))
 
+def collection_reorder(request, collection_id):
+    if request.method == 'POST' and request.POST.get('collection_id', None) and request.POST.get('new_order', None):
+        collection_id = request.POST.get('collection_id', None)
+        collection = get_object_or_404(Collection, id=collection_id)
+        current_order = collection.ordering
+        new_order = request.POST.get('new_order', None)
+        
+        if current_order != new_order:
+            later_collections = Collection.objects.filter(parent=collection.parent,
+                                                          ordering__gt=current_order)
+            for q in later_collections:
+                q.ordering = q.ordering - 1
+                q.save()
+                
+            later_collections = Collection.objects.filter(parent=collection.parent,
+                                                          ordering__gte=new_order)
+            for q in later_collections:
+                q.ordering = q.ordering + 1
+                q.save()
+                
+            collection.ordering = new_order
+            collection.save()
+            
+        return HttpResponse("success")
+            
+    return HttpResponse("invalid")
+
+
