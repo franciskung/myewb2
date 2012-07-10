@@ -34,6 +34,9 @@ class Activity(models.Model):
     object_id = models.PositiveIntegerField(blank=True, null=True)
     content_object = generic.GenericForeignKey()
     
+    class Meta:
+        ordering = ('-date',)
+    
 class Resource(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
