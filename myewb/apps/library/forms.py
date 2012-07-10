@@ -11,6 +11,10 @@ from library.models import FileResource, Collection
 
 class FileResourceForm(forms.ModelForm):
     resource = forms.FileField()
+    
+    scope = forms.CharField(widget=forms.CheckboxInput,
+                            required=False,
+                            label='Is this resource EWB-specific?')
 
     class Meta:
         model = FileResource
@@ -19,6 +23,14 @@ class FileResourceForm(forms.ModelForm):
 
     def clean_name(self):
         return self.cleaned_data['name']
+        
+    def clean_scope(self):
+        if self.cleaned_data['scope'] == 'on':
+            self.cleaned_data['scope'] = 'ewb'
+        else:
+            self.cleaned_data['scope'] = 'world'
+            
+        return self.cleaned_data['scope']
 
     def save(self, *args, **kwargs):
         result, changeset = super(FileResourceForm, self).save(*args, **kwargs)

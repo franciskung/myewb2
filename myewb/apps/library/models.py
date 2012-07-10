@@ -47,8 +47,11 @@ class Resource(models.Model):
     
     #objects = WorkspaceFileManager()
     
-    RESOURCE_TYPES = (('article', 'Article'),
-                      ('workshop', 'Workshop'))
+    RESOURCE_TYPES = (('article', 'Articles and papers'),
+                      ('guide', "Guides and how-to's"),
+                      ('media', 'Visual media'),
+                      ('workshop', 'Workshops')
+                     )
     resource_type = models.CharField(max_length=25,
                                      verbose_name='Type',
                                      choices=RESOURCE_TYPES)

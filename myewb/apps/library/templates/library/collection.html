@@ -74,8 +74,11 @@
         Type:
         <select name='sort_type' id='sort_type' class='sort_option'>
             <option value=''>(all)</option>
-            <option value='article'>Articles</option>
-            <option value='workshop'>Workshops</option>
+            {% for tshort, tlong in resource_types %}
+                <option value='{{ tshort }}'>{{ tlong }}</option>
+            {% endfor %}
+            {#<option value='article'>Articles</option>#}
+            {#<option value='workshop'>Workshops</option>#}
         </select>    
         
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

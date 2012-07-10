@@ -150,7 +150,9 @@ def collection(request, collection_id):
     
     return render_to_response("library/collection.html", 
         {'collection': collection,
-         'can_edit': collection.user_can_edit(request.user)},
+         'can_edit': collection.user_can_edit(request.user),
+         'resource_types': Resource.RESOURCE_TYPES,
+        },
         context_instance=RequestContext(request))
         
 def collection_sorted(request, collection_id):
