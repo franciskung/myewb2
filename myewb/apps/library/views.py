@@ -95,6 +95,13 @@ def collection(request, collection_id):
 def collection_edit(request, collection_id):
     collection = Collection.objects.get(id=collection_id)
 
+    # permissions check
+    if collection.owner != request.user and \
+       request.user not in collection.curators.all() and \
+       not request.user.has_module_perms("library"):
+        return render_to_response('denied.html', context_instance=RequestContext(request))
+        
+    # standard form handling
     if request.method == 'POST':
         form = CollectionForm(request.POST, instance=collection)
         
