@@ -204,10 +204,10 @@ class Collection(models.Model):
         if user.has_module_perms("library"):
             return True
             
-        if collection.owner == request.user:
+        if self.owner == user:
             return True
             
-        if request.user in collection.curators.all():
+        if user in self.curators.all():
             return True
         
         return False
