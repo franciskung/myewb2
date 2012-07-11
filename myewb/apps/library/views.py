@@ -26,6 +26,8 @@ def library_sort(resources, sorting):
             resources = resources.order_by('members__ordering')
         elif sorting == 'rating':
             resources = resources.order_by('-rating')
+        elif sorting == 'modified':
+            resources = resources.order_by('-modified')
         else:
             resources = resources.order_by(sorting)
     return resources
@@ -183,7 +185,8 @@ def mine(request, sort=None):
 #    edited = Activity.objects.select_related('activity').filter(user=request.user, activity_type='edit')
     edited = []
     
-    resources = library_sort(resources, "sort_by_%s" % sort)
+    if sort:
+        resources = library_sort(resources, "sort_by_%s" % sort)
 
     return render_to_response("library/mine.html", 
         {'resources': resources,
