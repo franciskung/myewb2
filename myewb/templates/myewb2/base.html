@@ -374,7 +374,11 @@
             function() {
                 return;
             });
-        $('a .dictionary').removeClass('dictionary');
+        $('a .dictionary').each(function() {
+            if (!$(this).parent('a.quietlink').attr('href')) {
+                $(this).removeClass('dictionary');
+            }
+        });
             
             
         if ($('#box-online-contents').length > 0)
