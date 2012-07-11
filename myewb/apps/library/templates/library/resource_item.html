@@ -1,0 +1,13 @@
+{% load truncate %}
+
+    <div class='minipost'>
+    <div class='minipostcontents'>
+    <div class='minipost-title'>
+        <h3><a href="{% url library_resource resource.id %}">{{ resource.name }}</a></h3>
+    </div>
+    <div class='minipost-text'>
+        {{ resource.description|truncate_head:150 }}
+    </div>
+    </div>
+    </div>
+

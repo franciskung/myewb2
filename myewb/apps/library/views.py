@@ -15,19 +15,41 @@ def home(request):
 
     return render_to_response("library/home.html", {
         'collections': collections,
-        'resources': allresources
+        'resources': allresources,
+        'resource_types': Resource.RESOURCE_TYPES,
     }, context_instance=RequestContext(request))
 
 def search(request):
-    keyword = request.GET.get('keyword', None)
-    rating = request.GET.get('rating', None)
-    topic = request.GET.get('topic', None)
-    resource_type = request.GET.get('type', None)
+    keyword = request.POST.get('keyword', None)
+    rating = request.POST.get('rating', None)
+    topic = request.POST.get('topic', None)
+    resource_type = request.POST.get('type', None)
+    sort = request.POST.get('sort', None)
     
-    results = []
+    results = Resource.objects.all()
+    if keyword:
+        for word in keyword.split():
+            results = results.filter(Q(name__icontains=word) | Q(description__icontains=word))
+    if rating:
+        results = results.filter(rating__gte=rating)
+    if resource_type:
+        results = results.filter(resource_type=resource_type)
+
+    if sort:
+        sorting = sort[8:]
+        if sorting == 'featured':
+            results = results.order_by('members__ordering')
+        else:
+            results = results.order_by(sorting)
+        
     
     return render_to_response("library/search.html", {
-        'results': results
+        'results': results,
+        'keyword': keyword,
+        'rating': rating,
+        'resource_type': resource_type,
+        'sort': sort,
+        'resource_types': Resource.RESOURCE_TYPES,
     }, context_instance=RequestContext(request))
 
     

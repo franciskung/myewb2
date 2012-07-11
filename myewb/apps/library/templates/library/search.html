@@ -1,8 +1,48 @@
 {% extends "library/base.html" %}
 
 {% block body_content %}
+    <style>
+        a.sort_option.current {
+            color: #444;
+        }
+        a.sort_option.current:hover {
+            text-decoration: none;
+        }
+    </style>
+
     <h2>Search the Library</h2>
     
-    <p>Coming soon...!</p>
+    {% include 'library/search_form.html' %}
 
+    {% if results %}
+        <div style='padding: 10px;' id="sort_by">
+            Sort by:
+            <a href="#" id='sort_by_featured' class='sort_option'>Featured</a> |
+            <a href="#" id='sort_by_rating' class='sort_option'>Rating</a> |
+            <a href="#" id='sort_by_name' class='sort_option'>Name</a> |
+            <a href="#" id='sort_by_downloads' class='sort_option'>Downloads</a> |
+            <a href="#" id='sort_by_modified' class='sort_option'>Last updated</a>
+        </div>
+    {% endif %}
+    
+    {% for resource in results %}
+        {% include 'library/resource_item.html' %}
+        
+    {% empty %}
+        <p><strong>Sorry, no results...</strong></p>
+    {% endfor %}
+
+{% endblock %}
+
+{% block extra_body %}
+    <script type='text/javascript'>
+        $().ready(function() {
+            $('#{{ sort }}').addClass('current');
+        
+            $('.sort_option').click(function() {
+                $('#form_sort').val($(this).attr('id'));
+                $('#form_submit').click();
+            });
+        });
+    </script>
 {% endblock %}
