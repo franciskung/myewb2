@@ -3,7 +3,15 @@
 {% load uni_form_tags %}
 
 {% block body_content %}
-    <h2>Add a new resource</h2>
+    <h2>
+        {% if is_link %}
+            Add a new link
+            (<a href="{% url library_upload %}">add a file instead</a>)
+        {% else %}
+            Add a new file
+            (<a href="{% url library_upload_link %}">add a link instead</a>)
+        {% endif %}
+    </h2>
     
     <form method="post" action="" class="uniForm" enctype='multipart/form-data'>
         <fieldset class="inlineLabels">

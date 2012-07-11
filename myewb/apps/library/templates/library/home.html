@@ -95,13 +95,17 @@
     <h2>&nbsp;</h2>
     
     
-    <a href="{% url library_upload %}" style='display: block; border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; background: green; width: 200px; margin: 0 auto; padding: 10px; text-align: center;'>
-        <span style='font-size: 14px; font-weight: bold; color: #ffffff;'>UPLOAD A <br/>NEW FILE</span>
+    <a href="{% url library_upload %}" style='display: block; border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; background: green; width: 200px; margin: 0 auto; padding: 10px; text-align: center; color: #ffffff;' id="add_resource">
+        <span style='font-size: 14px; font-weight: bold; color: #ffffff;'>ADD A NEW<br/>RESOURCE</span>
     </a>
+    <div style="background: green; width: 150px; margin: 0 auto; padding: 10px 20px; text-align: right; color: #ffffff; position: relative; top: -0.5em; left: 15px; line-height: 1.5em; display: none;" id="add_resource_more">
+        <a href="{% url library_upload %}">Upload a file &raquo;</a><br/>
+        <a href="{% url library_upload_link %}">Add a link &raquo;</a>
+    </div>
     <br/>
     
-    <a href="{% url library_mine %}" style='display: block; border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; background: green; width: 200px; padding: 10px; margin: 0 auto; text-align: center;'>
-        <span style='font-size: 14px; font-weight: bold; color: #ffffff;'>MY FILES</span>
+    <a href="{% url library_mine %}" style='display: block; border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; background: green; width: 200px; padding: 10px; margin: 0 auto; text-align: center; color: #ffffff;'>
+        <span style='font-size: 14px; font-weight: bold; color: #ffffff;'>MY RESOURCES</span>
     </a>
     <br/><br/>
     
@@ -113,4 +117,15 @@
         <a href="{% url library_collection c.id c.slug %}">{{ c.title }}</a>
     {% endfor %}
 
+{% endblock %}
+
+{% block extra_body %}
+    <script type='text/javascript'>
+        $().ready(function() {
+            $('#add_resource').click(function() {
+                $('#add_resource_more').slideToggle();
+                return false;
+            });
+        });
+    </script>
 {% endblock %}

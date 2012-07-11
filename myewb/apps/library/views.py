@@ -177,7 +177,8 @@ def upload(request, link=False):
             form = FileResourceForm()
     
     return render_to_response("library/upload.html", 
-        {'form': form},
+        {'form': form,
+         'is_link': link},
         context_instance=RequestContext(request))
         
 def mine(request, sort=None):

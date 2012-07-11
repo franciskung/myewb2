@@ -160,7 +160,7 @@ class FileResource(Resource):
         
         
 class LinkResource(Resource):
-    url = models.URLField()
+    url = models.URLField(verbose_name='URL')
     
     def save(self, *args, **kwargs):
         self.model = 'linkresource'
