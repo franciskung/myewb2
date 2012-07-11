@@ -19,6 +19,18 @@ def home(request):
         'resource_types': Resource.RESOURCE_TYPES,
     }, context_instance=RequestContext(request))
 
+def library_sort(resources, sorting):
+    if sorting and sorting[0:7] == 'sort_by':
+        sorting = sorting[8:]
+        if sorting == 'featured':
+            resources = resources.order_by('members__ordering')
+        elif sorting == 'rating':
+            resources = resources.order_by('-rating')
+        else:
+            resources = resources.order_by(sorting)
+    return resources
+
+
 def search(request):
     keyword = request.GET.get('keyword', None)
     rating = request.GET.get('rating', None)
@@ -35,14 +47,7 @@ def search(request):
     if resource_type:
         results = results.filter(resource_type=resource_type)
 
-    if sort and sort[0:7] == 'sort_by':
-        print "sort is", sort
-        sorting = sort[8:]
-        if sorting == 'featured':
-            results = results.order_by('members__ordering')
-        else:
-            results = results.order_by(sorting)
-        
+    results = library_sort(results, sort)
     
     return render_to_response("library/search.html", {
         'results': results,
@@ -169,13 +174,17 @@ def upload(request):
         {'form': form},
         context_instance=RequestContext(request))
         
-def mine(request):
+def mine(request, sort=None):
     resources = Resource.objects.filter(creator=request.user)    
-    edited = Activity.objects.select_related('activity').filter(user=request.user, activity_type='edit')
+#    edited = Activity.objects.select_related('activity').filter(user=request.user, activity_type='edit')
+    edited = []
+    
+    resources = library_sort(resources, "sort_by_%s" % sort)
 
     return render_to_response("library/mine.html", 
         {'resources': resources,
-         'edited': edited},
+         'edited': edited,
+         'sort': sort},
         context_instance=RequestContext(request))
 
 def collection(request, collection_id, slug=None):
@@ -198,14 +207,7 @@ def collection_sorted(request, collection_id):
     if request.GET.get('scope', None):
         resources = resources.filter(scope='ewb')
     if request.GET.get('sort_by', None):
-        sorting = request.GET['sort_by']
-        sorting = sorting[8:]
-        
-        if sorting == 'featured':
-            resources = resources.order_by('members__ordering')
-        else:
-            resources = resources.order_by(sorting)
-
+        resources = library_sort(resources, request.GET['sort_by'])
     
     return render_to_response("library/ajax/collection_sorted.html", 
         {'collection': collection,

@@ -1,29 +1,63 @@
 {% extends 'library/base.html' %}
 
-{% block body_content %}
-    <h2>My Resources</h2>
-    
-    {% if resources %}
-        {% for r in resources %}
-            <a href="{% url library_resource r.id %}">{{ r.name }}</a>
-            <br/><br/>
-        {% endfor %}
-        
-        
-    {% else %}
-        <p>You haven't created any resources yet.</p>
-    {% endif %}
-    
-    
-    <h2>Resources I've Edited</h2>
-    {% if edited %}
-        {% for e in edited %}
-            <a href="{% url library_resource e.id %}">{{ e.name }}</a>
-            <br/><br/>
-        {% endfor %}
-        
-    {% else %}
-        <p>You haven't edited any resources yet.</p>
-    {% endif %}
+{% load pagination_tags %}
 
+{% block body_content %}
+    {#<div style='border-right: 1px solid #a0a0a0; padding-right: 15px; width: 40%; float: left;'>#}
+        <h2>My Resources</h2>
+        
+        {% if resources %}
+            <div style='padding: 10px;' id="sort_by">
+                Sort by:
+                <a href="{% url library_mine 'featured' %}" id='sort_by_featured' class='sort_option'>Featured</a> |
+                <a href="{% url library_mine 'rating' %}" id='sort_by_rating' class='sort_option'>Rating</a> |
+                <a href="{% url library_mine 'name' %}" id='sort_by_name' class='sort_option'>Name</a> |
+                <a href="{% url library_mine 'downloads' %}" id='sort_by_downloads' class='sort_option'>Downloads</a> |
+                <a href="{% url library_mine 'modified' %}" id='sort_by_modified' class='sort_option'>Last updated</a>
+            </div>
+        {% endif %}
+        
+        {% autopaginate resources 10 %}
+        
+        {% if resources %}
+            {% for resource in resources %}
+                {% include 'library/resource_item.html' %}
+            {% endfor %}
+        {% else %}
+            <p>You haven't created any resources yet.</p>
+        {% endif %}
+        
+        {% paginate %}
+        
+    {#</div>#}
+
+    {% comment %}
+    <div style='margin-left: 60%;'>    
+        <h2>Resources I've Edited</h2>
+        {% if edited %}
+            {% for resource in edited %}
+                {% include 'library/resource_item.html' %}
+            {% endfor %}
+            
+        {% else %}
+            <p>You haven't edited any resources yet.</p>
+        {% endif %}
+    </div>
+    {% endcomment %}
+
+{% endblock %}
+
+{% block toolbar_right %}
+&nbsp;
+{% endblock %}
+
+{% block extra_body %}
+    <script type='text/javascript'>
+        $().ready(function() {
+            var sorting = '{{ sort }}';
+            if (sorting) {
+                $('#sort_by_' + sorting).addClass('current');
+            }
+        });
+    </script>
 {% endblock %}
