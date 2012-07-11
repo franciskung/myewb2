@@ -20,11 +20,11 @@ def home(request):
     }, context_instance=RequestContext(request))
 
 def search(request):
-    keyword = request.POST.get('keyword', None)
-    rating = request.POST.get('rating', None)
-    topic = request.POST.get('topic', None)
-    resource_type = request.POST.get('type', None)
-    sort = request.POST.get('sort', None)
+    keyword = request.GET.get('keyword', None)
+    rating = request.GET.get('rating', None)
+    topic = request.GET.get('topic', None)
+    resource_type = request.GET.get('type', None)
+    sort = request.GET.get('sort', None)
     
     results = Resource.objects.all()
     if keyword:
@@ -35,7 +35,8 @@ def search(request):
     if resource_type:
         results = results.filter(resource_type=resource_type)
 
-    if sort:
+    if sort and sort[0:7] == 'sort_by':
+        print "sort is", sort
         sorting = sort[8:]
         if sorting == 'featured':
             results = results.order_by('members__ordering')

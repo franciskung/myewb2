@@ -1,5 +1,7 @@
 {% extends "library/base.html" %}
 
+{% load pagination_tags %}
+
 {% block body_content %}
     <style>
         a.sort_option.current {
@@ -25,12 +27,16 @@
         </div>
     {% endif %}
     
+    {% autopaginate results 10 %}
+
     {% for resource in results %}
         {% include 'library/resource_item.html' %}
         
     {% empty %}
         <p><strong>Sorry, no results...</strong></p>
     {% endfor %}
+
+    {% paginate %}
 
 {% endblock %}
 
