@@ -9,6 +9,32 @@
 {% block body %}
     <h1>EWB Resource Library</h1>
     
+    <style>
+        .direct_download {
+            float: right;
+            border: 1px solid green;
+            -moz-border-radius: 0.5em;
+            -webkit-border-radius: 0.5em;
+            border-radius: 0.5em;
+            padding: 10px 10px 10px 30px;
+            position: relative;
+            background: green;
+        }
+        a.direct_download {
+            color: #ffffff;
+        }
+        .download_icon {
+            position: absolute;
+            top: 5px;
+            left: 0;
+            height: 30px;
+        }
+        img.fileicon {
+            height: 16px;
+            width: 16px;
+        }
+    </style>
+    
     {% block body_content %}
     {% endblock %}
 

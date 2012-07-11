@@ -1,11 +1,28 @@
 {% load truncate %}
+{% load icon_tags %}
+
 
     <div class='minipost'>
     <div class='minipostcontents'>
     <div class='minipost-title'>
-        <h3><a href="{% url library_resource resource.id %}">{{ resource.name }}</a></h3>
+        <a href="{% url library_download resource.id %}" class="direct_download">
+            <img src="{{ STATIC_URL }}images/icons/Download.ico" class="download_icon"/>
+            Download
+        </a>
+        
+        <span style='float: right; padding-top: 10px; padding-right: 10px;'>
+            {{ resource.rating|to_stars }}
+        </span>
+        
+        <h3>
+            {% if resource.fileresource %}
+                {% icon_for_filename resource.fileresource.filename %}
+            {% endif %}
+            
+            <a href="{% url library_resource resource.id %}">{{ resource.name }}</a>
+        </h3>
     </div>
-    <div class='minipost-text'>
+    <div class='minipost-text' style='padding-left: 25px;'>
         {{ resource.description|truncate_head:150 }}
     </div>
     </div>

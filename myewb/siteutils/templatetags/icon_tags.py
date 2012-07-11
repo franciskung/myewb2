@@ -75,3 +75,4 @@ def to_stars(value):
         
     return mark_safe(output)
 to_stars.is_safe = True
+
