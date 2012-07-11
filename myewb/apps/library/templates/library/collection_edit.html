@@ -100,6 +100,9 @@ background: #ffffff;
 
 
 {% block extra_body %}
+{{ block.super }}
+{% include "tinymce.html" %}
+	
 <script type="text/javascript">
 	$().ready(function() {
 	    $('#sortable-pages').sortable({

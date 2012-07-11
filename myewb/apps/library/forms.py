@@ -5,11 +5,14 @@ from django.forms import widgets
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
 
-from lxml.html.clean import clean_html, autolink_html
+from lxml.html.clean import clean_html, autolink_html, Cleaner
+from siteutils.helpers import autolink_email
 
 from library.models import FileResource, Collection
 
 class FileResourceForm(forms.ModelForm):
+    description = forms.CharField(widget=forms.Textarea(attrs={'class':'tinymce '}))
+
     resource = forms.FileField()
     
     scope = forms.CharField(widget=forms.CheckboxInput,
@@ -32,6 +35,21 @@ class FileResourceForm(forms.ModelForm):
             
         return self.cleaned_data['scope']
 
+    # do HTML validation and auto-linking
+    def clean_description(self):
+        body = self.cleaned_data.get('description', '')
+        
+        # validate HTML content
+        # Additional options at http://codespeak.net/lxml/lxmlhtml.html#cleaning-up-html
+        body = clean_html(body)
+        body = autolink_html(body)
+        
+        # emails too
+        body = autolink_email(body)
+        
+        self.cleaned_data['description'] = body
+        return body
+    
     def save(self, *args, **kwargs):
         result, changeset = super(FileResourceForm, self).save(*args, **kwargs)
         
@@ -40,7 +58,25 @@ class FileResourceForm(forms.ModelForm):
         return result, changeset
         
 class CollectionForm(forms.ModelForm):
+    description = forms.CharField(widget=forms.Textarea(attrs={'class':'tinymce '}))
+
     class Meta:
         model = Collection
         fields = ('name', 'description')
+
+    # do HTML validation and auto-linking
+    def clean_description(self):
+        body = self.cleaned_data.get('description', '')
+        
+        # validate HTML content
+        # Additional options at http://codespeak.net/lxml/lxmlhtml.html#cleaning-up-html
+        body = clean_html(body)
+        body = autolink_html(body)
+        
+        # emails too
+        body = autolink_email(body)
+        
+        self.cleaned_data['description'] = body
+        return body
+    
 

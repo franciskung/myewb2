@@ -233,7 +233,7 @@ def collection_edit(request, collection_id):
             
             return HttpResponseRedirect(reverse('library_collection',
                                                 kwargs={'collection_id': collection_id,
-                                                        'slug': collection.slug}
+                                                        'slug': collection.slug()}
                                                ))
     else:
         form = CollectionForm(instance=collection)

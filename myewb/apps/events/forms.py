@@ -17,6 +17,17 @@ class EventForm(forms.ModelForm):
     
     description = forms.CharField(widget=forms.Textarea(attrs={'class':'tinymce '}))
 
+    def clean_description(self):
+        body = self.cleaned_data.get('description', '')
+
+        # validate HTML content
+        # Additional options at http://codespeak.net/lxml/lxmlhtml.html#cleaning-up-html
+        body = clean_html(body)
+        #body = autolink_html(body)
+    
+        self.cleaned_data['description'] = body
+        return self.cleaned_data['description']
+        
     def clean(self):
         # why does this get called before field validation that ensures they are filled in???
         if self.cleaned_data.get('end', None) and self.cleaned_data.get('start', None):

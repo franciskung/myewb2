@@ -105,6 +105,7 @@ class GroupTopicForm(forms.ModelForm):
         # emails too
         body = autolink_email(body)
         
+        self.cleaned_data['body'] = body
         return body
     
     
