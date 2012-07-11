@@ -6,6 +6,23 @@
 {% load avatar_tags %}
 
 {% block body_content %}
+    <style>
+        span.star {
+            display: inline-block;
+            height: 20px;
+            width: 20px;
+            background: url('{{ STATIC_URL }}images/icons3/Favorite_20.png'); 
+        }
+        span.star.faded, span.star.faded:hover {
+            opacity: 0.4;
+            filter: alpha(opacity=40);
+        }
+        .clickable span.star {
+            cursor: pointer;
+        }
+    </style>
+
+
     <h2 style='margin-bottom: 5px;'><a href="{% url library_download resource.id %}">{{ resource.name }}</a></h2>
     
     <em>
@@ -18,7 +35,45 @@
         Updated {% mktime resource.modified %}
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         
-        {{ resource.rating }} stars
+        <span id="is_clickable" {% if not rating %}class="clickable"{% endif %}>
+        {% ifequal resource.rating 1 %}
+            <span class="star" id="star1"/></span>
+            <span class="star faded" id="star2"/></span>
+            <span class="star faded" id="star3"/></span>
+            <span class="star faded" id="star4"/></span>
+            <span class="star faded" id="star5"/></span>
+        {% endifequal %}
+        {% ifequal resource.rating 2 %}
+            <span class="star" id="star1"/></span>
+            <span class="star" id="star2"/></span>
+            <span class="star faded" id="star3"/></span>
+            <span class="star faded" id="star4"/></span>
+            <span class="star faded" id="star5"/></span>
+        {% endifequal %}
+        {% ifequal resource.rating 3 %}
+            <span class="star" id="star1"/></span>
+            <span class="star" id="star2"/></span>
+            <span class="star" id="star3"/></span>
+            <span class="star faded" id="star4"/></span>
+            <span class="star faded" id="star5"/></span>
+        {% endifequal %}
+        {% ifequal resource.rating 4 %}
+            <span class="star" id="star1"/></span>
+            <span class="star" id="star2"/></span>
+            <span class="star" id="star3"/></span>
+            <span class="star" id="star4"/></span>
+            <span class="star faded" id="star5"/></span>
+        {% endifequal %}
+        {% ifequal resource.rating 5 %}
+            <span class="star" id="star1"/></span>
+            <span class="star" id="star2"/></span>
+            <span class="star" id="star3"/></span>
+            <span class="star" id="star4"/></span>
+            <span class="star" id="star5"/></span>
+        {% endifequal %}
+        </span>
+        
+        
     </em>
     <br/><br/>
     
@@ -146,6 +201,45 @@
 
     <script type='text/javascript'>	
     	$('#organize').colorbox({opacity: '0.5', width: '600px;', height: '50%'});
+    	
+    	var old_rating = '{{ resource.rating }}';
+    	old_rating++;
+    	$('.clickable .star').hover(function() {
+    	                    var starnum = $(this).attr('id').substring(4);
+    	                    for (var x = 1; x <= starnum; x++) {
+    	                        $('#star' + x).removeClass('faded');
+    	                    }
+    	                    for (var x = ++starnum; x <= 5; x++) {
+    	                        $('#star' + x).addClass('faded');
+    	                    }
+    	                },
+    	                function() {
+    	                    for (var x = 1; x < old_rating; x++) {
+    	                        $('#star' + x).removeClass('faded');
+    	                    }
+    	                    for (var x = old_rating; x <= 5; x++) {
+    	                        $('#star' + x).addClass('faded');
+    	                    }
+    	                });
+    	$('.clickable .star').click(function() {
+    	    var starnum = $(this).attr('id').substring(4);
+    	    var rating = $(this).attr('id').substring(4);
+    	    $('#is_clickable').removeClass('clickable');
+    	    $('.star').unbind('mouseenter mouseleave');
+
+            for (var x = 1; x <= starnum; x++) {
+                $('#star' + x).removeClass('faded');
+            }
+            for (var x = ++starnum; x <= 5; x++) {
+                $('#star' + x).addClass('faded');
+            }
+
+    	    $.post('{% url library_rate resource.id %}',
+    	           {rating: rating},
+    	           function(data) {
+    	                ;
+    	           });
+    	});
     </script>
 {% endblock %}
 

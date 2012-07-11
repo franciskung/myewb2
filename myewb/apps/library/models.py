@@ -86,6 +86,33 @@ class Resource(models.Model):
                                     
         return getattr(self, getattr(self, 'model')).direct_download()
         
+    def get_rating(self, user):
+        return get_object_or_none(Rating, resource=self, user=user)
+        
+    def add_rating(self, user, rating):
+        rating_obj = self.get_rating(user)
+
+        if not rating_obj:
+            rating_obj = Rating.objects.create(resource=self, user=user, rating=rating)
+            
+            ratings = Rating.objects.filter(resource=self)
+            num_ratings = len(ratings)
+            sum_ratings = 0
+            for r in ratings:
+                sum_ratings = sum_ratings + r.rating
+                # yeah, I could use aggregates for this. probably should.
+            
+            avg_rating = round(float(sum_ratings) / num_ratings)
+            
+            self.rating = avg_rating
+            self.save()
+            
+            Activity.objects.create(resource=self,
+                                    user=user,
+                                    activity_type='rate',
+                                    content_object=rating_obj)
+            
+        return rating_obj
     
 # TODO: regex to use for validating filenames.  For now, anything not alpha-numeric-
 # dash-underscore-period-space gets stripped, but would be good to allow accents eventually.
@@ -248,4 +275,12 @@ class Membership(models.Model):
     user = models.ForeignKey(User)
     
     ordering = models.IntegerField(default=0)
+
+class Rating(models.Model):
+    resource = models.ForeignKey(Resource, related_name='ratings')
+    user = models.ForeignKey(User)
+    
+    added = models.DateTimeField(auto_now_add=True)
+    rating = models.IntegerField(default=0)
+
 

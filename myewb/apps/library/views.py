@@ -38,6 +38,7 @@ def resource(request, resource_id):
     return render_to_response("library/resource.html", {
         'resource': resource,
         'activity': activity,
+        'rating': resource.get_rating(request.user)
     }, context_instance=RequestContext(request))
     
 def download(request, resource_id):
@@ -80,6 +81,15 @@ def organize(request, resource_id):
             'resource': resource,
             'collections': collections,
         }, context_instance=RequestContext(request))
+        
+def rate(request, resource_id):
+    resource = Resource.objects.get(id=resource_id)
+    rating = request.POST.get('rating', None)
+    
+    if rating:
+        resource.add_rating(request.user, rating)
+    
+    return HttpResponse(resource.rating)
     
 def browse(request):
     collection_id = request.POST.get('dir', None)

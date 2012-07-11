@@ -13,6 +13,7 @@ urlpatterns = patterns('',
     url(r'^view/(?P<resource_id>\d+)/$', resource, name='library_resource'),
     url(r'^download/(?P<resource_id>\d+)/$', download, name='library_download'),
     url(r'^organize/(?P<resource_id>\d+)/$', organize, name='library_organize'),
+    url(r'^rate/(?P<resource_id>\d+)/$', rate, name='library_rate'),
     url(r'^browse/$', browse, name='library_folder_browse'),
     
     url(r'^upload/$', upload, name='library_upload'),
