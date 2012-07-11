@@ -7,7 +7,12 @@
     <div class='minipost-title'>
         <a href="{% url library_download resource.id %}" class="direct_download">
             <img src="{{ STATIC_URL }}images/icons/Download.ico" class="download_icon"/>
-            Download
+            {% if resource.linkresource %}
+                Visit
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            {% else %}
+                Download
+            {% endif %}
         </a>
         
         <span style='float: right; padding-top: 10px; padding-right: 10px;'>

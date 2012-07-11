@@ -91,7 +91,13 @@
     <br/>
 
     <a href="{% url library_download resource.id %}" style='display: block; border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; background: green; width: 200px; padding: 15px 10px; text-align: center;'>
-        <span style='font-size: 14px; font-weight: bold; color: #ffffff;'>DOWNLOAD</span>
+        <span style='font-size: 14px; font-weight: bold; color: #ffffff;'>
+            {% if resource.linkresource %}
+                VISIT
+            {% else %}
+                DOWNLOAD
+            {% endif %}
+        </span>
     </a>
 
     {% if resource.collection_set.all %}
@@ -131,10 +137,21 @@
     <br/>
 
     <div style='font-style: italic; text-align: center;'>
-        {{ resource.downloads }} downloads    
+        {{ resource.downloads }}
+        {% if resource.linkresource %}
+            visits
+        {% else %}
+            downloads
+        {% endif %}
     </div>
     <a href="{% url library_download resource.id %}" style='display: block; border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; background: green; width: 200px; margin: 0 auto; padding: 15px 10px; text-align: center;'>
-        <span style='font-size: 14px; font-weight: bold; color: #ffffff;'>DOWNLOAD</span>
+        <span style='font-size: 14px; font-weight: bold; color: #ffffff;'>
+            {% if resource.linkresource %}
+                VISIT
+            {% else %}
+                DOWNLOAD
+            {% endif %}
+        </span>
     </a>
     <br/>
 
@@ -168,7 +185,12 @@
                 	<a href="{% url profile_detail a.user.username %}"  class="avatar-whos-online" data-background-src="{% avatar_url a.user 25 %}" style="margin-right: 10px; margin-bottom: 15px;"></a>
 
                     {% ifequal a.activity_type 'download' %}
-                        Downloaded by <a href="{% url profile_detail a.user.username %}">{{ a.user.visible_name }}</a>
+                        {% if resource.linkresource %}
+                            Visited
+                        {% else %}
+                            Downloaded
+                        {% endif %}
+                        by <a href="{% url profile_detail a.user.username %}">{{ a.user.visible_name }}</a>
                         <br/>
                         <span style='font-color: #d0d0d0; font-size: 0.7em; font-style: italic;'>{% mktime_coarse a.date %}</span>
                     {% endifequal %}
