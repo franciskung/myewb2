@@ -117,39 +117,10 @@ class Resource(models.Model):
 # TODO: regex to use for validating filenames.  For now, anything not alpha-numeric-
 # dash-underscore-period-space gets stripped, but would be good to allow accents eventually.
 re_filename = re.compile(r'[^A-Za-z0-9\-_. ]')
-
-class FileResourceManager(models.Manager):
-    # Take the uploaded file (typicall from request.FILES['files'])
-    # and attach it to a new FileResource instance.
-    
-    def upload(self, uploadedfile):
-        # build and validate file name name
-        filename = re_filename.sub(r'', uploadedfile.name)
-            
-        # create wrapper object
-        resource = self.create(filename=filename)
-            
-        # open file
-        diskfile = open(resource.get_path(), 'wb+')
-            
-        # write file to disk
-        md5 = hashlib.md5()
-        
-        for chunk in uploadedfile.chunks():
-            diskfile.write(chunk)
-            md5.update(chunk)
-        diskfile.close()
-        
-        resource.checksum = md5.hexdigest()
-        resource.save()
-
-        return resource
         
 class FileResource(Resource):
     filename = models.CharField(max_length=255)
     checksum = models.CharField(max_length=32, default='')
-    
-    objects = FileResourceManager()
     
     def save(self, *args, **kwargs):
         self.model = 'fileresource'
@@ -166,10 +137,32 @@ class FileResource(Resource):
     def direct_download(self):
         return os.path.join(settings.STATIC_URL, 'library/files', str(self.id), self.filename)
         
+    def upload(self, uploadedfile):
+        # build and validate file name name
+        filename = re_filename.sub(r'', uploadedfile.name)
+        self.filename=filename
+            
+        # open file
+        diskfile = open(self.get_path(), 'wb+')
+            
+        # write file to disk
+        md5 = hashlib.md5()
+        
+        for chunk in uploadedfile.chunks():
+            diskfile.write(chunk)
+            md5.update(chunk)
+        diskfile.close()
+        
+        self.checksum = md5.hexdigest()
+        self.save()
+
+        return self
+        
+        
 class LinkResource(Resource):
     url = models.URLField()
     
-    def save(*args, **kwargs):
+    def save(self, *args, **kwargs):
         self.model = 'linkresource'
         return super(LinkResource, self).save(*args, **kwargs)
         

@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404, render_to_response
 from django.template.defaultfilters import slugify
 from django.template import RequestContext
 
-from library.forms import FileResourceForm, CollectionForm
+from library.forms import FileResourceForm, LinkResourceForm, CollectionForm
 from library.models import Resource, FileResource, Activity, Collection, Membership
 
 def home(request):
@@ -149,26 +149,30 @@ def browse(request):
     
     return HttpResponse(output)
     
-def upload(request):
+def upload(request, link=False):
     if request.method == 'POST':
-        form = FileResourceForm(request.POST, request.FILES)
+        if link:
+            form = LinkResourceForm(request.POST)
+        else:
+            form = FileResourceForm(request.POST, request.FILES)
         
         if form.is_valid():
-            # save file
-            resource = FileResource.objects.upload(request.FILES['resource'])
-                                                   
+            resource = form.save()
+            
+            if not link:
+                resource.upload(request.FILES['resource'])
+                
             resource.creator = request.user
-            resource.name = form.cleaned_data['name']
-            resource.description = form.cleaned_data['description']
-            resource.resource_type = form.cleaned_data['resource_type']
-            resource.scope = form.cleaned_data['scope']
             resource.save()
                                                 
             # redirect to file info display
             return HttpResponseRedirect(reverse('library_resource', kwargs={'resource_id': resource.id}))
     
     else:
-        form = FileResourceForm()
+        if link:
+            form = LinkResourceForm()
+        else:
+            form = FileResourceForm()
     
     return render_to_response("library/upload.html", 
         {'form': form},

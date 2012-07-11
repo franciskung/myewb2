@@ -8,19 +8,17 @@ from django.utils.translation import ugettext_lazy as _
 from lxml.html.clean import clean_html, autolink_html, Cleaner
 from siteutils.helpers import autolink_email
 
-from library.models import FileResource, Collection
+from library.models import Resource, FileResource, LinkResource, Collection
 
-class FileResourceForm(forms.ModelForm):
+class ResourceForm(forms.ModelForm):
     description = forms.CharField(widget=forms.Textarea(attrs={'class':'tinymce '}))
 
-    resource = forms.FileField()
-    
     scope = forms.CharField(widget=forms.CheckboxInput,
                             required=False,
                             label='Is this resource EWB-specific?')
 
     class Meta:
-        model = FileResource
+        model = Resource
         fields = ('name', 'description',
                   'resource_type', 'scope')
 
@@ -49,13 +47,21 @@ class FileResourceForm(forms.ModelForm):
         
         self.cleaned_data['description'] = body
         return body
-    
-    def save(self, *args, **kwargs):
-        result, changeset = super(FileResourceForm, self).save(*args, **kwargs)
-        
-        # we could also trigger an article refresh here...?
 
-        return result, changeset
+class FileResourceForm(ResourceForm):
+    resource = forms.FileField()
+
+    class Meta:
+        model = FileResource
+        fields = ('name', 'description',
+                  'resource_type', 'scope')
+
+class LinkResourceForm(ResourceForm):
+    class Meta:
+        model = LinkResource
+        fields = ('name', 'description',
+                  'resource_type', 'scope', 'url')
+
         
 class CollectionForm(forms.ModelForm):
     description = forms.CharField(widget=forms.Textarea(attrs={'class':'tinymce '}))

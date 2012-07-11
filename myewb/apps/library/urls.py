@@ -17,6 +17,7 @@ urlpatterns = patterns('',
     url(r'^browse/$', browse, name='library_folder_browse'),
     
     url(r'^upload/$', upload, name='library_upload'),
+    url(r'^upload/link/$', upload, name='library_upload_link', kwargs={'link': True}),
 
     url(r'^mine/(?P<sort>\w+)/$', mine, name='library_mine'),    
     url(r'^mine/$', mine, name='library_mine'),    
