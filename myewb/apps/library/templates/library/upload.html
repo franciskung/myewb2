@@ -1,11 +1,24 @@
 {% extends 'library/base.html' %}
 
+{% load uni_form_tags %}
+
 {% block body_content %}
     <h2>Add a new resource</h2>
     
-    <form method="post" action="" enctype="multipart/form-data" class="uniForm2">
-        {{ form.as_p }}
-        <br/>
-        <input type="submit"/>
+    <form method="post" action="" class="uniForm">
+        <fieldset class="inlineLabels">
+            {{ form|as_uni_form }}
+        
+            <div class="ctrlHolder">
+                <label></label>
+                <input type="submit" value="save"/>
+            </div>
+        </fieldset>
     </form>
+    
+{% endblock %}
+
+{% block extra_body %}
+    {{ block.super }}
+    {% include "tinymce.html" %}
 {% endblock %}
