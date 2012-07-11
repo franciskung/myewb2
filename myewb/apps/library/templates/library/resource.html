@@ -3,6 +3,7 @@
 {% load time_filters %}
 {% load dictionary_tags %}
 {% load attachablecomments_tags %}
+{% load avatar_tags %}
 
 {% block body_content %}
     <h2 style='margin-bottom: 5px;'><a href="{% url library_download resource.id %}">{{ resource.name }}</a></h2>
@@ -101,7 +102,9 @@
             <div class="minipostcontents" style='margin-top: -15px; margin-bottom: -15px;'>
         
             {% for a in activity %}
-                <p>
+                <p style='clear: left;'>
+                	<a href="{% url profile_detail a.user.username %}"  class="avatar-whos-online" data-background-src="{% avatar_url a.user 25 %}" style="margin-right: 10px; margin-bottom: 15px;"></a>
+
                     {% ifequal a.activity_type 'download' %}
                         Downloaded by <a href="{% url profile_detail a.user.username %}">{{ a.user.visible_name }}</a>
                         <br/>
