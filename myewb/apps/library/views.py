@@ -61,7 +61,7 @@ def search(request):
     
 def resource(request, resource_id):
     resource = Resource.objects.get(id=resource_id)
-    activity = Activity.objects.filter(resource=resource)
+    activity = Activity.objects.filter(resource=resource)[0:10]
     
     return render_to_response("library/resource.html", {
         'resource': resource,
