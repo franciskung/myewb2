@@ -375,7 +375,7 @@ padding-top: 18px;
   background: #ffffff url('../../../images/icons/Search.ico') no-repeat center left;
   background-size: 15px;
   padding-left: 20px;
-  width: 200px;
+  width: 180px;
   color: #a0a0a0;
   margin: 10px;
 }
@@ -443,7 +443,7 @@ box-shadow: 0px 0px 1px #CF6904;
 .myewb-header a {
 display: block;
 float: left;
-padding: 0 17px;
+padding: 0 15px;
 height: 75px;
 
 color: #ffffff;

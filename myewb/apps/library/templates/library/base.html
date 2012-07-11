@@ -2,6 +2,26 @@
 
 {% load dictionary_tags %}
 
+{% block nav_class_library %} current{% endblock %}
+
+{% block body_class %}library red{% endblock %}
+
+{% block subnav %}
+
+    <ul class="subnav">
+        
+        <li><a href="{% url library_home %} ">Library Home</a></li>
+        
+        {% if user.is_authenticated %}
+            <li><a href="{% url library_mine %} ">My Resources</a></li>
+            <li><a href="{% url library_upload %} ">Upload a resource</a></li>
+        {% endif %}
+        
+    </ul>
+
+
+{% endblock %}
+
 {% block head_title %}
     Resource Library
 {% endblock %}
