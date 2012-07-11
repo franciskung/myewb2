@@ -60,6 +60,11 @@
     <meta property="og:image" content="http://my.ewb.ca{{ STATIC_URL }}images/ewb_logo.png" />
 
     <style>
+        a .dictionary {
+            color: #cb5e00;
+            border-bottom: none;
+            cursor: auto;
+        }
         .dictionary {
 /*            color: #cb5e00;*/
             color: #222;
@@ -369,6 +374,7 @@
             function() {
                 return;
             });
+        $('a .dictionary').removeClass('dictionary');
             
             
         if ($('#box-online-contents').length > 0)
