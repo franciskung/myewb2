@@ -56,6 +56,15 @@
         {% if can_edit %}
             <span style='padding: 0 5px;'>&raquo;</span>
             <a href="{% url library_collection_edit collection.id %}">edit now</a>
+            
+            <div style='padding-top: 5px; font-style: normal;'>
+                <a href="{% url library_upload collection.id %}">Upload a file</a>
+                &nbsp;&nbsp;|&nbsp;&nbsp;
+                <a href="{% url library_upload_link collection.id %}">Add a link</a>
+                &nbsp;&nbsp;|&nbsp;&nbsp;
+                <a href="{% url library_collection_create collection.id %}">Create a sub-page</a>
+            </div>
+            
         {% endif %}
         
     </div>

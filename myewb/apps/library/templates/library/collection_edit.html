@@ -32,6 +32,8 @@ background: #ffffff;
     <h2>Edit Collection</h2>
 {% else %}
     <h2>Create a Collection</h2>
+    <strong>Currently in: <em>{{ parent.name }}</em></strong>
+    <br/><br/>
 {% endif %}
     
     <form method="post" action="" class="uniForm">

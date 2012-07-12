@@ -168,7 +168,12 @@ def browse(request):
     return HttpResponse(output)
 
 @login_required
-def upload(request, link=False):
+def upload(request, link=False, collection_id=None):
+
+    collection = None
+    if collection_id:
+        collection = Collection.objects.get(id=collection_id)
+        
     if request.method == 'POST':
         if link:
             form = LinkResourceForm(request.POST)
@@ -183,6 +188,9 @@ def upload(request, link=False):
                 
             resource.creator = request.user
             resource.save()
+            
+            if collection and collection.user_can_edit(request.user):
+                collection.add_resource(resource, request.user)
                                                 
             # redirect to file info display
             return HttpResponseRedirect(reverse('library_resource', kwargs={'resource_id': resource.id}))
@@ -195,7 +203,8 @@ def upload(request, link=False):
     
     return render_to_response("library/upload.html", 
         {'form': form,
-         'is_link': link},
+         'is_link': link,
+         'collection': collection},
         context_instance=RequestContext(request))
 
 @login_required
@@ -331,7 +340,8 @@ def collection_create(request, parent_id=None):
         
     return render_to_response("library/collection_edit.html", 
         {'form': form,
-         'create': True},
+         'create': True,
+         'parent': parent},
         context_instance=RequestContext(request))
 
 @login_required

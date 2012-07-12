@@ -22,7 +22,9 @@ urlpatterns = patterns('',
     url(r'^delete/(?P<resource_id>\d+)/$', resource_delete, name='library_resource_delete'),
     
     url(r'^upload/$', upload, name='library_upload'),
+    url(r'^upload/(?P<collection_id>\d+)/$', upload, name='library_upload'),
     url(r'^upload/link/$', upload, name='library_upload_link', kwargs={'link': True}),
+    url(r'^upload/link/(?P<collection_id>\d+)/$', upload, name='library_upload_link', kwargs={'link': True}),
 
     url(r'^mine/(?P<sort>\w+)/$', mine, name='library_mine'),    
     url(r'^mine/$', mine, name='library_mine'),    

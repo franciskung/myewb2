@@ -9,13 +9,26 @@
         {% else %}
             {% if is_link %}
                 Add a new link
-                (<a href="{% url library_upload %}">add a file instead</a>)
+                {% if collection %}
+                    (<a href="{% url library_upload collection.id %}">add a file instead</a>)
+                {% else %}
+                    (<a href="{% url library_upload %}">add a file instead</a>)
+                {% endif %}
             {% else %}
                 Add a new file
-                (<a href="{% url library_upload_link %}">add a link instead</a>)
+                {% if collection %}
+                    (<a href="{% url library_upload_link collection.id %}">add a link instead</a>)
+                {% else %}
+                    (<a href="{% url library_upload_link %}">add a link instead</a>)
+                {% endif %}
             {% endif %}
         {% endif %}
     </h2>
+    
+    {% if collection %}
+        <strong>Currently in: <em>{{ collection.name }}</em></strong>
+        <br/><br/>
+    {% endif %}
     
     <form method="post" action="" class="uniForm" enctype='multipart/form-data'>
         <fieldset class="inlineLabels">
