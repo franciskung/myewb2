@@ -10,6 +10,7 @@
 
 from django import template
 from django.template.defaultfilters import stringfilter
+from lxml.html.clean import clean_html, autolink_html, Cleaner
 
 register = template.Library()
 
@@ -126,9 +127,32 @@ def truncatechars(value, character_count, truncate_type='tail'):
 
     elif truncate_type == "middle":
       return truncate_middle(value, character_count)
+      
+      
+@register.filter(name='clean_html')
+def clean_html(value):
+    if not value or value == '':
+        return ''
+        
+    # thanks http://stackoverflow.com/questions/250357/smart-truncate-in-python
+    clean = Cleaner(scripts=False,      # disable it all except page_structure
+                    javascript=False,   # as proper cleaning is done on save;
+                    comments=False,     # here we just want to fix any
+                    links=False,        # dangling tags caused by truncation
+                    meta=False,
+                    #page_stricture=True,
+                    embedded=False,
+                    frames=False,
+                    forms=False,
+                    annoying_tags=False,
+                    remove_unknown_tags=False,
+                    safe_attrs_only=False).clean_html(value)
+                    
+    return clean
     
-
 truncatechars.is_safe = True
 truncate_head.is_safe = True
 truncate_tail.is_safe = True
 truncate_middle.is_safe = True
+clean_html.is_safe = True
+
