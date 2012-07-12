@@ -55,7 +55,7 @@ class Resource(models.Model):
                       ('guide', "Guides and how-to's"),
                       ('media', 'Visual media'),
                       ('website', 'Website'),
-                      ('workshop', 'Workshops'),
+                      ('workshop', 'Workshops and Presentations'),
                       ('other', 'Other')
                      )
     resource_type = models.CharField(max_length=25,
