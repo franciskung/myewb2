@@ -30,6 +30,16 @@ class ResourceForm(forms.ModelForm):
         fields = ('name', 'description', 'language',
                   'resource_type', 'scope')
 
+    def __init__(self, *args, **kwargs):
+        super(ResourceForm, self).__init__(*args, **kwargs)
+        
+        if self.instance.editable and self.instance.visible:
+            self.fields['permissions'].initial = 'public'
+        elif self.instance.visible:
+            self.fields['permissions'].initial = 'protected'
+        else:
+            self.fields['permissions'].initial = 'private'
+            
     def clean_name(self):
         return self.cleaned_data['name']
         
