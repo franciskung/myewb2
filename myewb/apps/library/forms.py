@@ -11,7 +11,7 @@ from siteutils.helpers import autolink_email
 from library.models import Resource, FileResource, LinkResource, Collection
 
 class ResourceForm(forms.ModelForm):
-    description = forms.CharField(widget=forms.Textarea(attrs={'class':'tinymce '}))
+    description = forms.CharField(widget=forms.Textarea(attrs={'class':'tinymce '}), required=False)
 
     scope = forms.CharField(widget=forms.CheckboxInput,
                             required=False,
@@ -28,7 +28,7 @@ class ResourceForm(forms.ModelForm):
     class Meta:
         model = Resource
         fields = ('name', 'description', 'language',
-                  'resource_type', 'scope', 'editable')
+                  'resource_type', 'scope')
 
     def clean_name(self):
         return self.cleaned_data['name']
@@ -59,15 +59,16 @@ class ResourceForm(forms.ModelForm):
     def clean_description(self):
         body = self.cleaned_data.get('description', '')
         
-        # validate HTML content
-        # Additional options at http://codespeak.net/lxml/lxmlhtml.html#cleaning-up-html
-        body = clean_html(body)
-        body = autolink_html(body)
+        if body:
+            # validate HTML content
+            # Additional options at http://codespeak.net/lxml/lxmlhtml.html#cleaning-up-html
+            body = clean_html(body)
+            body = autolink_html(body)
         
-        # emails too
-        body = autolink_email(body)
+            # emails too
+            body = autolink_email(body)
         
-        self.cleaned_data['description'] = body
+            self.cleaned_data['description'] = body
         return body
 
 class FileResourceForm(ResourceForm):
@@ -76,17 +77,17 @@ class FileResourceForm(ResourceForm):
     class Meta:
         model = FileResource
         fields = ('name', 'description', 'language',
-                  'resource_type', 'scope', 'editable')
+                  'resource_type', 'scope')
 
 class LinkResourceForm(ResourceForm):
     class Meta:
         model = LinkResource
         fields = ('name', 'description', 'language',
-                  'resource_type', 'scope', 'editable', 'url')
+                  'resource_type', 'scope', 'url')
 
         
 class CollectionForm(forms.ModelForm):
-    description = forms.CharField(widget=forms.Textarea(attrs={'class':'tinymce '}))
+    description = forms.CharField(widget=forms.Textarea(attrs={'class':'tinymce '}), required=False)
 
     class Meta:
         model = Collection
@@ -96,15 +97,16 @@ class CollectionForm(forms.ModelForm):
     def clean_description(self):
         body = self.cleaned_data.get('description', '')
         
-        # validate HTML content
-        # Additional options at http://codespeak.net/lxml/lxmlhtml.html#cleaning-up-html
-        body = clean_html(body)
-        body = autolink_html(body)
+        if body:
+            # validate HTML content
+            # Additional options at http://codespeak.net/lxml/lxmlhtml.html#cleaning-up-html
+            body = clean_html(body)
+            body = autolink_html(body)
         
-        # emails too
-        body = autolink_email(body)
+            # emails too
+            body = autolink_email(body)
         
-        self.cleaned_data['description'] = body
+            self.cleaned_data['description'] = body
         return body
     
 

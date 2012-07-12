@@ -40,7 +40,7 @@ class Activity(models.Model):
     
 class Resource(models.Model):
     name = models.CharField(max_length=255)
-    description = models.TextField()
+    description = models.TextField(blank=True, null=True)
     model = models.CharField(max_length=25)
     
     created = models.DateTimeField(auto_now_add=True)
@@ -54,7 +54,9 @@ class Resource(models.Model):
     RESOURCE_TYPES = (('article', 'Articles and papers'),
                       ('guide', "Guides and how-to's"),
                       ('media', 'Visual media'),
-                      ('workshop', 'Workshops')
+                      ('website', 'Website'),
+                      ('workshop', 'Workshops'),
+                      ('other', 'Other')
                      )
     resource_type = models.CharField(max_length=25,
                                      verbose_name='Type',
@@ -174,7 +176,9 @@ class FileResource(Resource):
     def upload(self, uploadedfile):
         # build and validate file name name
         filename = re_filename.sub(r'', uploadedfile.name)
-        self.filename=filename
+        #self.filename=filename
+        fname, dot, extension = filename.rpartition('.')
+        self.filename = slugify(self.name) + '.' + extension
             
         # open file
         diskfile = open(self.get_path(), 'wb+')
@@ -205,7 +209,7 @@ class LinkResource(Resource):
 
 class Collection(models.Model):
     name = models.CharField(max_length=50)
-    description = models.TextField()
+    description = models.TextField(blank=True, null=True)
     
     parent = models.ForeignKey("self", blank=True, null=True)
     ordering = models.IntegerField(null=True)

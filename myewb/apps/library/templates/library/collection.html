@@ -44,7 +44,8 @@
 {#    <div style='border: 1px solid #db7403; background: #f8efda; padding: 10px 15px;'>#}
     <div style='padding: 5px 0 10px 0;'>
         {% dictionary collection description as content %}
-		{{ content|safe }}
+{#		{{ content|safe }}#}
+	{{ collection.description|safe }}
     </div>
     <hr/>
     

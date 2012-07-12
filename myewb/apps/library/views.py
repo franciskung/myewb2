@@ -153,7 +153,10 @@ def browse(request):
         collections = Collection.objects.filter(parent=collection)
 
     else:
-        collections = Collection.objects.filter(Q(owner=request.user) | Q(curators=request.user))
+        if request.user.has_module_perms('library'):
+            collections = Collection.objects.filter(Q(owner=request.user) | Q(curators=request.user) | Q(featured=True))
+        else:
+            collections = Collection.objects.filter(Q(owner=request.user) | Q(curators=request.user))
         collections = collections.filter(parent__isnull=True)
     
     
