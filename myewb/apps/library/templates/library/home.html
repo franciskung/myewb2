@@ -25,6 +25,7 @@
     <h1>&nbsp;</h1>
     <h2>&nbsp;</h2>
     
+    {% if user.is_authenticated %}
     
     <a href="{% url library_upload %}" style='display: block; border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; background: green; width: 200px; margin: 0 auto; padding: 10px; text-align: center; color: #ffffff;' id="add_resource">
         <span style='font-size: 14px; font-weight: bold; color: #ffffff;'>ADD A NEW<br/>RESOURCE</span>
@@ -54,6 +55,8 @@
             <span style='color: #808080;'>( {{ c.get_total_resources }} )</span><br/>
         {% endfor %}
     </div>
+
+    {% endif %}
 
 {% endblock %}
 

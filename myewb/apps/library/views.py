@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import permission_required, login_required
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import HttpResponseRedirect, HttpResponse
@@ -11,7 +12,10 @@ from library.models import Resource, FileResource, Activity, Collection, Members
 def home(request):
     browse = Collection.objects.filter(featured=True, parent__isnull=True).order_by('ordering', '-modified')
 
-    collections = Collection.objects.filter(owner=request.user, parent__isnull=True).order_by('-modified', 'name')
+    if request.user.is_authenticated():
+        collections = Collection.objects.filter(owner=request.user, parent__isnull=True).order_by('-modified', 'name')
+    else:
+        collections = []
 
     return render_to_response("library/home.html", {
         'browse': browse,
@@ -74,7 +78,8 @@ def resource(request, resource_id):
 def download(request, resource_id):
     resource = Resource.objects.get(id=resource_id)
     return HttpResponseRedirect(resource.download(request.user))
-    
+
+@login_required
 def organize(request, resource_id):
     resource = Resource.objects.get(id=resource_id)
     
@@ -111,7 +116,8 @@ def organize(request, resource_id):
             'resource': resource,
             'collections': collections,
         }, context_instance=RequestContext(request))
-        
+
+@login_required
 def rate(request, resource_id):
     resource = Resource.objects.get(id=resource_id)
     rating = request.POST.get('rating', None)
@@ -120,7 +126,8 @@ def rate(request, resource_id):
         resource.add_rating(request.user, rating)
     
     return HttpResponse(resource.rating)
-    
+
+@login_required
 def browse(request):
     collection_id = request.POST.get('dir', None)
     
@@ -150,7 +157,8 @@ def browse(request):
     output = output + "</ul>\n"
     
     return HttpResponse(output)
-    
+
+@login_required
 def upload(request, link=False):
     if request.method == 'POST':
         if link:
@@ -181,6 +189,7 @@ def upload(request, link=False):
          'is_link': link},
         context_instance=RequestContext(request))
 
+@login_required
 def resource_edit(request, resource_id):
     resource = Resource.objects.get(id=resource_id)
     
@@ -210,7 +219,8 @@ def resource_replace(request, resource_id):
     
 def resource_delete(request, resource_id):
     pass
-        
+
+@login_required
 def mine(request, sort=None):
     resources = Resource.objects.filter(creator=request.user)    
 #    edited = Activity.objects.select_related('activity').filter(user=request.user, activity_type='edit')
@@ -252,7 +262,7 @@ def collection_sorted(request, collection_id):
          'resources': resources},
         context_instance=RequestContext(request))
         
-
+@login_required
 def collection_edit(request, collection_id):
     collection = Collection.objects.get(id=collection_id)
 
@@ -281,6 +291,7 @@ def collection_edit(request, collection_id):
          'form': form},
         context_instance=RequestContext(request))
 
+@login_required
 def collection_create(request, parent_id=None):
     parent = None
     if parent_id:
@@ -314,6 +325,7 @@ def collection_create(request, parent_id=None):
          'create': True},
         context_instance=RequestContext(request))
 
+@login_required
 def collection_reorder(request, collection_id):
     if request.method == 'POST' and request.POST.get('collection_id', None) and request.POST.get('new_order', None):
         collection_id = request.POST.get('collection_id', None)
@@ -341,6 +353,7 @@ def collection_reorder(request, collection_id):
             
     return HttpResponse("invalid")
 
+@login_required
 def collection_reorder_files(request, collection_id):
     if request.method == 'POST' and request.POST.get('file_id', None) and request.POST.get('new_order', None):
         file_id = request.POST.get('file_id', None)

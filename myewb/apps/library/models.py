@@ -88,6 +88,9 @@ class Resource(models.Model):
         return getattr(self, getattr(self, 'model')).direct_download()
         
     def get_rating(self, user):
+        if not user.is_authenticated():
+            return None
+            
         return get_object_or_none(Rating, resource=self, user=user)
         
     def add_rating(self, user, rating):
@@ -118,6 +121,9 @@ class Resource(models.Model):
     def user_can_see(self, user):
         if self.visible == True:
             return True
+            
+        if not user.is_authenticated():
+            return False
 
         if user.has_module_perms('library'):
             return True
@@ -128,6 +134,9 @@ class Resource(models.Model):
         return False            
         
     def user_can_edit(self, user):
+        if not user.is_authenticated():
+            return False
+    
         if self.editable == True:
             return True
 
@@ -247,6 +256,9 @@ class Collection(models.Model):
         return crumbs 
 
     def user_can_edit(self, user):
+        if not user.is_authenticated():
+            return False
+    
         if user.has_module_perms("library"):
             return True
             

@@ -35,7 +35,7 @@
         Updated {% mktime resource.modified %}
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         
-        <span id="is_clickable" {% if not rating %}class="clickable"{% endif %}>
+        <span id="is_clickable" {% if not rating %}{% if user.is_authenticated %}class="clickable"{% endif %}{% endif %}>
         {% ifequal resource.rating 0 %}
             <span class="star faded" id="star1"/></span>
             <span class="star faded" id="star2"/></span>
@@ -156,6 +156,7 @@
     
     <div style='height: 5px;'>&nbsp;</div>
 
+    {% if user.is_authenticated %}
     <a href="{% url library_resource_edit resource.id %}" style='display: block; border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; background: #fd9200; width: 200px; margin: 0 auto; padding: 15px 10px; text-align: center; color: #ffffff;' id='edit_resource'>
         <span style='font-size: 14px; font-weight: bold; color: #ffffff;'>Edit this resource</span>
     </a>
@@ -173,6 +174,8 @@
     <a href="{% url library_organize resource.id %}" style='display: block; border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; background: green; width: 200px; margin: 0 auto; padding: 15px 10px; text-align: center; color: #ffffff;' id='organize'>
         <span style='font-size: 14px; font-weight: bold; color: #ffffff;'>Add to a collection</span>
     </a>
+    {% endif %}
+    
 
     <br/>
         
@@ -246,11 +249,13 @@
     <script type='text/javascript'>	
     	$('#organize').colorbox({opacity: '0.5', width: '600px;', height: '50%'});
     	
+    	{% if user.is_authenticated %}
         {% if resource.fileresource %}
         	$('#edit_resource').click(function() {
         	    $('#edit_resource_more').slideToggle();
         	    return false;
         	});
+        {% endif %}
         {% endif %}
         
         $('.notyet').click(function() {
