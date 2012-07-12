@@ -114,6 +114,30 @@ class Resource(models.Model):
                                     content_object=rating_obj)
             
         return rating_obj
+        
+    def user_can_see(self, user):
+        if self.visible == True:
+            return True
+
+        if user.has_module_perms('library'):
+            return True
+            
+        if self.creator == user:
+            return True
+            
+        return False            
+        
+    def user_can_edit(self, user):
+        if self.editable == True:
+            return True
+
+        if user.has_module_perms('library'):
+            return True
+            
+        if self.creator == user:
+            return True
+            
+        return False            
     
 # TODO: regex to use for validating filenames.  For now, anything not alpha-numeric-
 # dash-underscore-period-space gets stripped, but would be good to allow accents eventually.

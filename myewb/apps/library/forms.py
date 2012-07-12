@@ -22,7 +22,8 @@ class ResourceForm(forms.ModelForm):
                      ('private', 'Private: only people I share this with can see or update it'))
     permissions = forms.CharField(widget=forms.RadioSelect(choices=PERMS_CHOICES),
                                   required=True,
-                                  initial=True)
+                                  initial=True,
+                                  label='Permissions (not implemented yet)')
 
     class Meta:
         model = Resource
