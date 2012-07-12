@@ -3,6 +3,7 @@
 {% load uni_form_tags %}
 
 {% block body_content %}
+{% if not create %}
 <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-ui.js"></script>
 <link rel="stylesheet" href="{{ STATIC_URL }}css/jquery-ui.css" />
 
@@ -28,8 +29,10 @@ background: #ffffff;
 }
 </style>
 
-
     <h2>Edit Collection</h2>
+{% else %}
+    <h2>Create a Collection</h2>
+{% endif %}
     
     <form method="post" action="" class="uniForm">
         <fieldset class="inlineLabels">
@@ -42,6 +45,7 @@ background: #ffffff;
         </fieldset>
     </form>
     
+    {% if not create %}
     <div style='width: 45%; float: right;'>
         <h2>Files</h2>
         Reorder files by dragging and dropping...
@@ -71,7 +75,7 @@ background: #ffffff;
         <br/><br/>
         
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <a href="{% url library_home %}">add a sub-page</a>
+        <a href="{% url library_collection_create collection.id %}">add a sub-page</a>
         <br/>
 
         <div id="sortable-pages">
@@ -94,15 +98,19 @@ background: #ffffff;
     </div>
     
     <br style='clear: right;'/><br/>
+    {% endif %}
     
     
 {% endblock %}
 
 
 {% block extra_body %}
+
 {{ block.super }}
 {% include "tinymce.html" %}
 	
+{% if not create %}
+
 <script type="text/javascript">
 	$().ready(function() {
 	    $('#sortable-pages').sortable({
@@ -132,4 +140,7 @@ background: #ffffff;
 	    });
 	});
 </script>
+
+{% endif %}
+
 {% endblock %}

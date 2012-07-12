@@ -231,6 +231,7 @@ class Collection(models.Model):
     def get_total_resources(self):
         total = self.resources.count()
         for c in self.get_children():
+            total = total + 1
             total += c.get_total_resources()
             
         return total

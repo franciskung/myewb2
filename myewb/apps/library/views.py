@@ -9,13 +9,13 @@ from library.forms import ResourceForm, FileResourceForm, LinkResourceForm, Coll
 from library.models import Resource, FileResource, Activity, Collection, Membership
 
 def home(request):
-    collections = Collection.objects.filter(featured=True, parent__isnull=True).order_by('ordering', '-modified')
-    
-    allresources = Resource.objects.all()
+    browse = Collection.objects.filter(featured=True, parent__isnull=True).order_by('ordering', '-modified')
+
+    collections = Collection.objects.filter(owner=request.user, parent__isnull=True).order_by('-modified', 'name')
 
     return render_to_response("library/home.html", {
+        'browse': browse,
         'collections': collections,
-        'resources': allresources,
         'resource_types': Resource.RESOURCE_TYPES,
     }, context_instance=RequestContext(request))
 
@@ -279,6 +279,39 @@ def collection_edit(request, collection_id):
     return render_to_response("library/collection_edit.html", 
         {'collection': collection,
          'form': form},
+        context_instance=RequestContext(request))
+
+def collection_create(request, parent_id=None):
+    parent = None
+    if parent_id:
+        parent = Collection.objects.get(id=parent_id)
+        if not parent.user_can_edit(request.user):
+            return render_to_response('denied.html', context_instance=RequestContext(request))
+
+    if request.method == 'POST':
+        form = CollectionForm(request.POST)
+        
+        if form.is_valid():
+            collection = form.save(commit=False)
+            collection.owner = request.user
+            
+            if parent:
+                collection.parent = parent
+            
+            collection.save()
+        
+            request.user.message_set.create(message='Collection created!')
+            return HttpResponseRedirect(reverse('library_collection',
+                                        kwargs={'collection_id': collection.id,
+                                                'slug': collection.slug()}
+                                       ))
+
+    else:
+        form = CollectionForm()
+        
+    return render_to_response("library/collection_edit.html", 
+        {'form': form,
+         'create': True},
         context_instance=RequestContext(request))
 
 def collection_reorder(request, collection_id):
