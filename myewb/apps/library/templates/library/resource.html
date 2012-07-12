@@ -84,11 +84,13 @@
     </em>
     <br/><br/>
     
-    <div style='border: 1px solid #db7403; background: #f8efda; padding: 10px 15px;'>
-        {% dictionary resource description as content %}
-		{{ content|safe }}
-    </div>
-    <br/>
+    {% if resource.description %}
+        <div style='border: 1px solid #db7403; background: #f8efda; padding: 10px 15px;'>
+            {% dictionary resource description as content %}
+    		{{ content|safe }}
+        </div>
+        <br/>
+    {% endif %}
 
     <a href="{% url library_download resource.id %}" style='display: block; border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; background: green; width: 200px; padding: 15px 10px; text-align: center; color: #ffffff;'>
         <span style='font-size: 14px; font-weight: bold; color: #ffffff;'>
