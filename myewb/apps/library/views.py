@@ -326,6 +326,14 @@ def collection_create(request, parent_id=None):
             
             if parent:
                 collection.parent = parent
+                
+                order = 0
+                children = parent.get_children()
+                for c in children:
+                    if c.ordering > order:
+                        order = c.ordering
+                order = order + 1
+                collection.ordering = order
             
             collection.save()
         

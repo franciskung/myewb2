@@ -212,7 +212,7 @@ class Collection(models.Model):
     description = models.TextField(blank=True, null=True)
     
     parent = models.ForeignKey("self", blank=True, null=True)
-    ordering = models.IntegerField(null=True)
+    ordering = models.IntegerField(default=1)
     featured = models.BooleanField(default=False)
     autolink = models.BooleanField(default=False)
 
@@ -301,7 +301,7 @@ class Collection(models.Model):
                                     content_object=self)
             
         return m
-
+        
 class Membership(models.Model):
     resource = models.ForeignKey(Resource, related_name='members')
     collection = models.ForeignKey(Collection, related_name='members')
