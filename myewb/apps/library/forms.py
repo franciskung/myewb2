@@ -17,10 +17,17 @@ class ResourceForm(forms.ModelForm):
                             required=False,
                             label='Is this resource EWB-specific?')
 
+    PERMS_CHOICES = (('public', 'Public: anyone can see and update this resource'),
+                     ('protected', 'Protected: anyone can see this, but only I can edit it'),
+                     ('private', 'Private: only people I share this with can see or update it'))
+    permissions = forms.CharField(widget=forms.RadioSelect(choices=PERMS_CHOICES),
+                                  required=True,
+                                  initial=True)
+
     class Meta:
         model = Resource
-        fields = ('name', 'description',
-                  'resource_type', 'scope')
+        fields = ('name', 'description', 'language',
+                  'resource_type', 'scope', 'editable')
 
     def clean_name(self):
         return self.cleaned_data['name']
@@ -32,6 +39,20 @@ class ResourceForm(forms.ModelForm):
             self.cleaned_data['scope'] = 'world'
             
         return self.cleaned_data['scope']
+        
+    def clean_permissions(self):
+        p = self.cleaned_data.get('permissions', None)
+        if p == 'public':
+            self.cleaned_data['editable'] = True
+            self.cleaned_data['visible'] = True
+        elif p == 'public':
+            self.cleaned_data['editable'] = False
+            self.cleaned_data['visible'] = True
+        else:
+            self.cleaned_data['editable'] = False
+            self.cleaned_data['visible'] = False
+            
+        return p
 
     # do HTML validation and auto-linking
     def clean_description(self):
@@ -53,14 +74,14 @@ class FileResourceForm(ResourceForm):
 
     class Meta:
         model = FileResource
-        fields = ('name', 'description',
-                  'resource_type', 'scope')
+        fields = ('name', 'description', 'language',
+                  'resource_type', 'scope', 'editable')
 
 class LinkResourceForm(ResourceForm):
     class Meta:
         model = LinkResource
-        fields = ('name', 'description',
-                  'resource_type', 'scope', 'url')
+        fields = ('name', 'description', 'language',
+                  'resource_type', 'scope', 'editable', 'url')
 
         
 class CollectionForm(forms.ModelForm):

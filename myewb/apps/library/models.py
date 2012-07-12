@@ -72,6 +72,7 @@ class Resource(models.Model):
                                 choices=RESOURCE_LANGUAGES)
 
     editable = models.BooleanField(default=True)
+    visible = models.BooleanField(default=True)
     rating = models.IntegerField(default=0)
     downloads = models.IntegerField(default=0)
 

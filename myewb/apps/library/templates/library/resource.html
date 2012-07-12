@@ -153,7 +153,22 @@
             {% endif %}
         </span>
     </a>
-    <br/>
+    
+    <div style='height: 5px;'>&nbsp;</div>
+
+    <a href="{% url library_resource_edit resource.id %}" style='display: block; border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; background: #fd9200; width: 200px; margin: 0 auto; padding: 15px 10px; text-align: center; color: #ffffff;' id='edit_resource'>
+        <span style='font-size: 14px; font-weight: bold; color: #ffffff;'>Edit this resource</span>
+    </a>
+    {% if resource.fileresource %}
+    <div style="background: #fd9200; width: 150px; margin: 0 auto; padding: 10px 20px; text-align: right; color: #ffffff; position: relative; top: -0.5em; left: 15px; line-height: 1.5em; display: none;" id="edit_resource_more">
+        <a href="{% url library_resource_edit resource.id %}">Change the description &raquo;</a><br/>
+        <a href="{% url library_resource_google resource.id %}" class="notyet">Open in Google Docs &raquo;</a><br/>
+        <a href="{% url library_resource_replace resource.id %}" class="notyet">Upload a new version &raquo;</a><br/>
+        <a href="{% url library_resource_delete resource.id %}" class="notyet">Delete this resource &raquo;</a>
+    </div>
+    {% endif %}
+
+    <div style='height: 5px;'>&nbsp;</div>
 
     <a href="{% url library_organize resource.id %}" style='display: block; border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; background: green; width: 200px; margin: 0 auto; padding: 15px 10px; text-align: center; color: #ffffff;' id='organize'>
         <span style='font-size: 14px; font-weight: bold; color: #ffffff;'>Add to a collection</span>
@@ -230,6 +245,18 @@
 
     <script type='text/javascript'>	
     	$('#organize').colorbox({opacity: '0.5', width: '600px;', height: '50%'});
+    	
+        {% if resource.fileresource %}
+        	$('#edit_resource').click(function() {
+        	    $('#edit_resource_more').slideToggle();
+        	    return false;
+        	});
+        {% endif %}
+        
+        $('.notyet').click(function() {
+            alert("This feature isn't ready yet, but is coming soon!");
+            return false;
+        });
     	
     	var old_rating = '{{ resource.rating }}';
     	old_rating++;

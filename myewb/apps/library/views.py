@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404, render_to_response
 from django.template.defaultfilters import slugify
 from django.template import RequestContext
 
-from library.forms import FileResourceForm, LinkResourceForm, CollectionForm
+from library.forms import ResourceForm, FileResourceForm, LinkResourceForm, CollectionForm
 from library.models import Resource, FileResource, Activity, Collection, Membership
 
 def home(request):
@@ -180,6 +180,36 @@ def upload(request, link=False):
         {'form': form,
          'is_link': link},
         context_instance=RequestContext(request))
+
+def resource_edit(request, resource_id):
+    resource = Resource.objects.get(id=resource_id)
+    
+    if request.method == 'POST':
+        form = ResourceForm(request.POST, instance=resource)
+        
+        if form.is_valid():
+            form.save()
+            
+            request.user.message_set.create(message='Resource updated!')
+            return HttpResponseRedirect(reverse('library_resource', kwargs={'resource_id': resource.id}))
+        
+    else:
+        form = ResourceForm(instance=resource)
+        
+    return render_to_response("library/upload.html", 
+        {'form': form,
+         'editing': True,
+         'resource': resource},
+        context_instance=RequestContext(request))
+
+def resource_google(request, resource_id):
+    pass
+    
+def resource_replace(request, resource_id): 
+    pass
+    
+def resource_delete(request, resource_id):
+    pass
         
 def mine(request, sort=None):
     resources = Resource.objects.filter(creator=request.user)    

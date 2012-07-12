@@ -4,12 +4,16 @@
 
 {% block body_content %}
     <h2>
-        {% if is_link %}
-            Add a new link
-            (<a href="{% url library_upload %}">add a file instead</a>)
+        {% if editing %}
+            Edit: {{ resource.name }}
         {% else %}
-            Add a new file
-            (<a href="{% url library_upload_link %}">add a link instead</a>)
+            {% if is_link %}
+                Add a new link
+                (<a href="{% url library_upload %}">add a file instead</a>)
+            {% else %}
+                Add a new file
+                (<a href="{% url library_upload_link %}">add a link instead</a>)
+            {% endif %}
         {% endif %}
     </h2>
     

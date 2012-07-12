@@ -16,6 +16,11 @@ urlpatterns = patterns('',
     url(r'^rate/(?P<resource_id>\d+)/$', rate, name='library_rate'),
     url(r'^browse/$', browse, name='library_folder_browse'),
     
+    url(r'^edit/(?P<resource_id>\d+)/$', resource_edit, name='library_resource_edit'),
+    url(r'^edit/(?P<resource_id>\d+)/google/$', resource_google, name='library_resource_google'),
+    url(r'^edit/(?P<resource_id>\d+)/replace/$', resource_replace, name='library_resource_replace'),
+    url(r'^delete/(?P<resource_id>\d+)/$', resource_delete, name='library_resource_delete'),
+    
     url(r'^upload/$', upload, name='library_upload'),
     url(r'^upload/link/$', upload, name='library_upload_link', kwargs={'link': True}),
 
