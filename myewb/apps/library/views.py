@@ -45,9 +45,12 @@ def search(request):
     sort = request.GET.get('sort', None)
     
     results = Resource.objects.all()
+    collections = []
     if keyword:
+        collections = Collection.objects.all()
         for word in keyword.split():
             results = results.filter(Q(name__icontains=word) | Q(description__icontains=word))
+            collections = collections.filter(Q(name__icontains=word) | Q(description__icontains=word))
     if rating:
         results = results.filter(rating__gte=rating)
     if resource_type:
@@ -55,7 +58,10 @@ def search(request):
 
     results = library_sort(results, sort)
     
+    
+    
     return render_to_response("library/search.html", {
+        'collections': collections,
         'results': results,
         'keyword': keyword,
         'rating': rating,

@@ -6,6 +6,8 @@
     <h2>Search the Library</h2>
     
     {% include 'library/search_form.html' %}
+    
+    <h2>Resources</h2>
 
     {% if results %}
         <div style='padding: 10px;' id="sort_by">
@@ -29,6 +31,29 @@
 
     {% paginate %}
 
+{% endblock %}
+
+{% block toolbar_right %}
+    <div style='height: 270px;'>
+    &nbsp;
+    </div>
+    <h2>Collections</h2>
+    
+    <div style='border-bottom: 1px solid #db7403; height: 1px;'>
+        &nbsp;
+    </div>
+    {% for c in collections %}
+        <div style='border: 1px solid #db7403; border-top: 0; background: #f8efda; padding: 10px 15px;'>
+            <a href="{% url library_collection c.id c.slug %}">{{ c.name }}</a>
+            {% with c.get_total_resources as subresources %}
+                {% if subresources %}
+                    &nbsp;
+                    <span style='color: #808080;'>( {{ subresources }} )</span>
+                {% endif %}
+            {% endwith %}
+        </div>
+    {% endfor %}
+    
 {% endblock %}
 
 {% block extra_body %}
