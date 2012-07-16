@@ -29,9 +29,11 @@ def library_sort(resources, sorting):
         if sorting == 'featured':
             resources = resources.order_by('members__ordering')
         elif sorting == 'rating':
-            resources = resources.order_by('-rating')
+            resources = resources.order_by('-rating', '-downloads', '-modified')
         elif sorting == 'modified':
             resources = resources.order_by('-modified')
+        elif sorting == 'downloads':
+            resources = resources.order_by('-downloads', '-rating', '-modified')
         else:
             resources = resources.order_by(sorting)
     return resources
