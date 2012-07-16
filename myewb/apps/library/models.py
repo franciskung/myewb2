@@ -52,6 +52,7 @@ class Resource(models.Model):
     #objects = WorkspaceFileManager()
     
     RESOURCE_TYPES = (('article', 'Articles and papers'),
+                      ('book', 'Books'),
                       ('guide', "Guides and how-to's"),
                       ('media', 'Visual media'),
                       ('website', 'Website'),

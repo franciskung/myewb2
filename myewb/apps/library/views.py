@@ -211,8 +211,14 @@ def upload(request, link=False, collection_id=None):
 def resource_edit(request, resource_id):
     resource = Resource.objects.get(id=resource_id)
     
+    if resource.model == 'linkresource':
+        form_class = LinkResourceForm
+    else:
+        form_class = ResourceForm
+    
+    
     if request.method == 'POST':
-        form = ResourceForm(request.POST, instance=resource)
+        form = form_class(request.POST, instance=resource)
         
         if form.is_valid():
             form.save()
@@ -221,7 +227,7 @@ def resource_edit(request, resource_id):
             return HttpResponseRedirect(reverse('library_resource', kwargs={'resource_id': resource.id}))
         
     else:
-        form = ResourceForm(instance=resource)
+        form = form_class(instance=resource)
         
     return render_to_response("library/upload.html", 
         {'form': form,
