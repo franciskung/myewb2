@@ -1,23 +1,27 @@
 {% load truncate %}
 {% load icon_tags %}
+{% load time_filters %}
 
 
     <div class='minipost'>
     <div class='minipostcontents'>
     <div class='minipost-title'>
-        <a href="{% url library_download resource.id %}" class="direct_download">
-            <img src="{{ STATIC_URL }}images/icons/Download.ico" class="download_icon"/>
-            {% if resource.linkresource %}
-                Visit
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            {% else %}
-                Download
-            {% endif %}
-        </a>
-        
-        <span style='float: right; padding-top: 10px; padding-right: 10px;'>
-            {{ resource.rating|to_stars }}
-        </span>
+    
+        <div style='float: right; width: auto; padding-bottom: 10px;'>
+            <div style='text-align: right; padding-right: 10px; height: 35px;'>
+                {{ resource.rating|to_stars }}
+            </div>
+            
+            <a href="{% url library_download resource.id %}" class="direct_download">
+                <img src="{{ STATIC_URL }}images/icons/Download.ico" class="download_icon"/>
+                {% if resource.linkresource %}
+                    Visit
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                {% else %}
+                    Download
+                {% endif %}
+            </a>
+        </div>
         
         <h3>
             {% if resource.fileresource %}
@@ -30,7 +34,19 @@
             <a href="{% url library_resource resource.id %}">{{ resource.name }}</a>
         </h3>
     </div>
-    <div class='minipost-text resource_summary' style='padding-left: 25px;'>
+    <div class='minipost-text resource_summary' style='padding-left: 22px;'>
+        <div style='font-style: italic; color: #909090; font-size: 0.75em; padding-bottom: 5px;'>
+            Updated {% mktime resource.modified %}
+            &nbsp;&nbsp;
+            &mdash;
+            &nbsp;&nbsp;
+            {{ resource.get_language_display }}
+            &nbsp;&nbsp;
+            &mdash;
+            &nbsp;&nbsp;
+            {{ resource.downloads }} download{{ resource.downloads|pluralize }}
+        </div>
+    
         {{ resource.description|safe|truncate_tail:200|clean_html }}
     </div>
     <div style='height: 1px;clear: right;'>&nbsp;</div>

@@ -85,8 +85,19 @@
         </select>    
         
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Language:
+        <select name='sort_language' id='sort_language' class='sort_option'>
+            <option value=''>(any)</option>
+            <option value='en'>English</option>
+            <option value='fr'>Fran&ccedil;ais</option>
+            <option value='bl'>Bilingual / bilingue</option>
+        </select>    
+        
+        {% comment %}
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <input type='checkbox' name='sort_scope' id='sort_scope' class='sort_option'/>
         <label for='sort_scope'>EWB material only</label>
+        {% endcomment %}
     </div>
 
     <div style='padding: 10px;' id="sort_by">
@@ -146,6 +157,7 @@
             $('#filelist').html("<p><img src='{{ STATIC_URL}}images/ajax-loader.gif'/>  Loading...</p>");
             $.get('{% url library_collection_sorted collection.id %}',
                   {type: $('#sort_type').val(),
+                   language: $('#sort_language').val(),
                    scope: $('#sort_scope').attr('checked'),
                    sort_by: $('a.sort_option.current').attr('id')
                   },

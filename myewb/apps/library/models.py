@@ -70,7 +70,8 @@ class Resource(models.Model):
                              choices=RESOURCE_SCOPE)
                              
     RESOURCE_LANGUAGES = (('en', 'English'),
-                          ('fr', 'Francais'))
+                          ('fr', 'Francais'),
+                          ('bl', 'Bilingual / bilingue'))
     language = models.CharField(max_length=2, default='en',
                                 choices=RESOURCE_LANGUAGES)
 

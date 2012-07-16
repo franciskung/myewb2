@@ -141,9 +141,9 @@
     <div style='font-style: italic; text-align: center;'>
         {{ resource.downloads }}
         {% if resource.linkresource %}
-            visits
+            visit{{ resource.downloads|pluralize }}
         {% else %}
-            downloads
+            download{{ resource.downloads|pluralize }}
         {% endif %}
     </div>
     <a href="{% url library_download resource.id %}" style='display: block; border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; background: green; width: 200px; margin: 0 auto; padding: 15px 10px; text-align: center; color: #ffffff;'>

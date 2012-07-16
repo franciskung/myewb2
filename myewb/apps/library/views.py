@@ -40,8 +40,8 @@ def library_sort(resources, sorting):
 def search(request):
     keyword = request.GET.get('keyword', None)
     rating = request.GET.get('rating', None)
-    topic = request.GET.get('topic', None)
     resource_type = request.GET.get('type', None)
+    language = request.GET.get('language', None)
     sort = request.GET.get('sort', None)
     
     results = Resource.objects.all()
@@ -55,6 +55,8 @@ def search(request):
         results = results.filter(rating__gte=rating)
     if resource_type:
         results = results.filter(resource_type=resource_type)
+    if language:
+        results = results.filter(language=language)
 
     results = library_sort(results, sort)
     
@@ -66,6 +68,7 @@ def search(request):
         'keyword': keyword,
         'rating': rating,
         'resource_type': resource_type,
+        'language': language,
         'sort': sort,
         'resource_types': Resource.RESOURCE_TYPES,
     }, context_instance=RequestContext(request))
@@ -276,6 +279,8 @@ def collection_sorted(request, collection_id):
     
     if request.GET.get('type', None):
         resources = resources.filter(resource_type=request.GET['type'])
+    if request.GET.get('language', None):
+        resources = resources.filter(language=request.GET['language'])
     if request.GET.get('scope', None):
         resources = resources.filter(scope='ewb')
     if request.GET.get('sort_by', None):
