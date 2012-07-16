@@ -15,6 +15,7 @@ class ResourceForm(forms.ModelForm):
 
     scope = forms.CharField(widget=forms.CheckboxInput,
                             required=False,
+                            initial=True,
                             label='Is this resource EWB-specific?')
 
     PERMS_CHOICES = (('public', 'Public: anyone can see and update this resource'),
