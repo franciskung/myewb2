@@ -8,13 +8,35 @@ from django.utils.safestring import mark_safe
 register = template.Library()
 
 KNOWN_EXTENSIONS = (
+        'avi',
+        'bmp',
         'doc',
-        'xls',
         'docx',
-        'pdf',
-        'jpg',
-        'png',
+        'fon',
         'gif',
+        'html',
+        'jpg',
+        'mov',
+        'mp3',
+        'mp4',
+        'mpeg',
+        'ods',
+        'odt',
+        'pdf',
+        'php',
+        'png',
+        'ppt',
+        'pptx',
+        'rar',
+        'tiff',
+        'txt',
+        'wav',
+        'wma',
+        'wmv',
+        'xls',
+        'xlsx',
+        'xml',
+        'zip'
 )
 
 def icon_for_filename(filename):

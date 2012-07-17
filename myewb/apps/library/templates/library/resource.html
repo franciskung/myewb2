@@ -4,6 +4,7 @@
 {% load dictionary_tags %}
 {% load attachablecomments_tags %}
 {% load avatar_tags %}
+{% load icon_tags %}
 
 {% block body_content %}
     <style>
@@ -23,7 +24,15 @@
     </style>
 
 
-    <h2 style='margin-bottom: 5px;'><a href="{% url library_download resource.id %}">{{ resource.name }}</a></h2>
+    <h2 style='margin-bottom: 5px;' id="filetitle">
+        {% if resource.fileresource %}
+            {% icon_for_filename resource.fileresource.filename %}
+        {% endif %}
+        {% if resource.linkresource %}
+            <img src="{{ STATIC_URL }}images/icons/Web.ico" class="fileicon"/>
+        {% endif %}
+        <a href="{% url library_download resource.id %}">{{ resource.name }}</a>
+    </h2>
     
     <em>
         By
