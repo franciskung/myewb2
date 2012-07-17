@@ -16,11 +16,16 @@ def home(request):
         collections = Collection.objects.filter(owner=request.user, parent__isnull=True).order_by('-modified', 'name')
     else:
         collections = []
+        
+    latest = Resource.objects.all().order_by('-modified')[0:10]
+    popular = Resource.objects.all().order_by('-downloads')[0:10]
 
     return render_to_response("library/home.html", {
         'browse': browse,
         'collections': collections,
         'resource_types': Resource.RESOURCE_TYPES,
+        'latest': latest,
+        'popular': popular
     }, context_instance=RequestContext(request))
 
 def library_sort(resources, sorting):

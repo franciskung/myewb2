@@ -18,6 +18,27 @@
             {% endfor %}
         </div>
     {% endfor %}
+    
+    <br style='clear: left;'/>
+    <hr/>
+
+    <div class='linklist'>
+        <h2>Popular resources</h2>
+
+        {% for r in popular %}
+            <p><a href="{% url library_resource r.id %}">{{ r.name }}</a></p>
+        {% endfor %}
+    </div>
+    
+    <div class='linklist'>
+        <h2>Latest additions</h2>
+
+        {% for r in latest %}
+            <p><a href="{% url library_resource r.id %}">{{ r.name }}</a></p>
+        {% endfor %}
+    </div>
+    
+    
 
 {% endblock %}
 
