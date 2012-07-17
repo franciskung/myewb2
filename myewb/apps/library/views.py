@@ -233,6 +233,10 @@ def resource_edit(request, resource_id):
         if form.is_valid():
             form.save()
             
+            Activity.objects.create(resource=resource,
+                                    user=request.user,
+                                    activity_type='edit')
+            
             request.user.message_set.create(message='Resource updated!')
             return HttpResponseRedirect(reverse('library_resource', kwargs={'resource_id': resource.id}))
         
