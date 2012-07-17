@@ -7,7 +7,7 @@ from django.template.defaultfilters import slugify
 from django.template import RequestContext
 
 from library.forms import ResourceForm, FileResourceForm, LinkResourceForm, CollectionForm
-from library.models import Resource, FileResource, Activity, Collection, Membership
+from library.models import Resource, FileResource, LinkResource, Activity, Collection, Membership
 
 def home(request):
     browse = Collection.objects.filter(featured=True, parent__isnull=True).order_by('ordering', '-modified')
@@ -199,11 +199,22 @@ def upload(request, link=False, collection_id=None):
             resource.creator = request.user
             resource.save()
             
-            if collection and collection.user_can_edit(request.user):
-                collection.add_resource(resource, request.user)
-                                                
-            # redirect to file info display
-            return HttpResponseRedirect(reverse('library_resource', kwargs={'resource_id': resource.id}))
+            duplicate = None
+            if link:
+                duplicate = LinkResource.objects.filter(url=resource.url).exclude(id=resource.id)
+            else:
+                duplicate = FileResource.objects.filter(checksum=resource.checksum).exclude(id=resource.id)
+                
+            if duplicate:
+                msg = "This resource already exists in the library!<br/><a href='%s'>Click here to view the resource</a>" % reverse('library_resource', kwargs={'resource_id': duplicate[0].id})
+                request.user.message_set.create(message=msg)
+                
+            else:
+                if collection and collection.user_can_edit(request.user):
+                    collection.add_resource(resource, request.user)
+                                                    
+                # redirect to file info display
+                return HttpResponseRedirect(reverse('library_resource', kwargs={'resource_id': resource.id}))
     
     else:
         if link:
