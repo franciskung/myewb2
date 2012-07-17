@@ -208,6 +208,17 @@
                 </td>
             </tr>
         {% endif %}
+        
+		{% if other_user.collections_owned.all %}
+	        <tr>
+	            <th>Resource Collections</th>
+	            <td>
+            		{% for collection in other_user.collections_owned.all %}
+            			<a href="{% url library_collection collection.id collection.slug %}">{{ collection.name }}</a><br/>
+            		{% endfor %}
+	            </td>
+	        </tr>
+	    {% endif %}
                 
 		{% if perms.jobboard or is_me %}
 			{% if other_user.interested_jobs.all or other_user.jobposting_set.all %}
