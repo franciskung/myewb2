@@ -234,6 +234,7 @@ def resource_edit(request, resource_id):
     
     if resource.model == 'linkresource':
         form_class = LinkResourceForm
+        resource = resource.linkresource
     else:
         form_class = ResourceForm
     
