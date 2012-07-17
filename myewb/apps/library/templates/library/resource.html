@@ -162,14 +162,28 @@
     <a href="{% url library_resource_edit resource.id %}" style='display: block; border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; background: #fd9200; width: 200px; margin: 0 auto; padding: 15px 10px; text-align: center; color: #ffffff;' id='edit_resource'>
         <span style='font-size: 14px; font-weight: bold; color: #ffffff;'>Edit this resource</span>
     </a>
-    {% if resource.fileresource %}
+    
     <div style="background: #fd9200; width: 150px; margin: 0 auto; padding: 10px 20px; text-align: right; color: #ffffff; position: relative; top: -0.5em; left: 15px; line-height: 1.5em; display: none;" id="edit_resource_more">
-        <a href="{% url library_resource_edit resource.id %}">Change description &raquo;</a><br/>
-        <a href="{% url library_resource_google resource.id %}" class="notyet">Open in Google Docs &raquo;</a><br/>
-        <a href="{% url library_resource_replace resource.id %}" class="notyet">Upload a new version &raquo;</a><br/>
-        <a href="{% url library_resource_delete resource.id %}" class="notyet">Delete this resource &raquo;</a>
+        <a href="{% url library_resource_edit resource.id %}">
+            Change description &raquo;
+        </a><br/>
+        
+        {% if resource.fileresource %}
+            {% if resource.fileresource.can_google_edit %}
+                <a href="{% url library_resource_google resource.id %}" class="notyet">
+                    Open in Google Docs &raquo;
+                </a><br/>
+            {% endif %}
+            
+            <a href="{% url library_resource_replace resource.id %}" class="notyet">
+                Upload a new version &raquo;
+            </a><br/>
+        {% endif %}
+        
+        <a href="{% url library_resource_delete resource.id %}" class="notyet">
+            Delete this resource &raquo;
+        </a>
     </div>
-    {% endif %}
 
     <div style='height: 5px;'>&nbsp;</div>
 

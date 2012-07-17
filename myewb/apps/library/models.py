@@ -151,7 +151,7 @@ class Resource(models.Model):
             return True
             
         return False            
-    
+        
 # TODO: regex to use for validating filenames.  For now, anything not alpha-numeric-
 # dash-underscore-period-space gets stripped, but would be good to allow accents eventually.
 re_filename = re.compile(r'[^A-Za-z0-9\-_. ]')
@@ -197,6 +197,14 @@ class FileResource(Resource):
         self.save()
 
         return self
+
+    def can_google_edit(self):
+        fname, dot, extension = self.filename.rpartition('.')
+
+        if extension in ('doc', 'docx'):
+            return True
+            
+        return False        
         
         
 class LinkResource(Resource):
