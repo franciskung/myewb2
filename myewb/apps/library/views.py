@@ -17,8 +17,8 @@ def home(request):
     else:
         collections = []
         
-    latest = Resource.objects.all().order_by('-modified')[0:10]
-    popular = Resource.objects.all().order_by('-downloads')[0:10]
+    latest = Resource.objects.visible().order_by('-modified')[0:10]
+    popular = Resource.objects.visible().order_by('-downloads')[0:10]
 
     return render_to_response("library/home.html", {
         'browse': browse,
@@ -51,7 +51,7 @@ def search(request):
     language = request.GET.get('language', None)
     sort = request.GET.get('sort', None)
     
-    results = Resource.objects.all()
+    results = Resource.objects.visible()
     collections = []
     if keyword:
         collections = Collection.objects.all()
@@ -83,6 +83,12 @@ def search(request):
     
 def resource(request, resource_id):
     resource = Resource.objects.get(id=resource_id)
+    
+    if resource.deleted:
+        return render_to_response("library/deleted.html", {
+            'resource': resource,
+        }, context_instance=RequestContext(request))
+    
     activity = Activity.objects.filter(resource=resource)[0:10]
     
     return render_to_response("library/resource.html", {
@@ -93,6 +99,12 @@ def resource(request, resource_id):
     
 def download(request, resource_id):
     resource = Resource.objects.get(id=resource_id)
+
+    if resource.deleted:
+        return render_to_response("library/deleted.html", {
+            'resource': resource,
+        }, context_instance=RequestContext(request))
+    
     return HttpResponseRedirect(resource.download(request.user))
 
 @login_required
@@ -267,12 +279,42 @@ def resource_google(request, resource_id):
 def resource_replace(request, resource_id): 
     pass
     
+def resource_archive(request, resource_id):
+    resource = Resource.objects.get(id=resource_id)
+    if not resource.user_can_edit(request.user):
+        return render_to_response('denied.html', context_instance=RequestContext(request))
+        
+    resource.archived = True
+    resource.save()
+    
+    request.user.message_set.create(message='Resource has been archived.')
+    return HttpResponseRedirect(reverse('library_resource', kwargs={'resource_id': resource.id}))
+
+def resource_unarchive(request, resource_id):
+    resource = Resource.objects.get(id=resource_id)
+    if not resource.user_can_edit(request.user, False):
+        return render_to_response('denied.html', context_instance=RequestContext(request))
+
+    resource.archived = False
+    resource.save()
+    
+    request.user.message_set.create(message='Resource has been restored.')
+    return HttpResponseRedirect(reverse('library_resource', kwargs={'resource_id': resource.id}))
+
 def resource_delete(request, resource_id):
-    pass
+    if not request.user.has_module_perms('library'):
+        return render_to_response('denied.html', context_instance=RequestContext(request))
+
+    resource = Resource.objects.get(id=resource_id)
+    resource.deleted = True
+    resource.save()
+    
+    request.user.message_set.create(message='Resource has been deleted.')
+    return HttpResponseRedirect(reverse('library_resource', kwargs={'resource_id': resource.id}))
 
 @login_required
 def mine(request, sort=None):
-    resources = Resource.objects.filter(creator=request.user)    
+    resources = Resource.objects.visible(creator=request.user)    
 #    edited = Activity.objects.select_related('activity').filter(user=request.user, activity_type='edit')
     edited = []
     
@@ -298,7 +340,7 @@ def collection(request, collection_id, slug=None):
 def collection_sorted(request, collection_id):
     collection = Collection.objects.get(id=collection_id)
     
-    resources = Resource.objects.filter(members__collection=collection_id)
+    resources = Resource.objects.visible(members__collection=collection_id)
     
     if request.GET.get('type', None):
         resources = resources.filter(resource_type=request.GET['type'])

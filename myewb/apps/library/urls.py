@@ -19,6 +19,8 @@ urlpatterns = patterns('',
     url(r'^edit/(?P<resource_id>\d+)/$', resource_edit, name='library_resource_edit'),
     url(r'^edit/(?P<resource_id>\d+)/google/$', resource_google, name='library_resource_google'),
     url(r'^edit/(?P<resource_id>\d+)/replace/$', resource_replace, name='library_resource_replace'),
+    url(r'^archive/(?P<resource_id>\d+)/$', resource_archive, name='library_resource_archive'),
+    url(r'^unarchive/(?P<resource_id>\d+)/$', resource_unarchive, name='library_resource_unarchive'),
     url(r'^delete/(?P<resource_id>\d+)/$', resource_delete, name='library_resource_delete'),
     
     url(r'^upload/$', upload, name='library_upload'),

@@ -93,6 +93,13 @@
     </em>
     <br/><br/>
     
+    {% if resource.archived %}
+        <div style='font-size: 1.5em; font-style: italic; font-weight: bold;'>
+            This resource has been archived and is outdated.
+        </div>
+        <br/>
+    {% endif %}
+    
     {% if resource.description %}
         <div style='border: 1px solid #db7403; background: #f8efda; padding: 10px 15px;'>
             {% dictionary resource description as content %}
@@ -189,9 +196,21 @@
             </a><br/>
         {% endif %}
         
-        <a href="{% url library_resource_delete resource.id %}" class="notyet">
-            Delete this resource &raquo;
-        </a>
+        {% if resource.archived %}
+            <a href="{% url library_resource_unarchive resource.id %}">
+                Un-archive this resource &raquo;
+            </a>
+        {% else %}
+            <a href="{% url library_resource_archive resource.id %}">
+                Archive this resource &raquo;
+            </a>
+        {% endif %}
+
+        {% if perms.library %}
+            <a href="{% url library_resource_delete resource.id %}" class="delete_confirm">
+                Delete this resource &raquo;
+            </a>
+        {% endif %}
     </div>
 
     <div style='height: 5px;'>&nbsp;</div>
@@ -286,6 +305,10 @@
         $('.notyet').click(function() {
             alert("This feature isn't ready yet, but is coming soon!");
             return false;
+        });
+        
+        $('.delete_confirm').click(function() {
+            return confirm("Are you sure you want to delete this resource?\n\nThe resource, including all revisions and activity history, will be permanently deleted!");
         });
     	
     	var old_rating = '{{ resource.rating }}';

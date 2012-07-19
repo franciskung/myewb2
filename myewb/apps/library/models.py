@@ -37,6 +37,10 @@ class Activity(models.Model):
     
     class Meta:
         ordering = ('-date',)
+
+class ResourceManager(models.Manager):
+    def visible(self):
+        return self.get_query_set().filter(archived=False, deleted=False)
     
 class Resource(models.Model):
     name = models.CharField(max_length=255)
@@ -79,6 +83,11 @@ class Resource(models.Model):
     visible = models.BooleanField(default=True)
     rating = models.IntegerField(default=0)
     downloads = models.IntegerField(default=0)
+    
+    archived = models.BooleanField(default=False)
+    deleted = models.BooleanField(default=False)
+    
+    objects = ResourceManager()
 
     def download(self, user):
         self.downloads = self.downloads + 1
@@ -123,6 +132,9 @@ class Resource(models.Model):
         return rating_obj
         
     def user_can_see(self, user):
+        if self.deleted == True:
+            return False
+    
         if self.visible == True:
             return True
             
@@ -137,7 +149,10 @@ class Resource(models.Model):
             
         return False            
         
-    def user_can_edit(self, user):
+    def user_can_edit(self, user, archive_check=True):
+        if archive_check and (self.deleted or self.archived):
+            return False
+    
         if not user.is_authenticated():
             return False
     
@@ -252,7 +267,7 @@ class Collection(models.Model):
         return Collection.objects.filter(parent=self).order_by('ordering', 'name')
 
     def get_total_resources(self):
-        total = self.resources.count()
+        total = self.resources.visible().count()
         for c in self.get_children():
             total = total + 1
             total += c.get_total_resources()
@@ -285,12 +300,16 @@ class Collection(models.Model):
         return False
         
     def get_ordered_resources(self):
+        """
         m = Membership.objects.select_related().filter(collection=self).order_by('ordering')
         
         resources = []
         for mp in m:
             resources.append(mp.resource)
         return resources
+        """
+        
+        return self.resources.visible().order_by('members__ordering')
         
     def add_resource(self, resource, user=None):
         m = get_object_or_none(Membership, collection=self, resource=resource)
