@@ -206,7 +206,7 @@ def upload(request, link=False, collection_id=None):
             resource = form.save()
             
             if not link:
-                resource.upload(request.FILES['resource'])
+                resource.upload(request.FILES['resource'], request.user)
                 
             resource.creator = request.user
             resource.save()
@@ -215,7 +215,7 @@ def upload(request, link=False, collection_id=None):
             if link:
                 duplicate = LinkResource.objects.filter(url=resource.url).exclude(id=resource.id)
             else:
-                duplicate = FileResource.objects.filter(checksum=resource.checksum).exclude(id=resource.id)
+                duplicate = FileResource.objects.filter(head_revision__checksum=resource.head_revision.checksum).exclude(id=resource.id)
                 
             if duplicate:
                 msg = "This resource already exists in the library!<br/><a href='%s'>Click here to view the resource</a>" % reverse('library_resource', kwargs={'resource_id': duplicate[0].id})
@@ -277,7 +277,19 @@ def resource_google(request, resource_id):
     pass
     
 def resource_replace(request, resource_id): 
-    pass
+    resource = FileResource.objects.get(id=resource_id)
+    if not resource.user_can_edit(request.user):
+        return render_to_response('denied.html', context_instance=RequestContext(request))
+        
+    resource.upload(request.FILES['resource'], request.user)
+    resource.updator = request.user
+    resource.save()
+    
+    Activity.objects.create(resource=resource, user=request.user,
+                            activity_type='edit')
+    
+    request.user.message_set.create(message='Resource has been updated.')
+    return HttpResponseRedirect(reverse('library_resource', kwargs={'resource_id': resource.id}))
     
 def resource_archive(request, resource_id):
     resource = Resource.objects.get(id=resource_id)

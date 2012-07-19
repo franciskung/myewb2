@@ -191,7 +191,7 @@
                 </a><br/>
             {% endif %}
             
-            <a href="{% url library_resource_replace resource.id %}" class="notyet">
+            <a href="{% url library_resource_replace resource.id %}" id="replace_file">
                 Upload a new version &raquo;
             </a><br/>
         {% endif %}
@@ -293,8 +293,15 @@
             </div>
             </div>
         </div>
-            
+        
     {% endif %}
+    
+    <div style='height: 1px; overflow: hidden;'>
+        <form method="post" action="{% url library_resource_replace resource.id %}" enctype='multipart/form-data' id="file_upload_form">
+            <input type="file" name="resource" id="file_upload"/>
+            <input type="submit"/>
+        </form>
+    </div>
     
 {% endblock %}
 
@@ -360,6 +367,19 @@
     	           function(data) {
     	                ;
     	           });
+    	});
+    	
+    	$('#file_upload').change(function() {
+    	    var new_file = $(this).val();
+    	    if (confirm("Are you sure you want to replace the resource with:\n\n" + new_file + "\n\n?"))
+    	    {
+    	        $('#file_upload_form').submit();
+    	    }
+    	});
+    	
+    	$('#replace_file').click(function() {
+            $('#file_upload').click();
+            return false;
     	});
     </script>
 {% endblock %}

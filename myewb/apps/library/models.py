@@ -9,7 +9,6 @@ from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
 
 from lxml.html.clean import clean_html, autolink_html, Cleaner
-from datetime import datetime
 import settings, os, shutil, datetime, re, types, hashlib
 
 from group_topics.models import GroupTopic
@@ -39,6 +38,13 @@ class Activity(models.Model):
     
     class Meta:
         ordering = ('-date',)
+
+class Rating(models.Model):
+    resource = models.ForeignKey('Resource', related_name='ratings')
+    user = models.ForeignKey(User)
+    
+    added = models.DateTimeField(auto_now_add=True)
+    rating = models.IntegerField(default=0)
 
 class ResourceManager(models.Manager):
     def visible(self):
@@ -172,10 +178,20 @@ class Resource(models.Model):
 # TODO: regex to use for validating filenames.  For now, anything not alpha-numeric-
 # dash-underscore-period-space gets stripped, but would be good to allow accents eventually.
 re_filename = re.compile(r'[^A-Za-z0-9\-_. ]')
-        
-class FileResource(Resource):
+
+
+class FileRevision(models.Model):
+    resource = models.ForeignKey('FileResource')
+    user = models.ForeignKey(User)
+    created = models.DateTimeField(auto_now_add=True)
     filename = models.CharField(max_length=255)
-    checksum = models.CharField(max_length=32, default='')
+    checksum = models.CharField(max_length=32)
+
+    def get_path(self):
+        return os.path.join(self.resource.get_path(), self.filename)
+
+class FileResource(Resource):
+    head_revision = models.ForeignKey(FileRevision, blank=True, null=True)
     
     def save(self, *args, **kwargs):
         self.model = 'fileresource'
@@ -186,21 +202,31 @@ class FileResource(Resource):
         
         if not os.path.isdir(path):
             os.makedirs(path, 0755)
-            
-        return path + '/' + self.filename
+
+        return path
+        
+    def filename(self):
+        return self.head_revision.filename
+        
+    def checksum(self):
+        return self.head_revision.checksum
     
     def direct_download(self):
-        return os.path.join(settings.STATIC_URL, 'library/files', str(self.id), self.filename)
+        return os.path.join(settings.STATIC_URL, 'library/files', str(self.id), self.head_revision.filename)
         
-    def upload(self, uploadedfile):
+    def upload(self, uploadedfile, user):
+        old_head = self.head_revision
+        
         # build and validate file name name
         filename = re_filename.sub(r'', uploadedfile.name)
-        #self.filename=filename
         fname, dot, extension = filename.rpartition('.')
-        self.filename = slugify(self.name) + '.' + extension
+        (y, m, d, h, mi, sec, d1, d2, d3) = datetime.datetime.now().timetuple()
+        timestring = "%04d%02d%02d%02d%02d%02d" % (y, m, d, h, mi, sec)
+        tmpname = "." + timestring + "." + extension + ".tmp"
+        newname = slugify(self.name) + '.' + extension
             
         # open file
-        diskfile = open(self.get_path(), 'wb+')
+        diskfile = open(os.path.join(self.get_path(), tmpname), 'wb+')
             
         # write file to disk
         md5 = hashlib.md5()
@@ -210,7 +236,23 @@ class FileResource(Resource):
             md5.update(chunk)
         diskfile.close()
         
-        self.checksum = md5.hexdigest()
+        # save old revision and update head
+        if old_head:
+            (y, m, d, h, mi, sec, d1, d2, d3) = old_head.created.timetuple()
+            timestring = "%04d%02d%02d%02d%02d%02d" % (y, m, d, h, mi, sec)
+            os.rename(old_head.get_path(),
+                      os.path.join(self.get_path(), timestring + "." + extension))
+            old_head.filename = timestring + "." + extension
+            old_head.save()
+        
+        os.rename(os.path.join(self.get_path(), tmpname),
+                  os.path.join(self.get_path(), newname))
+        new_head = FileRevision.objects.create(resource=self,
+                                               user=user,
+                                               filename=newname,
+                                               checksum=md5.hexdigest())
+
+        self.head_revision = new_head        
         self.save()
 
         return self
@@ -357,12 +399,4 @@ class Membership(models.Model):
     user = models.ForeignKey(User)
     
     ordering = models.IntegerField(default=0)
-
-class Rating(models.Model):
-    resource = models.ForeignKey(Resource, related_name='ratings')
-    user = models.ForeignKey(User)
-    
-    added = models.DateTimeField(auto_now_add=True)
-    rating = models.IntegerField(default=0)
-
 
