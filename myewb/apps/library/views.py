@@ -287,6 +287,9 @@ def resource_archive(request, resource_id):
     resource.archived = True
     resource.save()
     
+    Activity.objects.create(resource=resource, user=request.user,
+                            activity_type='archive')
+    
     request.user.message_set.create(message='Resource has been archived.')
     return HttpResponseRedirect(reverse('library_resource', kwargs={'resource_id': resource.id}))
 
@@ -297,6 +300,9 @@ def resource_unarchive(request, resource_id):
 
     resource.archived = False
     resource.save()
+    
+    Activity.objects.create(resource=resource, user=request.user,
+                            activity_type='unarchive')
     
     request.user.message_set.create(message='Resource has been restored.')
     return HttpResponseRedirect(reverse('library_resource', kwargs={'resource_id': resource.id}))

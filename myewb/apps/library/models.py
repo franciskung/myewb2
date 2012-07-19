@@ -28,7 +28,9 @@ class Activity(models.Model):
     LIBRARY_ACTIVITIES = (('download', 'download'),
                           ('edit', 'edit'),
                           ('collect', 'collect'),
-                          ('rate', 'rate'))
+                          ('rate', 'rate'),
+                          ('archive', 'archive'),
+                          ('unarchive', 'unarchive'))
     activity_type = models.CharField(max_length=25, choices=LIBRARY_ACTIVITIES)
     
     content_type = models.ForeignKey(ContentType, blank=True, null=True)

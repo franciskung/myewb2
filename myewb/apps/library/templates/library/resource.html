@@ -274,6 +274,18 @@
                         <br/>
                         <span style='font-color: #d0d0d0; font-size: 0.7em; font-style: italic;'>{% mktime_coarse a.date %}</span>
                     {% endifequal %}
+
+                    {% ifequal a.activity_type 'archive' %}
+                        Archived by <a href="{% url profile_detail a.user.username %}">{{ a.user.visible_name }}</a>
+                        <br/>
+                        <span style='font-color: #d0d0d0; font-size: 0.7em; font-style: italic;'>{% mktime_coarse a.date %}</span>
+                    {% endifequal %}
+
+                    {% ifequal a.activity_type 'unarchive' %}
+                        Un-archived by <a href="{% url profile_detail a.user.username %}">{{ a.user.visible_name }}</a>
+                        <br/>
+                        <span style='font-color: #d0d0d0; font-size: 0.7em; font-style: italic;'>{% mktime_coarse a.date %}</span>
+                    {% endifequal %}
                 </p>
             {% endfor %}
             
