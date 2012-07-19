@@ -1,0 +1,90 @@
+{% extends 'library/base.html' %}
+
+{% load time_filters %}
+{% load avatar_tags %}
+{% load pagination_tags %}
+
+{% block body_content %}
+
+    <h2 style='margin-bottom: 5px;' id="filetitle">
+        {{ resource.name }}
+    </h2>
+    
+    <em>
+        By
+        <a href="{% url profile_detail resource.creator.username %}" class="nodeco">
+            {{ resource.creator.visible_name }}
+        </a>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        
+        Updated {% mktime resource.modified %}
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    </em>
+    <br/><br/>
+    
+    <h3>Past revisions...</h3>
+    
+    <style>
+        #revisions_table th, #revisions_table td {
+            text-align: left;
+            padding: 5px 50px 5px 0;
+            vertical-align: top;
+        }
+    </style>
+    
+    {% with resource.get_revisions as revisions %}
+    <table border='0' id="revisions_table">
+        <tr>
+            <th>Author</th>
+            <th>Date</th>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+        </tr>
+        
+        {% autopaginate revisions 10 %}
+        {% for r in revisions %}
+            <tr>
+                <td>
+                	<a href="{% url profile_detail r.user.username %}"  class="avatar-whos-online" data-background-src="{% avatar_url r.user 25 %}" style="margin-right: 10px; margin-bottom: 15px;"></a>
+                    <a href="{% url profile_detail r.user.username %}">
+                        {{ r.user.visible_name }}
+                    </a>
+                </td>
+                <td>{% mktime r.created %}</td>
+                <td><a href="{{ r.get_download }}" target="_new">view</a></td>
+                <td>
+                    {% ifnotequal resource.head_revision r %}
+                        <form method="post" action="" class="revert">
+                        <input type="hidden" name="revision_id" value="{{ r.id }}"/>
+                        <input type="submit" value="revert"/>
+                        </form>
+                    {% else %}
+                        (current revision)
+                    {% endifnotequal %}
+                </td>
+                <td>
+                    {% if r.source %}
+                        <em>(reverted from {% mktime r.source.created %})</em>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        
+    </table>
+    
+    {% paginate %}
+    {% endwith %}
+
+
+{% endblock %}
+
+{% block extra_body %}
+    <script type='text/javascript'>
+        $().ready(function() {
+            $('.revert').submit(function() {
+                return confirm("Are you sure you want to replace the resource with an earlier version?");
+            });
+        });
+    </script>
+{% endblock %}

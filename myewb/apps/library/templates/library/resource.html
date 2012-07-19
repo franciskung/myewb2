@@ -180,9 +180,13 @@
     </a>
     
     <div style="background: #fd9200; width: 150px; margin: 0 auto; padding: 10px 20px; text-align: right; color: #ffffff; position: relative; top: -0.5em; left: 15px; line-height: 1.5em; display: none;" id="edit_resource_more">
+
+        <hr style='height: 3px; margin: 2px 0;'/>
+
         <a href="{% url library_resource_edit resource.id %}">
             Change description &raquo;
-        </a><br/>
+        </a>
+        <hr style='height: 3px; margin: 2px 0;'/>
         
         {% if resource.fileresource %}
             {% if resource.fileresource.can_google_edit %}
@@ -194,6 +198,13 @@
             <a href="{% url library_resource_replace resource.id %}" id="replace_file">
                 Upload a new version &raquo;
             </a><br/>
+            
+            <a href="{% url library_resource_revisions resource.id %}">
+                See past revisions &raquo;
+            </a>
+            
+            <hr style='height: 3px; margin: 2px 0;'/>
+
         {% endif %}
         
         {% if resource.archived %}
@@ -296,7 +307,7 @@
         
     {% endif %}
     
-    <div style='height: 1px; overflow: hidden;'>
+    <div style='height: 1px; width: 1px; overflow: hidden; position: absolute; top: 0; left: 0;'>
         <form method="post" action="{% url library_resource_replace resource.id %}" enctype='multipart/form-data' id="file_upload_form">
             <input type="file" name="resource" id="file_upload"/>
             <input type="submit"/>

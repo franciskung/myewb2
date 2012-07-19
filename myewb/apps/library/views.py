@@ -291,6 +291,30 @@ def resource_replace(request, resource_id):
     request.user.message_set.create(message='Resource has been updated.')
     return HttpResponseRedirect(reverse('library_resource', kwargs={'resource_id': resource.id}))
     
+def resource_revisions(request, resource_id): 
+    resource = FileResource.objects.get(id=resource_id)
+    
+    if request.method == 'POST':
+        if not resource.user_can_edit(request.user):
+            return render_to_response('denied.html', context_instance=RequestContext(request))
+            
+        revision_id = request.POST.get('revision_id', None)
+        success = resource.revert(revision_id, request.user)
+        
+        if success:
+            Activity.objects.create(resource=resource, user=request.user,
+                                    activity_type='edit')
+    
+            request.user.message_set.create(message='Reverted to old revision')
+            return HttpResponseRedirect(reverse('library_resource', kwargs={'resource_id': resource.id}))
+        
+        request.user.message_set.create(message='Unable to revert')
+        
+        
+    return render_to_response("library/resource_revisions.html", 
+        {'resource': resource},
+        context_instance=RequestContext(request))
+    
 def resource_archive(request, resource_id):
     resource = Resource.objects.get(id=resource_id)
     if not resource.user_can_edit(request.user):

@@ -9,7 +9,7 @@ from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
 
 from lxml.html.clean import clean_html, autolink_html, Cleaner
-import settings, os, shutil, datetime, re, types, hashlib
+import settings, os, shutil, datetime, re, types, hashlib, shutil
 
 from group_topics.models import GroupTopic
 from champ.models import Activity
@@ -186,9 +186,13 @@ class FileRevision(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     filename = models.CharField(max_length=255)
     checksum = models.CharField(max_length=32)
+    source = models.ForeignKey('self', blank=True, null=True)
 
     def get_path(self):
         return os.path.join(self.resource.get_path(), self.filename)
+        
+    def get_download(self):
+        return os.path.join(settings.STATIC_URL, 'library/files', str(self.resource.id), self.filename)
 
 class FileResource(Resource):
     head_revision = models.ForeignKey(FileRevision, blank=True, null=True)
@@ -212,7 +216,7 @@ class FileResource(Resource):
         return self.head_revision.checksum
     
     def direct_download(self):
-        return os.path.join(settings.STATIC_URL, 'library/files', str(self.id), self.head_revision.filename)
+        return self.head_revision.get_download()
         
     def upload(self, uploadedfile, user):
         old_head = self.head_revision
@@ -256,6 +260,36 @@ class FileResource(Resource):
         self.save()
 
         return self
+        
+    def revert(self, revision_id, user):
+        revision = FileRevision.objects.get(id=revision_id, resource=self)
+        
+        old_head = self.head_revision
+        stdname = old_head.filename
+        fname, dot, extension = old_head.filename.rpartition('.')
+
+        # save old head...
+        if old_head:
+            (y, m, d, h, mi, sec, d1, d2, d3) = old_head.created.timetuple()
+            timestring = "%04d%02d%02d%02d%02d%02d" % (y, m, d, h, mi, sec)
+            os.rename(old_head.get_path(),
+                      os.path.join(self.get_path(), timestring + "." + extension))
+            old_head.filename = timestring + "." + extension
+            old_head.save()
+            
+        # create new head
+        shutil.copy(revision.get_path(),
+                    os.path.join(self.get_path(), stdname))
+        new_head = FileRevision.objects.create(resource=self,
+                                               user=user,
+                                               filename=stdname,
+                                               checksum=revision.checksum,
+                                               source=revision)
+
+        self.head_revision = new_head        
+        self.save()
+        
+        return True
 
     def can_google_edit(self):
         fname, dot, extension = self.filename.rpartition('.')
@@ -264,6 +298,10 @@ class FileResource(Resource):
             return True
             
         return False        
+        
+    def get_revisions(self):
+        #return FileRevision.objects.filter(resource=self).exclude(id=self.head_revision.id).order_by('-created')
+        return FileRevision.objects.filter(resource=self).order_by('-created')
         
         
 class LinkResource(Resource):
