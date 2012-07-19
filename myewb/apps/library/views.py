@@ -10,10 +10,10 @@ from library.forms import ResourceForm, FileResourceForm, LinkResourceForm, Coll
 from library.models import Resource, FileResource, LinkResource, Activity, Collection, Membership
 
 def home(request):
-    browse = Collection.objects.filter(featured=True, parent__isnull=True).order_by('ordering', '-modified')
+    browse = Collection.objects.visible().filter(featured=True, parent__isnull=True).order_by('ordering', '-modified')
 
     if request.user.is_authenticated():
-        collections = Collection.objects.filter(owner=request.user, parent__isnull=True).order_by('-modified', 'name')
+        collections = Collection.objects.visible().filter(owner=request.user, parent__isnull=True).order_by('-modified', 'name')
     else:
         collections = []
         
@@ -54,7 +54,7 @@ def search(request):
     results = Resource.objects.visible()
     collections = []
     if keyword:
-        collections = Collection.objects.all()
+        collections = Collection.objects.visible()
         for word in keyword.split():
             results = results.filter(Q(name__icontains=word) | Q(description__icontains=word))
             collections = collections.filter(Q(name__icontains=word) | Q(description__icontains=word))
@@ -132,7 +132,7 @@ def organize(request, resource_id):
             return HttpResponseRedirect(reverse('library_resource',
                                                 kwargs={'resource_id': resource_id}))
 
-    collections = Collection.objects.filter(Q(owner=request.user) | Q(curators=request.user))
+    collections = Collection.objects.visible().filter(Q(owner=request.user) | Q(curators=request.user))
                                                 
     if request.is_ajax():
         return render_to_response("library/ajax/organize.html", {
@@ -172,13 +172,13 @@ def browse(request):
             collection = None
             
     if collection_id and collection:
-        collections = Collection.objects.filter(parent=collection)
+        collections = Collection.objects.visible().filter(parent=collection)
 
     else:
         if request.user.has_module_perms('library'):
-            collections = Collection.objects.filter(Q(owner=request.user) | Q(curators=request.user) | Q(featured=True))
+            collections = Collection.objects.visible().filter(Q(owner=request.user) | Q(curators=request.user) | Q(featured=True))
         else:
-            collections = Collection.objects.filter(Q(owner=request.user) | Q(curators=request.user))
+            collections = Collection.objects.visible().filter(Q(owner=request.user) | Q(curators=request.user))
         collections = collections.filter(parent__isnull=True)
     
     
@@ -314,7 +314,7 @@ def resource_delete(request, resource_id):
 
 @login_required
 def mine(request, sort=None):
-    resources = Resource.objects.visible(creator=request.user)    
+    resources = Resource.objects.visible().filter(creator=request.user)    
 #    edited = Activity.objects.select_related('activity').filter(user=request.user, activity_type='edit')
     edited = []
     
@@ -329,6 +329,11 @@ def mine(request, sort=None):
 
 def collection(request, collection_id, slug=None):
     collection = Collection.objects.get(id=collection_id)
+    
+    if collection.deleted:
+        return render_to_response("library/deleted.html", {
+            'collection': collection,
+        }, context_instance=RequestContext(request))
     
     return render_to_response("library/collection.html", 
         {'collection': collection,
@@ -427,6 +432,22 @@ def collection_create(request, parent_id=None):
          'create': True,
          'parent': parent},
         context_instance=RequestContext(request))
+
+@login_required
+def collection_delete(request, collection_id):
+    collection = get_object_or_404(Collection, id=collection_id)
+    if not collection.user_can_edit(request.user):
+        return render_to_response('denied.html', context_instance=RequestContext(request))
+
+    collection.softdelete()
+    
+    request.user.message_set.create(message="Collection has been deleted.")
+    
+    return HttpResponseRedirect(reverse('library_collection',
+                                kwargs={'collection_id': collection.id,
+                                        'slug': collection.slug()}
+                               ))
+    
 
 @login_required
 def collection_reorder(request, collection_id):

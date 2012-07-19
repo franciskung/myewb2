@@ -33,6 +33,7 @@ urlpatterns = patterns('',
     
     url(r'^collection/(?P<collection_id>\d+)/sorted$', collection_sorted, name='library_collection_sorted'),
     url(r'^collection/(?P<collection_id>\d+)/edit/$', collection_edit, name='library_collection_edit'),
+    url(r'^collection/(?P<collection_id>\d+)/delete/$', collection_delete, name='library_collection_delete'),
     url(r'^collection/(?P<collection_id>\d+)/reorder/$', collection_reorder, name='library_collection_reorder'),
     url(r'^collection/(?P<collection_id>\d+)/reorderfiles/$', collection_reorder_files, name='library_files_reorder'),
     url(r'^collection/(?P<parent_id>\d+)/create/$', collection_create, name='library_collection_create'),

@@ -232,6 +232,10 @@ class LinkResource(Resource):
     def direct_download(self):
         return self.url
 
+class CollectionManager(models.Manager):
+    def visible(self):
+        return self.get_query_set().filter(deleted=False)
+    
 class Collection(models.Model):
     name = models.CharField(max_length=50)
     description = models.TextField(blank=True, null=True)
@@ -248,6 +252,10 @@ class Collection(models.Model):
     owner = models.ForeignKey(User, related_name='collections_owned')
     curators = models.ManyToManyField(User, related_name='collections')
     
+    deleted = models.BooleanField(default=False)
+    
+    objects = CollectionManager()
+    
     class Meta:
         ordering = ['ordering', 'name']
     
@@ -258,13 +266,13 @@ class Collection(models.Model):
         return slugify(self.name)
     
     def featured_children(self):
-        return Collection.objects.filter(featured=True, parent=self).order_by('ordering')
+        return Collection.objects.visible().filter(featured=True, parent=self).order_by('ordering')
 
     def has_children(self):
-        return Collection.objects.filter(parent=self).count()
+        return Collection.objects.visible().filter(parent=self).count()
 
     def get_children(self):
-        return Collection.objects.filter(parent=self).order_by('ordering', 'name')
+        return Collection.objects.visible().filter(parent=self).order_by('ordering', 'name')
 
     def get_total_resources(self):
         total = self.resources.visible().count()
@@ -330,6 +338,14 @@ class Collection(models.Model):
                                     content_object=self)
             
         return m
+        
+    def softdelete(self):
+        children = self.get_children()
+        for child in children:
+            child.softdelete()
+    
+        self.deleted = True
+        self.save()
         
 class Membership(models.Model):
     resource = models.ForeignKey(Resource, related_name='members')

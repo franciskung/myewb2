@@ -3,7 +3,7 @@
 {% block body_content %}
     <br/>
     
-    <h2>Sorry, this resource has been permanently deleted.</h2>
+    <h2>Sorry, this {% if resource %}resource{% else %}collection{% endif %} has been permanently deleted.</h2>
     
     <p>
         <a href="{% url library_home %}">Back to the EWB library</a>

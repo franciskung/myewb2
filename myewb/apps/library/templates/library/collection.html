@@ -66,6 +66,8 @@
                 <a href="{% url library_upload_link collection.id %}">Add a link</a>
                 &nbsp;&nbsp;|&nbsp;&nbsp;
                 <a href="{% url library_collection_create collection.id %}">Create a sub-page</a>
+                &nbsp;&nbsp;|&nbsp;&nbsp;
+                <a href="{% url library_collection_delete collection.id %}" class="delete_confirm">Delete</a>
             </div>
             
         {% endif %}
@@ -167,6 +169,10 @@
                   });
             
             return false;
+        });
+        
+        $('.delete_confirm').click(function() {
+            return confirm("This will permanently delete the collection, as well as any subpages!\n\nAre you sure you want to do this???");
         });
     </script>
 {% endblock %}
