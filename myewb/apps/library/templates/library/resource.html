@@ -190,7 +190,7 @@
         
         {% if resource.fileresource %}
             {% if resource.fileresource.can_google_edit %}
-                <a href="{% url library_resource_google resource.id %}" class="notyet">
+                <a href="{% url library_resource_google resource.id %}" target="_new" id="google_open" onclick="window.open('{% url library_resource_google resource.id %}', 'popup', 'width=600,height=400'); return false">
                     Open in Google Docs &raquo;
                 </a><br/>
             {% endif %}
@@ -314,6 +314,26 @@
         </form>
     </div>
     
+    <div style='display: none;'>
+        <div id="google_msg" style='padding: 20px; text-align: center;'>
+            <p>
+                Please wait while we send the document to Google Docs...<br/>
+                It should open in a new window soon.
+            </p>
+            
+            <p>
+                <strong>When you are done editing the document,<br/>
+                you must click on the button below to save the updated copy!</strong>
+            </p>
+            
+            <a href="#" style='display: block; border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; background: #fd9200; width: 200px; margin: 0 auto; padding: 15px 10px; text-align: center; color: #ffffff;'>
+                <span style='font-size: 14px; font-weight: bold; color: #ffffff;'>Click here when you're done editing!</span>
+            </a>
+            
+            <br/><br/><br/>
+        </div>
+    </div>
+    
 {% endblock %}
 
 {% block extra_body %}
@@ -392,6 +412,11 @@
             $('#file_upload').click();
             return false;
     	});
+
+    	$('#google_open').click(function() {
+    	    $.colorbox({opacity: '0.5', width: '600px;', height: '50%',
+    	                inline: true, href: '#google_msg'});
+        });
     </script>
 {% endblock %}
 

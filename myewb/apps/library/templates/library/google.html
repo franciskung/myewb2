@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+
+<head>
+    <title>myEWB</title>
+	<link rel="stylesheet" href="{{ STATIC_URL }}templates/myewb2/css/newstyle.css">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="{{ STATIC_URL }}templates/myewb2/js/libs/jquery-1.6.2.min.js"><\/script>')</script>
+    
+</head>
+<body>
+
+<div id="maincontent" style='margin-top: 25px; height: 300px; text-align: center;'>
+
+
+<p>
+Please wait... we're talking to Google's servers and setting everything up.
+</p>
+
+</div>
+
+
+<script type='text/javascript'>
+    $().ready(function() {
+        $.post("{% url library_resource_google2 resource_id %}",
+               {},
+               function(data) {
+                    setTimeout(function() {
+                        window.location=data;
+                    }, 2000);
+               });
+    });
+</script>
+
+
+</body>
+</html>
+

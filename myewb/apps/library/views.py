@@ -9,6 +9,9 @@ from django.template import RequestContext
 from library.forms import ResourceForm, FileResourceForm, LinkResourceForm, CollectionForm
 from library.models import Resource, FileResource, LinkResource, Activity, Collection, Membership
 
+import settings, time
+
+
 def home(request):
     browse = Collection.objects.visible().filter(featured=True, parent__isnull=True).order_by('ordering', '-modified')
 
@@ -274,7 +277,56 @@ def resource_edit(request, resource_id):
         context_instance=RequestContext(request))
 
 def resource_google(request, resource_id):
-    pass
+    return render_to_response("library/google.html", 
+        {'resource_id': resource_id},
+        context_instance=RequestContext(request))
+
+def resource_google2(request, resource_id):
+    resource = FileResource.objects.get(id=resource_id)
+    if not resource.user_can_edit(request.user):
+        return render_to_response('denied.html', context_instance=RequestContext(request))
+        
+    if not settings.GOOGLE_APPS:
+        request.user.message_set.create(message='Google integration not available.')
+        return HttpResponseRedirect(reverse('library_home'))
+
+    import gdata, gdata.docs, gdata.docs.service
+    
+    client = gdata.docs.service.DocsService()
+    client.ClientLogin(settings.GOOGLE_ADMIN, settings.GOOGLE_PASSWORD)
+    client.ProgrammaticLogin()
+    
+    filename, dot, ext = resource.head_revision.filename.rpartition('.')
+    
+    if ext not in ('doc', 'docx'):
+        request.user.message_set.create(message='This file type is not supported for Google editing.')
+        return HttpResponseRedirect(reverse('library_resource', kwargs={'resource_id': resource.id}))
+    
+    content_type = gdata.docs.service.SUPPORTED_FILETYPES[ext.upper()]
+    
+    title = resource.name
+    
+    ms = gdata.MediaSource(file_path=resource.head_revision.get_path(),
+                           content_type=content_type)
+    entry = client.Upload(ms, title)
+    
+    if not entry:
+        request.user.message_set.create(message='Error contacting Google Docs... please try again later.')
+        return HttpResponseRedirect(reverse('library_resource', kwargs={'resource_id': resource.id}))
+
+    google_username=''
+    scope = gdata.docs.Scope(type='user', value=google_username)
+    role = gdata.docs.Role(value='writer')
+
+    acl_uri = entry.GetAclLink().href
+    acl_entry = gdata.docs.DocumentListAclEntry(scope=scope, role=role)
+    r = inserted_entry = client.Post(acl_entry, acl_uri + "?send-notification-emails=false",
+                                     converter=gdata.docs.DocumentListAclEntryFromString)
+                                 
+    while not r:
+        time.sleep(0.25)
+        
+    return HttpResponse(entry.GetAlternateLink().href.replace('/a/ewb.ca', ''))
     
 def resource_replace(request, resource_id): 
     resource = FileResource.objects.get(id=resource_id)

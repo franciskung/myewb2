@@ -182,6 +182,7 @@ check_password2 = User.check_password
 set_password2 = User.set_password
 User.add_to_class('google_username', models.CharField(null=True, blank=True, max_length=255))
 User.add_to_class('google_sync', models.BooleanField(default=False))
+User.add_to_class('google_alt_username', models.CharField(null=True, blank=True, max_length=255))
 
 def set_google_password(username, password):
     if settings.GOOGLE_APPS and username:

@@ -292,8 +292,7 @@ class FileResource(Resource):
         return True
 
     def can_google_edit(self):
-        fname, dot, extension = self.filename.rpartition('.')
-
+        fname, dot, extension = self.head_revision.filename.rpartition('.')
         if extension in ('doc', 'docx'):
             return True
             
