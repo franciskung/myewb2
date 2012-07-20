@@ -190,7 +190,7 @@
         
         {% if resource.fileresource %}
             {% if resource.fileresource.can_google_edit %}
-                <a href="{% url library_resource_google resource.id %}" target="_new" id="google_open" onclick="window.open('{% url library_resource_google resource.id %}', 'popup', 'width=600,height=400'); return false">
+                <a href="{% url library_resource_google resource.id %}" target="_new" id="google_open" onclick="window.open('{% url library_resource_google resource.id %}', 'popup', 'width=800,height=600'); return false">
                     Open in Google Docs &raquo;
                 </a><br/>
             {% endif %}
@@ -413,10 +413,12 @@
             return false;
     	});
 
+/*
     	$('#google_open').click(function() {
     	    $.colorbox({opacity: '0.5', width: '600px;', height: '50%',
     	                inline: true, href: '#google_msg'});
         });
+*/
     </script>
 {% endblock %}
 

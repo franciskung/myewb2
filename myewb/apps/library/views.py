@@ -9,7 +9,7 @@ from django.template import RequestContext
 from library.forms import ResourceForm, FileResourceForm, LinkResourceForm, CollectionForm
 from library.models import Resource, FileResource, LinkResource, Activity, Collection, Membership
 
-import settings, time
+import settings, time, os
 
 
 def home(request):
@@ -277,14 +277,30 @@ def resource_edit(request, resource_id):
         context_instance=RequestContext(request))
 
 def resource_google(request, resource_id):
+    google_username = request.user.google_alt_username
+    if not google_username:
+        google_username = request.user.google_username
+        
     return render_to_response("library/google.html", 
-        {'resource_id': resource_id},
+        {'resource_id': resource_id,
+         'google_username': google_username},
         context_instance=RequestContext(request))
 
 def resource_google2(request, resource_id):
     resource = FileResource.objects.get(id=resource_id)
     if not resource.user_can_edit(request.user):
         return render_to_response('denied.html', context_instance=RequestContext(request))
+        
+    google_username = None
+    if request.POST.get('google_username', None):
+        google_username = request.POST['google_username']
+        u = request.user
+        u.google_alt_username = google_username
+        u.save()
+    else:
+        google_username = request.user.google_alt_username
+        if not google_username:
+            google_username = request.user.google_username
         
     if not settings.GOOGLE_APPS:
         request.user.message_set.create(message='Google integration not available.')
@@ -296,38 +312,101 @@ def resource_google2(request, resource_id):
     client.ClientLogin(settings.GOOGLE_ADMIN, settings.GOOGLE_PASSWORD)
     client.ProgrammaticLogin()
     
-    filename, dot, ext = resource.head_revision.filename.rpartition('.')
-    
-    if ext not in ('doc', 'docx'):
-        request.user.message_set.create(message='This file type is not supported for Google editing.')
-        return HttpResponseRedirect(reverse('library_resource', kwargs={'resource_id': resource.id}))
-    
-    content_type = gdata.docs.service.SUPPORTED_FILETYPES[ext.upper()]
-    
-    title = resource.name
-    
-    ms = gdata.MediaSource(file_path=resource.head_revision.get_path(),
-                           content_type=content_type)
-    entry = client.Upload(ms, title)
+    if not resource.google_docs:
+        filename, dot, ext = resource.head_revision.filename.rpartition('.')
+        
+        if ext not in ('doc', 'docx'):
+            request.user.message_set.create(message='This file type is not supported for Google editing.')
+            return HttpResponseRedirect(reverse('library_resource', kwargs={'resource_id': resource.id}))
+        
+        content_type = gdata.docs.service.SUPPORTED_FILETYPES[ext.upper()]
+        
+        title = resource.name
+        
+        ms = gdata.MediaSource(file_path=resource.head_revision.get_path(),
+                               content_type=content_type)
+        entry = client.Upload(ms, title)
+    else:
+        entry = client.GetDocumentListEntry(resource.google_docs)
     
     if not entry:
         request.user.message_set.create(message='Error contacting Google Docs... please try again later.')
         return HttpResponseRedirect(reverse('library_resource', kwargs={'resource_id': resource.id}))
 
-    google_username=''
     scope = gdata.docs.Scope(type='user', value=google_username)
     role = gdata.docs.Role(value='writer')
 
     acl_uri = entry.GetAclLink().href
     acl_entry = gdata.docs.DocumentListAclEntry(scope=scope, role=role)
-    r = inserted_entry = client.Post(acl_entry, acl_uri + "?send-notification-emails=false",
-                                     converter=gdata.docs.DocumentListAclEntryFromString)
-                                 
-    while not r:
-        time.sleep(0.25)
+    try:
+        r = inserted_entry = client.Post(acl_entry, acl_uri + "?send-notification-emails=false",
+                                         converter=gdata.docs.DocumentListAclEntryFromString)
+    except:
+        # probably a "User Already Has Access" error
+        pass
+        
+    resource.google_docs = entry.id.text
+    resource.google_docs_users.add(request.user)
+    resource.google_docs_counter = resource.google_docs_counter + 1
+    resource.save()
         
     return HttpResponse(entry.GetAlternateLink().href.replace('/a/ewb.ca', ''))
     
+def resource_googlesave(request, resource_id, save=True):
+    resource = FileResource.objects.get(id=resource_id)
+    if not resource.user_can_edit(request.user):
+        return render_to_response('denied.html', context_instance=RequestContext(request))
+        
+    resource.google_docs_users.remove(request.user)
+    if resource.google_docs_counter:
+        resource.google_docs_counter = resource.google_docs_counter - 1
+    resource.save()
+
+    import gdata, gdata.docs, gdata.docs.service
+    client = gdata.docs.service.DocsService()
+    client.ClientLogin(settings.GOOGLE_ADMIN, settings.GOOGLE_PASSWORD)
+    client.ProgrammaticLogin()
+    entry = client.GetDocumentListEntry(resource.google_docs)
+    
+    if save:
+        filename, dot, ext = resource.head_revision.filename.rpartition('.')
+        tmpname = '.google-upload.tmp.' + ext
+        
+        client.Export(entry, os.path.join(resource.get_path(), tmpname))
+        resource.new_revision(tmpname, resource.head_revision.filename, request.user)
+        
+    if False and (resource.google_docs_counter == 0 or resource.google_docs_users.count() == 0):
+        client.Delete(resource.google_docs, {'If-Match': '*'}, {'delete': 'true'})
+        resource.google_docs = None
+        resource.google_docs_counter = 0;
+        for u in resource.google_docs_users.all():
+            resource.google_docs_users.remove(u)
+        resource.save()
+        
+    else:
+        print "trying to go"
+        google_username = request.user.google_alt_username
+        if not google_username:
+            google_username = request.user.google_username
+
+        uri = gdata.docs.service.DocumentAclQuery(resource.google_docs).ToUri()
+        acl_feed = client.GetDocumentListAclFeed(uri)
+        
+        acl_entry = None
+        for e in acl_feed.entry:
+            if e.scope.value == google_username:
+                print "testing value", e.scope.value
+                acl_entry = e
+                break
+                
+        if acl_entry:
+            print "found entry"
+            client.Delete(acl_entry.GetEditLink().href)
+            print "deleted"
+        
+
+    return HttpResponse('')        
+
 def resource_replace(request, resource_id): 
     resource = FileResource.objects.get(id=resource_id)
     if not resource.user_can_edit(request.user):

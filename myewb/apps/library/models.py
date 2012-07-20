@@ -187,6 +187,7 @@ class FileRevision(models.Model):
     filename = models.CharField(max_length=255)
     checksum = models.CharField(max_length=32)
     source = models.ForeignKey('self', blank=True, null=True)
+    is_google = models.BooleanField(default=False)
 
     def get_path(self):
         return os.path.join(self.resource.get_path(), self.filename)
@@ -196,6 +197,9 @@ class FileRevision(models.Model):
 
 class FileResource(Resource):
     head_revision = models.ForeignKey(FileRevision, blank=True, null=True)
+    google_docs = models.CharField(max_length=255, blank=True, null=True)
+    google_docs_users = models.ManyToManyField(User)
+    google_docs_counter = models.IntegerField(default=0)
     
     def save(self, *args, **kwargs):
         self.model = 'fileresource'
@@ -240,6 +244,12 @@ class FileResource(Resource):
             md5.update(chunk)
         diskfile.close()
         
+        return self.new_revision(tmpname, newname, user, md5.hexdigest())
+        
+    def new_revision(self, tmpname, newname, user, checksum='', google=False):
+        old_head = self.head_revision
+        fname, dot, extension = newname.rpartition('.')
+        
         # save old revision and update head
         if old_head:
             (y, m, d, h, mi, sec, d1, d2, d3) = old_head.created.timetuple()
@@ -254,13 +264,14 @@ class FileResource(Resource):
         new_head = FileRevision.objects.create(resource=self,
                                                user=user,
                                                filename=newname,
-                                               checksum=md5.hexdigest())
+                                               checksum=checksum,
+                                               is_google=google)
 
         self.head_revision = new_head        
         self.save()
 
         return self
-        
+    
     def revert(self, revision_id, user):
         revision = FileRevision.objects.get(id=revision_id, resource=self)
         

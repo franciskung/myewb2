@@ -8,31 +8,157 @@
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
     <script>window.jQuery || document.write('<script src="{{ STATIC_URL }}templates/myewb2/js/libs/jquery-1.6.2.min.js"><\/script>')</script>
     
+    <script type='text/javascript'>
+       var google_url = ''; 
+    
+       function bind_close_listeners() { 
+           $(window).bind("beforeunload",
+               function(){
+                   return "Are you sure you want to close the window without saving?\n\nTo save this resource back into the library, click the button in the bottom right corner."
+               });
+           $(window).bind("unload",
+               function() {
+                   $.post('{% url library_resource_googleclose resource_id %}',
+                          {},
+                          function(data) {
+                          });
+               });
+       } 
+       
+       function load_doc(data) {
+            google_url = data;
+            $('#please_wait2').slideDown();
+            bind_close_listeners();
+
+            setTimeout(function() {
+                $('#gframe').attr('src', data);
+                $('#gframe').load(function() {
+                    $('#maincontent').hide();
+                    $('#bottombar').show();
+                    $('#gframe').css('width', '100%');
+                    $('#gframe').css('height', '80%');
+                    $('#gframe').css('margin-top', '10px');
+                });
+            }, 1500);
+       }
+    </script>
+    
 </head>
-<body>
+<body style='height: 100%; margin: 0; padding: 0; overflow: hidden; color: #ffffff;'>
 
-<div id="maincontent" style='margin-top: 25px; height: 300px; text-align: center;'>
+<iframe href="#" style='width: 1px; height: 1px; border: 0;' height="1px" width="1px" id="gframe">
+</iframe>
+
+<div id="maincontent" style='margin-top: 25px; height: 150px; text-align: center; color: #444;'>
+    <div id="saving" style='display: none;'>
+        <p>
+            Please wait... saving the resource back into our library.
+        </p>
+        
+        <p>
+            <img src="{{ STATIC_URL }}images/ajax-loader2.gif"/>
+        </p>
+    </div>
+
+    <div id="please_wait" {% if not google_username %}style='display: none;'{% endif %}>
+        <p>
+            Please wait... we're talking to Google's servers and setting everything up.
+        </p>
+        
+        <p id="please_wait2" style='display: none;'>
+            Nearly done - loading Google Docs...
+        </p>
+        
+        <p>
+            <img src="{{ STATIC_URL }}images/ajax-loader2.gif"/>
+        </p>
+        
+    </div>
+
+    {% if google_username %}
+        <script type='text/javascript'>
+            $().ready(function() {
+                $.post("{% url library_resource_google2 resource_id %}",
+                       {},
+                       load_doc);
+            });
+        </script>
+
+    {% else %}
+        <div id="enter_email">
+            <p>
+                We need to share the resource with your Google account<br/>
+                (ie, a gmail or @ewb.ca email address):
+            </p>
+            
+            <form method="post" action="" id="email_form">
+                Email: <input type="text" name="email" id="email"/><br/>
+                <input type="submit" id="email_submit"/>
+            </form>
+        </div>
 
 
-<p>
-Please wait... we're talking to Google's servers and setting everything up.
-</p>
+        <script type='text/javascript'>
+            $().ready(function() {
+                $('#email_form').submit(function() {
+                    $('#gname').html($('#email').val());
+                    $('#enter_email').slideUp()
+                    $('#please_wait').slideDown();
+
+                    $.post("{% url library_resource_google2 resource_id %}",
+                           {'google_username': $('#email').val()},
+                           load_doc);
+
+                    return false;
+                });
+            });
+        </script>
+
+
+    {% endif %}
+</div>
+
+<div style='height: 15%; width: 100%; position: fixed; bottom: 0; padding-top: 25px; display: none;' id="bottombar">
+
+<div style='float: right; border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; background: green; width: auto; margin: 0 20px 10px 0; padding: 10px 15px;'>
+    <a href="#" id="done_edit" style='color: #ffffff;'>
+        Click here when done editing
+    </a>
+</div>
+
+<div style='padding-top: 5px;'>
+Opening with <strong>{{ google_username }}</strong><br/>
+(<a href="#" id="reload" style='color: #ffffff'>if you see a permissions error, click here</a>)
+</div>
 
 </div>
 
-
 <script type='text/javascript'>
     $().ready(function() {
-        $.post("{% url library_resource_google2 resource_id %}",
-               {},
-               function(data) {
-                    setTimeout(function() {
-                        window.location=data;
-                    }, 2000);
-               });
+        $('#reload').click(function() {
+            $('#gframe').attr('src', google_url);
+            return false;
+        });
+        $('#done_edit').click(function() {
+            $('#please_wait').hide();
+            $('#enter_email').hide();
+            $('#saving').show();
+            $('#maincontent').show();
+            
+            $('#bottombar').hide();
+            $('#gframe').hide();
+            
+            $.post('{% url library_resource_googlesave resource_id %}',
+                   {},
+                   function(data) {
+                       $(window).unbind("beforeunload");
+                       window.close();
+                   }); 
+
+            return false;
+        });
     });
 </script>
-
 
 </body>
 </html>
