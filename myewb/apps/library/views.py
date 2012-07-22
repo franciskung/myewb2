@@ -300,8 +300,8 @@ def resource_google2(request, resource_id):
         u.save()
     else:
         google_username = request.user.google_alt_username
-        if not google_username:
-            google_username = request.user.google_username
+        if not google_username and request.user.google_username:
+            google_username = "%s%s" % (request.user.google_username, '@ewb.ca')
         
     if not settings.GOOGLE_APPS:
         request.user.message_set.create(message='Google integration not available.')
@@ -396,8 +396,8 @@ def resource_googlesave(request, resource_id, save=True):
     # othertwise just remove this user's access to it
     else:
         google_username = request.user.google_alt_username
-        if not google_username:
-            google_username = request.user.google_username
+        if not google_username and request.user.google_username:
+            google_username = "%s%s" % (request.user.google_username, '@ewb.ca')
 
         uri = entry.GetAclLink().href
         acl_feed = client.GetDocumentListAclFeed(uri)
