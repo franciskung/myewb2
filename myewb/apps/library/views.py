@@ -291,6 +291,7 @@ def resource_google2(request, resource_id):
     if not resource.user_can_edit(request.user):
         return render_to_response('denied.html', context_instance=RequestContext(request))
         
+    # if user supplied a new Google account, save it
     google_username = None
     if request.POST.get('google_username', None):
         google_username = request.POST['google_username']
@@ -306,12 +307,13 @@ def resource_google2(request, resource_id):
         request.user.message_set.create(message='Google integration not available.')
         return HttpResponseRedirect(reverse('library_home'))
 
+    # google setup and login...
     import gdata, gdata.docs, gdata.docs.service
-    
     client = gdata.docs.service.DocsService()
     client.ClientLogin(settings.GOOGLE_ADMIN, settings.GOOGLE_PASSWORD)
     client.ProgrammaticLogin()
     
+    # need to upload file to google?
     if not resource.google_docs:
         filename, dot, ext = resource.head_revision.filename.rpartition('.')
         
@@ -326,6 +328,8 @@ def resource_google2(request, resource_id):
         ms = gdata.MediaSource(file_path=resource.head_revision.get_path(),
                                content_type=content_type)
         entry = client.Upload(ms, title)
+        
+    # or just retrieve the ID for the file if it's already there
     else:
         entry = client.GetDocumentListEntry(resource.google_docs)
     
@@ -333,6 +337,7 @@ def resource_google2(request, resource_id):
         request.user.message_set.create(message='Error contacting Google Docs... please try again later.')
         return HttpResponseRedirect(reverse('library_resource', kwargs={'resource_id': resource.id}))
 
+    # set up permissions for user
     scope = gdata.docs.Scope(type='user', value=google_username)
     role = gdata.docs.Role(value='writer')
 
@@ -345,6 +350,7 @@ def resource_google2(request, resource_id):
         # probably a "User Already Has Access" error
         pass
         
+    # and do some internal tracking...
     resource.google_docs = entry.id.text
     resource.google_docs_users.add(request.user)
     resource.google_docs_counter = resource.google_docs_counter + 1
@@ -357,17 +363,20 @@ def resource_googlesave(request, resource_id, save=True):
     if not resource.user_can_edit(request.user):
         return render_to_response('denied.html', context_instance=RequestContext(request))
         
+    # internal tracking first
     resource.google_docs_users.remove(request.user)
     if resource.google_docs_counter:
         resource.google_docs_counter = resource.google_docs_counter - 1
     resource.save()
 
+    # setup and login to google
     import gdata, gdata.docs, gdata.docs.service
     client = gdata.docs.service.DocsService()
     client.ClientLogin(settings.GOOGLE_ADMIN, settings.GOOGLE_PASSWORD)
     client.ProgrammaticLogin()
     entry = client.GetDocumentListEntry(resource.google_docs)
     
+    # pull file out of google and save new revision
     if save:
         filename, dot, ext = resource.head_revision.filename.rpartition('.')
         tmpname = '.google-upload.tmp.' + ext
@@ -375,6 +384,7 @@ def resource_googlesave(request, resource_id, save=True):
         client.Export(entry, os.path.join(resource.get_path(), tmpname))
         resource.new_revision(tmpname, resource.head_revision.filename, request.user)
         
+    # if no one is using this file any more, delete it from google docs
     if False and (resource.google_docs_counter == 0 or resource.google_docs_users.count() == 0):
         client.Delete(resource.google_docs, {'If-Match': '*'}, {'delete': 'true'})
         resource.google_docs = None
@@ -383,27 +393,23 @@ def resource_googlesave(request, resource_id, save=True):
             resource.google_docs_users.remove(u)
         resource.save()
         
+    # othertwise just remove this user's access to it
     else:
-        print "trying to go"
         google_username = request.user.google_alt_username
         if not google_username:
             google_username = request.user.google_username
 
-        uri = gdata.docs.service.DocumentAclQuery(resource.google_docs).ToUri()
+        uri = entry.GetAclLink().href
         acl_feed = client.GetDocumentListAclFeed(uri)
         
         acl_entry = None
         for e in acl_feed.entry:
             if e.scope.value == google_username:
-                print "testing value", e.scope.value
                 acl_entry = e
                 break
                 
         if acl_entry:
-            print "found entry"
             client.Delete(acl_entry.GetEditLink().href)
-            print "deleted"
-        
 
     return HttpResponse('')        
 
