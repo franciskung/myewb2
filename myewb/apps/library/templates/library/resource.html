@@ -190,7 +190,7 @@
         
         {% if resource.fileresource %}
             {% if resource.fileresource.can_google_edit %}
-                <a href="{% url library_resource_google resource.id %}" target="_new" id="google_open" onclick="window.open('{% url library_resource_google resource.id %}', 'popup', 'width=800,height=600'); return false">
+                <a href="{% url library_resource_google resource.id %}" target="_new" id="google_open" onclick="google_docs_window = window.open('{% url library_resource_google resource.id %}', 'myewb_google_docs', 'width=400,height=200'); return false">
                     Open in Google Docs &raquo;
                 </a><br/>
             {% endif %}
@@ -315,20 +315,37 @@
     </div>
     
     <div style='display: none;'>
-        <div id="google_msg" style='padding: 20px; text-align: center;'>
-            <p>
-                Please wait while we send the document to Google Docs...<br/>
-                It should open in a new window soon.
-            </p>
+        <div id="google_msg" style='padding: 20px 10px; text-align: center;'>
+            <div id="google_msg_opening">
+                <p>
+                    Opening with <strong>{{ google_username }}</strong>
+                </p>
             
-            <p>
-                <strong>When you are done editing the document,<br/>
-                you must click on the button below to save the updated copy!</strong>
-            </p>
+                <p>
+                    Please wait while we send the document to Google Docs...<br/>
+                    It should open in a new window soon.<br/>
+                    (<a href="#" id="google_reload">click here if you get a permissions error</a>)
+                </p>
+                
+                <p>
+                    <strong>When you are done editing the document,<br/>
+                    you must click on the button below to save the updated copy!</strong>
+                </p>
+                
+                <a href="#" style='display: block; border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; background: #fd9200; width: 200px; margin: 0 auto; padding: 15px 10px; text-align: center; color: #ffffff;' id="done_editing">
+                    <span style='font-size: 14px; font-weight: bold; color: #ffffff;'>Click here when you're done editing!</span>
+                </a>
+            </div>
             
-            <a href="#" style='display: block; border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; background: #fd9200; width: 200px; margin: 0 auto; padding: 15px 10px; text-align: center; color: #ffffff;'>
-                <span style='font-size: 14px; font-weight: bold; color: #ffffff;'>Click here when you're done editing!</span>
-            </a>
+            <div id="google_msg_saving" style='display: none;'>
+                <p>
+                    Please wait... saving the resource back into our library.
+                </p>
+                
+                <p>
+                    <img src="{{ STATIC_URL }}images/ajax-loader2.gif"/>
+                </p>
+            </div>
             
             <br/><br/><br/>
         </div>
@@ -341,6 +358,8 @@
 	{% include "tinymce.html" %}
 
     <script type='text/javascript'>	
+        var google_docs_window;
+        var google_docs_url;
     	$('#organize').colorbox({opacity: '0.5', width: '600px;', height: '50%'});
     	
     	{% if user.is_authenticated %}
@@ -413,12 +432,34 @@
             return false;
     	});
 
-/*
     	$('#google_open').click(function() {
+            $('#google_msg_opening').show();
+            $('#google_msg_saving').hide();
     	    $.colorbox({opacity: '0.5', width: '600px;', height: '50%',
     	                inline: true, href: '#google_msg'});
         });
-*/
+        
+    	$('#google_reload').click(function() {
+    	    google_docs_window.location = google_docs_url;
+    	    return false;
+        });
+        
+        $('#done_editing').click(function() {
+            $('#google_msg_opening').slideUp();
+            $('#google_msg_saving').slideDown();
+            
+            if (google_docs_window)
+                google_docs_window.close();
+                
+            $.post('{% url library_resource_googlesave resource.id %}',
+                   {},
+                   function(data) {
+                       $.colorbox.close();
+                   }); 
+
+            return false;
+        });
+        
     </script>
 {% endblock %}
 
