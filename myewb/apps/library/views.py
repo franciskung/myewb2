@@ -258,7 +258,9 @@ def resource_edit(request, resource_id):
         form = form_class(request.POST, instance=resource)
         
         if form.is_valid():
-            form.save()
+            resource = form.save(commit=False)
+            resource.modify()
+            resource.save()
             
             Activity.objects.create(resource=resource,
                                     user=request.user,
@@ -383,9 +385,13 @@ def resource_googlesave(request, resource_id, save=True):
         
         client.Export(entry, os.path.join(resource.get_path(), tmpname))
         resource.new_revision(tmpname, resource.head_revision.filename, request.user)
+
+        Activity.objects.create(resource=resource,
+                                user=request.user,
+                                activity_type='edit')
         
     # if no one is using this file any more, delete it from google docs
-    if False and (resource.google_docs_counter == 0 or resource.google_docs_users.count() == 0):
+    if resource.google_docs_counter == 0 or resource.google_docs_users.count() == 0:
         client.Delete(resource.google_docs, {'If-Match': '*'}, {'delete': 'true'})
         resource.google_docs = None
         resource.google_docs_counter = 0;
@@ -420,6 +426,7 @@ def resource_replace(request, resource_id):
         
     resource.upload(request.FILES['resource'], request.user)
     resource.updator = request.user
+    resource.modify()
     resource.save()
     
     Activity.objects.create(resource=resource, user=request.user,

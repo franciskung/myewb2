@@ -56,7 +56,7 @@ class Resource(models.Model):
     model = models.CharField(max_length=25)
     
     created = models.DateTimeField(auto_now_add=True)
-    modified = models.DateTimeField(auto_now=True)
+    modified = models.DateTimeField()
     
     creator = models.ForeignKey(User, related_name='library_resources', null=True)
     updator = models.ForeignKey(User, related_name='library_updates', null=True)
@@ -107,6 +107,9 @@ class Resource(models.Model):
         a.save()
                                     
         return getattr(self, getattr(self, 'model')).direct_download()
+        
+    def modify(self):
+        self.modified = datetime.datetime.now()
         
     def get_rating(self, user):
         if not user.is_authenticated():
@@ -258,6 +261,7 @@ class FileResource(Resource):
                       os.path.join(self.get_path(), timestring + "." + extension))
             old_head.filename = timestring + "." + extension
             old_head.save()
+            self.modify()
         
         os.rename(os.path.join(self.get_path(), tmpname),
                   os.path.join(self.get_path(), newname))
@@ -268,6 +272,7 @@ class FileResource(Resource):
                                                is_google=google)
 
         self.head_revision = new_head        
+        self.updator = user
         self.save()
 
         return self
@@ -298,6 +303,7 @@ class FileResource(Resource):
                                                source=revision)
 
         self.head_revision = new_head        
+        self.modify()
         self.save()
         
         return True
