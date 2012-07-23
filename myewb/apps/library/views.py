@@ -280,8 +280,8 @@ def resource_edit(request, resource_id):
 
 def resource_google(request, resource_id):
     google_username = request.user.google_alt_username
-    if not google_username:
-        google_username = request.user.google_username
+    if not google_username and request.user.google_username:
+        google_username = "%s%s" % (request.user.google_username, '@ewb.ca')
         
     return render_to_response("library/google.html", 
         {'resource_id': resource_id,

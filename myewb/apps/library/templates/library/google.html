@@ -24,8 +24,12 @@
 </head>
 <body style='height: 100%; margin: 0; padding: 0; overflow: hidden; color: #ffffff;'>
 
-<div id="maincontent" style='margin-top: 25px; height: 150px; text-align: center; color: #444;'>
+<div id="maincontent" style='margin-top: 25px; height: 150px; text-align: center; color: #444; padding: 10px;'>
     <div id="please_wait" {% if not google_username %}style='display: none;'{% endif %}>
+        <p>
+            Opening with <strong>{{ google_username }}</strong>
+        </p>
+    
         <p>
             Please wait... we're talking to Google's servers and setting everything up.
         </p>

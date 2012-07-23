@@ -190,7 +190,7 @@
         
         {% if resource.fileresource %}
             {% if resource.fileresource.can_google_edit %}
-                <a href="{% url library_resource_google resource.id %}" target="_new" id="google_open" onclick="google_docs_window = window.open('{% url library_resource_google resource.id %}', 'myewb_google_docs', 'width=400,height=200'); return false">
+                <a href="{% url library_resource_google resource.id %}" target="_new" id="google_open" onclick="google_docs_window = window.open('{% url library_resource_google resource.id %}', 'myewb_google_docs', 'width=400,height=250'); return false">
                     Open in Google Docs &raquo;
                 </a><br/>
             {% endif %}
@@ -318,10 +318,6 @@
         <div id="google_msg" style='padding: 20px 10px; text-align: center;'>
             <div id="google_msg_opening">
                 <p>
-                    Opening with <strong>{{ google_username }}</strong>
-                </p>
-            
-                <p>
                     Please wait while we send the document to Google Docs...<br/>
                     It should open in a new window soon.<br/>
                     (<a href="#" id="google_reload">click here if you get a permissions error</a>)
@@ -335,6 +331,12 @@
                 <a href="#" style='display: block; border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; background: #fd9200; width: 200px; margin: 0 auto; padding: 15px 10px; text-align: center; color: #ffffff;' id="done_editing">
                     <span style='font-size: 14px; font-weight: bold; color: #ffffff;'>Click here when you're done editing!</span>
                 </a>
+                
+                <br/>
+                <p>
+                    <a href="#" id="google_discard">Or, click here to discard your changes</a>
+                </p>
+                
             </div>
             
             <div id="google_msg_saving" style='display: none;'>
@@ -392,6 +394,7 @@
     <script type='text/javascript'>	
         var google_docs_window;
         var google_docs_url;
+        var google_is_saving = false;
     	$('#organize').colorbox({opacity: '0.5', width: '600px;', height: '50%'});
     	
     	{% if user.is_authenticated %}
@@ -482,11 +485,19 @@
             return false;
     	});
 
+        function google_close() {
+            if (!google_is_saving)
+                $.post('{% url library_resource_googleclose resource.id %}');
+        }
+
     	$('#google_open').click(function() {
             $('#google_msg_opening').show();
             $('#google_msg_saving').hide();
-    	    $.colorbox({opacity: '0.5', width: '600px;', height: '50%',
-    	                inline: true, href: '#google_msg'});
+            google_is_saving = false;
+            
+    	    $.colorbox({opacity: '0.5', width: '600px;',
+    	                inline: true, href: '#google_msg',
+    	                onCleanup: google_close});
         });
         
     	$('#google_reload').click(function() {
@@ -497,6 +508,7 @@
         $('#done_editing').click(function() {
             $('#google_msg_opening').slideUp();
             $('#google_msg_saving').slideDown();
+            google_is_saving = true;
             
             if (google_docs_window)
                 google_docs_window.close();
@@ -507,6 +519,14 @@
                        $.colorbox.close();
                    }); 
 
+            return false;
+        });
+        
+        $('#google_discard').click(function() {
+            if (google_docs_window)
+                google_docs_window.close();
+                
+            $.colorbox.close();
             return false;
         });
         
