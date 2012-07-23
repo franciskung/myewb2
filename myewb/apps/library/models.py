@@ -56,7 +56,7 @@ class Resource(models.Model):
     model = models.CharField(max_length=25)
     
     created = models.DateTimeField(auto_now_add=True)
-    modified = models.DateTimeField()
+    modified = models.DateTimeField(default=datetime.datetime.now())
     
     creator = models.ForeignKey(User, related_name='library_resources', null=True)
     updator = models.ForeignKey(User, related_name='library_updates', null=True)
@@ -101,10 +101,11 @@ class Resource(models.Model):
         self.downloads = self.downloads + 1
         self.save()
         
-        a = Activity.objects.create(resource=self,
-                                    user=user,
-                                    activity_type='download')
-        a.save()
+        if user.is_authenticated():
+            a = Activity.objects.create(resource=self,
+                                        user=user,
+                                        activity_type='download')
+            a.save()
                                     
         return getattr(self, getattr(self, 'model')).direct_download()
         

@@ -31,7 +31,7 @@
         {% if resource.linkresource %}
             <img src="{{ STATIC_URL }}images/icons/Web.ico" class="fileicon"/>
         {% endif %}
-        <a href="{% url library_download resource.id %}">{{ resource.name }}</a>
+        <a href="{% url library_download resource.id %}" class="download">{{ resource.name }}</a>
     </h2>
     
     <em>
@@ -108,7 +108,7 @@
         <br/>
     {% endif %}
 
-    <a href="{% url library_download resource.id %}" style='display: block; border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; background: green; width: 200px; padding: 15px 10px; text-align: center; color: #ffffff;'>
+    <a href="{% url library_download resource.id %}" style='display: block; border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; background: green; width: 200px; padding: 15px 10px; text-align: center; color: #ffffff;' class="download">
         <span style='font-size: 14px; font-weight: bold; color: #ffffff;'>
             {% if resource.linkresource %}
                 VISIT
@@ -162,7 +162,7 @@
             download{{ resource.downloads|pluralize }}
         {% endif %}
     </div>
-    <a href="{% url library_download resource.id %}" style='display: block; border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; background: green; width: 200px; margin: 0 auto; padding: 15px 10px; text-align: center; color: #ffffff;'>
+    <a href="{% url library_download resource.id %}" style='display: block; border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; background: green; width: 200px; margin: 0 auto; padding: 15px 10px; text-align: center; color: #ffffff;' class="download">
         <span style='font-size: 14px; font-weight: bold; color: #ffffff;'>
             {% if resource.linkresource %}
                 VISIT
@@ -349,6 +349,38 @@
             
             <br/><br/><br/>
         </div>
+        
+        <div id="download_login" style='padding: 20px 10px; text-align: center;'>
+            <p>
+                <strong>Sign in to myEWB</strong><br/>
+                to download this resource...
+            </p>
+            
+            <form class="uniForm" id="mainpagelogin" method="POST" action="{% url acct_login %}" style='text-align: center; width: 50%; margin: 0 auto;'>
+            <fieldset class="inlineLabels">
+            <p>
+                <label for="id_login_name">Email:</label>
+                <input id="id_login_name" type="text" name="login_name" maxlength="75"/>
+            </p>
+
+            <p>
+                <label for="id_password">Password:</label>
+                <input type="password" name="password" id="id_password"/>
+            </p>
+
+            <p style='text-align: center;'>
+                <input type="submit" value="sign in &raquo;"/>
+            </p>
+                
+            </fieldset>
+            </form>
+            
+            <br/>
+            
+            <p>
+                <a href="{% url library_download resource.id %}" {% if resource.linkresource %}target="_blank"{% endif %}>Or, download as a guest...</a>
+            </p>
+        </div>
     </div>
     
 {% endblock %}
@@ -370,11 +402,6 @@
         	});
         {% endif %}
         {% endif %}
-        
-        $('.notyet').click(function() {
-            alert("This feature isn't ready yet, but is coming soon!");
-            return false;
-        });
         
         $('.delete_confirm').click(function() {
             return confirm("Are you sure you want to delete this resource?\n\nThe resource, including all revisions and activity history, will be permanently deleted!");
@@ -417,6 +444,29 @@
     	           function(data) {
     	                ;
     	           });
+    	});
+    	
+    	{% if not user.is_authenticated %}
+        	$('.download').click(function() {
+        	    $.colorbox({opacity: '0.5', width: '600px;', height: '50%',
+        	                inline: true, href: '#download_login'});
+        	    return false;
+            });
+    	{% endif %}
+    	
+    	$('#mainpagelogin').submit(function() {
+            {% if resource.linkresource %}
+        	    download_window = window.open();
+        	{% else %}
+        	    download_window = window;
+        	{% endif %}
+    	    $.post($(this).attr('action'),
+    	           $(this).serialize(),
+    	           function(data) {
+    	               download_window.location = '{% url library_download resource.id %}';
+    	               $.colorbox.close();
+    	           });
+    	    return false;
     	});
     	
     	$('#file_upload').change(function() {
