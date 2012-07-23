@@ -531,7 +531,7 @@ def collection(request, collection_id, slug=None):
 def collection_sorted(request, collection_id):
     collection = Collection.objects.get(id=collection_id)
     
-    resources = Resource.objects.visible(members__collection=collection_id)
+    resources = Resource.objects.visible().filter(members__collection=collection_id)
     
     if request.GET.get('type', None):
         resources = resources.filter(resource_type=request.GET['type'])
