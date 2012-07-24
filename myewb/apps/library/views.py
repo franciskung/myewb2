@@ -358,7 +358,10 @@ def resource_google2(request, resource_id):
     resource.google_docs_counter = resource.google_docs_counter + 1
     resource.save()
         
-    return HttpResponse(entry.GetAlternateLink().href.replace('/a/ewb.ca', ''))
+    final_uri = entry.GetAlternateLink().href
+    if "@ewb.ca" not in google_username:
+        final_uri = final_uri.replace('/a/ewb.ca', '')
+    return HttpResponse(final_uri)
     
 def resource_googlesave(request, resource_id, save=True):
     resource = FileResource.objects.get(id=resource_id)
