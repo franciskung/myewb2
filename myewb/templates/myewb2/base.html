@@ -36,7 +36,11 @@
 
     {# really only used for tabs... but... yeah. #}
     <link rel="stylesheet" href="{{ STATIC_URL }}css/tabs.css" />
-    <script src="{% if request.is_secure %}https{% else %}http{% endif %}://cdn.jquerytools.org/1.2.6/jquery.tools.min.js"></script>
+    {% if request.is_secure %}
+    <script src="{{ STATIC_URL }}js/jquery.tools.min.js"></script>
+    {% else %}
+    <script src="http://cdn.jquerytools.org/1.2.6/jquery.tools.min.js"></script>
+    {% endif %}
 
 	{% block extra_head %}
 	{% endblock %}
