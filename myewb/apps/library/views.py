@@ -30,6 +30,9 @@ def home(request):
         'latest': latest,
         'popular': popular
     }, context_instance=RequestContext(request))
+    
+def splash(request):
+    return render_to_response("library/splash.html", {}, context_instance=RequestContext(request))
 
 def library_sort(resources, sorting):
     if sorting and sorting[0:7] == 'sort_by':
