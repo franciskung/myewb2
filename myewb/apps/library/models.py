@@ -27,6 +27,7 @@ class Activity(models.Model):
     LIBRARY_ACTIVITIES = (('download', 'download'),
                           ('edit', 'edit'),
                           ('collect', 'collect'),
+                          ('decollect', 'decollect'),
                           ('rate', 'rate'),
                           ('archive', 'archive'),
                           ('unarchive', 'unarchive'))
@@ -437,6 +438,23 @@ class Collection(models.Model):
                                     content_object=self)
             
         return m
+
+    def remove_resource(self, resource, user=None):
+        m = get_object_or_none(Membership, collection=self, resource=resource)
+
+        if m:
+            orderings = Membership.objects.filter(collection=self, ordering__gt=m.ordering)
+            m.delete()
+
+            for o in orderings:
+                o.ordering = o.ordering - 1
+                o.save()
+
+            Activity.objects.create(resource=resource,
+                                    user=user,
+                                    activity_type='decollect',
+                                    content_object=self)
+        return True
         
     def softdelete(self):
         children = self.get_children()

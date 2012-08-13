@@ -118,6 +118,8 @@ def organize(request, resource_id):
     resource = Resource.objects.get(id=resource_id)
     
     if request.method == 'POST':
+        is_removal = request.POST.get('removal', False)
+
         collection_id = request.POST['collection_id']
         if collection_id[0:1] == '/':
             collection_id = collection_id[1:]
@@ -129,7 +131,10 @@ def organize(request, resource_id):
         if not collection.user_can_edit(request.user):
             return render_to_response('denied.html', context_instance=RequestContext(request))
 
-        collection.add_resource(resource, user=request.user)
+	if is_removal:
+            collection.remove_resource(resource, user=request.user)
+        else:
+            collection.add_resource(resource, user=request.user)
         
         if request.is_ajax():
             return HttpResponse('success')
