@@ -2,7 +2,9 @@
 
 {% block body_content %}
     <h2>Search the Library</h2>
+    {% with 'true' as compact_search %}
     {% include 'library/search_form.html' %}
+    {% endwith %}
     
     <h2>Browse the Library</h2>
     
