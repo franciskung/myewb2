@@ -1,7 +1,6 @@
 {% extends "library/base.html" %}
 
 {% block body_content %}
-    <h2>Search the Library</h2>
     {% with 'yes' as compact_search %}
         {% include 'library/search_form.html' %}
     {% endwith %}

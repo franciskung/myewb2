@@ -1,12 +1,14 @@
+    <img src="{{ STATIC_URL }}images/icons3/Search2.png" style='float: left; height: 75px; margin-top: -15px;'/>
+
+    <h2 style='margin: 0 0 5px 75px;'>Search the Library</h2>
+
     <form method="get" action="{% url library_search %}">
 
-    <div style='width:365px; float: left;'>
-        Keyword:<br/>
-        <input name='keyword' type="text" value="{{ keyword }}" style='width: 340px;'/>
+    <div style='width:305px; float: left; margin-left: -10px;'>
+        <input name='keyword' type="text" value="{{ keyword }}" style='width: 280px;'/>
     </div>
 
-    <div style='width: 185px; float: right;'>
-        <br/>
+    <div style='width: 180px; float: right;'>
         <input type='submit' id='form_submit' value='Search'/>
         {% if compact_search %}
             <br/>
@@ -14,10 +16,8 @@
         {% endif %}
     </div>
 
-    <br style='clear: both;'/>
-
     <div {% if compact_search %}style='display: none;'{% endif %} id="more_search_options">
-    <br/>
+    <br style='clear: both;'/>
     <div style='width: 155px; float: left;'>
         Rating:<br/>
         <select name='rating'>
@@ -57,7 +57,7 @@
     <input type='hidden' id='form_sort' name='sort' value='{{ sort }}'/>
     </form>
 
-    <hr/>
+    <hr style='clear: both;'/>
 
     {% if compact_search %}
     <script type='text/javascript'>
