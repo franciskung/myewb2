@@ -107,7 +107,7 @@
 
         {% for c in collections %}
             <div style="border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; border: 1px solid #db7403; background: #f8efda; float: left; width: 160px; height: 100px; margin: 10px; position: relative; overflow: hidden; padding: 5px;" class="collection_hover" href="{% url library_collection c.id c.slug %}">
-                <strong>c.name</strong><br/>
+                <strong>{{ c.name }}</strong><br/>
                 {% for resource in c.get_ordered_resources %}
                     <a href="{% url library_resource resource.id %}">{{ resource.name }}</a><br/>
                 {% endfor %}
