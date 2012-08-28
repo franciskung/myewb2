@@ -14,7 +14,7 @@
             {% for c in browse %}
                 {% ifequal c.id 100 %}
                     <strong>{{ c.name }}</strong><br/>
-                    {% for child in c.featured_children %}
+                    {% for child in c.get_children %}
                         <a href="{% url library_collection child.id child.slug %}">{{ child.name }}</a><br/>
                     {% endfor %}
                 {% endifequal %}
@@ -61,7 +61,7 @@
         </div>
     </div>
 
-    <div style="border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; border: 1px solid #db7403; background: url('{{STATIC_URL }}images/library/leadership.png') #f8efda; float: left; width: 170px; height: 100px; margin: 10px; position: relative; overflow: hidden;" id="core_leadership" class="collection_hover" href="{% url library_collection 3 'leadership-central' %}">
+    <div style="border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; border: 1px solid #db7403; background: url('{{STATIC_URL }}images/library/leadership.png') #f8efda; float: left; width: 170px; height: 100px; margin: 10px; position: relative; overflow: hidden;" id="core_leadership" class="collection_hover" href="{% url library_collection 4 'leadership-central' %}">
         <div id="core_leadership_list" style="padding: 5px; height: 220px; background: #f8efda; display: none;">
             {% for c in browse %}
                 {% ifequal c.id 4 %}
@@ -113,6 +113,16 @@
                 {% endfor %}
             </div>
         {% endfor %}
+        
+    {% else %}
+    
+        <br style='clear: both;'/>
+        <hr style='clear: both;'/>
+        <br/>
+        
+        <p>
+            <a href="{% url acct_login %}?next=/library/">Sign in</a> to see more recommended collections!
+        </p>
 
     {% endif %}    
 
@@ -123,9 +133,18 @@
 {% endblock %}
 
 {% block toolbar_right %}
-    <h2>&nbsp;</h2>
+{#    <h2>&nbsp;</h2>#}
+
+    <div style='width: 220px; margin: 0 auto;'>
+    <iframe width="220" height="124" src="http://www.youtube.com/embed/du6DytJyOi0?rel=0" frameborder="0" allowfullscreen></iframe>
+    </div>
+
+    <br/>
+    <hr style='width: 220px; margin: 0 auto;'/>
+    <br/>
     
-    {% if user.is_authenticated %}
+    
+{#    {% if user.is_authenticated %}#}
     
     <a href="{% url library_upload %}" style='display: block; border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; background: green; width: 200px; margin: 0 auto; padding: 10px; text-align: center; color: #ffffff;' id="add_resource">
         <span style='font-size: 14px; font-weight: bold; color: #ffffff;'>ADD A NEW<br/>RESOURCE</span>
@@ -136,7 +155,7 @@
     </div>
     <br/>
     
-    {% endif %}
+{#    {% endif %}#}
 
     <br/>
     <div style='font-weight: bold; margin-left: 40px;'>Recent activity</div>

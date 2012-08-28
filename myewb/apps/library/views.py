@@ -228,9 +228,9 @@ def upload(request, link=False, collection_id=None):
             
             duplicate = None
             if link:
-                duplicate = LinkResource.objects.filter(url=resource.url).exclude(id=resource.id)
+                duplicate = LinkResource.objects.filter(url=resource.url, deleted=False).exclude(id=resource.id)
             else:
-                duplicate = FileResource.objects.filter(head_revision__checksum=resource.head_revision.checksum).exclude(id=resource.id)
+                duplicate = FileResource.objects.filter(head_revision__checksum=resource.head_revision.checksum, deleted=False).exclude(id=resource.id)
                 
             if duplicate:
                 msg = "This resource already exists in the library!<br/><a href='%s'>Click here to view the resource</a>" % reverse('library_resource', kwargs={'resource_id': duplicate[0].id})
