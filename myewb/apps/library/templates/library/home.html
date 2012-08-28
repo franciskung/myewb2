@@ -114,20 +114,20 @@
             </div>
         {% endfor %}
         
+        <br style='clear: left;'/>
+        
     {% else %}
     
         <br style='clear: both;'/>
         <hr style='clear: both;'/>
-        <br/>
         
-        <p>
+        <p style='padding-left: 15px;'>
             <a href="{% url acct_login %}?next=/library/">Sign in</a> to see more recommended collections!
         </p>
 
     {% endif %}    
 
 
-    <br style='clear: left;'/>
     <hr/>
 
 {% endblock %}
