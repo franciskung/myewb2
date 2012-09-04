@@ -61,6 +61,7 @@ background: #ffffff;
         	    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         	    {#<a href="{% url library_resource_edit file.id %}" class="question_edit">(edit)</a>#}
         	    {#<a href="#" class="question_delete" id="question-delete-{{q.id}}">(delete)</a>#}
+        	    <a href="{% url library_organize file.id %}" class="resource_delete">(remove from collection)</a>
             </p>
 	        
 	    {% empty %}
@@ -140,6 +141,16 @@ background: #ffffff;
                      'new_order': new_pos});
 	        }
 	    });
+
+            $('.resource_delete').click(function() {
+                $.post($(this).attr('href'),
+                       {removal: true,
+                        collection_id: '{{ collection.id }}'},
+                       function(data) {
+                           window.location.reload();
+                       });
+                return false;
+            });
 	});
 </script>
 

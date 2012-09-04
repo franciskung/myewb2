@@ -118,6 +118,8 @@ def organize(request, resource_id):
     resource = Resource.objects.get(id=resource_id)
     
     if request.method == 'POST':
+        is_removal = request.POST.get('removal', False)
+
         collection_id = request.POST['collection_id']
         if collection_id[0:1] == '/':
             collection_id = collection_id[1:]
@@ -127,9 +129,22 @@ def organize(request, resource_id):
         collection = Collection.objects.get(id=collection_id)
         
         if not collection.user_can_edit(request.user):
-            return render_to_response('denied.html', context_instance=RequestContext(request))
+            if is_removal:
+                collection.removal_notice(resource, request.user)
+            else:
+                collection.addition_notice(resource, request.user)
 
-        collection.add_resource(resource, user=request.user)
+            if request.is_ajax():
+                return HttpResponse('success')
+            else:
+                request.user.message_set.create(message="The collection curator has been notified with your recommendation!")
+                return HttpResponseRedirect(reverse('library_resource',
+                                                    kwargs={'resource_id': resource_id}))
+
+        if is_removal:
+            collection.remove_resource(resource, user=request.user)
+        else:
+            collection.add_resource(resource, user=request.user)
         
         if request.is_ajax():
             return HttpResponse('success')
@@ -173,20 +188,14 @@ def browse(request):
             collection_id = collection_id[:-1]
             
         collection = Collection.objects.get(id=collection_id)
-        if not collection.user_can_edit(request.user):
-            collection_id = None
-            collection = None
             
     if collection_id and collection:
         collections = Collection.objects.visible().filter(parent=collection)
 
     else:
-        if request.user.has_module_perms('library'):
-            collections = Collection.objects.visible().filter(Q(owner=request.user) | Q(curators=request.user) | Q(featured=True))
-        else:
-            collections = Collection.objects.visible().filter(Q(owner=request.user) | Q(curators=request.user))
-        collections = collections.filter(parent__isnull=True)
-    
+        core = Collection.objects.visible().filter(featured=True).filter(parent__isnull=True)
+        owned = Collection.objects.visible().exclude(featured=True).filter(Q(owner=request.user) | Q(curators=request.user)).filter(parent__isnull=True)
+        collections = list(core) + list(owned)
     
     output = "<ul class='jqueryFileTree' style='display: none;'>\n"
     for c in collections:
@@ -219,9 +228,9 @@ def upload(request, link=False, collection_id=None):
             
             duplicate = None
             if link:
-                duplicate = LinkResource.objects.filter(url=resource.url).exclude(id=resource.id)
+                duplicate = LinkResource.objects.filter(url=resource.url, deleted=False).exclude(id=resource.id)
             else:
-                duplicate = FileResource.objects.filter(head_revision__checksum=resource.head_revision.checksum).exclude(id=resource.id)
+                duplicate = FileResource.objects.filter(head_revision__checksum=resource.head_revision.checksum, deleted=False).exclude(id=resource.id)
                 
             if duplicate:
                 msg = "This resource already exists in the library!<br/><a href='%s'>Click here to view the resource</a>" % reverse('library_resource', kwargs={'resource_id': duplicate[0].id})

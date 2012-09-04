@@ -1,54 +1,150 @@
 {% extends "library/base.html" %}
 
+{% load avatar_tags %}
+
 {% block body_content %}
-    <h2>Search the Library</h2>
-    {% with 'true' as compact_search %}
-    {% include 'library/search_form.html' %}
+    {% with 'yes' as compact_search %}
+        {% include 'library/search_form.html' %}
     {% endwith %}
     
-    <h2>Browse the Library</h2>
-    
-    {% for c in browse %}
-        <div style='border: 1px solid #db7403; background: #f8efda; width: 260px; margin-right: 15px; margin-bottom: 15px; padding: 5px; float: left; {% cycle 'clear: left;' ''%}'>
-            <a href="{% url library_collection c.id c.slug %}" style='float: right; padding-right: 5px;'>see all &raquo;</a>
+    <h2 style="margin-bottom: 0;">Core Collections</h2>
 
-            <strong>{{ c.name }}</strong>
-            <br/><br/>
-
-            {% for child in c.featured_children %}
-                <a href="{% url library_collection child.id child.slug %}">{{ child.name }}</a><br/>
+    <div style="display: block; border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; border: 1px solid #db7403; background: url('{{STATIC_URL }}images/library/essentials.png') #f8efda; float: left; width: 170px; height: 220px; margin: 10px; position: relative; overflow: hidden;" id="core_essentials" class="collection_hover" href="{% url library_collection 100 'essentials' %}">
+        <div id="core_essentials_list" style="padding: 5px; height: 220px; background: #f8efda; display: none;">
+            {% for c in browse %}
+                {% ifequal c.id 100 %}
+                    <strong>{{ c.name }}</strong><br/>
+                    {% for child in c.get_children %}
+                        <a href="{% url library_collection child.id child.slug %}">{{ child.name }}</a><br/>
+                    {% endfor %}
+                {% endifequal %}
             {% endfor %}
         </div>
-    {% endfor %}
+    </div>
+
+    <div style="border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; border: 1px solid #db7403; background: url('{{STATIC_URL }}images/library/canada.png') #f8efda; float: left; width: 170px; height: 100px; margin: 10px; position: relative; overflow: hidden;" id="core_canada" class="collection_hover" href="{% url library_collection 1 'change-in-canada' %}">
+        <div id="core_canada_list" style="padding: 5px; height: 220px; background: #f8efda; display: none;">
+            {% for c in browse %}
+                {% ifequal c.id 1 %}
+                    <strong>{{ c.name }}</strong><br/>
+                    {% for child in c.featured_children %}
+                        <a href="{% url library_collection child.id child.slug %}">{{ child.name }}</a><br/>
+                    {% endfor %}
+                {% endifequal %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <div style="border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; border: 1px solid #db7403; background: url('{{STATIC_URL }}images/library/africa.png') #f8efda; float: left; width: 170px; height: 100px; margin: 10px; position: relative; overflow: hidden;" id="core_africa" class="collection_hover" href="{% url library_collection 2 'change-in-africa' %}">
+        <div id="core_africa_list" style="padding: 5px; height: 220px; background: #f8efda; display: none;">
+            {% for c in browse %}
+                {% ifequal c.id 2 %}
+                    <strong>{{ c.name }}</strong><br/>
+                    {% for child in c.featured_children %}
+                        <a href="{% url library_collection child.id child.slug %}">{{ child.name }}</a><br/>
+                    {% endfor %}
+                {% endifequal %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <div style="border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; border: 1px solid #db7403; background: url('{{STATIC_URL }}images/library/creatingchange.png') #f8efda; float: left; width: 170px; height: 100px; margin: 10px; position: relative; overflow: hidden;" id="core_change" class="collection_hover" href="{% url library_collection 3 'creating-change' %}">
+        <div id="core_change_list" style="padding: 5px; height: 220px; background: #f8efda; display: none;">
+            {% for c in browse %}
+                {% ifequal c.id 3 %}
+                    <strong>{{ c.name }}</strong><br/>
+                    {% for child in c.featured_children %}
+                        <a href="{% url library_collection child.id child.slug %}">{{ child.name }}</a><br/>
+                    {% endfor %}
+                {% endifequal %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <div style="border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; border: 1px solid #db7403; background: url('{{STATIC_URL }}images/library/leadership.png') #f8efda; float: left; width: 170px; height: 100px; margin: 10px; position: relative; overflow: hidden;" id="core_leadership" class="collection_hover" href="{% url library_collection 4 'leadership-central' %}">
+        <div id="core_leadership_list" style="padding: 5px; height: 220px; background: #f8efda; display: none;">
+            {% for c in browse %}
+                {% ifequal c.id 4 %}
+                    <strong>{{ c.name }}</strong><br/>
+                    {% for child in c.featured_children %}
+                        <a href="{% url library_collection child.id child.slug %}">{{ child.name }}</a><br/>
+                    {% endfor %}
+                {% endifequal %}
+            {% endfor %}
+        </div>
+    </div>
+
+
+
+    {% if user.is_authenticated %}
+
+        <hr style='clear: both;'/>
+
+        <h2 style="margin-bottom: 0;">Recommended Collections</h2>
+
+        <p>
+            Recommended collections are based on the groups that you are apart of.
+        </p>
+
+        <p>
+            <em>No recommended collections yet ... </em>
+        </p>
+
+        <hr style='clear: both;'/>
+
+        <h2 style="margin-bottom: 0;">My Collections</h2>
+
+        <div style='padding-bottom: 5px; padding-left: 25px;'>
+            <a href="{% url library_collection_create %}">create a collection</a>
+        </div>
+
+        <div style="border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; border: 1px solid #db7403; background: #f8efda; float: left; width: 160px; height: 100px; margin: 10px; position: relative; overflow: hidden; padding: 5px;" class="collection_hover" href="{% url library_mine %}">
+            <strong>All my resources</strong><br/>
+                {% for resource in user.library_resources.all %}
+                    <a href="{% url library_resource resource.id %}">{{ resource.name }}</a><br/>
+                {% endfor %}
+        </div>
+
+        {% for c in collections %}
+            <div style="border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; border: 1px solid #db7403; background: #f8efda; float: left; width: 160px; height: 100px; margin: 10px; position: relative; overflow: hidden; padding: 5px;" class="collection_hover" href="{% url library_collection c.id c.slug %}">
+                <strong>{{ c.name }}</strong><br/>
+                {% for resource in c.get_ordered_resources %}
+                    <a href="{% url library_resource resource.id %}">{{ resource.name }}</a><br/>
+                {% endfor %}
+            </div>
+        {% endfor %}
+        
+    {% else %}
     
+        <br style='clear: both;'/>
+        <hr style='clear: both;'/>
+        <br/>
+        
+        <p>
+            <a href="{% url acct_login %}?next=/library/">Sign in</a> to see more recommended collections!
+        </p>
+
+    {% endif %}    
+
+
     <br style='clear: left;'/>
     <hr/>
-
-    <div class='linklist'>
-        <h2>Popular resources</h2>
-
-        {% for r in popular %}
-            <p><a href="{% url library_resource r.id %}">{{ r.name }}</a></p>
-        {% endfor %}
-    </div>
-    
-    <div class='linklist'>
-        <h2>Latest additions</h2>
-
-        {% for r in latest %}
-            <p><a href="{% url library_resource r.id %}">{{ r.name }}</a></p>
-        {% endfor %}
-    </div>
-    
-    
 
 {% endblock %}
 
 {% block toolbar_right %}
-    <h1>&nbsp;</h1>
-    <h2>&nbsp;</h2>
+{#    <h2>&nbsp;</h2>#}
+
+    <div style='width: 220px; margin: 0 auto;'>
+    <iframe width="220" height="124" src="http://www.youtube.com/embed/du6DytJyOi0?rel=0" frameborder="0" allowfullscreen></iframe>
+    </div>
+
+    <br/>
+    <hr style='width: 220px; margin: 0 auto;'/>
+    <br/>
     
-    {% if user.is_authenticated %}
+    
+{#    {% if user.is_authenticated %}#}
     
     <a href="{% url library_upload %}" style='display: block; border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; background: green; width: 200px; margin: 0 auto; padding: 10px; text-align: center; color: #ffffff;' id="add_resource">
         <span style='font-size: 14px; font-weight: bold; color: #ffffff;'>ADD A NEW<br/>RESOURCE</span>
@@ -59,28 +155,40 @@
     </div>
     <br/>
     
-    <a href="{% url library_mine %}" style='display: block; border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; background: green; width: 200px; padding: 10px; margin: 0 auto; text-align: center; color: #ffffff;'>
-        <span style='font-size: 14px; font-weight: bold; color: #ffffff;'>MY RESOURCES</span>
-    </a>
-    <br/><br/>
+{#    {% endif %}#}
+
+    <br/>
+    <div style='font-weight: bold; margin-left: 40px;'>Recent activity</div>
+        <div class="minipost" style='width: 220px; margin: 5px auto;'>
+        <div class="minipostcontents" style='margin-top: -15px; margin-bottom: -15px;'>
     
-    <hr/>
-    <h2>Collections</h2>
+        {% for r in latest %}
+            <p style='clear: left;'>
 
-    <div style='position: relative; top: -15px; line-height: 1.5em;'>
-        <div style='padding-bottom: 5px; padding-left: 25px;'>
-            <a href="{% url library_collection_create %}">create a collection</a>
-        </div>
-        
-        {% for c in collections %}
-            <a href="{% url library_collection c.id c.slug %}">{{ c.name }}</a>
-            &nbsp;
-            <span style='color: #808080;'>( {{ c.get_total_resources }} )</span><br/>
+                {% if r.updator %}
+                	<a href="{% url profile_detail r.updator.username %}"  class="avatar-whos-online" data-background-src="{% avatar_url r.updator 25 %}" style="margin-right: 10px; margin-bottom: 15px;"></a>
+
+                    <div style='margin-left: 45px;'>
+                    <span style='font-size: 0.7em; font-color: #d0d0d0; font-style: italic;'><a href="{% url profile_detail r.updator.username %}">{{ r.updator.visible_name }}</a> updated</span><br/>
+                    <a href="{% url library_resource r.id %}">{{ r.name }}</a>
+                    </div>
+
+                {% else %}
+                	<a href="{% url profile_detail r.creator.username %}"  class="avatar-whos-online" data-background-src="{% avatar_url r.creator 25 %}" style="margin-right: 10px; margin-bottom: 15px;"></a>
+
+                    <div style='margin-left: 45px;'>
+                    <span style='font-size: 0.7em; font-color: #d0d0d0; font-style: italic;'><a href="{% url profile_detail r.creator.username %}">{{ r.creator.visible_name }}</a> created</span><br/>
+                    <a href="{% url library_resource r.id %}">{{ r.name }}</a>
+                    </div>
+                {% endif %}
+            </p>
         {% endfor %}
+        
+        <br style="clear:both; height: 1px; line-height: 1px;" />
+        </div>
+        </div>
     </div>
-
-    {% endif %}
-
+    
 {% endblock %}
 
 {% block extra_body %}
@@ -88,6 +196,23 @@
         $().ready(function() {
             $('#add_resource').click(function() {
                 $('#add_resource_more').slideToggle();
+                return false;
+            });
+
+            $('.collection_hover').hover(function() {
+                    $('#' + $(this).attr('id') + '_list').slideDown();
+                },
+                function() {
+                    $('#' + $(this).attr('id') + '_list').slideUp();
+                });
+
+            $('.collection_hover').css('cursor', 'pointer');
+            $('.collection_hover a').click(function(e) {
+                e.stopPropagation();
+                return true;
+            });
+            $('.collection_hover').click(function() {
+                window.location = $(this).attr('href');
                 return false;
             });
         });

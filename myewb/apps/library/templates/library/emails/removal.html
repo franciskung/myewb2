@@ -1,0 +1,19 @@
+<p>Hello,</p>
+
+<p>
+Our system shows that you are the curator of the collection <a href="http://my.ewb.ca{% url library_collection collection.id %}">{{ collection.name }}</a>.
+</p>
+
+<p>
+{{ user.visible_name}} has recommended that a resource be removed from your collection:<br/>
+<a href="http://my.ewb.ca{% url library_resource resource.id %}">{{ resource.name }}</a>
+</p>
+
+<p>
+Have a great day!
+</p>
+
+<p>
+- the myEWB automated email robot
+</p>
+

@@ -1,27 +1,24 @@
+    <img src="{{ STATIC_URL }}images/icons3/Search2.png" style='float: left; height: 75px; margin-top: -15px;'/>
+
+    <h2 style='margin: 0 0 5px 75px;'>Search the Library</h2>
+
     <form method="get" action="{% url library_search %}">
 
-    <div style='width:400px; float: left;'>
-        Keyword:<br/>
-        <input name='keyword' type="text" value="{{ keyword }}" style='width: 400px;'/>
+    <div style='width:305px; float: left; margin-left: -10px;'>
+        <input name='keyword' type="text" value="{{ keyword }}" style='width: 280px;'/>
     </div>
 
-    <div style='width: 125px; float: right; text-align: right; padding-right: 45px;'>
-        <br/>
+    <div style='width: 180px; float: right;'>
         <input type='submit' id='form_submit' value='Search'/>
-
         {% if compact_search %}
-        <a href="#" id="show_search_options">
             <br/>
-            more options
-        </a>
+            <a href="#" id="more_search_options_link" style='font-size: 0.75em;'>more search options</a>
         {% endif %}
     </div>
 
+    <div {% if compact_search %}style='display: none;'{% endif %} id="more_search_options">
     <br style='clear: both;'/>
-
-    <div id="more_search_options" {% if compact_search %}style='display: none;'{% endif %}>
-    <br/>
-    <div style='width: 165px; float: left;'>
+    <div style='width: 155px; float: left;'>
         Rating:<br/>
         <select name='rating'>
             <option value=''>Any</option>
@@ -54,20 +51,19 @@
     </div>
 
     <br style='clear: both;'/>
+
     </div>
 
     <input type='hidden' id='form_sort' name='sort' value='{{ sort }}'/>
     </form>
 
-    <hr/>
+    <hr style='clear: both;'/>
 
     {% if compact_search %}
-        <script type='text/javascript'>
-            $().ready(function() {
-                $('#show_search_options').click(function() {
-                    $('#more_search_options').slideDown();
-                    $(this).hide();
-                });
-            });
-        </script>
+    <script type='text/javascript'>
+        $('#more_search_options_link').click(function() {
+            $('#more_search_options').slideDown();
+            $('#more_search_options_link').hide();
+        });
+    </script>
     {% endif %}

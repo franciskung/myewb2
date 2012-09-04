@@ -6,8 +6,10 @@ from django.conf import settings
 from library.views import *
 
 urlpatterns = patterns('',
-    url(r'^$', splash, name='library_splash'),
-    url(r'^$', splash, name='library_home'),
+#    url(r'^$', splash, name='library_splash'),
+#    url(r'^$', splash, name='library_home'),
+    url(r'^$', home, name='library_splash'),
+    url(r'^library/$', home, name='library_home'),
     url(r'^library/$', home, name='library_home2'),
 
     url(r'^search/$', search, name='library_search'),

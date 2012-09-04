@@ -257,6 +257,7 @@
                 <p style='clear: left;'>
                 	<a href="{% url profile_detail a.user.username %}"  class="avatar-whos-online" data-background-src="{% avatar_url a.user 25 %}" style="margin-right: 10px; margin-bottom: 15px;"></a>
 
+                    <div style='margin-left: 45px;'>
                     {% ifequal a.activity_type 'download' %}
                         {% if resource.linkresource %}
                             Visited
@@ -275,7 +276,14 @@
                     {% endifequal %}
                     
                     {% ifequal a.activity_type 'collect' %}
-                        Added to a collection by <a href="{% url profile_detail a.user.username %}">{{ a.user.visible_name }}</a>
+                        Added to a collection by <a href="{% url profile_detail a.user.username %}">{{ a.user.visible_name }}</a><br/>
+                        (<a href="{% url library_collection a.content_object.id a.content_object.slug %}">{{ a.content_object.name }}</a>)
+                        <br/>
+                        <span style='font-color: #d0d0d0; font-size: 0.7em; font-style: italic;'>{% mktime_coarse a.date %}</span>
+                    {% endifequal %}
+                    
+                    {% ifequal a.activity_type 'decollect' %}
+                        Removed from a collection by <a href="{% url profile_detail a.user.username %}">{{ a.user.visible_name }}</a>
                         <br/>
                         <span style='font-color: #d0d0d0; font-size: 0.7em; font-style: italic;'>{% mktime_coarse a.date %}</span>
                     {% endifequal %}
@@ -297,6 +305,7 @@
                         <br/>
                         <span style='font-color: #d0d0d0; font-size: 0.7em; font-style: italic;'>{% mktime_coarse a.date %}</span>
                     {% endifequal %}
+                    </div>
                 </p>
             {% endfor %}
             

@@ -6,6 +6,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.db.models import Q
 from django.template.defaultfilters import slugify
+from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 
 from lxml.html.clean import clean_html, autolink_html, Cleaner
@@ -14,6 +15,7 @@ import settings, os, shutil, datetime, re, types, hashlib, shutil
 from group_topics.models import GroupTopic
 from champ.models import Activity
 from events.models import Event
+from mailer import send_mail
 
 from siteutils.shortcuts import get_object_or_none
 
@@ -27,6 +29,7 @@ class Activity(models.Model):
     LIBRARY_ACTIVITIES = (('download', 'download'),
                           ('edit', 'edit'),
                           ('collect', 'collect'),
+                          ('decollect', 'decollect'),
                           ('rate', 'rate'),
                           ('archive', 'archive'),
                           ('unarchive', 'unarchive'))
@@ -437,7 +440,80 @@ class Collection(models.Model):
                                     content_object=self)
             
         return m
+
+    def addition_notice(self, resource, user):
+        m = get_object_or_none(Membership, collection=self, resource=resource)
         
+        if not m:
+            curator = self.owner
+
+            message = render_to_string('library/emails/addition.html', {'resource': resource, 'collection': self, 'user': user})
+            
+            ctx = {'body': message,
+                   'title': "Recommendation for your EWB Library collection",
+                   'topic_id': None,
+                   'event': None,
+                   'attachments': None
+                  }
+            sender = 'myEWB <notices@my.ewb.ca>'
+            
+            send_mail(subject="Recommendation for your EWB Library collection",
+                      txtMessage=None,
+                      htmlMessage=message,
+                      fromemail=sender,
+                      recipients=[curator.email],
+                      context=ctx,
+                      content_object=self)
+                        
+            return True
+
+        return False        
+
+    def remove_resource(self, resource, user=None):
+        m = get_object_or_none(Membership, collection=self, resource=resource)
+
+        if m:
+            orderings = Membership.objects.filter(collection=self, ordering__gt=m.ordering)
+            m.delete()
+
+            for o in orderings:
+                o.ordering = o.ordering - 1
+                o.save()
+
+            Activity.objects.create(resource=resource,
+                                    user=user,
+                                    activity_type='decollect',
+                                    content_object=self)
+        return True
+        
+    def removal_notice(self, resource, user):
+        m = get_object_or_none(Membership, collection=self, resource=resource)
+        
+        if not m:
+            curator = self.owner
+
+            message = render_to_string('library/emails/removal.html', {'resource': resource, 'collection': self, 'user': user})
+            
+            ctx = {'body': message,
+                   'title': "Recommendation for your EWB Library collection",
+                   'topic_id': None,
+                   'event': None,
+                   'attachments': None
+                  }
+            sender = 'myEWB <notices@my.ewb.ca>'
+            
+            send_mail(subject="Recommendation for your EWB Library collection",
+                      txtMessage=None,
+                      htmlMessage=message,
+                      fromemail=sender,
+                      recipients=[curator.email],
+                      context=ctx,
+                      content_object=self)
+                        
+            return True
+
+        return False        
+
     def softdelete(self):
         children = self.get_children()
         for child in children:
