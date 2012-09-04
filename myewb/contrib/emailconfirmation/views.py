@@ -18,7 +18,6 @@ def confirm_email(request, confirmation_key):
         email_address.user.backend = "django.contrib.auth.backends.ModelBackend"
         auth_login(request, email_address.user)
 
-        # send receipt
         c = Context({})
         htmlmessage = loader.get_template("emailconfirmation/welcome.html")
         htmlbody = htmlmessage.render(c)
