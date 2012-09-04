@@ -25,7 +25,7 @@
     <link rel="stylesheet" href="{{ STATIC_URL }}css/uni-form/default.uni-form.css" />            
     <link rel="stylesheet" href="{{ STATIC_URL }}css/jquery-ui.css" />
 	<link rel="stylesheet" href="{{ STATIC_URL }}templates/myewb2/css/segmented_control.css">
-	<link rel="stylesheet" href="{{ STATIC_URL }}templates/myewb2/css/newstyle.css?v=2">
+	<link rel="stylesheet" href="{{ STATIC_URL }}templates/myewb2/css/newstyle.css?v=3">
 	<link rel="stylesheet" href="{{ STATIC_URL }}templates/myewb2/css/960.css">
 	<link href='{% if request.is_secure %}https{% else %}http{% endif %}://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet' type='text/css'>
     <link href='{% if request.is_secure %}https{% else %}http{% endif %}://fonts.googleapis.com/css?family=Open+Sans:800' rel='stylesheet' type='text/css'>
@@ -395,6 +395,7 @@
 </script>
 
 
+{% include "feedbackform.html" %}
 {% include "google_analytics.html" %}
 
 <!--[if lt IE 7 ]>

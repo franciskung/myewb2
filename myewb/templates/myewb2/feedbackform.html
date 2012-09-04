@@ -1,0 +1,79 @@
+
+
+<div id="feedback-dialog" title="myEWB 1.5 Feedback!" style="display: none;">
+    <div id="feedback-dialog-contents">
+        <h2 class="h2bold">myEWB feedback</h2>
+        
+    	<p>We are constantly evolving myEWB and our online community; we'd love to hear about your thoughts and experiences!</p>
+    	
+    	<form id="feedback-form">
+           {% if user.is_authenticated %}
+        	   <input type="hidden" name="feedback-username" value="{{ user.username }}"/>
+           	   <input type="hidden" name="feedback-visiblename" value="{{ user.visible_name }}"/>
+           	   <input type="hidden" name="feedback-email-h" value="{{ user.email }}"/>
+    	   {% endif %}
+    	   
+    	   <label for="feedback-email">Email:</label>
+    	   <input type="text" name="feedback-email" id="feedback-email" value="{% if user.is_authenticated %}{{ user.email }}{% endif %}"/>
+    	   <br/><br/>
+    	   
+       	   <input type="hidden" name="feedback-path" value="{{request.path}}"/>    	   
+    	   
+    	   <label for="feedback-text">Feedback:</label><br/>
+    	   <textarea name="feedback-text" id="feedback-text" style="width:500px; height:80px;"></textarea>
+    	   <br/><br/>
+    	   
+    	   <label for="feedback-category">Category:</label>
+    	       <select name="feedback-category" id="feedback-category">
+    	           <option>(choose an option)</option>
+    	           <option>This is broken</option>
+    	           <option>This looks funny</option>
+    	           <option>This is slow</option>
+    	           <option>This is cool</option>
+    	           <option>It would be sweet if...</option>
+    	       </select>
+    	   <br/><br/>
+    	   
+    	   <button id="feedback-dialog-send">Send!</button>
+    	</form>
+
+        <p>Major issues? Email <a href="mailto:support@my.ewb.ca">support@my.ewb.ca</a></p>
+        <br/><br/>
+
+	</div>
+</div>
+
+<a href="#" id="feedback-button-woot">Share your feedback!</a>
+
+
+<script type="text/javascript">
+$().ready(function() {
+//		$("#feedback-dialog").dialog({ modal: true,width: 460,autoOpen: false });
+		
+		
+		$("#feedback-dialog-send").click(function() {
+    		$.post("{% url feedback_email %}",
+    		       $("#feedback-form").serialize(),
+           		   function(data){
+                      alert("Thanks!");
+                      $.colorbox.close();
+                      $("#feedback-text").val('');
+                      $("#feedback-category").val('(choose an option)');
+                   });
+           return false;
+		});
+		
+		
+//		$("#feedback-button-woot").click(function() {
+//            $("#feedback-dialog").dialog('open');
+//            return false;
+//        });
+
+        $('#feedback-button-woot').colorbox({opacity: '0.5',
+                                             inline: true,
+                                             width: '700px',
+                                             href: '#feedback-dialog-contents'});
+
+});
+
+</script>
