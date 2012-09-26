@@ -95,11 +95,16 @@ class EmailConfirmationManager(models.Manager):
         except self.model.DoesNotExist:
             return None
         if not confirmation.key_expired():
+            confirmation.used = datetime.now()
+            confirmation.save()
+            
             email_address = confirmation.email_address
             email_address.verified = True
             email_address.set_as_primary(conditional=True)
             email_address.save()
+            
             email_confirmed.send(sender=self.model, email_address=email_address)
+            
             return email_address
 
     def send_confirmation(self, email_address, subject=None, template=None):
@@ -154,10 +159,14 @@ class EmailConfirmation(models.Model):
     email_address = models.ForeignKey(EmailAddress)
     sent = models.DateTimeField()
     confirmation_key = models.CharField(max_length=40)
+    used = models.DateTimeField(blank=True, null=True)
 
     objects = EmailConfirmationManager()
 
     def key_expired(self):
+        if self.used:
+            return True
+            
         expiration_date = self.sent + timedelta(
             days=settings.EMAIL_CONFIRMATION_DAYS)
         return expiration_date <= datetime.now()
