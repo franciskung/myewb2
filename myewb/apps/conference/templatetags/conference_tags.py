@@ -23,11 +23,11 @@ def time_fr(thetime):
 
 @register.simple_tag
 def lookup_cost(code, room):
-    key = "confreg-2012-" + room + "-" + code
+    key = "confreg-2013-" + room + "-" + code
     listing = CONF_OPTIONS.get(key, None)
     
     if listing:
-        return "$%d &nbsp;&nbsp;&nbsp;(%s)" % (listing['cost'], listing['name'])
+        return "$%d<br/><span style='font-size: 0.75em;'>%s</span>" % (listing['cost'], listing['name'])
     else:
         return ""
 
