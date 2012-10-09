@@ -178,7 +178,7 @@ class ConferenceRegistrationForm2(ConferenceRegistrationForm):
     tshirt = forms.ChoiceField(label='Purchase a National Conference 2013 t-shirt?',
                                choices=TSHIRT_CHOICES,
                                widget=forms.RadioSelect,
-                               help_text="""<a href="/site_media/static/images/conference_shirt_2013.png" class="colorbox"><img src='/site_media/static/images/conference_shirt_2013.png' style='width: 250px;' id="confshirt"/></a><br/><em>design subject to small changes</em>""")
+                               help_text="""<a href="/site_media/static/images/conference_shirt_2013.png" class="colorbox"><img src='/site_media/static/images/conference_shirt_2013.png' id="confshirt"/></a><br/><em>design subject to small changes</em>""")
     
     handbook = forms.BooleanField(label='Printed conference handbook',
                                required=False,
