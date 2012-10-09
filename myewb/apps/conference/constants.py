@@ -200,10 +200,10 @@ CONF_OPTIONS = {'confreg-2013-quad-test': {'cost': 175,
                
                }
 
-ROOM_CHOICES = (('nohotel', _('Conference only (no hotel)')),
-                ('quad', _('Quad occupancy (four to a room)')),
+ROOM_CHOICES = (('quad', _('Quad occupancy (four to a room)')),
                 ('double', _('Double occupancy (two to a room)')),
-                ('single', _('Single occupancy (private room)'))
+                ('single', _('Single occupancy (private room)')),
+                ('nohotel', _('Conference only (no hotel)'))                
                ) 
                 
 EXTERNAL_CHOICES = (('fridaystudent', _('Friday attendance (student)')),

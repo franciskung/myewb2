@@ -331,6 +331,33 @@ Broadly, this is for people that engage with the African ventures, and connectin
 					else
 						return true;
 				});
+
+				var hotel_options_touched = false;
+				$('input[name=type]').change(function() {
+				    hotel_options_touched = true;
+				});
+				$('#id_code').change(function() {
+				    if ($(this).val()) {
+				        if (!hotel_options_touched)
+    				        $('#id_type_0').attr('checked', 'checked');
+				        $('#id_type_0').attr('disabled', false);
+				        $('#id_type_1').attr('disabled', false);
+				        $('#id_type_2').attr('disabled', false);
+				    }
+				    else if (!$(this).val()) {
+    				    hotel_options_touched = false;
+				        $('#id_type_3').attr('checked', 'checked');
+				        $('#id_type_0').attr('disabled', true);
+				        $('#id_type_1').attr('disabled', true);
+				        $('#id_type_2').attr('disabled', true);
+				    }
+				});
+
+				if (!$('#id_code').val()) {
+				    $('#id_type_0').attr('disabled', true);
+				    $('#id_type_1').attr('disabled', true);
+				    $('#id_type_2').attr('disabled', true);
+			    }
 			});
 		</script>
 

@@ -88,7 +88,7 @@ class ConferenceRegistrationForm1(ConferenceRegistrationForm):
     # bleh.  i don't like putting so much UI text here, instead of in a template!!
 
 
-    code = forms.CharField(label='Registraton code',
+    code = forms.CharField(label='Registration code',
                            help_text='if you have a registration code, enter it here for a discounted rate.',
                            required=False)
     type = forms.ChoiceField(label='Registration type',
@@ -100,7 +100,8 @@ class ConferenceRegistrationForm1(ConferenceRegistrationForm):
                              #help_text="""Note that tickets to the Gala on Saturday evening featuring K'naan are sold separately, through the Gala event site"""
                              )
     
-    roommate = forms.CharField(label='Roommate request (with a hotel option, if any).<br/>Requests are not guaranteed; however if all roommates list each other it will increase your chances.<br/>Rooms are all-male or all-female (no co-ed rooms).', required=False)
+    roommate = forms.CharField(label='Roommate request<br/>(with a hotel option, if any)', required=False,
+                               help_text='Requests are not guaranteed; however if all roommates list each other it will increase your chances.<br/>Rooms are all-male or all-female (no co-ed rooms).')
 
     extra_gala = forms.BooleanField(label='Add an extra gala ticket ($75)',
                                     required=False,
@@ -174,13 +175,13 @@ class ConferenceRegistrationForm2(ConferenceRegistrationForm):
 								 required=False,
 								 help_text='Auriez-vous besoin d’un casque d’écoute pour la traduction?<br/>Would you be interested in a simultaneous-translation headset? There will be keynotes in both English and French.')
 	
-    tshirt = forms.ChoiceField(label='Purchase an EWB t-shirt?',
+    tshirt = forms.ChoiceField(label='Purchase a National Conference 2013 t-shirt?',
                                choices=TSHIRT_CHOICES,
                                widget=forms.RadioSelect)
     
     handbook = forms.BooleanField(label='Printed conference handbook',
                                required=False,
-                               help_text='Would you like a printed copy of the conference handbook? An electronic copy will also be available')
+                               help_text='Would you like a printed copy of the conference handbook?<br/>An electronic copy will also be available, but there is no wi-fi at the conference centre')
     
     cellphone = forms.CharField(label='Your cell phone number',
                                 required=False,
