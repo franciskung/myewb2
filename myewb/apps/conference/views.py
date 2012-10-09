@@ -581,14 +581,14 @@ def generate_codes(request):
         
         else:
             form = CodeGenerationForm()
-            chapters = ChapterInfo.objects.all().order_by('chapter_name')
 
-            for c in chapters:
-                l, created = LeadershipDaySpots.objects.get_or_create(chapter=c.network)
-                used = ConferenceRegistration.objects.filter(submitted=True, cancelled=False, ldd_chapter=c.network)
-                c.ldd = used.count()
+        chapters = ChapterInfo.objects.all().order_by('chapter_name')
+        for c in chapters:
+            l, created = LeadershipDaySpots.objects.get_or_create(chapter=c.network)
+            used = ConferenceRegistration.objects.filter(submitted=True, cancelled=False, ldd_chapter=c.network)
+            c.ldd = used.count()
 
-            ldd = LeadershipDaySpots.objects.all()
+        ldd = LeadershipDaySpots.objects.all()
         
         return render_to_response('conference/codes.html',
                                   {'codes': codes,
