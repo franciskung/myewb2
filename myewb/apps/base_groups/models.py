@@ -284,7 +284,7 @@ class BaseGroup(Group):
                   content_object=content_object,
                   reply_to=reply_to)
     
-    def save(self, force_insert=False, force_update=False):
+    def save(self, *args, **kwargs):
         # if we are updating a group, don't change the slug (for consistency)
         created = False
         if not self.id:
@@ -324,7 +324,7 @@ class BaseGroup(Group):
         if not self.from_email:
             self.from_email = "notices@my.ewb.ca"
         
-        super(BaseGroup, self).save(force_insert=force_insert, force_update=force_update)
+        super(BaseGroup, self).save(*args, **kwargs)
         post_save.send(sender=BaseGroup, instance=self, created=created)
 
     def delete(self):

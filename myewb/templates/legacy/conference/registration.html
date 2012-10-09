@@ -10,17 +10,17 @@
 {% load group_tags %}
 {% load topics_tags %}
 
-{% block head_title %}National Conference 2012{% endblock %}
+{% block head_title %}National Conference 2013{% endblock %}
 
-{% block body %}
-    <h2>National Conference 2012: Registration</h2>
+{% block bodyold %}
+    <h2>National Conference 2013: Registration</h2>
     
     <p>Registration for the conference is now closed.</p>
     
     
 {% endblock %}
 
-{% block body2 %}
+{% block body %}
 <br/><br/>
 
 	<style type="text/css">
@@ -117,89 +117,33 @@
 		
 		<br/>
 		
-		<h2>National Conference 2012: Registration</h2>
+		{#<h2>National Conference 2013: Registration</h2>#}
 		<form id="conf-registration" method="POST" action="" class="uniForm" enctype="multipart/form-data">
 			<fieldset class="inlineLabels">
-				{#<div class="heading">Personal Details</div>#}
-			
-				<div class="ctrlHolder">
-					<label>Name</label>
-					{{ user.first_name}} {{user.last_name }}
-				</div>
-			
-				<div class="ctrlHolder">
-					<label>Email</label>
-					{{ user.email }}
-				</div>
 				
-				{% comment %}
-				<div class="ctrlHolder">
-					<label>Phone Number</label>
-					{{ user.get_profile.default_phone }}
-				</div>
-				{% endcomment %}
-				
-				<div class="ctrlHolder">
-					<label>Gender</label>
-					{% ifequal user.get_profile.gender "M" %}
-						Male
-					{% else %}
-						{% ifequal user.get_profile.gender "F" %}
-							Female
-						{% else %}
-							Unknown
-						{% endifequal %}
-					{% endifequal %}
-				</div>
-				
-				{% if not user.is_bulk %}
-				<div class="ctrlHolder">
-					<label>Student status</label>
-					{% if user.get_profile.student %}
-						Yes
-					{% else %}
-						No
-					{% endif %}
-				</div>
-				{% endif %}
-				
-				<div class="ctrlHolder">
-					<label>Preferred language</label>
-					{% ifequal user.get_profile.language "E" %}
-						English
-					{% else %}
-						{% ifequal user.get_profile.language "F" %}
-							French
-						{% else %}
-							Unknown
-						{% endifequal %}
-					{% endifequal %}
-				</div>
-				
-				{% if needsRenewal and not user.is_bulk %}
-					<div class="ctrlHolder">
-						<label>EWB membership</label>
-						You are not a paid member of EWB - the membership fee will be automatically added to your registration<br/>
-						($20 for students, $40 for professionals)<br/>
+				<div class="heading">National Conference 2013<br/>Registration Details</div>
+				<div style='text-align: center;'>Page {{ stage|default:1 }} of 6</div>
+
+                {% ifequal stage '1' %}
+					<div style='text-align: center; font-weight: bold;'>
+                        <br/>
+						Please confirm your personal information
+                        <br/>
 					</div>
-				{% endif %}
-
-				{% if not user.is_bulk %}
-				<div class="ctrlHolder" style="text-align: center;">
-					<em>To change your personal details, please
-					<a href="{% url profile_edit %}" target="_new">update your myEWB profile</a>.</em>
-				</div>
-				{% endif %}
-				<hr/>
-
-				<div class="heading">Registration Details</div>
-				<div style='text-align: center;'>Page {{ stage|default:1 }} of 5</div>
+                {% endifequal %}
+                {% if not stage %}
+					<div style='text-align: center; font-weight: bold;'>
+                        <br/>
+						Please confirm your personal information
+                        <br/>
+					</div>
+                {% endif %}
 										
-				{% ifequal stage '3' %}
+				{% ifequal stage '5' %}
 					<br/><br/>
 					{% include "conference/africandelegates.html" %}
 				{% endifequal %}
-				{% ifequal stage '4' %}
+				{% ifequal stage '6' %}
 					<br/><br/>
 					<div style='text-align: center; font-weight: bold; font-style: italic;'>
 						You will have an opportunity to preview your registration on the next page.
@@ -209,12 +153,14 @@
 		
 				{{ form|as_uni_form }}
 				
+{% comment %}
                 {% if not stage %}
                      <div class="ctrlHolder">
                          <label>&nbsp;</label>
                          <img src="{{ STATIC_URL }}images/conference-tshirt.png"/>
                      </div>
                 {% endif %}
+{% endcomment %}
                                 
 	            <div class="form_block ctrlHolder">
 	            	{% if stage %}
@@ -239,26 +185,27 @@
 		    <th>No room</th>
 		  </tr>
 		  <tr>
-		    <th>Subsidized: BC/AB/NF</th>
-		    <td>$125 (student)<br/>$275 (general)</td>    
-		    <td>$275 (student)<br/>$450 (general)</td>    
-		    <td>$625 (student)<br/>$785 (general)</td>
-		    <td>$80 (student)<br/>$200 (general)</td>    
-		  </tr>
-		  <tr>
-		    <th>Subsidized: SK/MB/NB/NS</th>
-		    <td>$225 (student)<br/>$375 (general)</td>    
-		    <td>$375 (student)<br/>$550 (general)</td>    
-		    <td>$725 (student)<br/>$885 (general)</td>    
-		    <td>$160 (student)<br/>$280 (general)</td>    
+		    <th>Subsidized: NB/NS/NL</th>
+		    <td>$200 (student)</td>    
+		    <td>$400 (student)</td>    
+		    <td>$700 (student)</td>
+		    <td>$50 (student)</td>    
 		  </tr>
 		  <tr>
 		    <th>Subsidized: ON/QB</th>
-		    <td>$375 (student)<br/>$525 (general)</td>    
-		    <td>$525 (student)<br/>$700 (general)</td>    
-		    <td>$875 (student)<br/>$1035 (general)</td>    
-		    <td>$280 (student)<br/>$320 (general)</td>    
+		    <td>$300 (student)<br/>$400 (general)</td>    
+		    <td>$500 (student)<br/>$600 (general)</td>    
+		    <td>$800 (student)<br/>$900 (general)</td>    
+		    <td>$150 (student)<br/>$250 (general)</td>    
 		  </tr>
+		  <tr>
+		    <th>Subsidized: BC/SK/MB</th>
+		    <td>$375 (student)<br/>$475 (general)</td>    
+		    <td>$575 (student)<br/>$675 (general)</td>    
+		    <td>$875 (student)<br/>$975 (general)</td>    
+		    <td>$225 (student)<br/>$325 (general)</td>    
+		  </tr>
+		  {% comment %}
 		  <tr>
 		  	<th>
 		  		EWB Alumni
@@ -268,6 +215,7 @@
 		  	</td>
 		  	<td>$350</td>
 		  </tr>
+		  {% endcomment %}
 		  <tr>
 		    <th>Standard<br/>(no registration code)</th>
 		    <td colspan='3' style='text-align: center;'>
@@ -304,8 +252,45 @@
 		{% endif %}
 		{% endcomment %}
 
-	    <link type="text/css" href="{{STATIC_URL}}css/colorbox.css" rel="stylesheet" />
-	    <script type="text/javascript" src="{{STATIC_URL}}js/colorbox.js"></script>
+		<div style="display: none;" id="confcontentdescription">
+<p><strong>Youth venture</strong><br/>
+This venture seeks change in the youth leadership development system in Canada; focusing for right now primarily on the K-12 education system. Looking to foster curious, critical, and collaborative leaders for social change, this venture is currently exploring, creating, and delivering resources and training to Canadian educators. 
+</p>
+
+<p><strong>Global engineering</strong><br/>
+This venture is focused on helping the engineering profession realize its true potential as global problem solvers, and to bring those skills to bear on the issue of poverty. This venture partners not just with engineering firms, but also with professional associations, universities, private companies and individual engineers.
+</p>
+
+<p><strong>Advocacy</strong><br/>
+This venture's job is to strengthen Canada’s approach to global development by advocating for smart decisions, policies and practices—ensuring our country has the greatest possible impact on an international level. This includes MP engagement, building political will in Canadian citizens, and engaging with public policy makers.
+</p>
+
+<p><strong>Member learning</strong><br/>
+This is for anyone involved in helping to move forward the knowledge and learning of EWB members, whether formally or informally. This includes member learning presentations, development drinks, and can encompass the roles of returned Junior Fellows, Professional Fellows, and African Programs Staff.
+</p>
+
+<p><strong>Network/People</strong><br/>
+This enabling team is focused on supporting EWB members across the organization. This can include the chapter support network (chapter presidents, VP internal, coaches/mentors, etc), as well as broader efforts to engage members in leadership development and skill-building.
+</p>
+
+<p><strong>Invested partnerships</strong><br/>
+This is an enabling team for anyone involved with fundraising, finances, corporate engagement, or other areas that help EWB fund our amazing programs.
+</p>
+
+<p><strong>Communications</strong><br/>
+If a considerable amount of your work in EWB is geared toward communicating the organization and its work, this is the enabling team for you. Communications broadly includes online engagement, social media, and advertising EWB on your campus or in your workplace.
+</p>
+
+<p><strong>Fair trade/Ethical Consumption</strong><br/>
+The fair trade venture is spreading the word about ethical consumption choices, and making the connection between everyday decisions and poverty eradication. By engaging the public, the goal is to ensure they make decisions that lead to an equitable relationship between Canada and countries in Africa.
+</p>
+
+<p><strong>African ventures engagement</strong><br/>
+Broadly, this is for people that engage with the African ventures, and connecting them to the rest of the organization. It is geared toward people in roles related to Connecting Canadians to Africa, or those heading up a "ChAPSter buddy" relationship (between a Canadian chapter and African Programs Staff). <em>(Note: This is not a default section for returned overseas volunteers/staff; please select the category that represents your most recent involvement.)</em>
+</p>
+		    
+		</div>
+
 		<script type="text/javascript">
 			$().ready(function() {
 				$('#confoptiontablelink').colorbox({transition: 'elastic',
@@ -319,6 +304,20 @@
 															$('#confoptiontable').hide();
 														},
 				});
+
+				$('#confcontentlink').colorbox({transition: 'elastic',
+													opacity: '0.5',
+													width: '75%',
+													inline: true,
+													href: '#confcontentdescription',
+													onLoad: function() {
+															$('#confcontentdescription').show();
+														},
+													onCleanup: function() {
+															$('#confcontentdescription').hide();
+														},
+				});
+
 
 				$('#conf-registration').submit(function() {
 					if ($('select[name=address]').val() == 'new')

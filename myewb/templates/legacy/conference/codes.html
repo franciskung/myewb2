@@ -75,6 +75,15 @@ Enter the type ("type of code") and number ("starting at") below; the secret cod
 		border: 1px solid;
 		text-align: center;
 	}
+
+    #ldd_spots td, #ldd_spots th {
+        text-align: center;
+        padding: 3px 8px;
+    }
+
+    #ldd_spots input {
+        text-align: center;
+    }
 </style>
 <table style="width: 100%;" class="confcodes">
 	<tr>
@@ -93,6 +102,37 @@ Enter the type ("type of code") and number ("starting at") below; the secret cod
 		</tr>
 	{% endfor %}
 </table>
+
+<h2>Leadership Development Day spots</h2>
+
+<form method="POST" action="{% url conference_ldd_spots %}">
+    <table id="ldd_spots">
+        <tr>
+            <th>Chapter</th>
+            <th>Spots used</th>
+            <th>Spots allowed</th>
+        </tr>
+
+        {% for chapter in chapters %}
+            <tr style='background: {% cycle '#e0e0e0;' '#ffffff;' %}'>
+                <td>{{ chapter.chapter_name }}</td>
+                <td>{{ chapter.ldd }}</td>
+                <td>
+                    {% for l in ldd %}
+                        {% ifequal l.chapter chapter.network %}
+                            <input type="text" style="width: 25px;" name="ldd_{{ chapter.network.id }}" value="{{ l.spots }}"/>
+                        {% endifequal %}
+                    {% endfor %}
+                </td>
+            </tr>
+        {% endfor %}
+
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td><input type="submit" name="save"/></td>
+    </table>
+</form>
 
 <script type="text/javascript">
 	$().ready(function() {

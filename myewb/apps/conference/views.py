@@ -26,9 +26,10 @@ from attachments.models import Attachment
 from account_extra.forms import EmailLoginForm, EmailSignupForm
 
 from base_groups.models import BaseGroup, GroupMemberRecord
+from communities.models import NationalRepList
 from conference.decorators import conference_login_required
 from conference.forms import * #ConferenceRegistrationForm, CodeGenerationForm, ConferenceSignupForm #ConferenceRegistrationFormPreview, 
-from conference.models import ConferenceRegistration, ConferenceCode
+from conference.models import ConferenceRegistration, ConferenceCode, LeadershipDaySpots
 from conference.constants import *
 from conference.utils import needsToRenew
 from networks.models import ChapterInfo
@@ -96,7 +97,7 @@ def view_registration(request):
         else:
             tshirtform = True
 
-        if registration.ski:
+        if registration.extra_gala:
             skiform = None
         else:
             skiform = True
@@ -124,13 +125,17 @@ def view_registration(request):
             
             # populate and process the right registration form...
             if not stage:
-                form = ConferenceRegistrationForm1(request.POST, instance=registration)
+                form = ConferenceRegistrationProfileForm(request.POST, instance=user.get_profile())
             elif stage == '2':
-                form = ConferenceRegistrationForm2(request.POST, instance=registration)
+                form = ConferenceRegistrationForm1(request.POST, instance=registration)
             elif stage == '3':
-                form = ConferenceRegistrationForm3(request.POST, instance=registration)
+                form = ConferenceRegistrationForm2(request.POST, instance=registration)
             elif stage == '4':
+                form = ConferenceRegistrationForm3(request.POST, instance=registration)
+            elif stage == '5':
                 form = ConferenceRegistrationForm4(request.POST, instance=registration)
+            elif stage == '6':
+                form = ConferenceRegistrationForm5(request.POST, instance=registration)
                 
             form.user = user
             if form.is_valid():
@@ -147,19 +152,27 @@ def view_registration(request):
                 elif stage == '3':
                     stage = '4'
                 elif stage == '4':
-                    return ConferenceRegistrationFormPreview(ConferenceRegistrationForm4)(request, username=request.user.username, registration_id=registration.id)
+                    stage = '5'
+                elif stage == '5':
+                    stage = '6'
+                elif stage == '6':
+                    return ConferenceRegistrationFormPreview(ConferenceRegistrationForm5)(request, username=request.user.username, registration_id=registration.id)
                 
                 form = None
 
         # populate form (either current form with errors, or next stage's form)
         if not stage and not form:
-            form = ConferenceRegistrationForm1(instance=registration)
+            form = ConferenceRegistrationProfileForm(instance=user.get_profile())
         elif stage == '2' and not form:
-            form = ConferenceRegistrationForm2(instance=registration)
+            form = ConferenceRegistrationForm1(instance=registration)
         elif stage == '3' and not form:
-            form = ConferenceRegistrationForm3(instance=registration)
+            form = ConferenceRegistrationForm2(instance=registration)
         elif stage == '4' and not form:
+            form = ConferenceRegistrationForm3(instance=registration)
+        elif stage == '5' and not form:
             form = ConferenceRegistrationForm4(instance=registration)
+        elif stage == '6' and not form:
+            form = ConferenceRegistrationForm5(instance=registration)
         form.user = request.user
                 
     needsRenewal = needsToRenew(request.user.get_profile())
@@ -171,6 +184,8 @@ def view_registration(request):
         last_stage = '3'
     elif stage == '5':
         last_stage = '4'
+    elif stage == '6':
+        last_stage = '5'
 
     return render_to_response('conference/registration.html',
                               {'registration': registration,
@@ -437,9 +452,25 @@ def list(request, chapter=None):
     registrations = ConferenceRegistration.objects.filter(user__memberprofile__chapter=group,
                                                           submitted=True, cancelled=False)
 
+    is_president = False
+    prez_group = NationalRepList.objects.get(slug='presidents')
+    pro_prez_group = NationalRepList.objects.get(slug='citynetworkpres')
+    if request.user.has_module_perms('conference'):
+        is_president = True
+    else:
+        if group.user_is_admin(request.user):
+            if prez_group.user_is_member(request.user) or pro_prez_group.user_is_member(request.user):
+                is_president = True
+
+    ldd, created = LeadershipDaySpots.objects.get_or_create(chapter=group)
+    ldd_open = ldd.spots - ConferenceRegistration.objects.filter(submitted=True, cancelled=False, ldd_chapter=group).count()
+
     return render_to_response('conference/list.html',
                               {'registrations': registrations,
-                               'group': group},
+                               'group': group,
+                               'is_president': is_president,
+                               'ldd_total': ldd.spots,
+                               'ldd_open': ldd_open},
                                context_instance=RequestContext(request)
                                )
     
@@ -467,12 +498,12 @@ def download(request, who=None):
                      'room size', 'registered on', 'headset',
                      'food prefs', 'special needs',
                      'emergency name', 'emergency phone', 'prev conferences',
-                     'prev retreats', 'cell phone', 't-shirt', 'ski trip',
+                     'prev retreats', 'cell phone', 't-shirt', 'extra gala ticket?',
                      'reg code', 'reg type', 'african delegate',
-                     'roommate request', 'new to ottawa', 
-                     'Survey - learn', 'Survey - connections', 'Survey - opportunities and challenges',
-                     'Survey - perfect experience', 'Survey - stay up to speed',
-                     'Survey - Sunday trip', 'Survey - socials', 'Survey - restaurants',
+                     'roommate request', 'new to calgary', 
+#                     'Survey - learn', 'Survey - connections', 'Survey - opportunities and challenges',
+#                     'Survey - perfect experience', 'Survey - stay up to speed',
+#                     'Survey - Sunday trip', 'Survey - socials', 'Survey - restaurants',
                      'past/current jf', 'past/current president', 'past/current exec'
                      ])
                      
@@ -508,10 +539,10 @@ def download(request, who=None):
         row = [fname, lname, email, gender, language, chapter,
                r.amountPaid, r.roomSize, r.date, r.headset,
                r.foodPrefs, r.specialNeeds, r.emergName, r.emergPhone,
-               r.prevConfs, r.prevRetreats, r.cellphone, r.tshirt, r.ski,
-               code, r.type, r.africaFund, r.roommate, r.new_to_ottawa,
-               r.survey1, r.survey2, r.survey3, r.survey4,
-               r.survey5, r.survey6, r.survey7, r.survey8,
+               r.prevConfs, r.prevRetreats, r.cellphone, r.tshirt, r.extra_gala,
+               code, r.type, r.africaFund, r.roommate, r.new_to_calgary,
+ #              r.survey1, r.survey2, r.survey3, r.survey4,
+#               r.survey5, r.survey6, r.survey7, r.survey8,
                jf, president, executive]
             
         writer.writerow([fix_encoding(s) for s in row])
@@ -550,13 +581,23 @@ def generate_codes(request):
         
         else:
             form = CodeGenerationForm()
+            chapters = ChapterInfo.objects.all().order_by('chapter_name')
+
+            for c in chapters:
+                l, created = LeadershipDaySpots.objects.get_or_create(chapter=c.network)
+                used = ConferenceRegistration.objects.filter(submitted=True, cancelled=False, ldd_chapter=c.network)
+                c.ldd = used.count()
+
+            ldd = LeadershipDaySpots.objects.all()
         
         return render_to_response('conference/codes.html',
                                   {'codes': codes,
                                    'form': form,
                                    'conf_codes': CONF_CODES,
                                    'conf_options': CONF_OPTIONS,
-                                   'room_choices': ROOM_CHOICES
+                                   'room_choices': ROOM_CHOICES,
+                                   'ldd': ldd,
+                                   'chapters': chapters
                                   },
                                   context_instance=RequestContext(request)
                                  )
@@ -585,4 +626,79 @@ def lookup_code(request):
                 else:
                     return HttpResponse("invalid code")
     return HttpResponse("lookup error")
+    
+def ldd_spots(request):
+    if request.user.has_module_perms('conference'):
+        if request.method == 'POST':
+            chapters = ChapterInfo.objects.all().order_by('chapter_name')
+
+            for c in chapters:
+                l, created = LeadershipDaySpots.objects.get_or_create(chapter=c.network)
+
+                spots = request.POST.get("ldd_%d" % c.network.id, 0)
+                l.spots = spots
+                l.save()
+
+            request.user.message_set.create(message='LDD spots updated')            
+
+        return HttpResponseRedirect(reverse('conference_codes'))
+
+    else:
+        return render_to_response('denied.html', context_instance=RequestContext(request))
+
+def ldd_delegates(request, chapter_id):
+    chapter = BaseGroup.objects.get(id=chapter_id)
+
+    is_president = False
+    prez_group = NationalRepList.objects.get(slug='presidents')
+    pro_prez_group = NationalRepList.objects.get(slug='citynetworkpres')
+    if request.user.has_module_perms('conference'):
+        is_president = True
+    else:
+        if chapter.user_is_admin(request.user):
+            if prez_group.user_is_member(request.user) or pro_prez_group.user_is_member(request.user):
+                is_president = True
+
+    if is_president:
+
+        registrations = ConferenceRegistration.objects.filter(user__memberprofile__chapter=chapter,
+                                                              submitted=True, cancelled=False)
+        to_save = []
+        delegates = 0
+        
+        for r in registrations:
+            ldd = request.POST.get("ldd_%d" % r.id, '')
+            print "getting", "ldd_%d" % r.id, "for", ldd
+            if ldd:
+                r.ldd_delegate = True
+                r.ldd_type = ldd
+                r.ldd_chapter = chapter.network
+                if request.POST.get("ldd_hotel_%d" % r.id, '') == "on":
+                    r.ldd_hotel = True
+                else:
+                    r.ldd_hotel = False
+
+                delegates = delegates + 1
+                to_save.append(r)
+                
+            elif r.ldd_delegate == True and r.ldd_chapter.id == chapter.id:
+                r.ldd_delegate = False
+                r.ldd_type = ''
+                r.ldd_chapter = None
+                r.ldd_hotel = False
+                to_save.append(r)
+            
+        spots, created = LeadershipDaySpots.objects.get_or_create(chapter=chapter)
+        print "delegates", delegates, "spots", spots.spots
+        if delegates > spots.spots:
+            request.user.message_set.create(message='You selected too many delegates - changes were NOT saved!')
+        else:
+            for s in to_save:
+                s.save()
+            request.user.message_set.create(message='LDD delegates updated!')
+
+        return HttpResponseRedirect(reverse('conference_list'))
+
+    else:
+        return render_to_response('denied.html', context_instance=RequestContext(request))
     

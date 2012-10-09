@@ -38,9 +38,9 @@ class Community(BaseGroup):
         else:
             return False
        
-    def save(self, force_insert=False, force_update=False):
+    def save(self, *args, **kwargs):
         self.model = "Community"
-        return super(Community, self).save(force_insert, force_update)
+        return super(Community, self).save(*args, **kwargs)
         
     class Meta:
         verbose_name_plural = "communities"

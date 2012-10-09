@@ -4,13 +4,13 @@
 {% load i18n %}
 {% load creditcard_tags %}
 
-{% block head_title %}National Conference 2012{% endblock %}
+{% block head_title %}National Conference 2013{% endblock %}
 
 {% block body %}
 
 <br/><br/>
 
-<h1>National Conference 2012: Registration Preview</h1>
+<h1>National Conference 2013: Registration Preview</h1>
 	
 <h2>Personal Details</h2>
 
@@ -31,6 +31,7 @@
 		border-left: 0px;
 		border-right: 0px;
 		padding: 5px 15px;
+        vertical-align: top;
 	}
 </style>
 
@@ -198,7 +199,7 @@
 {% endfor %}
 <input type="hidden" name="{{ stage_field }}" value="2" />
 <input type="hidden" name="{{ hash_field }}" value="{{ hash_value }}" />
-<input type="hidden" name="reg_stage" value="4" />
+<input type="hidden" name="reg_stage" value="6" />
 <p>
 	<input type="button" value="Go back" onClick="history.go(-1);" />
 	&nbsp;&nbsp;

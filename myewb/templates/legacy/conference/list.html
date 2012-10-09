@@ -2,18 +2,136 @@
 
 {% load i18n %}
 
-{% block head_title %}National Conference 2012{% endblock %}
+{% block head_title %}National Conference 2013{% endblock %}
 
 {% block body %}
+<style>
+    #ldd th, #ldd td {
+        padding: 10px 30px;
+        text-align: left;
+        vertical-align: top;
+    }
+</style>
+
 <br/><br/>
 
-<h1>National Conference 2012</h1>
+<h1>National Conference 2013</h1>
 	
 <h2>Registration List for {{ group.name }}</h2>
 	
-{% for reg in registrations %}
-	<p><a href="{% url profile_detail reg.user.username %}">{{ reg.user.visible_name }}</a></p>
-{% endfor %}
+{% if not is_president %}
+    {% for reg in registrations %}
+	    <p><a href="{% url profile_detail reg.user.username %}">{{ reg.user.visible_name }}</a></p>
+    {% endfor %}
+
+{% else %}
+
+    <p id="ldd_summary" style="font-size: 1.25em;">Leadership Development Day spots available: <span id="ldd_open">{{ ldd_open }}</span> of {{ ldd_total }}</p>
+
+    <form action="{% url conference_ldd_delegates group.id %}" method="post" id="ldd_form">
+    <table id="ldd">
+        <tr>
+            <th>Delegate</th>
+            <th>Leadership Development Day</th>
+        </tr>
+
+        {% for reg in registrations %}
+            <tr style="background: {% cycle '#e0e0e0;' '#ffffff;' %}">
+                <td><a href="{% url profile_detail reg.user.username %}">{{ reg.user.visible_name }}</a></td>
+                <td>
+                    {% if reg.ldd_delegate %}
+                        {% ifnotequal reg.ldd_chapter.id group.id %}
+                            <em>Attending LDD with a different chapter</em>
+                        {% else %}
+                            <select class="ldd_select ldd_existing" id="ldd_{{ reg.id }}" name="ldd_{{ reg.id }}">
+                                <option value=''>Not attending</option>
+                                <option value='president' {% ifequal reg.ldd_type 'president' %}selected='selected'{% endifequal %}>Attending: Chapter president</option>
+                                <option value='jf' {% ifequal reg.ldd_type 'jf' %}selected='selected'{% endifequal %}>Attending: Junior Fellow</option>
+                                <option value='rjf' {% ifequal reg.ldd_type 'rjf' %}selected='selected'{% endifequal %}>Attending: Returned JF</option>
+                                <option value='general' {% ifequal reg.ldd_type 'general' %}selected='selected'{% endifequal %}>Attending: general delegate</option>
+                            </select>
+
+                            <div id='ldd_hoteldiv_{{ reg.id }}' style='padding-top: 5px;'>
+                                <input type="checkbox" name="ldd_hotel_{{ reg.id }}" id="ldd_hotel_{{ reg.id }}" {% if reg.ldd_hotel %}checked='checked'{% endif %}/>
+                                <label for="ldd_hotel_{{ reg.id }}">Hotel needed Thursday night</label>
+                            </div>
+                        {% endifnotequal %}
+                    {% else %}
+                        <select class="ldd_select ldd_new" id="ldd_{{ reg.id }}" name="ldd_{{ reg.id }}">
+                            <option value=''>Not attending</option>
+                            <option value='president'>Attending: Chapter president</option>
+                            <option value='jf'>Attending: Junior Fellow</option>
+                            <option value='rjf'>Attending: Returned JF</option>
+                            <option value='general'>Attending: general delegate</option>
+                        </select>
+
+                        <div id='ldd_hoteldiv_{{ reg.id }}' style='padding-top: 5px; display: none;'>
+                            <input type="checkbox" name="ldd_hotel_{{ reg.id }}" id="ldd_hotel_{{ reg.id }}"/>
+                            <label for="ldd_hotel_{{ reg.id }}">Hotel needed Thursday night</label>
+                        </div>
+                    {% endif %}
+                </td>
+            </tr>
+
+        {% endfor %}
+
+        <tr>
+            <td>&nbsp;</td>
+            <td><input type="submit" value="save"/></td>
+        </tr>
+    </table>
+    </form>
+
+
+    <script type='text/javascript'>
+        $().ready(function() {
+            $('.ldd_select').change(function() {
+                var reg_id = $(this).attr('id').substring(4);
+
+                if ($(this).val() == '') {
+                    if ($(this).hasClass('ldd_existing')) {
+                        $(this).removeClass('ldd_existing');
+                        $(this).addClass('ldd_new');
+                        $('#ldd_open').html($('#ldd_open').html() - (-1));
+
+                        $('#ldd_hoteldiv_' + reg_id).slideUp();
+                    }
+                }
+
+                else {
+                    if ($(this).hasClass('ldd_new')) {
+                        $(this).removeClass('ldd_new');
+                        $(this).addClass('ldd_existing');
+                        $('#ldd_open').html($('#ldd_open').html() - 1);
+
+                        $('#ldd_hoteldiv_' + reg_id).slideDown();
+                    }
+                }
+
+                if (($('#ldd_open').html() - 1 - (-1)) < 0) {
+                    alert('You have too many LDD delegates selected - remove some before saving the page...');
+                    $('#ldd_summary').css('color', 'red');
+                }
+                else {
+                    $('#ldd_summary').css('color', '#444');
+                }
+            });
+
+            $('#ldd_form').submit(function() {
+                if (($('#ldd_open').html() - 1 - (-1)) < 0) {
+                    alert("You have too many delegates selected!");
+                
+                    return false;
+                }
+
+                else {
+                    return true;
+                }
+            });
+        });
+    </script>
+
+{% endif %}
 	
 
 {% endblock %}

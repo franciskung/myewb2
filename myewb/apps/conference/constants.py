@@ -8,6 +8,18 @@ FOOD_CHOICES = (('none', _("no special preferences")),
                 ('vegan', _("vegan"))
     )
 
+HOMEROOM_CHOICES = (('yv', 'Youth venture'),
+                    ('ge', 'Global Engineering'),
+                    ('adv', 'Advocacy'),
+                    ('ml', 'Member Learning'),
+                    ('net', 'Network / people'),
+                    ('ip', 'Invested Partnerships'),
+                    ('comms', 'Communications'),
+                    ('ft', 'Fair Trade'),
+                    ('aps', 'African ventures engagement'),
+    )
+
+
 # this should be a dictionary, but needs to be a tuple to be used as an ENUM
 CONF_CODES = (('a', "test"),
               ('b', "uni-east"),

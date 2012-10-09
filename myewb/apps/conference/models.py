@@ -21,7 +21,7 @@ class ConferenceRegistration(models.Model):
     roomSize = models.CharField(max_length=25, null=True, blank=True)
     date = models.DateTimeField(default=datetime.now)
     headset = models.BooleanField(default=False)
-    foodPrefs = models.CharField(max_length=10, choices=FOOD_CHOICES, default='none')
+    foodPrefs = models.CharField(max_length=10, choices=FOOD_CHOICES, default='vegetarian')
     submitted = models.BooleanField(default=False)
     cancelled = models.BooleanField(default=False)
     specialNeeds = models.TextField(null=True, blank=True)
@@ -34,7 +34,7 @@ class ConferenceRegistration(models.Model):
     cellphone_from = models.ForeignKey('ConferencePhoneFrom', null=True, blank=True)
     #grouping = models.CharField(max_length=50, blank=True, null=True)
     roommate = models.CharField(max_length=255, blank=True, null=True)
-    new_to_ottawa = models.BooleanField(default=False, blank=True)
+    new_to_calgary = models.BooleanField(default=False, blank=True)
     
     txid = models.CharField(max_length=255, null=True, blank=True)
     receiptNum = models.CharField(max_length=255, null=True, blank=True)
@@ -42,16 +42,25 @@ class ConferenceRegistration(models.Model):
     type = models.CharField(max_length=50, null=True, blank=True)
     africaFund = models.SmallIntegerField(blank=True, null=True)
     tshirt = models.CharField(max_length=1, blank=True, null=True)
-    ski = models.CharField(max_length=1, blank=True, null=True)
+
+    extra_gala = models.BooleanField(default=False, blank=True)
+    homeroom = models.CharField(max_length=10, blank=True)
+    industry = models.CharField(max_length=255, blank=True)
+
+    ldd_delegate = models.BooleanField(default=False)
+    ldd_chapter = models.ForeignKey(Network, blank=True, null=True)
+    ldd_type = models.CharField(max_length=50, blank=True)
+    ldd_hotel = models.BooleanField(default=False)
     
-    survey1 = models.TextField(null=True, blank=True)
-    survey2 = models.TextField(null=True, blank=True)
-    survey3 = models.TextField(null=True, blank=True)
-    survey4 = models.TextField(null=True, blank=True)
-    survey5 = models.TextField(null=True, blank=True)
-    survey6 = models.TextField(null=True, blank=True)
-    survey7 = models.TextField(null=True, blank=True)
-    survey8 = models.TextField(null=True, blank=True)
+        
+#    survey1 = models.TextField(null=True, blank=True)
+#    survey2 = models.TextField(null=True, blank=True)
+#    survey3 = models.TextField(null=True, blank=True)
+#    survey4 = models.TextField(null=True, blank=True)
+#    survey5 = models.TextField(null=True, blank=True)
+#    survey6 = models.TextField(null=True, blank=True)
+#    survey7 = models.TextField(null=True, blank=True)
+#    survey8 = models.TextField(null=True, blank=True)
 
     def cancel(self):
         self.cancelled = True
@@ -59,20 +68,20 @@ class ConferenceRegistration(models.Model):
         self.save()
 
         # remove from delegates group
-        grp, created = Community.objects.get_or_create(slug='conference2012',
+        grp, created = Community.objects.get_or_create(slug='conference2013',
                                                        defaults={'invite_only': True,
-                                                                 'name': 'National Conference 2012 - EWB delegates',
+                                                                 'name': 'National Conference 2013 - EWB delegates',
                                                                  'creator': self.user,
-                                                                 'description': 'National Conference 2012 delegates (EWB members)',
-                                                                 'mailchimp_name': 'National Conference 2012 members',
+                                                                 'description': 'National Conference 2013 delegates (EWB members)',
+                                                                 'mailchimp_name': 'National Conference 2013 members',
                                                                  'mailchimp_category': 'Conference'})
 
-        grp2, created = Community.objects.get_or_create(slug='conference2011-external',
+        grp2, created = Community.objects.get_or_create(slug='conference2013-external',
                                                         defaults={'invite_only': True,
-                                                                  'name': 'National Conference 2012 - external delegates',
+                                                                  'name': 'National Conference 2013 - external delegates',
                                                                   'creator': self.user,
-                                                                  'description': 'National Conference 2012 delegates (external)',
-                                                                  'mailchimp_name': 'National Conference 2012 external',
+                                                                  'description': 'National Conference 2013 delegates (external)',
+                                                                  'mailchimp_name': 'National Conference 2013 external',
                                                                   'mailchimp_category': 'Conference'})
 
         grp.remove_member(self.user)
@@ -184,6 +193,10 @@ class FriendsConferenceCode(ConferenceCode):
         
     def isAvailable(self):
         return True
+
+class LeadershipDaySpots(models.Model):
+    chapter = models.ForeignKey(Network)
+    spots = models.IntegerField(default=0)
 
 SESSION_TYPES = (('keynote', "Keynote"),
                  ('speaker', "Speaker"),

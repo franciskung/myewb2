@@ -10,7 +10,7 @@
 {% load group_tags %}
 {% load topics_tags %}
 
-{% block head_title %}National Conference 2012{% endblock %}
+{% block head_title %}National Conference 2013{% endblock %}
 
 {% block body %}
 <style>
@@ -27,7 +27,7 @@
 	</style> 
 	<br/><br/>
 
-<h2>National Conference 2012</h2>
+<h2>National Conference 2013</h2>
 
 		<br />
 		<p style="font-weight: bold;">
@@ -37,36 +37,34 @@
 		<br/>
 
 		<ul id="registrationoptions">
-		
+
+{% comment %}		
 		<li>
 			<a href="http://conference2012.ewb.ca/reg/conference/schedule/">View or build your personal conference schedule</a>
 		</li>
+{% endcomment %}
 		
 		<li>
 			<a href="{% url conference_receipt %}" style="font-weight: bold;">print a receipt</a>
 		</li>
 
 		<li>
-			{#<a href="{% url conference_cancel %}">cancel your registration</a> #}
-<span style="text-decoration: line-through;">cancel your registration</span><br/>
-<em>Registration changes and cancellations can not be made after January 3.</em>
+			<a href="{% url conference_cancel %}">cancel your registration</a> 
+{#<span style="text-decoration: line-through;">cancel your registration</span><br/>#}
+{#<em>Registration changes and cancellations can not be made after January 3.</em>#}
 		</li>
 		
-		{% comment %}
 		{% if tshirtform %}
 		<li>
 			<a href="{% url conference_tshirt %}">add a conference t-shirt to your registration</a>
 		</li>
 		{% endif %}
-		{% endcomment %}
 		
-		{% comment %}
 		{% if skiform %}
 		<li>
-			<a href="{% url conference_ski %}">attend the optional Sunday ski trip</a>
+			<a href="{% url conference_ski %}">add an extra Gala ticket to your registration</a>
 		</li>
 		{% endif %}
-		{% endcomment %}
 		
 		<li>
 			<a href="{% url conference_ad %}">add an African Delegate contribution</a> (${{ registration.africaFund|default:0 }} received)
@@ -82,7 +80,7 @@
 		
 		<br />
 		<br />
-		<p>Keep checking the conference website at <a href="http://conference2012.ewb.ca/">http://conference2012.ewb.ca</a> for up-to-date information regarding the conference!</p>
+		<p>Keep checking the conference website at <a href="http://conference2013.ewb.ca/">http://conference2013.ewb.ca</a> for up-to-date information regarding the conference!</p>
 
 
 {% endblock %}

@@ -3,12 +3,12 @@
 
 {% load i18n %}
 
-{% block head_title %}National Conference 2012{% endblock %}
+{% block head_title %}National Conference 2013{% endblock %}
 
 {% block body %}
 <br/><br/>
 
-<h1>National Conference 2012</h1>
+<h1>National Conference 2013</h1>
 
 {% if cancelled %}
 	<h2>Your registration has been cancelled.</h2>
@@ -31,7 +31,7 @@
 	Are you sure you want to cancel your registration?
 	A $20 processing fee will be charged, and the rest of your registration will be refunded.<br/><br/>
 	
-	Note that membership payments and the contributions to the "Support an African delegate" program 
+	Note that membership payments and the contributions to the Kumvana program 
 	are non-refundable.<br/><br/>
 	
 	<form action="{% url conference_cancel %}" method="post">

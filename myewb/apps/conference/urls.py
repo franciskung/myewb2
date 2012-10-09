@@ -24,6 +24,9 @@ urlpatterns = patterns('conference.views',
     url(r'^codes/$', 'generate_codes', name='conference_codes'),
     url(r'^codelookup/$', 'lookup_code', name='conference_code_lookup')    ,
 
+    url(r'^lddspots/$', 'ldd_spots', name='conference_ldd_spots')    ,
+    url(r'^ldddelegates/(?P<chapter_id>[\d]+)/$', 'ldd_delegates', name='conference_ldd_delegates')    ,
+
     url(r'^download/all/$', 'download', kwargs={'who': 'all'}, name='conference_download_all'),
     url(r'^download/chapter/$', 'download', kwargs={'who': 'chapter'}, name='conference_download_chapter'),
     url(r'^download/open/$', 'download', kwargs={'who': 'open'}, name='conference_download_open'),

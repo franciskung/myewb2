@@ -2,12 +2,12 @@
 
 {% load i18n %}
 
-{% block head_title %}National Conference 2012{% endblock %}
+{% block head_title %}National Conference 2013{% endblock %}
 
 {% block body %}
 <br/><br/>
 
-<h1>National Conference 2011</h1>
+<h1>National Conference 2013</h1>
 
 <p>You're an admin, or are an exec of multiple chapters.</p>
 
@@ -27,7 +27,7 @@
 
 
 {% if is_admin %}
-	<div style="width: 50%; float: right;">
+	<div style="width: 50%; float: right; padding-left: 50px;">
 		<h2>More conference stats</h2>
 	
 		<p>	
@@ -72,5 +72,6 @@
 {% endfor %}
 </table>
 
+<p><em>Note, chapters registration numbers may not match total registration numbers since a member can be apart of more than one chapter!</em></p>
 
 {% endblock %}
