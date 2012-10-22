@@ -81,6 +81,17 @@
 		{
 			font-size: 12px;
 		}
+#confshirt {
+float: right;
+margin-top: -110px;
+margin-right: 275px;
+height: 150px;
+z-index: 100;
+}
+#hint_id_tshirt {
+z-index: 100;
+}
+
 	</style> 
 
 	{% if not registration or not registration.submitted %}
@@ -180,9 +191,9 @@
 		  <tr>
 		    <th>&nbsp;</th>
 		    <th>Quad occupancy<br/>4/room (shared beds)</th>
-		    <th>Double occupancy<br/>2/room (single beds)</th>
+		    <th>Double occupancy<br/>2/room (own beds)</th>
 		    <th>Single occupancy<br/>own room</th>
-		    <th>No room</th>
+		    <th>No hotel</th>
 		  </tr>
 		  <tr>
 		    <th>Subsidized: NB/NS/NL</th>
@@ -205,6 +216,13 @@
 		    <td>$875 (student)<br/>$975 (general)</td>    
 		    <td>$225 (student)<br/>$325 (general)</td>    
 		  </tr>
+                  <tr>
+                    <th>Subsidized: AB</th>
+                    <td>$450 (student)<br/>$550 (general)</td>
+                    <td>$650 (student)<br/>$750 (general)</td>
+                    <td>$950 (student)<br/>$1050 (general)</td>
+                    <td>$300 (student)<br/>$400 (general)</td>
+                  </tr>
 		  {% comment %}
 		  <tr>
 		  	<th>
@@ -317,6 +335,7 @@ Broadly, this is for people that engage with the African ventures, and connectin
 															$('#confcontentdescription').hide();
 														},
 				});
+$('.colorbox').colorbox({opacity: '0.5', height: '75%'});
 
 
 				$('#conf-registration').submit(function() {
@@ -332,6 +351,7 @@ Broadly, this is for people that engage with the African ventures, and connectin
 						return true;
 				});
 
+/*
 				var hotel_options_touched = false;
 				$('input[name=type]').change(function() {
 				    hotel_options_touched = true;
@@ -358,6 +378,7 @@ Broadly, this is for people that engage with the African ventures, and connectin
 				    $('#id_type_1').attr('disabled', true);
 				    $('#id_type_2').attr('disabled', true);
 			    }
+*/
 			});
 		</script>
 
@@ -382,7 +403,7 @@ Broadly, this is for people that engage with the African ventures, and connectin
 
 		<br />
 		<br />
-		<p>Keep checking the conference website at <a href="http://conference2012.ewb.ca/">http://conference2012.ewb.ca</a> for up-to-date information regarding the conference!</p>
+		<p>Keep checking the conference website at <a href="http://conference2013.ewb.ca/">http://conference2013.ewb.ca</a> for up-to-date information regarding the conference!</p>
 
 	{% endif %}
 

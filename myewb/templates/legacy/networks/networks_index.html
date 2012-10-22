@@ -30,7 +30,7 @@
         <p>{% blocktrans %}<a href="{{ signup_url }}">Sign up</a> and <a href="{{ login_url }}">log in </a> to join a chapter.{% endblocktrans %}</p>
     {% endif %}
 
-	{% cache CACHE_TIMEOUT "chapterlist2" %}    
+	{% cache CACHE_TIMEOUT "chapterlist3" %}    
 
     {% autosort groups %}
     {#{% autopaginate groups 10 %}#}
@@ -281,6 +281,7 @@ var cityArray = new Array();
 			"Fredericton" : new GLatLng(45.957319, -66.647818),
 			"Victoria" : new GLatLng(48.42804, -123.356467),
 			"Burnaby" : new GLatLng(49.250494, -122.95967),
+			"Kelowna": new GLatLng(49.8849, -119.4907),
 			"Edmonton" : new GLatLng(53.53279, -113.503383),
 			"Calgary" : new GLatLng(51.039877, -114.080796),
 			"Saskatoon" : new GLatLng(52.13142, -106.64594),

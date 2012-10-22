@@ -22,7 +22,8 @@
         {% endcomment %}
         <li><a href="{% url networks_index %}">{% trans "Chapters" %}</a></li> 
         <li><a href="{% url communities_index %}">{% trans "Communities" %}</a></li>
-        <li><a href="{% url national_office %}">{% trans "National Office" %}</a></li>
+{#        <li><a href="{% url national_office %}">{% trans "National Office" %}</a></li>#}
+        <li><a href="{% url dictionary_view 'who-do-i-contact' %}">Who Do I Contact?</a></li>
         {% if is_exec %}
        		<li><a href="{% link_to_current_champ request.user %}">CHAMP</a></li>
        		<li><a href="{% link_to_current_finance request.user %}">Finance</a></li>

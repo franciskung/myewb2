@@ -26,10 +26,12 @@
 {% endif %}
 
 {% if reg.tshirt %}
+{% ifnotequal reg.tshirt 'n' %}
 <tr>
 <td align="center" style="border: 1px solid black;">Conference t-shirt</td>
 <td align="center" style="border: 1px solid black;">$20.00</td>
 </tr>
+{% endifnotequal %}
 {% endif %}
 
 {% if reg.extra_gala %}

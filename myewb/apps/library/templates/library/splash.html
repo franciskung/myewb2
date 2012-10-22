@@ -1,4 +1,32 @@
-{% extends 'library/base.html' %}
+{% extends "base.html" %}
+
+{% load dictionary_tags %}
+
+{% block nav_class_library %} current{% endblock %}
+
+{% block main_nav_library %}
+          <li><a href="{% url library_home %}" class="border-red current">
+                        <img src="{{ STATIC_URL }}images/icons3/Folders.png"/>
+                        Library
+          </a></li>
+{% endblock %}
+
+{% block body_class %}library red{% endblock %}
+
+{% block subnav %}
+
+    <ul class="subnav">
+
+<br/>
+
+    </ul>
+
+
+{% endblock %}
+
+{% block head_title %}
+    Resource Library
+{% endblock %}
 
 {% block body %}
 
@@ -35,7 +63,7 @@
     <br/><br/>
     
     <span style='font-size: 80px;'>
-        EWBibioth&eacute;que
+        EWBiblioth&egrave;que
     </span>
     <br/>
     <span style='font-size: 50px;'>
@@ -69,9 +97,18 @@
 			</div>
     </div>
 
-    
 
 </div>
+
+<br style='clear: both;'/>
+
+<div style='text-align: center;'>
+<iframe width="560" height="315" src="http://www.youtube.com/embed/DhtC2imYH2U" frameborder="0" allowfullscreen></iframe>
+
+</div>
+<br style='clear: both;'/>
+    
+
 
 <script type='text/javascript'>
     $().ready(function() {
@@ -91,3 +128,9 @@
 </script>
 
 {% endblock %}
+
+{% block toolbar_right %}
+
+{% endblock %}
+
+

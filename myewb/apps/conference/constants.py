@@ -30,7 +30,9 @@ CONF_CODES = (('a', "test"),
               ('g', "city-onqb"),
               ('h', "city-west"),
               ('i', "city-alberta"),
-#              ('j', "alumni"),
+              ('j', "teams-ventures"),
+              ('k', "kumvana"),
+              ('l', "confteam")
              )
               
 CONF_CODES_LONG = (('a', "Test code"),
@@ -38,11 +40,13 @@ CONF_CODES_LONG = (('a', "Test code"),
                    ('c', "University chapter (ON/QB)"),
                    ('d', "University chapter (BC/SK/MB)"),
                    ('e', "University chapter (AB)"),
-                   ('f', "EWB Staff"),
+                   ('f', "EWB Staff and guests"),
                    ('g', "City network (ON/QB)"),
                    ('h', "City network (BC/SK/MB)"),
                    ('i', "City network (AB)"),
-#                   ('j', "EWB Alumni"),
+                   ('j', "Distributed teams and venture leaders"),
+                   ('k', "Kumvana delegates"),
+                   ('l', "Conference team volunteers"),
                   )
               
 CONF_HASH = settings.CONF_HASH
@@ -181,13 +185,13 @@ CONF_OPTIONS = {'confreg-2013-quad-test': {'cost': 175,
                                                'name': "City network (AB) - no room"},
 
                 'confreg-2013-quad-staff': {'cost': 0,
-                                             'name': "EWB Staff - quad occupancy"},
-                #'confreg-2013-double-staff': {'cost': 0,
-                #                             'name': "EWB Staff - double occupancy"},
-                #'confreg-2013-single-staff': {'cost': 0,
-                #                             'name': "EWB Staff - single occupancy"},
+                                             'name': "EWB Staff and guests - quad occupancy"},
+                'confreg-2013-double-staff': {'cost': 200,
+                                             'name': "EWB Staff and guests - double occupancy"},
+                'confreg-2013-single-staff': {'cost': 500,
+                                             'name': "EWB Staff and guests - single occupancy"},
                 'confreg-2013-nohotel-staff': {'cost': 0,
-                                             'name': "EWB Staff - no room"},
+                                             'name': "EWB Staff and guests - no room"},
 
                 #'confreg-2013-quad-alumni': {'cost': 350,
                 #                             'name': "EWB Alumni"},
@@ -198,6 +202,27 @@ CONF_OPTIONS = {'confreg-2013-quad-test': {'cost': 175,
                 #'confreg-2013-nohotel-alumni': {'cost': 350,
                 #                             'name': "EWB Alumni"}
                
+                'confreg-2013-quad-teams-ventures': {'cost': 200,
+                                               'name': "Distributed teams and venture leaders - quad occupancy"},
+                'confreg-2013-double-teams-ventures': {'cost': 400,
+                                               'name': "Distributed teams and venture leaders - double occupancy"},
+                'confreg-2013-single-teams-ventures': {'cost': 700,
+                                               'name': "Distributed teams and venture leaders - single occupancy"},
+                'confreg-2013-nohotel-teams-ventures': {'cost': 50,
+                                               'name': "Distributed teams and venture leaders - no room"},
+
+                'confreg-2013-double-kumvana': {'cost': 0,
+                                               'name': "Kumvana delegates - double occupancy"},
+
+                'confreg-2013-quad-confteam': {'cost': 0,
+                                             'name': "Conference team volunteers - quad occupancy"},
+                'confreg-2013-double-confteam': {'cost': 150,
+                                             'name': "Conference team volunteers - double occupancy"},
+                'confreg-2013-single-confteam': {'cost': 350,
+                                             'name': "Conference team volunteers - single occupancy"},
+                'confreg-2013-nohotel-confteam': {'cost': 650,
+                                             'name': "Conference team volunteers - no room"},
+
                }
 
 ROOM_CHOICES = (('quad', _('Quad occupancy (four to a room)')),
