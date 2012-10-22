@@ -1,0 +1,130 @@
+{% extends "topics/base.html" %}
+
+{% load i18n %}
+{% load uni_form_tags %}
+
+{#{% load uni_form_tags %}#}
+
+{% load pagination_tags %}
+{% load group_tags %}
+{% load tagging_tags %}
+
+{% comment %}
+**********
+NOTE: this template should only be used in the context of a group (ie, the group 
+variable is not None).  The generic/combined post listing has been moved to
+templates/frontpage.html
+
+The {% if group %} checks are left in just in case, and should be removed eventually.
+***********
+{% endcomment %}
+
+{% block head_title %}{% trans "New Post" %}{% endblock %}
+
+{% block body %}
+    <h2><span class="lighter">{% trans "Import post to the" %}</span><br/>
+    {% ifnotequal group.slug "ewb" %}
+    
+    {{group.name}}
+    
+    {% else %}
+    myEWB Front Page
+    {% endifnotequal %}
+    </h2>
+    
+
+    <p>
+        <em>
+            This will take all content found at the URL below and import it into a post.
+            <br/>
+            <strong>
+                Use this feature with care - NO security checks will be performed, and 
+                it is possible import viruses or other malicious code!
+            </strong>
+        </em>
+    </p>
+    
+    <p>
+        (this is mostly meant for importing Mailchimp mailings; anything over 600px in width will not display well)
+    </p>
+    
+    <p>
+        Posts added using this import tool will never be mailed out to the group.
+    </p>
+    
+    <p><strong>Once again, if you are not absolutely sure of what you are doing, do not use this!</strong></p>
+	
+        
+    <form class="uniForm wideform" method="POST" enctype="multipart/form-data" action="" id='new_post_form'>
+        <fieldset class="inlineLabels">
+            {{ form|as_uni_form }}
+            {% ifequal group.slug "ewb" %}
+            	<p style='font-size: 14px;'>
+            		<strong>This post will be displayed to everyone in EWB.</strong><br/>
+            		If you are looking to 
+            		post to a specific chapter or community, go under the Groups tab, and post from the group's page.
+            	</p>
+            {% endifequal %}
+            <p class="form_block">
+                <input type="hidden" name="next" value="{{ request.path }}" />
+                <input type="submit" id="submitPost" value="{% trans "Post" %}" /></td>
+            </p>
+        </fieldset>
+    </form>
+{% endblock %}
+
+{% block extra_body %}
+	{{ block.super }}
+	{% include "tinymce.html" %}
+    {% include "comments-js.html" %}
+	
+	<link rel="stylesheet" href="{{ STATIC_URL }}css/autocomplete.css" />
+    <script type="text/javascript" src="{{STATIC_URL}}jquery.autocomplete.min.js"></script>
+	<script type="text/javascript">
+    $("#id_tags").autocomplete('{% url tagging_utils_autocomplete "group_topics" "grouptopic" %}', {
+                max: 10,
+                multiple: true,
+                multipleSeparator: ", ",
+            });
+            
+    $('#id_send_as_email').click(function() {
+        if ($('#id_send_as_email').attr('checked'))
+        {
+    		$('#div_id_sender').slideDown();
+      		$('#div_id_reply_to').slideDown();
+        }
+        else
+        {
+    		$('#div_id_sender').slideUp();
+    		$('#div_id_reply_to').slideUp();
+        }
+    });
+    
+    $(document).ready(function() {
+    
+        {% comment %}
+        {% if request.REQUEST.sendasemail %}
+        $('#id_send_as_email').attr('checked', true);
+        {% else %}
+        $('#id_send_as_email').attr('checked', false);
+        {% endif %}
+        {% endcomment %}
+        {# This is going to be a problem - needs to be done server side so it doesn't override eg. previewing and going back, etc. #}
+    
+    
+    	if ($('#id_send_as_email:checked').val())
+    		$('#div_id_sender').show();
+    	else
+    		$('#div_id_sender').hide();
+    		
+        {% ifequal group.group_type 'a' %}
+        	if ($('#id_send_as_email:checked').val())
+        		$('#div_id_reply_to').show();
+        	else
+        		$('#div_id_reply_to').hide();
+        {% endifequal %}
+
+    });
+    </script>	
+{% endblock %}
+    
