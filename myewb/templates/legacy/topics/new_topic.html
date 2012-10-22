@@ -32,7 +32,9 @@ The {% if group %} checks are left in just in case, and should be removed eventu
     {% endifnotequal %}
     </h2>
     
-
+    {% if perms.group_topics %}
+        <p>Looking for the admin-only importer? <a href="{% groupurl topic_new_external group %}">click here</a></p>
+    {% endif %}
 	
         
     <form class="uniForm wideform" method="POST" enctype="multipart/form-data" action="" id='new_post_form'>
