@@ -160,6 +160,8 @@ class GroupTopic(Topic):
     visible = models.BooleanField(editable=False)
     pending = models.BooleanField(default=False, editable=False, db_index=True)
     
+    external_link = models.CharField(max_length=255, blank=True, null=True)
+    
     objects = GroupTopicManager()
     
     def __init__(self, *args, **kwargs):
@@ -243,24 +245,56 @@ class GroupTopic(Topic):
         if len(self.body) < 250:
             return self.body
 
-        # thanks http://stackoverflow.com/questions/250357/smart-truncate-in-python
-        intro = self.body[:250].rsplit(' ', 1)[0]
-        intro += '...'
+        if not self.external_link:
+            # thanks http://stackoverflow.com/questions/250357/smart-truncate-in-python
+            intro = self.body[:250].rsplit(' ', 1)[0]
+            intro += '...'
 
-        intro = Cleaner(scripts=False,      # disable it all except page_structure
-                        javascript=False,   # as proper cleaning is done on save;
-                        comments=False,     # here we just want to fix any
-                        links=False,        # dangling tags caused by truncation
-                        meta=False,
-                        #page_stricture=True,
-                        embedded=False,
-                        frames=False,
-                        forms=False,
-                        annoying_tags=False,
-                        remove_unknown_tags=False,
-                        safe_attrs_only=False).clean_html(intro)
-        
-        return intro
+            intro = Cleaner(scripts=False,      # disable it all except page_structure
+                            javascript=False,   # as proper cleaning is done on save;
+                            comments=False,     # here we just want to fix any
+                            links=False,        # dangling tags caused by truncation
+                            meta=False,
+                            #page_stricture=True,
+                            embedded=False,
+                            frames=False,
+                            forms=False,
+                            annoying_tags=False,
+                            remove_unknown_tags=False,
+                            safe_attrs_only=False).clean_html(intro)
+            
+            return intro
+        else:
+            # woot http://stackoverflow.com/questions/753052/strip-html-from-strings-in-python
+            from HTMLParser import HTMLParser
+
+            class MLStripper(HTMLParser):
+                def __init__(self):
+                    self.reset()
+                    self.fed = []
+                    self.opentags = 0
+                def handle_starttag(self, tag, attrs):
+                    if tag in ('script', 'style', 'title'):
+                        self.opentags = self.opentags + 1
+                def handle_endtag(self, tag):
+                    if tag in ('script', 'style', 'title'):
+                        self.opentags = self.opentags - 1
+                def handle_data(self, d):
+                    if self.opentags == 0:
+                        # blatent hack to beautify mailchimp weekly roundup imports
+                        if d not in ("Find out about what", "s new in EWB this week!", "|EWB", " Weekly Roundup", "Not displaying correctly?"):
+                            self.fed.append(d)
+                def get_data(self):
+                    return ''.join(self.fed)
+
+            s = MLStripper()
+            s.feed(self.body)
+            intro = s.get_data()
+            intro = intro.replace("\n", "")
+            intro = re.sub(r' +', ' ', intro)
+            intro = intro[:250].rsplit(' ', 1)[0]
+            intro += '...'
+            return intro
     
     def intro_has_more(self):
         return (len(self.body) >= 400)

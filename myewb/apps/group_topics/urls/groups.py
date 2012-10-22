@@ -13,4 +13,5 @@ from django.conf.urls.defaults import *
 urlpatterns = patterns('',
     url(r'^$', 'group_topics.views.topics.topics', name="topic_list"),
     url(r'^new/$', 'group_topics.views.topics.new_topic', name="topic_new"),
+    url(r'^newexternal/$', 'group_topics.views.topics.new_topic_external', name="topic_new_external"),
 )

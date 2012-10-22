@@ -38,7 +38,7 @@
 
 {% block body %}
 
-<div class="minipost">
+<div class="minipost" {% if topic.external_link %}style='width: 630px;'{% endif %}>
   
   <div class="minipostcontents">
 
@@ -109,62 +109,68 @@
     </div>
       
     <div class="minipost-text">
-        <div style="float: right; width: auto; font-size: 10px; font-weight: normal; padding: 5px; margin: 0 0 10px 10px;" class="standardbox standardbox-title">
+        {% if topic.external_link %}
+            <br/>
+            <iframe id="topic_frame" src="{% url topic_detail_raw topic.id %}" style="overflow: none; border: 0; width: 600px; height: auto;" scrolling="no"></iframe>
+        {% else %}
+    
+            <div style="float: right; width: auto; font-size: 10px; font-weight: normal; padding: 5px; margin: 0 0 10px 10px;" class="standardbox standardbox-title">
 
-		<div style="width: auto; line-height: 2em; padding-bottom: 10px;">
-		    Share this post<br/>
-			<!-- AddThis Button BEGIN -->
-			<div class="addthis_toolbox addthis_default_style " style="width: 115px; height: 16px;">
-			<a class="addthis_button_preferred_1"></a>
-			<a class="addthis_button_preferred_2"></a>
-			<a class="addthis_button_preferred_3"></a>
-			<a class="addthis_button_preferred_4"></a>
-			<a class="addthis_button_compact"></a>
-			</div>
-			<script type="text/javascript">var addthis_config = {"data_track_clickback":true};</script>
-			<script type="text/javascript" src="https://s7.addthis.com/js/250/addthis_widget.js#username=ewbcanada"></script>
-			<!-- AddThis Button END -->
+		    <div style="width: auto; line-height: 2em; padding-bottom: 10px;">
+		        Share this post<br/>
+			    <!-- AddThis Button BEGIN -->
+			    <div class="addthis_toolbox addthis_default_style " style="width: 115px; height: 16px;">
+			    <a class="addthis_button_preferred_1"></a>
+			    <a class="addthis_button_preferred_2"></a>
+			    <a class="addthis_button_preferred_3"></a>
+			    <a class="addthis_button_preferred_4"></a>
+			    <a class="addthis_button_compact"></a>
+			    </div>
+			    <script type="text/javascript">var addthis_config = {"data_track_clickback":true};</script>
+			    <script type="text/javascript" src="https://s7.addthis.com/js/250/addthis_widget.js#username=ewbcanada"></script>
+			    <!-- AddThis Button END -->
+            </div>
+
+            {% if user.is_authenticated %}
+                <div style="text-align: center; float: left;">
+                    {# sean's gonna hate me for introducing another image!  we'll optimize this later... #}
+                    
+                        Watchlist<br/>
+                        {% topic_on_watchlist user topic as on_list %}
+                        {% spaceless %}
+                        {% if on_list %}
+                            <a href="{% url topic_watchlist_remove user.pk %}" id="toggle_watchlist-{{ topic.pk }}" class="more watchlist-toggle toggle-remove">
+                        {% else %}
+                            <a href="{% url topic_watchlist_add user.pk %}" id="toggle_watchlist-{{ topic.pk }}" class="more watchlist-toggle toggle-add faded">
+                        {% endif %}
+                        <img src="{{STATIC_URL}}images/icons3/Favorite.png" style="height: 30px; width: 30px;"/>
+                        </a>
+                        {% endspaceless %}
+                </div>
+                <div style="text-align: center; float: right;">
+                    Cheers<br/>
+             	    {% show_cheers_widget topic %}
+                </div>
+            {% endif %}
+              
+            <div style='clear: both; text-align: center;'>
+		        {% if perms.group_topics %}
+		            <a href="{% url topic_views topic.id %}" class="topic_views">
+			            <strong>Views: {{ topic.view_set.count }}</strong>
+		            </a>
+                {% else %}
+                    {% if request.user.is_authenticated %}
+        		        <strong>Views: {{ topic.view_set.count }}</strong>
+		            {% endif %}
+                {% endif %}
+	        </div>
+
         </div>
 
-        {% if user.is_authenticated %}
-            <div style="text-align: center; float: left;">
-                {# sean's gonna hate me for introducing another image!  we'll optimize this later... #}
-                
-                    Watchlist<br/>
-                    {% topic_on_watchlist user topic as on_list %}
-                    {% spaceless %}
-                    {% if on_list %}
-                        <a href="{% url topic_watchlist_remove user.pk %}" id="toggle_watchlist-{{ topic.pk }}" class="more watchlist-toggle toggle-remove">
-                    {% else %}
-                        <a href="{% url topic_watchlist_add user.pk %}" id="toggle_watchlist-{{ topic.pk }}" class="more watchlist-toggle toggle-add faded">
-                    {% endif %}
-                    <img src="{{STATIC_URL}}images/icons3/Favorite.png" style="height: 30px; width: 30px;"/>
-                    </a>
-                    {% endspaceless %}
-            </div>
-            <div style="text-align: center; float: right;">
-                Cheers<br/>
-         	    {% show_cheers_widget topic %}
-            </div>
-        {% endif %}
-          
-        <div style='clear: both; text-align: center;'>
-		    {% if perms.group_topics %}
-		        <a href="{% url topic_views topic.id %}" class="topic_views">
-			        <strong>Views: {{ topic.view_set.count }}</strong>
-		        </a>
-            {% else %}
-                {% if request.user.is_authenticated %}
-    		        <strong>Views: {{ topic.view_set.count }}</strong>
-		        {% endif %}
-            {% endif %}
-	    </div>
-
-    </div>
-
-          {% dictionary topic body as body %}
-          {{ body|safe }}
-          {#{{ topic.body|safe }}#}
+        {% dictionary topic body as body %}
+        {{ body|safe }}
+        {#{{ topic.body|safe }}#}
+    {% endif %}
 
     	<div style='clear: right;'></div>
     	
@@ -313,12 +319,78 @@
 		function post_cheers_sidebar(cheersId) {
 		    $('#post-cheers').load($('#cheers_for_content_link').attr('href'));
 		}
+		
+		{% if topic.external_link %}
+		    $('#topic_frame').load(function() {
+		        $('td.preheaderContent', $(this).contents()).hide();
+		        $('td.footerContent', $(this).contents()).hide();
+		        $('body', $(this).contents()).css('padding-bottom', '0');
+		        $('#topic_frame').css('height', $(this).contents().height() + 'px');
+		    });
+
+		{% endif %}
 	</script>
 {% endblock %}
 
 
 {% block toolbar_right %}
+    {% if topic.external_link %}
+        <div style="width: 115px; font-size: 10px; font-weight: normal; padding: 5px; margin: 0 0 15px 0px;" class="standardbox standardbox-title">
+
+		    <div style="width: auto; line-height: 2em; padding-bottom: 10px;">
+		        Share this post<br/>
+			    <!-- AddThis Button BEGIN -->
+			    <div class="addthis_toolbox addthis_default_style " style="width: 115px; height: 16px;">
+			    <a class="addthis_button_preferred_1"></a>
+			    <a class="addthis_button_preferred_2"></a>
+			    <a class="addthis_button_preferred_3"></a>
+			    <a class="addthis_button_preferred_4"></a>
+			    <a class="addthis_button_compact"></a>
+			    </div>
+			    <script type="text/javascript">var addthis_config = {"data_track_clickback":true};</script>
+			    <script type="text/javascript" src="https://s7.addthis.com/js/250/addthis_widget.js#username=ewbcanada"></script>
+			    <!-- AddThis Button END -->
+            </div>
+
+            {% if user.is_authenticated %}
+                <div style="text-align: center; float: left;">
+                    {# sean's gonna hate me for introducing another image!  we'll optimize this later... #}
+                    
+                        Watchlist<br/>
+                        {% topic_on_watchlist user topic as on_list %}
+                        {% spaceless %}
+                        {% if on_list %}
+                            <a href="{% url topic_watchlist_remove user.pk %}" id="toggle_watchlist-{{ topic.pk }}" class="more watchlist-toggle toggle-remove">
+                        {% else %}
+                            <a href="{% url topic_watchlist_add user.pk %}" id="toggle_watchlist-{{ topic.pk }}" class="more watchlist-toggle toggle-add faded">
+                        {% endif %}
+                        <img src="{{STATIC_URL}}images/icons3/Favorite.png" style="height: 30px; width: 30px;"/>
+                        </a>
+                        {% endspaceless %}
+                </div>
+                <div style="text-align: center; float: right;">
+                    Cheers<br/>
+             	    {% show_cheers_widget topic %}
+                </div>
+            {% endif %}
+              
+            <div style='clear: both; text-align: center;'>
+		        {% if perms.group_topics %}
+		            <a href="{% url topic_views topic.id %}" class="topic_views">
+			            <strong>Views: {{ topic.view_set.count }}</strong>
+		            </a>
+                {% else %}
+                    {% if request.user.is_authenticated %}
+        		        <strong>Views: {{ topic.view_set.count }}</strong>
+		            {% endif %}
+                {% endif %}
+	        </div>
+
+        </div>
+    {% endif %}
+    
     <br/>
+    
     {% ifnotequal topic.group.slug "ewb" %}
         <strong>Posted to:</strong><br/>
     	<a href="{{ topic.group.get_absolute_url }}#group-posts">{{ topic.group }}</a>

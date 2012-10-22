@@ -17,6 +17,8 @@ from tag_app.models import TagAlias
 from lxml.html.clean import clean_html, autolink_html, Cleaner
 from siteutils.helpers import autolink_email
 
+import urllib2
+
 class GroupTopicForm(forms.ModelForm):
     
     body = forms.CharField(widget=forms.Textarea(attrs={'class':'tinymce '}))
@@ -108,4 +110,29 @@ class GroupTopicForm(forms.ModelForm):
         self.cleaned_data['body'] = body
         return body
     
+class GroupTopicExternalForm(forms.ModelForm):
     
+    class Meta:
+        model = GroupTopic
+        fields = ('title', 'external_link',)
+        
+    def clean_external_link(self):
+        external_link = self.cleaned_data.get('external_link', '')
+        
+        try:
+            f = urllib2.urlopen(external_link)
+            self.http_result =  f.read()
+        except:
+            raise forms.ValidationError("This URL is not valid.")
+            
+        return external_link
+    
+    def save(self, *args, **kwargs):
+        commit = kwargs.get('commit', False)
+        instance = super(GroupTopicExternalForm, self).save(*args, **kwargs)
+        
+        
+        instance.body = self.http_result
+        
+        return instance
+

@@ -30,7 +30,7 @@ from account_extra.forms import EmailLoginForm
 from base_groups.models import BaseGroup
 from base_groups.helpers import user_can_adminovision, user_can_execovision
 from group_topics.models import GroupTopic, Watchlist
-from group_topics.forms import GroupTopicForm
+from group_topics.forms import GroupTopicForm, GroupTopicExternalForm
 from threadedcomments.models import ThreadedComment
 from profiles.models import MemberProfile
 from siteutils.shortcuts import get_object_or_none
@@ -93,6 +93,22 @@ def topic(request, topic_id, group_slug=None, edit=False, template_name="topics/
         "member": member,
         "grpadmin": grpadmin,
     }, context_instance=RequestContext(request))
+
+def topic_raw(request, topic_id, group_slug=None, edit=False, template_name="topics/topic.html", bridge=None):
+
+    topic = get_object_or_404(GroupTopic, id=topic_id, external_link__isnull=False)
+    
+    parent_group = topic.parent_group
+    # XXX PERMISSIONS CHECK
+    if not parent_group.is_visible(request.user) and not topic.creator == request.user:
+        return render_to_response("topics/disallowed.html", {
+            "topic": None,
+            "group": parent_group,
+            "member": None,
+            "grpadmin": None,
+        }, context_instance=RequestContext(request))
+
+    return HttpResponse(topic.body)
 
 # if group_slug=None will return all visible posts; otherwise will restrict by group
 # if featured=True will sort by score; otherwise will sort by date
@@ -335,6 +351,40 @@ def new_topic(request, group_slug=None, bridge=None):
         "attach_forms": attach_forms,
         "attach_count": attach_count,
         "is_member": is_member,
+    }, context_instance=RequestContext(request))
+
+# only to be used by trusted admins!!! this will pull in content from an external
+# site and display it in an iframe; there are no security checks.
+def new_topic_external(request, group_slug=None, bridge=None):
+    group = None
+    if group_slug is None:
+        group_slug = "ewb"
+        
+    group = get_object_or_404(BaseGroup, slug=group_slug)
+    
+    if not request.user.has_module_perms("group_topics"):
+        return HttpResponseForbidden()
+    
+    if request.method == "POST":
+        form = GroupTopicExternalForm(request.POST)
+
+        if form.is_valid():
+            topic = form.save(commit=False)
+            if group:
+                group.associate(topic, commit=False)
+            topic.creator = request.user
+            topic.pending = False
+            topic.save()
+                    
+            request.user.message_set.create(message=_("You have started the topic %(topic_title)s") % {"topic_title": topic.title})
+            
+            return HttpResponseRedirect(topic.get_absolute_url())
+    else:
+        form = GroupTopicExternalForm()
+
+    return render_to_response("topics/new_topic_external.html", {
+        "group": group,
+        "form": form,
     }, context_instance=RequestContext(request))
     
 def get_attachment_form(request, template_name="topics/attachment_form.html", form_class=AttachmentForm, group_slug=None, bridge=None):

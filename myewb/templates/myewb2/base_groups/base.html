@@ -87,11 +87,17 @@
 	    {% if member and member.is_accepted and group.is_active %}
 			<p style="font-size: 14px;">
 	    		<a href="{% groupurl topic_new group %}">Create a new post</a>
+				{% if perms.group_topics %}
+				| <a href="{% groupurl topic_new_external group %}">Import post (admins only!)</a>
+				{% endif %}
 		    </p>
         {% else %}
             {% if is_admin and group.is_active %}
     			<p style="font-size: 14px;">
     	    		<a href="{% groupurl topic_new group %}" title="You're not a member of this group, but as an admin you can post to it.">Create a new post</a>
+    				{% if perms.group_topics %}
+    				| <a href="{% groupurl topic_new_external group %}">Import post (admins only!)</a>
+    				{% endif %}
     		    </p>
             {% endif %}
 	    {% endif %}
@@ -113,6 +119,10 @@
         			{% if group.is_active %}
 	    				{% if is_member %}
 		    				<a href="{% groupurl topic_new group %}">Create a new post</a>
+		    				
+		    				{% if perms.group_topics %}
+		    				| <a href="{% groupurl topic_new_external group %}">Import post (admins only!)</a>
+		    				{% endif %}
 	    				{% else %}
 		    				You need to 
 	    	
