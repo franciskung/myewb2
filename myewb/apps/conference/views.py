@@ -500,7 +500,9 @@ def download(request, who=None):
                      'emergency name', 'emergency phone', 'prev conferences',
                      'prev retreats', 'cell phone', 't-shirt', 'extra gala ticket?',
                      'reg code', 'reg type', 'african delegate',
-                     'roommate request', 'new to calgary', 
+                     'roommate request', 'new to calgary',
+                     'handbook requested', 'photo release', 'conference content',
+                     'industry', 'LDD attendance', 'LDD category', 'LDD hotel',
 #                     'Survey - learn', 'Survey - connections', 'Survey - opportunities and challenges',
 #                     'Survey - perfect experience', 'Survey - stay up to speed',
 #                     'Survey - Sunday trip', 'Survey - socials', 'Survey - restaurants',
@@ -541,6 +543,8 @@ def download(request, who=None):
                r.foodPrefs, r.specialNeeds, r.emergName, r.emergPhone,
                r.prevConfs, r.prevRetreats, r.cellphone, r.tshirt, r.extra_gala,
                code, r.type, r.africaFund, r.roommate, r.new_to_calgary,
+               r.handbook, r.photo_release, r.homeroom, r.industry,
+               r.ldd_delegate, r.ldd_type, r.ldd_hotel]
  #              r.survey1, r.survey2, r.survey3, r.survey4,
 #               r.survey5, r.survey6, r.survey7, r.survey8,
                jf, president, executive]

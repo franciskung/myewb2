@@ -42,6 +42,8 @@ class ConferenceRegistration(models.Model):
     type = models.CharField(max_length=50, null=True, blank=True)
     africaFund = models.SmallIntegerField(blank=True, null=True)
     tshirt = models.CharField(max_length=1, blank=True, null=True)
+    handbook = models.BooleanField(default=False, blank=True)
+    photo_release = models.BooleanField(default=True, blank=True)
 
     extra_gala = models.BooleanField(default=False, blank=True)
     homeroom = models.CharField(max_length=10, blank=True)
