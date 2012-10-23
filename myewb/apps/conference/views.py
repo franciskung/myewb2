@@ -544,8 +544,8 @@ def download(request, who=None):
                r.prevConfs, r.prevRetreats, r.cellphone, r.tshirt, r.extra_gala,
                code, r.type, r.africaFund, r.roommate, r.new_to_calgary,
                r.handbook, r.photo_release, r.homeroom, r.industry,
-               r.ldd_delegate, r.ldd_type, r.ldd_hotel]
- #              r.survey1, r.survey2, r.survey3, r.survey4,
+               r.ldd_delegate, r.ldd_type, r.ldd_hotel,
+#               r.survey1, r.survey2, r.survey3, r.survey4,
 #               r.survey5, r.survey6, r.survey7, r.survey8,
                jf, president, executive]
             
