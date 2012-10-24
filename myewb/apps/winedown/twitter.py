@@ -19,7 +19,7 @@ def load_tweets():
 
     conn = httplib.HTTPConnection("search.twitter.com")
 
-    params = {'q': '@ewb OR #ewb'}  # add @ewb OR #ewb as query terms
+    params = {'q': '@ewb OR #ewb OR @worldofewb'}  # add @ewb OR #ewb as query terms
     params['result_type'] = 'recent'        # want all recent tweets, not only popular ones...
     if since:
         params['since_id'] = since          # since is a tweet ID
