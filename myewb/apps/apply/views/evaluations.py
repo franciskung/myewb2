@@ -18,6 +18,7 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidde
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext, Context, loader
 from django.utils.translation import ugettext_lazy as _
+from django.utils.html import strip_tags
 
 from mailer import send_mail
 from siteutils.shortcuts import get_object_or_none
@@ -140,11 +141,17 @@ def evaluation_pdf(request, app_id):
     p.append(Spacer(0, 20))
 
     p.append(Paragraph("Resume", h2))
-    p.append(Paragraph(application.resume_text.replace("<br>", "<br/>").replace("</p>", "<br/><br/>"), lindent))
+    try:
+        p.append(Paragraph(application.resume_text.replace("<br>", "<br/>").replace("</p>", "<br/><br/>"), lindent))
+    except:
+        p.append(Paragraph(strip_tags(application.resume_text).replace("\n", "<br/>"), lindent))
     p.append(Spacer(0, 20))
 
     p.append(Paragraph("References", h2))
-    p.append(Paragraph(application.references.replace("<br>", "<br/>").replace("</p>", "<br/><br/>"), lindent))
+    try:
+        p.append(Paragraph(application.references.replace("<br>", "<br/>").replace("</p>", "<br/><br/>"), lindent))
+    except:
+        p.append(Paragraph(strip_tags(application.resume_text).replace("\n", "<br/>"), lindent))
     p.append(Spacer(0, 20))
     
     p.append(Paragraph("Application Questions", h2))
