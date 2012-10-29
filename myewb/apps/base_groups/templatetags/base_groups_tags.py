@@ -107,11 +107,14 @@ class MembershipNode(template.Node):
             return u''
             
         # membership status
-        if group.user_is_member(user):
-            member = group.members.get(user=user)
-        elif group.user_is_pending_member(user):
-            member = group.pending_members.get(user=user)
-        else:
+        try:
+            if group.user_is_member(user):
+                member = group.members.get(user=user)
+            elif group.user_is_pending_member(user):
+                member = group.pending_members.get(user=user)
+            else:
+                member = None
+        except:
             member = None
         context[self.context_name] = member
         return u''
