@@ -85,6 +85,7 @@ urlpatterns = patterns('',
     (r'^dictionary/', include('dictionary.urls')),
     (r'^library/', include('library.urls')),
     (r'^blacklist/', include('httpbl.urls')),
+    (r'^whosonline/', include('whosonline.urls')),
     
     url(r'^unsubscribe/$', 'networks.views.network.unsubscribe', name='network_unsubscribe',),
     

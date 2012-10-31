@@ -1,0 +1,56 @@
+{% extends "profiles/base.html" %}
+
+
+{% load i18n %}
+{% load uni_form_tags %}
+{% load ifsetting_tag %}
+
+{% block head_title %}Who's Online{% endblock %}
+
+{% block body %}
+
+<style>
+    #historytable th, #historytable td {
+        text-align: left;
+        padding: 5px 15px;
+    }
+</style>
+
+<h1>Who's Online on myEWB</h1>
+
+<p>This is an admin-only page to track the history of online users.</p>
+
+<p>It is intended purely for engagement-tracking and research, to know what parts of the site are popular and to follow peoples' paths through myEWB</p>
+
+{% if user and history %}
+    <h2>{{ user.visible_name }}</h2>
+    
+    <table id="historytable">
+        <tr>
+            <th>Time</th>
+            <th>Page</th>
+        </tr>
+        
+        
+        {% for time, page in history %}
+            <tr style='background: {% cycle '#d0d0d0;' '#ffffff;' %}'>
+                <th>{{ time|date:"M d - H:i:s" }}</th>
+                <th><a href="{{ page }}" target="_new">{{ page }}</a></th>
+            </tr>
+        {% endfor %}
+    </table>
+    
+    <p>
+        <a href="{% url whosonline %}">back to listing</a>
+    </p>
+
+
+{% else %}
+    {% for userid, user in registered_users %}
+        <p><a href="{% url whosonline user.username %}">{{ user.visible_name }}</a></p>
+    {% endfor %}
+
+{% endif %}
+
+{% endblock %}
+

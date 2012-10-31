@@ -19,6 +19,10 @@
 	{% if online_anon %}
 		and {{ online_anon }} guest{{ online_anon|pluralize }}
 	{% endif %}
+	
+	{% if perms.profiles %}
+	    <p><a href="{% url whosonline %}">detailed activity tracking</a></p>
+	{% endif %}
 </div>
 
 <div id="inbox_count_ajax" style="display: none;">

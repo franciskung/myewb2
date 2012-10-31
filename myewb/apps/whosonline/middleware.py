@@ -12,12 +12,16 @@ USER_PAGE_VIEW_TIME = 8 * 60
 CACHE_ONLINE_USER_ID_PREFIX = "online_u_"
 CACHE_ONLINE_USER_SESSION_PREFIX = "online_s_"
 CACHE_ONLINE_USERS_KEY = "online_users"
+CACHE_ONLINE_USERS_HISTORY = "online_userhistory"
 
 if settings.SESSION_ENGINE != "django.contrib.sessions.backends.db":
     raise Exception("Online users middleware supports only 'django.contrib.sessions.backends.db' session engine.")    
 
 def get_cache_key_for_session(session_key):
     return "%s%s" % (CACHE_ONLINE_USER_SESSION_PREFIX, session_key)
+    
+def get_cache_history_key(userid):
+    return "%s_%s" % (CACHE_ONLINE_USERS_HISTORY, userid)
 
 def get_online_users():
     """
@@ -51,6 +55,15 @@ def add_online_user(request):
     if request.user.is_authenticated():
         users[request.session.session_key] = request.user
         cache.set(get_cache_key_for_session(request.session.session_key), request.user, USER_PAGE_VIEW_TIME)
+
+        if request.path != '/keepalive/':        
+            history = cache.get(get_cache_history_key(request.user.id))
+            if not history:
+                history = []
+            elif len(history) > 50:
+                history = history[-40:]
+            history.append((datetime.now(), request.path))
+            cache.set(get_cache_history_key(request.user.id), history, USER_PAGE_VIEW_TIME)
     else:
         users[request.session.session_key] = True
         cache.set(get_cache_key_for_session(request.session.session_key), True, USER_PAGE_VIEW_TIME)
@@ -83,5 +96,6 @@ def remove_user(request):
         del(users[request.session.session_key])
         cache.set(CACHE_ONLINE_USERS_KEY, users, USER_PAGE_VIEW_TIME)
         cache.delete(get_cache_key_for_session(request.session.session_key))
+        cache.delete(get_cache_history_key(request.user.id))
     except:
         pass

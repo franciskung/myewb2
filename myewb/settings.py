@@ -102,7 +102,7 @@ MIDDLEWARE_CLASSES = (
     'djangodblog.middleware.DBLogMiddleware',
     'pinax.middleware.security.HideSensistiveFieldsMiddleware',
     'django.middleware.transaction.TransactionMiddleware',
-    'siteutils.online_middleware.OnlineUsers',
+    'whosonline.middleware.OnlineUsers',
     'siteutils.mobile_detection.MobileDetectionMiddleware',
     'themeswitch.middleware.ThemeSwitchMiddleware',
 #    'themeswitch.middleware.ThemeSwitchTrackingMiddleware',
@@ -139,7 +139,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "context_processors.combined_inbox_count",
     "siteutils.context_processors.myewb_settings",
     "siteutils.context_processors.timezone",
-    "siteutils.online_middleware.context",
+    "whosonline.middleware.context",
     "group_topics.context_processors.newposts",
     "communities.context_processors.is_exec",
     "profiles.context_processors.toolbar_states",
@@ -248,6 +248,7 @@ INSTALLED_APPS = (
     'dictionary',
     'library',
     'httpbl',
+    'whosonline',
 
     # our own third-party libs
     'contrib.django_evolution',
