@@ -4,10 +4,12 @@ from django.http import HttpResponseRedirect
 from django.template import RequestContext, Context, loader
 
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import permission_required
 from django.core.cache import cache
 
 from whosonline.middleware import get_cache_key_for_session, get_cache_history_key, CACHE_ONLINE_USERS_KEY
 
+@permission_required('profiles')
 def whosonline(request, username=None):
     user = None
     history = None
@@ -38,6 +40,6 @@ def whosonline(request, username=None):
     return render_to_response("whosonline/whosonline.html",
                               {'registered_users': registered_users.iteritems(),
                                'history': history,
-                               'user': user},
+                               'target_user': user},
                               context_instance=RequestContext(request))
 

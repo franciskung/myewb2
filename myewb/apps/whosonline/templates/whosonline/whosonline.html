@@ -22,8 +22,8 @@
 
 <p>It is intended purely for engagement-tracking and research, to know what parts of the site are popular and to follow peoples' paths through myEWB</p>
 
-{% if user and history %}
-    <h2>{{ user.visible_name }}</h2>
+{% if target_user and history %}
+    <h2>{{ target_user.visible_name }}</h2>
     
     <table id="historytable">
         <tr>
@@ -46,8 +46,8 @@
 
 
 {% else %}
-    {% for user, pages in registered_users %}
-        <div style='width: 25%; padding-bottom: 8px; float: left;'><a href="{% url whosonline user.username %}">{{ user.visible_name }}</a> ({{ pages }})</div>
+    {% for target_user, pages in registered_users %}
+        <div style='width: 25%; padding-bottom: 8px; float: left;'><a href="{% url whosonline target_user.username %}">{{ target_user.visible_name }}</a> ({{ pages }})</div>
     {% endfor %}
 
 {% endif %}
