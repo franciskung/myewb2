@@ -56,14 +56,14 @@ def add_online_user(request):
         users[request.session.session_key] = request.user
         cache.set(get_cache_key_for_session(request.session.session_key), request.user, USER_PAGE_VIEW_TIME)
 
-        if request.path != '/keepalive/':        
-            history = cache.get(get_cache_history_key(request.user.id))
+        history = cache.get(get_cache_history_key(request.user.id))
+        if request.path != '/keepalive/' and not request.is_ajax():
             if not history:
                 history = []
             elif len(history) > 50:
                 history = history[-40:]
             history.append((datetime.now(), request.path))
-            cache.set(get_cache_history_key(request.user.id), history, USER_PAGE_VIEW_TIME)
+        cache.set(get_cache_history_key(request.user.id), history, USER_PAGE_VIEW_TIME)
     else:
         users[request.session.session_key] = True
         cache.set(get_cache_key_for_session(request.session.session_key), True, USER_PAGE_VIEW_TIME)

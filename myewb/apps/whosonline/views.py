@@ -31,7 +31,7 @@ def whosonline(request, username=None):
             cached_user = cache.get(get_cache_key_for_session(sessid), False)
             if cached_user:
                 if isinstance(cached_user, User):
-                    registered_users[cached_user.id] = cached_user
+                    registered_users[cached_user] = len(cache.get(get_cache_history_key(cached_user.id), []))
     else:
         history.reverse()
 

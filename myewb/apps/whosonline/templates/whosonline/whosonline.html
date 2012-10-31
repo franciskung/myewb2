@@ -46,8 +46,8 @@
 
 
 {% else %}
-    {% for userid, user in registered_users %}
-        <p><a href="{% url whosonline user.username %}">{{ user.visible_name }}</a></p>
+    {% for user, pages in registered_users %}
+        <div style='width: 25%; padding-bottom: 8px; float: left;'><a href="{% url whosonline user.username %}">{{ user.visible_name }}</a> ({{ pages }})</div>
     {% endfor %}
 
 {% endif %}
