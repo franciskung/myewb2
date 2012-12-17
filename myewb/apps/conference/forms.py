@@ -175,10 +175,10 @@ class ConferenceRegistrationForm2(ConferenceRegistrationForm):
 								 required=False,
 								 help_text='Auriez-vous besoin d’un casque d’écoute pour la traduction?<br/>Would you be interested in a simultaneous-translation headset? There will be keynotes in both English and French.')
 	
-    tshirt = forms.ChoiceField(label='Purchase a National Conference 2013 t-shirt?',
-                               choices=TSHIRT_CHOICES,
-                               widget=forms.RadioSelect,
-                               help_text="""<a href="/site_media/static/images/conference_shirt_2013.png" class="colorbox"><img src='/site_media/static/images/conference_shirt_2013.png' id="confshirt"/></a><br/><em>design subject to small changes</em>""")
+#    tshirt = forms.ChoiceField(label='Purchase a National Conference 2013 t-shirt?',
+#                               choices=TSHIRT_CHOICES,
+#                               widget=forms.RadioSelect,
+#                               help_text="""<a href="/site_media/static/images/conference_shirt_2013.png" class="colorbox"><img src='/site_media/static/images/conference_shirt_2013.png' id="confshirt"/></a><br/><em>design subject to small changes</em>""")
     
     handbook = forms.BooleanField(label='Printed conference handbook',
                                required=False,
@@ -209,7 +209,8 @@ class ConferenceRegistrationForm2(ConferenceRegistrationForm):
 
     class Meta:
         model = ConferenceRegistration
-        fields = ['foodPrefs', 'specialNeeds', 'headset', 'tshirt', 'handbook',
+#        fields = ['foodPrefs', 'specialNeeds', 'headset', 'tshirt', 'handbook',
+        fields = ['foodPrefs', 'specialNeeds', 'headset', 'handbook',
                   'cellphone', 'emergName', 'emergPhone', 'photo_release'
                   ]
     
@@ -407,6 +408,7 @@ class ConferenceRegistrationForm5(ConferenceRegistrationForm):
             cleaned_data['products'].append(product.sku)
             total_cost = total_cost + Decimal(product.amount)
 
+        """
         if reg.tshirt and (reg.tshirt == 's' or reg.tshirt == 'm' or reg.tshirt == 'l' or reg.tshirt == 'x'):
             sku = "13-conf-tshirt"
             name = "Conference t-shirt"
@@ -418,6 +420,7 @@ class ConferenceRegistrationForm5(ConferenceRegistrationForm):
             
             cleaned_data['products'].append(product.sku)
             total_cost = total_cost + Decimal(20)
+        """
 
         if reg.extra_gala:
             sku = "13-conf-galaguest"

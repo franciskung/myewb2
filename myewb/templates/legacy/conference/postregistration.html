@@ -52,16 +52,18 @@
 		</li>
 
 		<li>
-			<a href="{% url conference_cancel %}">cancel your registration</a> 
-{#<span style="text-decoration: line-through;">cancel your registration</span><br/>#}
-{#<em>Registration changes and cancellations can not be made after January 3.</em>#}
+{#			<a href="{% url conference_cancel %}">cancel your registration</a> #}
+<span style="text-decoration: line-through;">cancel your registration</span><br/>
+<em>Registration changes and cancellations can not be made after December 1.</em>
 		</li>
 		
+		{% comment %}
 		{% if tshirtform %}
 		<li>
 			<a href="{% url conference_tshirt %}">add a conference t-shirt to your registration</a>
 		</li>
 		{% endif %}
+		{% endcomment %}
 		
 		{% if skiform %}
 		<li>
