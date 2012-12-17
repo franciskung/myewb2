@@ -11,6 +11,9 @@
 		background: none;
 		border: 0;
 	}
+	.tabs a, .ui-tabs-nav a {
+	    width: 50px;
+	}
 </style>
 
 
@@ -42,7 +45,8 @@
         <strong>{{ timeslot.time|time:'g:i A' }}: "{{ timeslot.name }}"</strong>
     </p>
 
-    <ul id="tabhead">
+    {% comment %}
+    <ul id="tabhead" class="tabs">
     	{% for r in recommended %}
     		{#<li><a href="#">{{ r.name }}</a></li>#}
     		{#<li><a href="#">{% cycle 'A' 'B' 'C' 'D' 'E' 'F' 'G' 'H' 'I' 'J' 'K' 'L' 'M' 'N' 'O' 'P' 'Q' 'R' 'S' 'T' 'U' 'V' 'W' 'X' 'Y' 'Z' %}</a></li>#}
@@ -69,6 +73,7 @@
 	        </div>
 	    {% endfor %}
     </div>
+    {% endcomment %}
 	
 	{% comment %}
 	<div style="border: 1px solid; background: #e0e0e0; padding: 10px;">
@@ -82,8 +87,10 @@
 	</div>
 	{% endcomment %}
 
-    <br/><br/>
-    <strong>Other sessions at this time</strong>
+    <br/>
+    {#<br/><br/>#}
+    {#<strong>Other sessions at this time</strong>#}
+    <strong>Sessions at this time:</strong>
 
     <ul style='list-style-type: disc; margin-left: 25px;'>
     {% for s in sessions %}

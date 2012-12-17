@@ -12,13 +12,13 @@
     <table style='border: 1px solid;'>
 	    {% for timeslot in times %}
 	    	<tr>
-	    		<th style='width: 35%; vertical-align: top;'>
+	    		<th style='width: 35%; vertical-align: top; border-bottom: 1px solid #a0a0a0; padding: 3px 0;'>
 	    			{{ timeslot.name }}
 	    			<br/>
 	    			<span style='font-weight: normal;'>{{ timeslot.day|date:"l"}}, {{ timeslot.time|time:"g:i" }} - {{ timeslot.endtime|time:"g:i A" }}</span>
 	    		</th>
 	    		
-	    		<td>
+	    		<td style='vertical-align: top; border-bottom: 1px solid #a0a0a0; padding: 3px 0;'>
 	    			{% for s in timeslot.conferencesession_set.all %}
 	    			    <span style='float: right; font-style: italic;'>
 	    			        ({{ s.attendees.count }} attending)

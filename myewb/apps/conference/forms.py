@@ -476,6 +476,7 @@ class ConferenceRegistrationFormPreview(PaymentFormPreview):
             
             # this call sends it to the bank!!
             response = super(ConferenceRegistrationFormPreview, self).done(request, cleaned_data)
+            #response = (True, "123", "456")
             
             if not response[0]:
                 response = (False, "Credit card: %s" % response[1])
@@ -1131,15 +1132,27 @@ class ConferenceSmsForm(forms.Form):
                               help_text='Maximum 160 characters.')
 
 class ConferenceQuestionnaireForm(forms.ModelForm):
-    roles = forms.MultipleChoiceField(required=False,
-                                      widget=forms.CheckboxSelectMultiple,
-                                      choices=ROLES_CHOICES)
+#    roles = forms.MultipleChoiceField(required=False,
+#                                      widget=forms.CheckboxSelectMultiple,
+#                                      choices=ROLES_CHOICES)
     
+    handbook = forms.BooleanField(label='I would like to receive a hardcopy of the delegate handbook',
+                                  help_text='A PDF version will be provided, and you \
+    will be able to download an app (look for Spotlight in your app store) as well. \
+    Note that there will be no Internet on the conference level.',
+                                          required=False)
+    french = forms.BooleanField(label='I would be interested in practicing my French during conference',
+                                help_text='We will connect you with other delegate and \
+    create a fun, non-intimidating environment for you to interact with other \
+    like-minded individuals',
+                                          required=False)
+
     class Meta:
             model = ConferenceQuestionnaire
             exclude = ('registration',)
 
 class ConferenceQuestionnaireFormFrench(forms.ModelForm):
+    """
     first_conference = forms.BooleanField(label='Est-ce votre premier congrès?',
                                           required=False)
     
@@ -1165,6 +1178,7 @@ class ConferenceQuestionnaireFormFrench(forms.ModelForm):
     prep = forms.ChoiceField(choices=((0, '< 5 heures'),
                                       (5, '> 5 heures')),
                              label='Combien d’heures vous engagez-vous à investir dans votre préparation (lecture/écoute/réflexion) pour le congrès?')
+    """
 
     class Meta:
             model = ConferenceQuestionnaire

@@ -39,9 +39,11 @@ CONFERENCE_DAYS = (('thurs', 'Thursday', 13),
                    ('sat', 'Saturday', 15))
 
 def build_recommended(user, timeslot):
+    return set()
     registration = get_object_or_404(ConferenceRegistration, user=user, submitted=True, cancelled=False)
     
     sessions = ConferenceSession.objects.filter(timeslot=timeslot)
+    #return set(sessions)
     recommendations = set()
     
     for s in sessions:
@@ -135,8 +137,8 @@ def questionnaire(request, user=None):
         if form.is_valid():
             questionnaire = form.save(commit=False)
             questionnaire.registration = registration
-            if not questionnaire.leadership_years:
-                questionnaire.leadership_years = 1 
+            #if not questionnaire.leadership_years:
+            #    questionnaire.leadership_years = 1 
             questionnaire.save()
             
             return HttpResponseRedirect(reverse('conference_session_pick'))
@@ -144,10 +146,17 @@ def questionnaire(request, user=None):
     else:
         initial = {}
         if registration:
-            if registration.prevConfs:
-                initial['first_conference'] = False
-            else:
-                initial['first_conference'] = True
+            if registration.handbook:
+                initial['handbook'] = True
+            initial['nametag_name'] = registration.user.visible_name()
+            chapter = registration.user.get_profile().get_chapter()
+            if chapter:
+                initial['nametag_chapter'] = chapter.name
+                if chapter.user_is_member(registration.user):
+                    memberobj = chapter.members.get(user=registration.user)
+                    if memberobj.is_admin:
+                        initial['nametag_role'] = memberobj.admin_title
+            
         form = formclass(initial=initial)
         
     common_sessions = ConferenceSession.objects.filter(common=True)
@@ -231,7 +240,8 @@ def schedule_final(request):
     sessions = ConferenceSession.objects.filter(attendees=user).order_by('timeslot__time', 'timeslot__day')
         
     timelist = []
-    for t in range(8, 22):
+    #for t in range(8, 22):
+    for t in range(8, 20):
         timelist.append(t)
 
     if request.session.get('conflang', 'en') == 'fr':
@@ -306,7 +316,7 @@ def session_new(request):
     else:
         form = ConferenceSessionForm()
         
-    return render_to_response("conference/schedule/session_edit.html",
+    return render_to_response("conference/schedule2/session_edit.html",
                               {"form": form,
                                "new": True},
                               context_instance = RequestContext(request))

@@ -269,11 +269,19 @@ class ConferenceSession(models.Model):
         return reverse('conference_session', kwargs={'session': self.id});
         
     def dayverbose(self):
+        """
         if self.timeslot.day == date(year=2012, month=1, day=12):
             return 'thurs'
         elif self.timeslot.day == date(year=2012, month=1, day=13):
             return 'fri'
         elif self.timeslot.day == date(year=2012, month=1, day=14):
+            return 'sat'
+        """
+        if self.timeslot.day == date(year=2013, month=1, day=12):
+            return 'thurs'
+        elif self.timeslot.day == date(year=2013, month=1, day=13):
+            return 'fri'
+        elif self.timeslot.day == date(year=2013, month=1, day=14):
             return 'sat'
         
         return ''
@@ -315,6 +323,7 @@ class ConferenceSession(models.Model):
 class ConferenceQuestionnaire(models.Model):
     registration = models.OneToOneField(ConferenceRegistration)
     
+    """
     first_conference = models.BooleanField(default=True,
                                            verbose_name='Is this your first EWB National Conference?')
     
@@ -339,6 +348,26 @@ class ConferenceQuestionnaire(models.Model):
     prep = models.IntegerField(choices=(('0', 'Under 5 hours'),
                                         ('5', 'Over 5 hours')),
                                         verbose_name='How many hours of prep are you able to commit to before conference?')
+    """
+    
+    handbook = models.BooleanField(default=True,
+                                   verbose_name="I would like to receive a hardcopy of the delegate handbook")
+                                   
+    french = models.BooleanField(default=False,
+                                 verbose_name="I would be interested in practicing my French during conference")
+
+    nametag_name = models.CharField(max_length=255, verbose_name="Name (for your nametag)")
+    nametag_chapter = models.CharField(max_length=255, verbose_name="Chapter (for your nametag)", blank=True, null=True)
+    nametag_role = models.CharField(max_length=255, verbose_name="Role (for your nametag)", blank=True, null=True)
+    nametag_interest = models.CharField(max_length=255, verbose_name="Interested in... (for your nametag)", blank=True, null=True)
+    nametag_employer = models.CharField(max_length=255, verbose_name="Employer (if you are a professional; for your nametag)", blank=True, null=True)
+                                 
+    q3 = models.TextField(blank=True, null=True)
+    q4 = models.TextField(blank=True, null=True)
+    q5 = models.TextField(blank=True, null=True)
+    q6 = models.TextField(blank=True, null=True)
+    q7 = models.TextField(blank=True, null=True)
+    
                                         
 class ConferenceSessionCriteria(models.Model):
     first_conference = models.CharField(max_length=3, choices=(('yes', 'yes'), ('no', 'no')), blank=True)
