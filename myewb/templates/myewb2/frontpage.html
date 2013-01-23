@@ -73,6 +73,20 @@ $(document).ready(function() {
 
 {% block body_base %}
 
+    {% if user.nomail %}
+        <div style="border: 1px solid #ff0000; margin: 10px auto; width: 500px; background: #ffbbbb; padding: 0 15px 0px; border-radius: 0.5em; -moz-border-radius: 0.5em; -webkit-border-radius: 0.5em; text-align: center;">
+            {% if user.bouncing %}
+                <h2>Your email address is bouncing</h2>
+    
+            {% else %}
+                <h2>myEWB emails to your account are disabled</h2>
+            {% endif %}
+
+            <a href="{% url acct_email %}">Click here to resume email delivery</a>
+            <br/><br/>
+        </div>
+    {% endif %}
+
 <div class="chapterdash-background">
   <div class="container_16 second-container">
 
