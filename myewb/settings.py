@@ -249,6 +249,7 @@ INSTALLED_APPS = (
     'library',
     'httpbl',
     'whosonline',
+    'profileupdate2013',
 
     # our own third-party libs
     'contrib.django_evolution',

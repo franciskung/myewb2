@@ -1,0 +1,22 @@
+{% extends 'profiles/base.html' %}
+
+{% block body %}
+
+<h2>Profile Update</h2>
+
+{% if profile_user.first_name and profile_user.last_name %}
+<p>Hello {{ profile_user.first_name }},</p>
+{% endif %}
+
+<p>Welcome back to myEWB!</p>
+
+<p>The information you provide will only be used by EWB. We will never sell or share your information.</p>
+
+<p>This will take 5-10 minutes.</p>
+
+<form action="{% url profileupdate_contact %}" method="get">
+
+    <input type="submit" value="Start"/>
+</form>
+
+{% endblock %}
