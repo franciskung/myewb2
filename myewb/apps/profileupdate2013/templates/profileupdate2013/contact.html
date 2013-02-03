@@ -1,16 +1,265 @@
 {% extends 'profiles/base.html' %}
 
+{% load uni_form_tags %}
+
 {% block body %}
 
-<h2>Profile Update</h2>
+<style>
+    .addressform th {
+        text-align: right;
+        font-weight: normal;
+        padding-left: 25px;
+    }
+    .addressform td {
+        padding-left: 15px;
+    }
+</style>
+
+
+<h2>
+    Profile Update
+    &nbsp;
+    <span style='font-size: 0.7em; font-weight: normal;'>(page  1/3)</span>
+</h2>
 
 <p><strong>First, let's make sure your contact information is up to date.</strong></p>
 
 <p>Again, we re-iterate that this information will never leave EWB.</p>
 
-<form action="" method="post">
 
-    <input type="submit" value="Hello"/>
+<h3>Your email</h3>
+<div style='padding-left: 25px;'>
+
+    <p>    
+        Your email address is <strong>{{ primary_email.email }}</strong>.
+    </p>
+    
+    {% if additional_emails %}
+        Additional email addresses:
+        
+        <div style='padding: 5px 0 10px 25px;'>
+            {% for emailaddress in additional_emails %}
+                {% if emailaddress.verified %}
+                    {{ emailaddress.email }}
+                    
+                    &nbsp;&nbsp;&nbsp;
+                    <span style='font-size: 0.85em;'>
+                    -
+                    <a href="#" onclick="$('#email_primary_{{ emailaddress.id }}').submit();">make primary</a>
+                {% else %}
+                    <em>{{ emailaddress.email }}</em>
+                    
+                    &nbsp;&nbsp;&nbsp;
+                    <span style='font-size: 0.85em;'>
+                    (not verified)
+                    
+                    -
+                    <a href="#" onclick="$('#email_resend_{{ emailaddress.id }}').submit();">re-send verification email</a>
+                {% endif %}
+                - 
+                <a href="#" onclick="$('#email_remove_{{ emailaddress.id }}').submit()">remove</a>
+                </span>
+                
+                <form style="display: none;" id="email_primary_{{ emailaddress.id }}" method="post" action="">
+                    <input type="hidden" name="email" value="{{ emailaddress.id }}"/>
+                    <input type="hidden" name="action" value="email_primary"/>
+                </form>
+                <form style="display: none;" id="email_resend_{{ emailaddress.id }}" method="post" action="">
+                    <input type="hidden" name="email" value="{{ emailaddress.id }}"/>
+                    <input type="hidden" name="action" value="email_resend"/>
+                </form>
+                <form style="display: none;" id="email_remove_{{ emailaddress.id }}" method="post" action="">
+                    <input type="hidden" name="email" value="{{ emailaddress.id }}"/>
+                    <input type="hidden" name="action" value="email_remove"/>
+                </form>
+                <br/>
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+    <div style='padding-left: 25px;'>
+        <a href="" id="link_add_email">add a new email</a>
+        <form method="post" action="" id="div_add_email" style="display: none;">
+            {{ add_email_form.email }}
+             <input type="hidden" name="action" value="email_new"/>
+             <input type="submit" value="add a new email"/>
+        </form>
+    </div>
+    <br/>
+</div>
+    
+
+<h3>Your address</h3>
+<div style='padding-left: 25px;'>
+
+    <table border="0">
+        {% if profile_user.get_profile.addresses_primary %}
+            <tr>
+                <td style='vertical-align: top; padding-right: 25px;'><strong>primary</strong></td>
+                <td style='vertical-align: top; padding-bottom: 10px;'>
+                    <strong>{{ profile_user.get_profile.addresses_primary.label }}</strong>
+                    &nbsp;&nbsp;&nbsp;
+                    <span style='font-size: 0.85em;'>
+                        (<a href="#" onclick="$('#address_remove_{{ profile_user.get_profile.addresses_primary.id }}').submit()">remove</a>)
+                    </span>
+                    <br/>
+                    
+                    {{ profile_user.get_profile.addresses_primary.street }}<br/>
+                    {{ profile_user.get_profile.addresses_primary.city }},
+                    {{ profile_user.get_profile.addresses_primary.province }}
+                    <form style="display: none;" id="address_remove_{{ profile_user.get_profile.addresses_primary.id }}" method="post" action="">
+                        <input type="hidden" name="address" value="{{ profile_user.get_profile.addresses_primary.id }}"/>
+                        <input type="hidden" name="action" value="address_remove"/>
+                    </form>
+                </td>
+            </tr>
+        {% endif %}
+        
+	    {% for address in profile_user.get_profile.addresses.all %}
+	        {% ifnotequal address.id profile_user.get_profile.addresses_primary.id %}
+	            <tr>
+	                <td style='vertical-align: top; padding-right: 25px;'>
+	                    <a href="#" onclick="$('#address_primary_{{ address.id }}').submit()">make primary</a>
+	                </td>
+	                <td style='vertical-align: top; padding-bottom: 10px;'>
+	                    <strong>{{ address.label }}</strong>
+                        &nbsp;&nbsp;&nbsp;
+                        <span style='font-size: 0.85em;'>
+                            (<a href="#" onclick="$('#address_remove_{{ address.id }}').submit()">remove</a>)
+                        </span>
+	                    <br/>
+	                    
+	                    {{ address.street }}<br/>
+                        {{ address.city }}, {{ address.province }}
+
+                        <form style="display: none;" id="address_primary_{{ address.id }}" method="post" action="">
+                            <input type="hidden" name="address" value="{{ address.id }}"/>
+                            <input type="hidden" name="action" value="address_primary"/>
+                        </form>
+                        <form style="display: none;" id="address_remove_{{ address.id }}" method="post" action="">
+                            <input type="hidden" name="address" value="{{ address.id }}"/>
+                            <input type="hidden" name="action" value="address_remove"/>
+                        </form>
+
+	                </td>
+	            </tr>
+	        {% endifnotequal %}
+	    {% endfor %}
+	</table>
+	
+	<a href="" id="link_add_address">add a new address</a>
+	<div id="div_add_address" style="display: none;">
+	    Add a new address:
+        <form method="post" action="">
+	        <table class="addressform">
+        	    {{ address_form }}
+        	    <tr>
+            	    <th>&nbsp;</th>
+        	        <td>
+                        <input type="hidden" name="action" value="address_new"/>
+            	        <input type="submit" value="add"/>
+            	    </td>
+        	    </tr>
+	        </table>
+    	</form>
+	</div>
+
+</div>    
+
+<h3>Your phone number</h3>
+<div style='padding-left: 25px;'>
+    
+    <table border="0">
+        {% if profile_user.get_profile.phone_numbers_primary %}
+            <tr>
+                <td style='vertical-align: top; padding-right: 25px;'><strong>primary</strong></td>
+                <td style='vertical-align: top; padding-bottom: 10px;'>
+                    {{ profile_user.get_profile.phone_numbers_primary.number }}
+                    &nbsp;&nbsp;&nbsp;
+                    <span style='font-size: 0.85em;'>
+                        (<a href="#" onclick="$('#phone_remove_{{ profile_user.get_profile.phone_numbers_primary.id }}').submit()">remove</a>)
+                    </span>
+                    <form style="display: none;" id="phone_remove_{{ profile_user.get_profile.phone_numbers_primary.id }}" method="post" action="">
+                        <input type="hidden" name="phone" value="{{ profile_user.get_profile.phone_numbers_primary.id }}"/>
+                        <input type="hidden" name="action" value="phone_remove"/>
+                    </form>
+                </td>
+            </tr>
+        {% endif %}
+        
+	    {% for phone in profile_user.get_profile.phone_numbers.all %}
+	        {% ifnotequal phone.id profile_user.get_profile.phone_numbers_primary.id %}
+	            <tr>
+	                <td style='vertical-align: top; padding-right: 25px;'>
+	                    <a href="#" onclick="$('#phone_primary_{{ phone.id }}').submit()">make primary</a>
+	                </td>
+	                <td style='vertical-align: top; padding-bottom: 10px;'>
+	                    {{ phone.number }}
+                        &nbsp;&nbsp;&nbsp;
+                        <span style='font-size: 0.85em;'>
+                            (<a href="#" onclick="$('#phone_remove_{{ phone.id }}').submit()">remove</a>)
+                        </span>
+
+                        <form style="display: none;" id="phone_primary_{{ phone.id }}" method="post" action="">
+                            <input type="hidden" name="phone" value="{{ phone.id }}"/>
+                            <input type="hidden" name="action" value="phone_primary"/>
+                        </form>
+                        <form style="display: none;" id="phone_remove_{{ phone.id }}" method="post" action="">
+                            <input type="hidden" name="phone" value="{{ phone.id }}"/>
+                            <input type="hidden" name="action" value="phone_remove"/>
+                        </form>
+
+	                </td>
+	            </tr>
+	        {% endifnotequal %}
+	    {% endfor %}
+	</table>
+	
+	<a href="" id="link_add_phone">add a new phone number</a>
+	<div id="div_add_phone" style="display: none;">
+	    Add a new phone number:
+        <form method="post" action="">
+	        <table class="addressform">
+        	    {{ phone_form }}
+        	    <tr>
+            	    <th>&nbsp;</th>
+        	        <td>
+                        <input type="hidden" name="action" value="phone_new"/>
+            	        <input type="submit" value="add"/>
+            	    </td>
+        	    </tr>
+	        </table>
+    	<form>
+	</div>
+    
+</div>    
+
+<br/><br/>    
+<form action="" method="post">
+    <input type="submit" value="Continue to next page" method="post"/>
 </form>
 
+
+<script type='text/javascript'>
+    $().ready(function() {
+        $('#link_add_email').click(function() {
+            $('#div_add_email').slideDown();
+            $(this).hide();
+            return false;
+        });
+        $('#link_add_address').click(function() {
+            $('#div_add_address').slideDown();
+            $(this).hide();
+            return false;
+        });
+        $('#link_add_phone').click(function() {
+            $('#div_add_phone').slideDown();
+            $(this).hide();
+            return false;
+        });
+    });
+</script>
+
 {% endblock %}
+
+

@@ -136,7 +136,9 @@ class MemberProfile(Profile):
 
     #addresses = generic.GenericRelation(Address)
     addresses = models.ManyToManyField(Address)
+    addresses_primary = models.ForeignKey(Address, related_name='primary_user', blank=True, null=True)
     phone_numbers = generic.GenericRelation(PhoneNumber)
+    phone_numbers_primary = models.ForeignKey(PhoneNumber, related_name='primary_user', blank=True, null=True)
     sending_groups = models.ManyToManyField("apply.SendingGroup", blank=True)
     
     grandfathered = models.BooleanField(_('grandfathered'),
