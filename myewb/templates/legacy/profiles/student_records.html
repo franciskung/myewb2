@@ -18,7 +18,7 @@ Copyright 2009 Engineers Without Borders (Canada) Organisation and/or volunteer 
 				{{ record.institution }}
 			{% endif %}
 			{% if is_me %}
-				(<a href="{% url edit_student_record user.username record.id %}"><small>edit</small></a>)
+				<span class="edit_school">(<a href="{% url edit_student_record user.username record.id %}"><small>edit</small></a>)</span>
 			{% endif %}
 			(<a href="#" id="student_record_more_{{ record.id }}"><small>more</small></a><a href="#" id="student_record_less_{{ record.id }}" style="display: none;"><small>less</small></a>)
 			

@@ -9,7 +9,7 @@ from pinax.apps.account.forms import AddEmailForm
 
 from emailconfirmation.models import EmailAddress, EmailConfirmation
 
-from profiles.forms import AddressForm, PhoneNumberForm
+from profiles.forms import AddressForm, PhoneNumberForm, StudentRecordForm, WorkRecordForm
 from profiles.models import MemberProfile
 from siteutils.models import Address, PhoneNumber
 
@@ -136,20 +136,40 @@ def contact(request):
 
 @login_required
 def workplace(request):
-    return render_to_response("profileupdate2013/intro.html",
-                              {'profile_user': request.user},
-                              context_instance=RequestContext(request))
+    profile = request.user.get_profile()
 
-@login_required
-def school(request):
-    return render_to_response("profileupdate2013/intro.html",
-                              {'profile_user': request.user},
+    workplace_form = WorkRecordForm()
+    school_form = StudentRecordForm()
+
+    if request.method == 'POST':
+        
+        action = request.POST.get('action', None)
+        
+        if action == 'workplace':
+            workplace_form = WorkRecordForm(request.POST)
+            if workplace_form.is_valid():
+                workplace = workplace_form.save(commit=False)
+                workplace.user = request.user
+                workplace.save()
+        
+        elif action == 'school':
+            school_form = StudentRecordForm(request.POST)
+            if school_form.is_valid():
+                school = school_form.save(commit=False)
+                school.user = request.user
+                school.save()
+
+    return render_to_response("profileupdate2013/workplace.html",
+                              {'profile_user': request.user,
+                               'is_me': True,
+                               'workplace_form': workplace_form,
+                               'school_form': school_form},
                               context_instance=RequestContext(request))
 
 @login_required
 def interests(request):
 
-    return render_to_response("profileupdate2013/intro.html",
+    return render_to_response("profileupdate2013/interests.html",
                               {'profile_user': request.user},
                               context_instance=RequestContext(request))
 
