@@ -9,6 +9,7 @@ from pinax.apps.account.forms import AddEmailForm
 
 from emailconfirmation.models import EmailAddress, EmailConfirmation
 
+from interests.models import Interest
 from profiles.forms import AddressForm, PhoneNumberForm, StudentRecordForm, WorkRecordForm
 from profiles.models import MemberProfile
 from siteutils.models import Address, PhoneNumber
@@ -168,9 +169,30 @@ def workplace(request):
 
 @login_required
 def interests(request):
+    interests = Interest.objects.filter(highlighted=True)
+    profile = request.user.get_profile()
+    
+    if request.method == 'POST':
+        for i in interests:
+            if request.POST.get("interest_%d" % i.id, None):
+                i.users.add(profile)
+                
+                
+        extra = request.POST.get('extra', None)
+        if extra:
+            extra = extra.strip()
+        if extra:
+            for i in extra.split("\n"):
+                i = i.strip()
+                if i:
+                    interest, created = Interest.objects.get_or_create(tag=i)
+                    interest.users.add(profile)
+                    
+        return HttpResponseRedirect(reverse('profileupdate_complete'))
 
     return render_to_response("profileupdate2013/interests.html",
-                              {'profile_user': request.user},
+                              {'profile_user': request.user,
+                               'interests': interests},
                               context_instance=RequestContext(request))
 
 @login_required

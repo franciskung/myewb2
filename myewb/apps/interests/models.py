@@ -8,8 +8,9 @@ Copyright 2011 Engineers Without Borders Canada
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from base_groups.models import BaseGroup
 from group_topics.models import GroupTopic
-from profiles import MemberProfile
+from profiles.models import MemberProfile
 
 class InterestManager(models.Manager):
     pass
@@ -28,6 +29,8 @@ class Interest(models.Model):
     tag = models.CharField(max_length=50, blank=False)
     topics = models.ManyToManyField(GroupTopic, blank=True)
     users = models.ManyToManyField(MemberProfile, blank=True)
+    groups = models.ManyToManyField(BaseGroup, blank=True)
+    primary_group = models.ForeignKey(BaseGroup, blank=True, null=True, related_name='primary_interest')
 
     highlighted = models.BooleanField(default=False)
 

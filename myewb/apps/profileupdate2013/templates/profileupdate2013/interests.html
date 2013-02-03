@@ -22,7 +22,41 @@
     <span style='font-size: 0.7em; font-weight: normal;'>(page  3/3)</span>
 </h2>
 
-<p><strong>And last... tell us about what you are interested in.</strong></p>
+<p><strong>And lastly... tell us about what you are interested in.</strong></p>
+
+{% comment %}
+<form action="" method="post">
+    <table style='width: 80%;'>
+        <tr>
+            {% for interest in interests %}
+                <td style='width: 18%; padding-bottom: 5px;'>
+                
+                    <input type="checkbox" id="interest_{{ interest.id }}">
+                    <label for="interest_{{ interest.id }}">{{ interest.tag }}</label>
+                
+                {% cycle '</td>' '</td>' '</td>' '</td></tr><tr>' %}
+            {% endfor %}
+        </tr>
+    </table>
+</form>
+{% endcomment %}
+
+<form action="" method="post">
+    {% for interest in interests %}
+        <div style='padding-bottom: 5px;'>
+            <input type="checkbox" name="interest_{{ interest.id }}" value="yes" id="interest_{{ interest.id }}">
+            <label for="interest_{{ interest.id }}">{{ interest.tag }}</label>
+        </div>
+    {% endfor %}
+    <br/>
+    
+    Or, add your own topics (one per line):<br/>
+    <textarea style='width: 250px; height: 45px;' name='extra'></textarea>
+    <br/><br/>
+    
+    <input type="submit" value="Save"/>
+</form>
+
 
 
 {% endblock %}

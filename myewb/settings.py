@@ -250,6 +250,7 @@ INSTALLED_APPS = (
     'httpbl',
     'whosonline',
     'profileupdate2013',
+    'interests',
 
     # our own third-party libs
     'contrib.django_evolution',
