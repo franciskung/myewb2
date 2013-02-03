@@ -37,6 +37,9 @@ class Interest(models.Model):
     related_tags = models.ManyToManyField('self', blank=True)
     
     objects = InterestManager()
+    
+    class Meta:
+        ordering = ['tag',]
 
     def __unicode(self):
         return self.tag
