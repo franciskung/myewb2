@@ -44,7 +44,7 @@
                     
                     &nbsp;&nbsp;&nbsp;
                     <span style='font-size: 0.85em;'>
-                    -
+                    (
                     <a href="#" onclick="$('#email_primary_{{ emailaddress.id }}').submit(); return false;">make primary</a>
                 {% else %}
                     <em>{{ emailaddress.email }}</em>
@@ -53,11 +53,11 @@
                     <span style='font-size: 0.85em;'>
                     (not verified)
                     
-                    -
+                    (
                     <a href="#" onclick="$('#email_resend_{{ emailaddress.id }}').submit(); return false;">re-send verification email</a>
                 {% endif %}
                 - 
-                <a href="#" onclick="$('#email_remove_{{ emailaddress.id }}').submit(); return false;">remove</a>
+                <a href="#" onclick="$('#email_remove_{{ emailaddress.id }}').submit(); return false;">remove</a>)
                 </span>
                 
                 <form style="display: none;" id="email_primary_{{ emailaddress.id }}" method="post" action="">
@@ -119,13 +119,14 @@
 	        {% ifnotequal address.id profile_user.get_profile.addresses_primary.id %}
 	            <tr>
 	                <td style='vertical-align: top; padding-right: 25px;'>
-	                    <a href="#" onclick="$('#address_primary_{{ address.id }}').submit(); return false;">make primary</a>
+	                    &nbsp;
 	                </td>
 	                <td style='vertical-align: top; padding-bottom: 10px;'>
 	                    <strong>{{ address.label }}</strong>
                         &nbsp;&nbsp;&nbsp;
                         <span style='font-size: 0.85em;'>
-                            (<a href="#" onclick="$('#address_remove_{{ address.id }}').submit(); return false;">remove</a>)
+    	                    (<a href="#" onclick="$('#address_primary_{{ address.id }}').submit(); return false;">make primary</a> - 
+                            <a href="#" onclick="$('#address_remove_{{ address.id }}').submit(); return false;">remove</a>)
                         </span>
 	                    <br/>
 	                    
@@ -191,13 +192,14 @@
 	        {% ifnotequal phone.id profile_user.get_profile.phone_numbers_primary.id %}
 	            <tr>
 	                <td style='vertical-align: top; padding-right: 25px;'>
-	                    <a href="#" onclick="$('#phone_primary_{{ phone.id }}').submit(); return false;">make primary</a>
+	                    &nbsp;
 	                </td>
 	                <td style='vertical-align: top; padding-bottom: 10px;'>
 	                    {{ phone.number }}
                         &nbsp;&nbsp;&nbsp;
                         <span style='font-size: 0.85em;'>
-                            (<a href="#" onclick="$('#phone_remove_{{ phone.id }}').submit(); return false;">remove</a>)
+                            (<a href="#" onclick="$('#phone_primary_{{ phone.id }}').submit(); return false;">make primary</a> - 
+                            <a href="#" onclick="$('#phone_remove_{{ phone.id }}').submit(); return false;">remove</a>)
                         </span>
 
                         <form style="display: none;" id="phone_primary_{{ phone.id }}" method="post" action="">

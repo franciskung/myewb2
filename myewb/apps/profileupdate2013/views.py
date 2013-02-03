@@ -125,6 +125,11 @@ def contact(request):
         profile.addresses_primary = addr[0]
         profile.save()
         
+    if profile.phone_numbers.count() and not profile.phone_numbers_primary:
+        ph = profile.phone_numbers.order_by('-last_updated')
+        profile.phone_numbers_primary = ph[0]
+        profile.save()
+        
 
     return render_to_response("profileupdate2013/contact.html",
                               {'profile_user': request.user,
