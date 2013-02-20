@@ -136,7 +136,9 @@ class MemberProfile(Profile):
 
     #addresses = generic.GenericRelation(Address)
     addresses = models.ManyToManyField(Address)
+    addresses_primary = models.ForeignKey(Address, related_name='primary_user', blank=True, null=True)
     phone_numbers = generic.GenericRelation(PhoneNumber)
+    phone_numbers_primary = models.ForeignKey(PhoneNumber, related_name='primary_user', blank=True, null=True)
     sending_groups = models.ManyToManyField("apply.SendingGroup", blank=True)
     
     grandfathered = models.BooleanField(_('grandfathered'),
@@ -380,8 +382,8 @@ class StudentRecord(models.Model):
     user = models.ForeignKey(User, verbose_name=_('user'))
     network = models.ForeignKey("networks.Network", verbose_name=_('network'), blank=True, null=True)
     
-    institution = models.CharField(_('institution'), max_length=255, null=True, blank=True)
-    student_number = models.CharField(_('student number'), max_length=255, null=True, blank=True)
+    institution = models.CharField(_('School name'), max_length=255, null=True, blank=True)
+    #student_number = models.CharField(_('student number'), max_length=255, null=True, blank=True)
     field = models.CharField(_('field'), max_length=255, null=True, blank=True)
     
     STUDENT_LEVELS = (
@@ -393,7 +395,7 @@ class StudentRecord(models.Model):
     )
     level = models.CharField(_('level'), max_length=2, choices=STUDENT_LEVELS, null=True, blank=True)
     start_date = models.DateField(_('start date'), null=True, blank=True)
-    graduation_date = models.DateField(_('graduation date'), null=True, blank=True)
+    graduation_date = models.DateField(_('(Expected) Graduation date'), null=True, blank=True)
     
     objects = StudentRecordManager()
 
@@ -427,7 +429,7 @@ class WorkRecord(models.Model):
     sector = models.CharField(_('sector'), max_length=255, null=True, blank=True)
     position = models.CharField(_('position'), max_length=255, null=True, blank=True)
     start_date = models.DateField(_('start date'), null=True, blank=True)
-    end_date = models.DateField(_('end date'), null=True, blank=True)
+    end_date = models.DateField(_('end date'), null=True, blank=True, help_text="Leave blank if this is your current job")
     
     COMPANY_SIZES = (
         ('tiny', _('1 - 5 employees')),

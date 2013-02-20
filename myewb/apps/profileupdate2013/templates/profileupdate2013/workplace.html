@@ -1,0 +1,109 @@
+{% extends 'profiles/base.html' %}
+
+{% load uni_form_tags %}
+{% load profile_tags %}
+
+{% block body %}
+
+ <link rel="stylesheet" href="{{STATIC_URL}}css/ui.timepickr.css" rel="stylesheet" />
+ <link rel="stylesheet" href="{{ STATIC_URL }}css/autocomplete.css" />
+
+
+<h2>
+    Profile Update
+    &nbsp;
+    <span style='font-size: 0.7em; font-weight: normal;'>(page  2/3)</span>
+</h2>
+
+<p><strong>Next, tell us about your current workplace and school.</strong></p>
+
+<h3>Workplaces</h3>
+<div style='padding-left: 25px;'>
+    {% show_work_records profile_user is_me %}
+    <a href="{% url new_work_record profile_user.username %}" id="link_workplace">Add a workplace</a>
+    
+</div>
+
+<h3>School</h3>
+<div style='padding-left: 25px;'>
+
+    {% show_student_records profile_user is_me %}
+    <a href="{% url new_student_record profile_user.username %}" id="link_school">Add a school</a>
+
+</div>
+
+<div style='display: none;'>
+    <div id="div_workplace_form">
+        <form class="uniForm" method="POST" action="">
+            <fieldset class="inlineLabels">  
+                {{ workplace_form|as_uni_form }}
+                <div class="ctrlHolder">
+                    <label>&nbsp;</label>
+                    <input type="hidden" name="action" value="workplace" />
+                    <input type="submit" value="add"/>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+    
+    <div id="div_school_form">
+        <form class="uniForm" method="POST" action="">
+            <fieldset class="inlineLabels">  
+                {{ school_form|as_uni_form }}
+                <div class="form_block">
+                <input type="hidden" name="action" value="school" />
+                <input type="submit" value="add"/>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>
+
+<br/><br/>    
+<form action="{% url profileupdate_interests %}" method="get">
+    <input type="submit" value="Continue to next page"/>
+</form>
+
+
+{% show_student_records_js profile_user is_me %}
+{% show_work_records_js profile_user is_me %}
+
+<script type="text/javascript" src="{{STATIC_URL}}jquery.autocomplete.min.js"></script>
+
+<script type="text/javascript" src="{{STATIC_URL}}js/ui.datepicker.js"></script>
+
+<style>
+	div.ui-datepicker {z-index:10000000;}
+</style>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+		$('#id_employer').autocomplete('{% url ajax_search_network "C" %}');
+		var datepicker = $("input#id_start_date").datepicker({dateFormat: 'yy-mm-dd',
+															changeMonth: true,
+															changeYear: true,
+															yearRange: '-50:+5'});
+		var datepicker2 = $("input#id_end_date").datepicker({dateFormat: 'yy-mm-dd',
+															changeMonth: true,
+															changeYear: true,
+															yearRange: '-50:+5'});
+		var datepicker3 = $("input#id_graduation_date").datepicker({dateFormat: 'yy-mm-dd',
+															changeMonth: true,
+															changeYear: true,
+															yearRange: '-50:+5'});
+															
+        $('#link_workplace').colorbox({width: '50%',
+                                       inline: true,
+                                       opacity: '0.7',
+                                       href: "#div_workplace_form"});
+        $('#link_school').colorbox({width: '50%',
+                                       inline: true,
+                                       opacity: '0.7',
+                                       href: "#div_school_form"});
+        $('.edit_work').hide();
+        $('.edit_school').hide();
+	});
+</script>
+
+{% endblock %}
+
