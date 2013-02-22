@@ -13,9 +13,15 @@ from interests.models import Interest
 from profiles.forms import AddressForm, PhoneNumberForm, StudentRecordForm, WorkRecordForm
 from profiles.models import MemberProfile
 from siteutils.models import Address, PhoneNumber
+from datetime import datetime
+from profileupdate2013.models import ProfileUpdate, ProfileUpdateForm
 
 @login_required
 def intro(request):
+    profile_update = ProfileUpdate.objects.create(user=request.user,
+                                                  profile=request.user.get_profile())
+                                                  
+    request.session['profileupdate'] = profile_update
 
     return render_to_response("profileupdate2013/intro.html",
                               {'profile_user': request.user},
@@ -29,6 +35,16 @@ def contact(request):
     address_form = AddressForm()
     phone_form = PhoneNumberForm()
     
+    profile_update = request.session.get('profileupdate')
+    if profile_update:
+        profile_update = ProfileUpdate.objects.get(id=profile_update.id)
+    else:
+        profile_update = ProfileUpdate.objects.create(user=request.user,
+                                                      profile=request.user.get_profile())
+        request.session['profileupdate'] = profile_update
+    profile_update.contact = datetime.now()
+    profile_update.save()
+
     if request.method == 'POST':
         
         action = request.POST.get('action', None)
@@ -147,6 +163,16 @@ def workplace(request):
     workplace_form = WorkRecordForm()
     school_form = StudentRecordForm()
 
+    profile_update = request.session.get('profileupdate')
+    if profile_update:
+        profile_update = ProfileUpdate.objects.get(id=profile_update.id)
+    else:
+        profile_update = ProfileUpdate.objects.create(user=request.user,
+                                                      profile=request.user.get_profile())
+        request.session['profileupdate'] = profile_update
+    profile_update.workplace = datetime.now()
+    profile_update.save()
+
     if request.method == 'POST':
         
         action = request.POST.get('action', None)
@@ -173,10 +199,54 @@ def workplace(request):
                               context_instance=RequestContext(request))
 
 @login_required
+def demographics(request):
+    profile = request.user.get_profile()
+
+    update_form = ProfileUpdateForm()
+    
+    profile_update = request.session.get('profileupdate')
+    if profile_update:
+        profile_update = ProfileUpdate.objects.get(id=profile_update.id)
+    else:
+        profile_update = ProfileUpdate.objects.create(user=request.user,
+                                                      profile=request.user.get_profile())
+        request.session['profileupdate'] = profile_update
+    profile_update.demographics = datetime.now()
+    profile_update.save()
+
+    if request.method == 'POST':
+        update_form = ProfileUpdateForm(request.POST, instance=profile_update)
+        
+        if update_form.is_valid():
+            profile_update = update_form.save()
+        
+            return HttpResponseRedirect(reverse('profileupdate_complete'))
+        request.user.message_set.create(message='form invalid')
+    else:
+        request.user.message_set.create(message='no form')
+    
+            
+    return render_to_response("profileupdate2013/demographics.html",
+                              {'profile_user': request.user,
+                               'form': update_form},
+                              context_instance=RequestContext(request))
+
+
+@login_required
 def interests(request):
     interests = Interest.objects.filter(highlighted=True)
     profile = request.user.get_profile()
     
+    profile_update = request.session.get('profileupdate')
+    if profile_update:
+        profile_update = ProfileUpdate.objects.get(id=profile_update.id)
+    else:
+        profile_update = ProfileUpdate.objects.create(user=request.user,
+                                                      profile=request.user.get_profile())
+        request.session['profileupdate'] = profile_update
+    profile_update.interests = datetime.now()
+    profile_update.save()
+
     if request.method == 'POST':
         for i in interests:
             if request.POST.get("interest_%d" % i.id, None):
@@ -193,7 +263,7 @@ def interests(request):
                     interest, created = Interest.objects.get_or_create(tag=i)
                     interest.users.add(profile)
                     
-        return HttpResponseRedirect(reverse('profileupdate_complete'))
+        return HttpResponseRedirect(reverse('profileupdate_demograhpics'))
 
     return render_to_response("profileupdate2013/interests.html",
                               {'profile_user': request.user,

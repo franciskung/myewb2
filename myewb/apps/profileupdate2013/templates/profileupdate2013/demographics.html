@@ -1,0 +1,45 @@
+{% extends 'profiles/base.html' %}
+
+{% load uni_form_tags %}
+
+{% block body %}
+
+<style>
+    .addressform th {
+        text-align: right;
+        font-weight: normal;
+        padding-left: 25px;
+    }
+    .addressform td {
+        padding-left: 15px;
+    }
+</style>
+
+
+<h2>
+    The EWB Census
+    &nbsp;
+    <span style='font-size: 0.7em; font-weight: normal;'>(page  3/4)</span>
+</h2>
+
+<p>
+    Now we move onto your relationship with EWB.
+</p>
+
+
+<form action="{% url profileupdate_demographics %}" method="post" class="uniForm">
+    <fieldset class="inlineLabels">
+        {{ form|as_uni_form }}
+        <input type="submit" value="Continue to next page"/>
+    </fieldset>
+</form>
+
+
+{% endblock %}
+
+
+{% block toolbar_right %}
+	&nbsp;
+{% endblock %}
+
+

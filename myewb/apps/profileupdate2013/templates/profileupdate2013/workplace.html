@@ -10,12 +10,19 @@
 
 
 <h2>
-    Profile Update
+    The EWB Census
     &nbsp;
-    <span style='font-size: 0.7em; font-weight: normal;'>(page  2/3)</span>
+    <span style='font-size: 0.7em; font-weight: normal;'>(page  2/4)</span>
 </h2>
 
-<p><strong>Next, tell us about your current workplace and school.</strong></p>
+<p>
+    <strong>Next, tell us about your current workplace or school.</strong>
+</p>
+
+<p>
+    Knowing where you spend most of your day can help us connect you to <br/>
+    opportunities or other EWBers who are nearby!
+</p>
 
 <h3>Workplaces</h3>
 <div style='padding-left: 25px;'>
@@ -60,7 +67,7 @@
 </div>
 
 <br/><br/>    
-<form action="{% url profileupdate_interests %}" method="get">
+<form action="{% url profileupdate_demographics %}" method="get">
     <input type="submit" value="Continue to next page"/>
 </form>
 
@@ -106,4 +113,9 @@
 </script>
 
 {% endblock %}
+
+{% block toolbar_right %}
+	&nbsp;
+{% endblock %}
+
 

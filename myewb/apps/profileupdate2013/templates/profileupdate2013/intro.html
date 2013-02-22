@@ -2,17 +2,35 @@
 
 {% block body %}
 
-<h2>Profile Update</h2>
+<h2>The EWB Census</h2>
 
 {% if profile_user.first_name and profile_user.last_name %}
-<p>Hello {{ profile_user.first_name }},</p>
+<strong>{{ profile_user.first_name }} {{ profile_user.last_name }}</strong>
 {% endif %}
 
-<p>Welcome back to myEWB!</p>
+<p>Welcome back to myEWB, and thank you for participating in the first-ever EWB Census!</p>
 
-<p>The information you provide will only be used by EWB. We will never sell or share your information.</p>
+<p>
+    Engineers Without Borders has a <strong>network of over 40,000</strong> members,
+    donors, and supporters - and we are trying to find new and better ways to 
+    <strong>keep you connected to this network</strong>.
+</p>
 
-<p>This will take 5-10 minutes.</p>
+<p>
+    At the same time, we are finding that our information is more and more outdated
+    ... which makes it difficult to ensure that <strong>your EWB experience is 
+    tailored to your needs and interests.</strong>
+</p>
+
+<p>
+    So ... we are introducing the <strong>EWB Census</strong>!  We want to make sure
+    our information is up-to-date, in order to <strong>stay in touch with you</strong>
+    and <strong>find out about what you are interested in</strong>.
+</p>
+
+<p>
+    This should only take <strong>5-10 minutes</strong> - let's get started!
+</p>
 
 <form action="{% url profileupdate_contact %}" method="get">
 
@@ -20,3 +38,9 @@
 </form>
 
 {% endblock %}
+
+{% block toolbar_right %}
+	&nbsp;
+{% endblock %}
+
+
