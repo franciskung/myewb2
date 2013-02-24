@@ -1,0 +1,98 @@
+{% load i18n %}
+{% load avatar_tags %}
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+    
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+	<title>{% if SITE_NAME %}{{ SITE_NAME }} &raquo; {% endif %}{% block head_title %}{% endblock %}</title>
+	<meta name="description" content="">
+	<meta name="author" content="">
+
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/uni-form/uni-form.css" />    
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/uni-form/default.uni-form.css" />            
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/jquery-ui.css" />
+	<link href='{% if request.is_secure %}https{% else %}http{% endif %}://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet' type='text/css'>
+    <link href='{% if request.is_secure %}https{% else %}http{% endif %}://fonts.googleapis.com/css?family=Open+Sans:800' rel='stylesheet' type='text/css'>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="{{ STATIC_URL }}templates/myewb2/js/libs/jquery-1.6.2.min.js"><\/script>')</script>
+    <script src="{{ STATIC_URL }}templates/myewb2/js/libs/modernizr-2.0.6.min.js"></script>
+
+    {% if request.is_secure %}
+    <script src="{{ STATIC_URL }}js/jquery.tools.min.js"></script>
+    {% else %}
+    <script src="http://cdn.jquerytools.org/1.2.6/jquery.tools.min.js"></script>
+    {% endif %}
+
+	{% block extra_head %}
+	{% endblock %}
+
+    <link type="text/css" href="{{STATIC_URL}}css/colorboxnew.css?v=5" rel="stylesheet" />
+    <script type="text/javascript" src="{{STATIC_URL}}js/colorbox.js?v=6"></script>
+
+    <meta property="og:image" content="http://my.ewb.ca{{ STATIC_URL }}images/ewb_logo.png" />
+    
+    {# will pull this out into a css file later #}
+    <style>
+        body {
+            background: #ff7200;
+        }
+        
+        #mainbox {
+            width: 900px;
+            background: #f0f0f0;
+            border: 1px solid;
+            margin: 25px auto;
+            padding: 25px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div id="mainbox">
+    <h2>
+        ROLODEX
+    </h2>
+    
+    <div id="maincontent">
+        {% block body %} 
+        {% endblock %}
+    </div>
+
+    <div class="clear"></div>
+
+</div>
+
+{% block extra_body %}
+{% endblock %}
+
+
+<script type="text/javascript">
+    $().ready(function() {
+    
+        {% block javascript %}
+        {% endblock %}
+
+    });
+</script>
+
+<!--[if lt IE 7 ]>
+	<script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.2/CFInstall.min.js"></script>
+	<script>window.attachEvent("onload",function(){CFInstall.check({mode:"overlay"})})</script>
+<![endif]-->
+
+</body>
+
+</html>
+

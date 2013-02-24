@@ -251,6 +251,7 @@ INSTALLED_APPS = (
     'whosonline',
     'profileupdate2013',
     'interests',
+    'rolodex',
 
     # our own third-party libs
     'contrib.django_evolution',
