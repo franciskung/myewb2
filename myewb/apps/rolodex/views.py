@@ -1,4 +1,5 @@
 from django.core.urlresolvers import reverse
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext, Context, loader
@@ -9,6 +10,9 @@ from account_extra.forms import EmailLoginForm
 from account.views import login as pinaxlogin
 
 from datetime import datetime
+
+from rolodex.models import TrackingProfile
+from rolodex.forms import TrackingProfileForm
 
 def home(request):
     if not request.user.is_authenticated():
@@ -40,4 +44,56 @@ def logout(request):
     logout(request)
     return HttpResponseRedirect(reverse('rolodex_login'))
 
+def search(request):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect(reverse('rolodex_login'))
+        
+    search = request.POST.get('search', None)
+    if not search:
+        request.user.message_set.create(message='Please enter a search term')
+        return HttpResponseRedirect(reverse('rolodex_home'))
+            
+    # match on first name
+    qry = Q(first_name__icontains=search.split()[0])
+    for term in search.split()[1:]:     # support space-deliminated search terms
+        qry = qry & Q(first_name__icontains=term)
+
+    # match on last name
+    qry2 = Q(last_name__icontains=search.split()[0])
+    for term in search.split()[1:]:     # support space-deliminated search terms
+        qry2 = qry2 & Q(last_name__icontains=term)
+    qry = qry | qry2
+        
+    # match on email
+    qry2 = Q(email__email__icontains=search.split()[0])
+    for term in search.split()[1:]:     # support space-deliminated search terms
+        qry2 = qry2 & Q(email__email__icontains=term)
+    qry = qry | qry2
+    
+    results = TrackingProfile.objects.filter(qry)
+    results = results.distinct().order_by("last_name")
+
+    return render_to_response("rolodex/search.html",
+                              {'results': results,
+                               'search': search},
+                              context_instance=RequestContext(request))
+
+def new(request):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect(reverse('rolodex_login'))
+        
+    if request.method == 'POST':
+        form = TrackingProfileForm(request.POST)
+        
+        if form.is_valid():
+            profile = form.save()
+            request.user.message_set.create(message='New record created')
+            return HttpResponseRedirect(reverse('rolodex_view', kwargs={'profile_id': profile.id}))
+            
+    else:
+        form = TrackingProfileForm()
+        
+    return render_to_response("rolodex/new.html",
+                              {'form': form},
+                              context_instance=RequestContext(request))
 

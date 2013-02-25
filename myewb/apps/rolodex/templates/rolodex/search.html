@@ -1,0 +1,32 @@
+{% extends 'rolodex/base.html' %}
+
+{% block head_title %}Search{% endblock %}
+
+{% block body %}
+    <h2>Search for an individual:</h2>
+    <form method="post" value="{{ search }}" action="{% url rolodex_search %}">
+        <input type="text" name="search"/>
+        <input type="submit" value="Go"/>
+    </form>
+    <br/>
+    
+    <div style='float: right; width: 150px; border: 1px solid; padding: 10px;'>
+        <strong>Couldn't find the person?</strong><br/><br/>
+        
+        <a href="{% url rolodex_new %}">Add them</a>
+    </div>
+    
+    <p>
+        <strong>Your search for <em>{{ search }}</em>:</strong>
+    </p>
+    
+    {% for profile in results %}
+        {{ profile.last_name }}, {{ profile.first_name }} ({{ profile.email }})<br/>
+        
+    {% empty %}
+        Sorry, no results
+    {% endfor %}
+
+    
+
+{% endblock %}

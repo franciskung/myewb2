@@ -1,11 +1,15 @@
 {% extends 'rolodex/base.html' %}
 
+{% block head_title %}Home{% endblock %}
+
 {% block body %}
-    Welcome to EWB's member database!
+    <p>
+        Welcome to EWB's member database!
+    </p>
 
     <h2>Search for an individual:</h2>
-    <form>
-        <input type="text"/>
+    <form method="post" action="{% url rolodex_search %}">
+        <input type="text" name="search"/>
         <input type="submit" value="Go"/>
     </form>
     <br/>

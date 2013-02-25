@@ -11,6 +11,9 @@ from datetime import date, datetime
 class TrackingProfile(models.Model):
     user = models.ForeignKey(User)
     profile = models.ForeignKey(MemberProfile)
+
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
     
     chapter = models.ForeignKey(Network, blank=True, null=True)
     role = models.CharField(max_length=255, blank=True, null=True)
