@@ -1,0 +1,36 @@
+{% extends "rolodex/base.html" %}
+
+
+{% load uni_form_tags %}
+
+{% block head_title %}Login{% endblock %}
+
+{% block body %}
+
+    <p>
+        Please login with your myEWB account to access the EWB Rolodex.
+    </p>
+    
+    <form class="login uniForm" method="post" action="">
+        <fieldset class="inlineLabels">
+            {{ form.as_p }}
+
+			<p><label for="id_login"></label>
+				<input type="submit" name="login" id="id_login" value="Login" />
+		    </p>
+		    
+        </fieldset>
+    </form>
+    
+
+{% endblock %}
+
+{% block extra_body %}
+<script type='text/javascript' charset="utf-8">
+    $("#id_username").focus();
+</script>
+{% endblock %}
+
+{% block javascript %}
+    $('#id_remember').parent().hide();
+{% endblock %}

@@ -45,15 +45,52 @@
     {# will pull this out into a css file later #}
     <style>
         body {
-            background: #ff7200;
+            /*background: #fd9200;*/
+            /*background: #ffffff;*/
+            background: #FCFAF5;
+            border: 12px solid #fd9200;
+            border-bottom: 0;
+            margin: 0;
+            padding: 0;
+            font-family: 'Ubuntu', 'Open Sans', "Lucida Grande", sans-serif;
+            color: #444444;
+            font-size: 14px;
+        }
+        
+        h1, h2, h3 {
+            font-family: 'Open Sans', sans-serif;
+            color: #7E3B00;
+            font-weight: bold;
+        }
+        
+        h1 {
+            margin: 16px 0;
+            font-size: 22px;
+        }
+        
+        h2 {
+            margin: 12px 0 8px 0;
+            font-size: 16px;
         }
         
         #mainbox {
             width: 900px;
-            background: #f0f0f0;
-            border: 1px solid;
-            margin: 25px auto;
-            padding: 25px;
+            background: #f8efda;
+            border: 3px solid #DB7403;
+            margin: 25px auto 5px;
+            padding: 5px 25px 25px;
+        }
+        
+        #logoutbox {
+            text-align: right;
+            position: relative;
+            top: -26px;
+            line-height: 1px;
+        }
+        
+        #footer {
+            text-align: center;
+            font-size: 12px;
         }
     </style>
 </head>
@@ -61,9 +98,13 @@
 <body>
 
 <div id="mainbox">
-    <h2>
-        ROLODEX
-    </h2>
+    <h1>EWB ROLODEX</h1>
+    
+    <div id="logoutbox">
+        {% if user.is_authenticated %}
+            Hello {{ user.visible_name }} (<a href="{% url rolodex_logout %}">logout</a>)
+        {% endif %}
+    </div>
     
     <div id="maincontent">
         {% block body %} 
@@ -74,12 +115,18 @@
 
 </div>
 
+<div id='footer'>
+    Engineers Without Borders Canada | Unauthorized use prohibited
+</div>
+
 {% block extra_body %}
 {% endblock %}
 
 
 <script type="text/javascript">
     $().ready(function() {
+        if ($('body').height() < $(window).height())
+            $('body').height($(window).height() - 10);
     
         {% block javascript %}
         {% endblock %}
