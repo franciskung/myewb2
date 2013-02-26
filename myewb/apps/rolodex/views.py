@@ -10,8 +10,9 @@ from account_extra.forms import EmailLoginForm
 from account.views import login as pinaxlogin
 
 from datetime import datetime
+from siteutils.shortcuts import get_object_or_none
 
-from rolodex.models import TrackingProfile
+from rolodex.models import TrackingProfile, Email
 from rolodex.forms import TrackingProfileForm
 
 def home(request):
@@ -78,22 +79,63 @@ def search(request):
                                'search': search},
                               context_instance=RequestContext(request))
 
-def new(request):
+def profile_edit(request, profile_id=None):
     if not request.user.is_authenticated():
         return HttpResponseRedirect(reverse('rolodex_login'))
         
+    profile = None
+    if profile_id:
+        profile = get_object_or_404(TrackingProfile, id=profile_id)
+        
     if request.method == 'POST':
-        form = TrackingProfileForm(request.POST)
+        if profile:
+            form = TrackingProfileForm(request.POST, instance=profile)
+        else:
+            form = TrackingProfileForm(request.POST)
         
         if form.is_valid():
             profile = form.save()
-            request.user.message_set.create(message='New record created')
+            
+            # create email and set as primary, if needed
+            email = form.cleaned_data['email']
+            if email:
+                email_obj = get_object_or_none(Email, email=email, profile=profile)
+                if not email_obj:
+                    email_obj = Email.objects.create(email=email,
+                                                     profile=profile,
+                                                     updated=datetime.now())
+                if not email_obj.primary:
+                    other_emails = Email.objects.filter(profile=profile)
+                    for e in other_emails:
+                        e.primary = False
+                        e.save()
+                    email_obj.primary = True
+                    email_obj.save()
+
+            # display success message            
+            if profile:
+                request.user.message_set.create(message='Record updated')
+            else:
+                request.user.message_set.create(message='New record created')
             return HttpResponseRedirect(reverse('rolodex_view', kwargs={'profile_id': profile.id}))
             
     else:
-        form = TrackingProfileForm()
+        if profile:
+            form = TrackingProfileForm(instance=profile)
+        else:
+            form = TrackingProfileForm()
         
-    return render_to_response("rolodex/new.html",
-                              {'form': form},
+    return render_to_response("rolodex/profile_edit.html",
+                              {'form': form,
+                               'profile': profile},
                               context_instance=RequestContext(request))
+
+def profile_view(request, profile_id):
+    
+    profile = get_object_or_404(TrackingProfile, id=profile_id)
+
+    return render_to_response("rolodex/profile_view.html",
+                              {'profile': profile},
+                              context_instance=RequestContext(request))
+
 

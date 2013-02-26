@@ -9,8 +9,8 @@ from profiles.models import MemberProfile
 from datetime import date, datetime
 
 class TrackingProfile(models.Model):
-    user = models.ForeignKey(User)
-    profile = models.ForeignKey(MemberProfile)
+    user = models.ForeignKey(User, blank=True, null=True)
+    profile = models.ForeignKey(MemberProfile, blank=True, null=True)
 
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
@@ -30,12 +30,19 @@ class TrackingProfile(models.Model):
     #   email_set
     #   address_set
     
+    def primary_email(self):
+        email = self.email_set.filter(primary=True)
+        if email:
+            return email[0].email
+        else:
+            return None
+    
 
 class Email(models.Model):
     email = models.EmailField()
     profile = models.ForeignKey(TrackingProfile)
     primary = models.BooleanField(default=False)
-    updated = models.DateTimeField(auto_now=True)
+    updated = models.DateTimeField()
 
 class Address(models.Model):
     address = models.TextField()

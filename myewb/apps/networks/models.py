@@ -59,6 +59,7 @@ class Network(BaseGroup):
     
     class Meta:
         verbose_name_plural = "networks"
+        ordering = ('name',)
     
 class ChapterInfo(models.Model):
     network = models.OneToOneField(Network, related_name="chapter_info", verbose_name=_('network'))

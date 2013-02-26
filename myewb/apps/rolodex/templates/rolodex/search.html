@@ -10,7 +10,7 @@
     </form>
     <br/>
     
-    <div style='float: right; width: 150px; border: 1px solid; padding: 10px;'>
+    <div style='float: right; width: 250px; border: 1px solid; padding: 10px;'>
         <strong>Couldn't find the person?</strong><br/><br/>
         
         <a href="{% url rolodex_new %}">Add them</a>
@@ -21,12 +21,17 @@
     </p>
     
     {% for profile in results %}
-        {{ profile.last_name }}, {{ profile.first_name }} ({{ profile.email }})<br/>
+        <div style='padding-bottom: 10px;'>
+            <a href="{% url rolodex_view profile.id %}">{{ profile.last_name }}, {{ profile.first_name }}</a>
+            ({{ profile.primary_email }})
+        </div>
         
     {% empty %}
         Sorry, no results
     {% endfor %}
 
     
+
+    <br style='clear: both;'/><br/>
 
 {% endblock %}

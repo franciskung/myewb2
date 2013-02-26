@@ -2,15 +2,15 @@
 
 {% load uni_form_tags %}
 
-{% block head_title %}New Record{% endblock %}
+{% block head_title %}{% if profile %}Edit{% else %}New{% endif %} Record{% endblock %}
 
 {% block body %}
     <form class="uniForm" method="post" action="">
         <fieldset class="inlineLabels">
             {{ form|as_uni_form }}
 
-			<label for="id_login"></label>
-			<input type="submit" name="login" id="id_login" value="Add" />
+			<label for="id_save"></label>
+			<input type="submit" id="id_save" value="Save" />
 		    
         </fieldset>
     </form>

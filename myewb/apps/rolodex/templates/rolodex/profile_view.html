@@ -1,0 +1,22 @@
+{% extends 'rolodex/base.html' %}
+
+{% block head_title %}{{ profile.first_name }} {{ profile.last_name }}{% endblock %}
+
+{% block body %}
+
+    <div style='text-align: center;'>
+        <h1>{{ profile.first_name }} {{ profile.last_name }}</h1>
+        <strong>{{ profile.primary_email }}</strong>
+        
+        <br/><br/>
+        
+        <form method="get" action="{% url rolodex_edit profile.id %}">
+            <input type="submit" value="Edit this record"/>
+        </form>
+    </div>
+
+
+    <br style='clear: both;'/><br/>
+
+{% endblock %}
+

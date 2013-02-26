@@ -1,11 +1,27 @@
 from datetime import date
 from django import forms
-from rolodex.models import TrackingProfile
+
+from siteutils.shortcuts import get_object_or_none
+
+from rolodex.models import TrackingProfile, Email
 
 class TrackingProfileForm(forms.ModelForm):
-    email = forms.EmailField()
+    email = forms.EmailField(required=False)
 
     class Meta:
         model = TrackingProfile
         fields = ('first_name', 'last_name', 'email', 'chapter', 'role', 'school', 'workplace')
+
+    def __init__(self, *args, **kwargs):
+        instance = kwargs.get('instance', None)
+        
+        if instance:
+            email = Email.objects.filter(profile=instance, primary=True)
+            if email:
+                initial = kwargs.get('initial', {})
+                initial['email'] = email[0].email
+                kwargs['initial'] = initial
+            
+        return super(TrackingProfileForm, self).__init__(*args, **kwargs)
+    
 

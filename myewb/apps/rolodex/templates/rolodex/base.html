@@ -104,7 +104,9 @@
 <body>
 
 <div id="navbar">
-    <h1>EWB ROLODEX</h1>
+    <h1>
+        <a href="{% url rolodex_home %}">EWB ROLODEX</a>
+    </h1>
 
     <div id="logoutbox">
         {% if user.is_authenticated %}
@@ -134,8 +136,8 @@
 <script type="text/javascript">
     $().ready(function() {
         if ($('body').height() < $(window).height())
-            //$('body').height($(window).height() - 10);
-            $('#maincontent').height($(window).height() - 150);
+            $('body').height($(window).height() - 25);
+            //$('#maincontent').height($(window).height() - 175);
     
         {% block javascript %}
         {% endblock %}
