@@ -3,6 +3,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
+from django.forms.models import model_to_dict
 
 from networks.models import Network
 from profiles.models import MemberProfile
@@ -22,6 +23,7 @@ class TrackingProfile(models.Model):
     school = models.CharField(max_length=255, blank=True, null=True)
 
     updated = models.DateTimeField(auto_now=True)
+    updated_by = models.ForeignKey(User, related_name="trackingprofile_updates")
     
     flags = models.ManyToManyField('Flag', through='ProfileFlag')
     badges = models.ManyToManyField('Badge', through='ProfileBadge')
@@ -36,20 +38,32 @@ class TrackingProfile(models.Model):
             return email[0].email
         else:
             return None
-    
+            
+    def to_dict(self):
+        d = model_to_dict(self)
+        d['emails'] = [e.email for e in self.email_set.all()]
+        d['addresses'] = [a.address for a in self.address_set.all()]
+        
+        return d
 
 class Email(models.Model):
     email = models.EmailField()
     profile = models.ForeignKey(TrackingProfile)
     primary = models.BooleanField(default=False)
     updated = models.DateTimeField()
+    
+    class Meta:
+        ordering = ('-primary', '-email')
 
 class Address(models.Model):
     address = models.TextField()
     profile = models.ForeignKey(TrackingProfile)
     primary = models.BooleanField(default=False)
     updated = models.DateTimeField(auto_now=True)
-    
+
+    class Meta:
+        ordering = ('-primary', '-updated')
+
 class Donation(models.Model):
     profile = models.ForeignKey(TrackingProfile)
     date = models.DateTimeField()
@@ -122,4 +136,11 @@ class Event(models.Model):
     
 class EventAttendance(Activity):
     event = models.ForeignKey(Event)
+    
+class ProfileHistory(models.Model):
+    profile = models.ForeignKey(TrackingProfile)
+    editor = models.ForeignKey(User)
+    date = models.DateTimeField(auto_now_add=True)
+    
+    revision = models.TextField(blank=True, null=True)
     

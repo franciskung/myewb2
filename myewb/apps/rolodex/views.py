@@ -6,13 +6,15 @@ from django.template import RequestContext, Context, loader
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import user_passes_test
 
+import pickle
+
 from account_extra.forms import EmailLoginForm
 from account.views import login as pinaxlogin
 
 from datetime import datetime
 from siteutils.shortcuts import get_object_or_none
 
-from rolodex.models import TrackingProfile, Email
+from rolodex.models import TrackingProfile, Email, ProfileHistory
 from rolodex.forms import TrackingProfileForm
 
 def home(request):
@@ -88,13 +90,17 @@ def profile_edit(request, profile_id=None):
         profile = get_object_or_404(TrackingProfile, id=profile_id)
         
     if request.method == 'POST':
+        profile_pickle = None
         if profile:
             form = TrackingProfileForm(request.POST, instance=profile)
+            profile_pickle = pickle.dumps(profile.to_dict())
         else:
             form = TrackingProfileForm(request.POST)
         
         if form.is_valid():
-            profile = form.save()
+            profile = form.save(commit=False)
+            profile.updated_by = request.user
+            profile.save()
             
             # create email and set as primary, if needed
             email = form.cleaned_data['email']
@@ -111,6 +117,13 @@ def profile_edit(request, profile_id=None):
                         e.save()
                     email_obj.primary = True
                     email_obj.save()
+                    
+            # save revision history
+            if profile_pickle:
+                history = ProfileHistory.objects.create(profile=profile,
+                                                        editor=request.user,
+                                                        revision=profile_pickle)
+                
 
             # display success message            
             if profile:
