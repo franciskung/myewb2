@@ -7,5 +7,5 @@ class TrackingProfileForm(forms.ModelForm):
 
     class Meta:
         model = TrackingProfile
-        fields = ('first_name', 'last_name', 'chapter', 'role', 'school', 'workplace')
+        fields = ('first_name', 'last_name', 'email', 'chapter', 'role', 'school', 'workplace')
 
