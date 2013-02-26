@@ -10,7 +10,7 @@ class TrackingProfileForm(forms.ModelForm):
 
     class Meta:
         model = TrackingProfile
-        fields = ('first_name', 'last_name', 'email', 'chapter', 'role', 'school', 'workplace')
+        fields = ('first_name', 'last_name', 'email', 'chapter', 'role', 'workfield', 'school', 'graduation', 'workplace')
 
     def __init__(self, *args, **kwargs):
         instance = kwargs.get('instance', None)

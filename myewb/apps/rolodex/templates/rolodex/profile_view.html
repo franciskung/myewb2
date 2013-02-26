@@ -1,22 +1,168 @@
 {% extends 'rolodex/base.html' %}
 
+{% load avatar_tags %}
+
 {% block head_title %}{{ profile.first_name }} {{ profile.last_name }}{% endblock %}
 
 {% block body %}
 
-    <div style='text-align: center;'>
-        <h1>{{ profile.first_name }} {{ profile.last_name }}</h1>
-        <strong>{{ profile.primary_email }}</strong>
+    <style>
+        .aligntable td {
+            padding: 5px 5px 10px 5px;
+            vertical-align: top;
+        }
+        td.left {
+            text-align: right;
+        }
+        td.right {
+        }
         
+    </style>
+
+    <h1 style='text-align: center;'>{{ profile.first_name }} {{ profile.last_name }}</h1>
+
+    <div style='width: 170px; float: left; border: 1px solid #db7403; padding: 0 5px 10px;'>
+        <h2>Badges</h2>
+    </div>
+
+    <div style='width: 170px; float: right; border: 1px solid #db7403; padding: 0 5px 10px;'>
+        <h2>Flags</h2>
+    </div>
+
+    <div style='text-align: center; width: 500px; margin: 0 auto;'>
+    	<a href="{% avatar_url profile.user 500 %}" id="avatar">
+        	{% avatar profile.user 160 %}
+        </a>
+
         <br/><br/>
         
+        <strong>{{ profile.primary_email }}</strong><br/>
         <form method="get" action="{% url rolodex_edit profile.id %}">
             <input type="submit" value="Edit this record"/>
         </form>
     </div>
+    
+    <br/><br/>
 
+    <div style='border-right: 3px solid #db7403; width: 425px; float: left; padding: 0px 10px;'>
+        <h2>Contact details</h2>
 
-    <br style='clear: both;'/><br/>
+        <table border="0" class="aligntable">
+        <tr>
+            <td class="left">
+                Role / <br/>Chapter
+            </td>
+            <td clas="right">
+                {% if profile.role %}{{ profile.role }},{% endif %}<br/>
+                {% if profile.chapter %}{{ profile.chapter }}{% endif %}
+            </td>
+
+        </tr>
+        <tr>
+
+            <td class="left">
+                Email addresses
+            </td>
+            <td clas="right">
+                {% for e in profile.email_set.all %}
+                    <div style='padding-bottom: 5px;'>{{ e.email }}</div>
+                {% endfor %}
+            </td>
+
+        </tr>
+        <tr>
+            
+            <td class="left">
+                Mailing address
+            </td>
+            <td clas="right">
+                {% if profile.address_set.count %}
+                    adf
+                    {% ifnotequal profile.address_set.count 1 %}
+                        <a href="#">({{ profile.address_set.count }} more)</a>
+                    {% endifnotequal %}
+                {% else %}
+                    <em>none</em>
+                {% endif %}
+            </td>
+            
+        </tr>
+
+        {% if profile.workfield %}            
+            <tr>
+                <td class="left">
+                    Field
+                </td>
+                <td clas="right">
+                    {{ profile.workfield }}
+                </td>
+                
+            </tr>
+        {% endif %}
+        {% if profile.school %}            
+            <tr>
+                <td class="left">
+                    School
+                </td>
+                <td clas="right">
+                    {{ profile.school }}
+                    {% if profile.graduation %}
+                        <br/>
+                        <em>expected graduation: {{ profile.graduation }}
+                    {% endif %}
+                </td>
+                
+            </tr>
+        {% endif %}
+        {% if profile.workplace %}            
+            <tr>
+                <td class="left">
+                    Workplace
+                </td>
+                <td clas="right">
+                    {{ profile.workplace }}
+                </td>
+                
+            </tr>
+        {% endif %}
+        
+        <tr>
+            <td class="left">
+                Last updated
+            </td>
+            <td clas="right">
+                {{ profile.updated_by.visible_name }}<br/>
+                {{ profile.updated }}<br/>
+                (<a href="#">see full history</a>)
+            </td>
+        </tr>
+
+        <tr>
+            <td class="left">
+                Mailing history
+            </td>
+            <td clas="right">
+                <a href="#">view Mailchimp account</a>
+            </td>
+        </tr>
+
+        <tr>
+            <td class="left">
+                Donation history
+            </td>
+            <td clas="right">
+                <a href="#">view Salesforce account</a>
+            </td>
+        </tr>
+
+        </table>
+    </div>
+
+    <div style='width: 425px; float: right; padding: 0px 10px;'>
+        <h2>Interaction history</h2>
+    </div>
+
+    <br style='clear: both;'/>
 
 {% endblock %}
 

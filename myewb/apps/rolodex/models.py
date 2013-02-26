@@ -21,6 +21,8 @@ class TrackingProfile(models.Model):
     
     workplace = models.CharField(max_length=255, blank=True, null=True)
     school = models.CharField(max_length=255, blank=True, null=True)
+    workfield = models.CharField(max_length=255, blank=True, null=True, verbose_name='Field / Profession')
+    graduation = models.CharField(max_length=255, blank=True, null=True, verbose_name='Expected graduation', help_text="If a student - use mm-yyyy format")
 
     updated = models.DateTimeField(auto_now=True)
     updated_by = models.ForeignKey(User, related_name="trackingprofile_updates")
