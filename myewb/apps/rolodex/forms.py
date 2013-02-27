@@ -27,4 +27,4 @@ class TrackingProfileForm(forms.ModelForm):
 class NoteForm(forms.ModelForm):
     class Meta:
         model = Interaction
-        fields = ('interaction_type', 'pinned', 'note')
+        fields = ('interaction_type', 'visibility', 'pinned', 'note')

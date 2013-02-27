@@ -3,6 +3,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
+from django.db.models import Q
 from django.forms.models import model_to_dict
 
 from networks.models import Network
@@ -43,9 +44,13 @@ class TrackingProfile(models.Model):
         else:
             return None
             
-    def get_activities(self, page=1, per_page=15):
+    def get_activities(self, user=None, page=1, per_page=15):
+        qry = Q(visibility='anyone')
+        qry2 = Q(visibility='private') & Q(added_by=user)
+        activities = self.activity_set.filter(qry | qry2)
+        
         idx = (page - 1) * per_page
-        return self.activity_set.filter()[idx:idx+(per_page-1)]
+        return activities[idx:idx+(per_page-1)]
             
     def to_dict(self):
         d = model_to_dict(self)
@@ -118,12 +123,17 @@ class ProfileBadge(models.Model):
     removed_by = models.ForeignKey(User, related_name='unbadges')
     removed_date = models.DateTimeField(blank=True, null=True)
     
+VISIBILITY_OPTIONS = (('anyone', 'Anyone with access to the Rolodex (all staff)'),
+                      ('team', 'My team only'),
+                      ('private', 'Private - no one else can see this'))
 class Activity(models.Model):
     profile = models.ForeignKey(TrackingProfile)
     activity_type = models.CharField(max_length=255)
     date = models.DateField()
     entered = models.DateTimeField(auto_now_add=True)
     pinned = models.BooleanField(default=False)
+    visibility = models.CharField(max_length=255, choices=VISIBILITY_OPTIONS, default='anyone')
+    added_by = models.ForeignKey(User, blank=True, null=True)
     
     content_type = models.ForeignKey(ContentType, blank=True, null=True, related_name='RolodexActivity')
     object_id = models.IntegerField(blank=True, null=True)
@@ -136,8 +146,7 @@ INTERACTION_TYPES = (('call', 'Phone call'),
                      ('conversation', 'Conversation'),
                      ('note', 'Note'))
 class Interaction(Activity):
-    added_by = models.ForeignKey(User)
-    interaction_type = models.CharField(max_length=255, choices=INTERACTION_TYPES)
+    interaction_type = models.CharField(max_length=255, choices=INTERACTION_TYPES, default='note')
     note = models.TextField(blank=True, null=True)
     
     def note_trunc(self, length=125):

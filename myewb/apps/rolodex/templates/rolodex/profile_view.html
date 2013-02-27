@@ -174,7 +174,7 @@
             <input type="submit" value="Add an interaction" style='margin: -5px 0 10px 10px;'/>
         </form>
         
-        {% for activity in profile.get_activities %}
+        {% for activity in activities %}
             <div style='padding-bottom:20px;'>
                 <div style='height: 20px; width: 30px; float: right;'>
                     {% if activity.pinned %}

@@ -154,9 +154,11 @@ def profile_view(request, profile_id):
         return HttpResponseRedirect(reverse('rolodex_login'))
     
     profile = get_object_or_404(TrackingProfile, id=profile_id)
+    activities = profile.get_activities(user=request.user)
 
     return render_to_response("rolodex/profile_view.html",
-                              {'profile': profile},
+                              {'profile': profile,
+                               'activities': activities},
                               context_instance=RequestContext(request))
 
 def note_new(request, profile_id):
