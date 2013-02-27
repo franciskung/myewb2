@@ -198,3 +198,29 @@ def note_view_ajax(request, note_id):
                               {'note': note},
                               context_instance=RequestContext(request))
 
+def note_pin(request, note_id):
+    if not perm(request):
+        return HttpResponseRedirect(reverse('rolodex_login'))
+
+    note = get_object_or_none(Interaction, id=note_id)
+    
+    if not note.pinned:
+        note.pinned = True
+        note.save()
+        
+    request.user.message_set.create(message='Pinned')
+    return HttpResponseRedirect(reverse('rolodex_view', kwargs={'profile_id': note.profile.id}))
+
+def note_unpin(request, note_id):
+    if not perm(request):
+        return HttpResponseRedirect(reverse('rolodex_login'))
+
+    note = get_object_or_none(Interaction, id=note_id)
+    
+    if note.pinned:
+        note.pinned = False
+        note.save()
+        
+    request.user.message_set.create(message='Un-pinned')
+    return HttpResponseRedirect(reverse('rolodex_view', kwargs={'profile_id': note.profile.id}))
+

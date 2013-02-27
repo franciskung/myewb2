@@ -84,11 +84,11 @@
         }
         
         a.description {
-            color: #444444;
+            color: #888888;
         }
         a.description:hover {
-            color: #666666;
-/*            text-decoration: none;*/
+            color: #444444;
+            text-decoration: none;
         }
         
         #navbar {
@@ -137,6 +137,19 @@
     </div>
 </div>
     
+    {% if messages %}
+        <div id="messages" style='width: 500px; margin: 0 auto; padding-bottom: 22px;'>
+            <div style='background: #db7403; color: #ffffff; padding: 2px 5px;'>Messages</div>
+            <div style='border: 2px solid #db7403; padding: 5px;'>
+                {% for message in messages %}
+                    <div class="message">{{ message }}</div>
+                    {% if not forloop.last %}<hr/>{% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+
 <div id="mainbox">
     <div id="maincontent">
         {% block body %} 
