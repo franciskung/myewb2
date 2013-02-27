@@ -178,12 +178,12 @@
             <div style='padding-bottom:20px;'>
                 {% if activity.pinned %}**{% else %}&nbsp;&nbsp;{% endif %}
                 
-                {{ activity.date }}
+                {{ activity.date|date:'M j, Y' }}
                 
                 {% ifequal activity.activity_type 'interaction' %}
                     <strong>{{ activity.interaction.interaction_type }}</strong>
                     <a href="{% url rolodex_note_ajax activity.id %}" class="colorbox description" style='display: block; padding: 5px 0 0 20px;'>
-                        {{ activity.interaction.note|linebreaksbr }}
+                        {{ activity.interaction.note_trunc }}
                     </a>
                 
                 {% else %}
@@ -207,5 +207,6 @@
 
 {% block javascript %}
     $('.colorbox').colorbox({width: '50%',
+                             height: '50%',
                              opacity: '0.7'});
 {% endblock %}

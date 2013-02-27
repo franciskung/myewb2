@@ -2,13 +2,13 @@
     {% if note %}
         <h2>
             <strong>{{ note.interaction_type }}</strong><br/>
-            {{ note.date }} ({{ note.added_by.visible_name }})
+            {{ note.date|date:'M j, Y' }} ({{ note.added_by.visible_name }})
         </h2>
 
         {{ note.note|linebreaks }}
         
         <p>
-            <em>Entered: {{ note.entered }}
+            <em>Entered: {{ note.entered|date:'M j, Y - h:i a' }}
         </p>
     {% else %}
         Not Found.

@@ -140,6 +140,12 @@ class Interaction(Activity):
     interaction_type = models.CharField(max_length=255, choices=INTERACTION_TYPES)
     note = models.TextField(blank=True, null=True)
     
+    def note_trunc(self, length=125):
+        if len(self.note) < length:
+            return self.note
+            
+        return self.note[0:length].rsplit(' ', 1)[0] + '...'
+    
 class Event(models.Model):
     name = models.CharField(max_length=255)
     date = models.DateField()
