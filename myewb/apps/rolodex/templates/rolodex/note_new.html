@@ -1,0 +1,20 @@
+{% extends 'rolodex/profile_view.html' %}
+
+{% load uni_form_tags %}
+
+{% block rolodex_view %}
+    <h2>Add a new interaction</h2>
+    
+    <form class="uniForm" method="post" action="">
+        <fieldset class="inlineLabels">
+            {{ form|as_uni_form }}
+
+			<label for="id_save"></label>
+			<input type="submit" id="id_save" value="Save" />
+		    
+        </fieldset>
+    </form>
+    
+
+{% endblock %}
+

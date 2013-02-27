@@ -30,9 +30,11 @@ class TrackingProfile(models.Model):
     flags = models.ManyToManyField('Flag', through='ProfileFlag')
     badges = models.ManyToManyField('Badge', through='ProfileBadge')
 
-    # plus these reverse relation:
+    # plus these reverse relations:
     #   email_set
     #   address_set
+    #   activity_set
+    #   profilehistory_set
     
     def primary_email(self):
         email = self.email_set.filter(primary=True)
@@ -40,6 +42,10 @@ class TrackingProfile(models.Model):
             return email[0].email
         else:
             return None
+            
+    def get_activities(self, page=1, per_page=15):
+        idx = (page - 1) * per_page
+        return self.activity_set.filter()[idx:idx+(per_page-1)]
             
     def to_dict(self):
         d = model_to_dict(self)
@@ -122,6 +128,9 @@ class Activity(models.Model):
     content_type = models.ForeignKey(ContentType, blank=True, null=True, related_name='RolodexActivity')
     object_id = models.IntegerField(blank=True, null=True)
     content_object = generic.GenericForeignKey('content_type', 'object_id')
+    
+    class Meta:
+        ordering = ('-pinned', '-date',)
 
 INTERACTION_TYPES = (('call', 'Phone call'),
                      ('conversation', 'Conversation'),

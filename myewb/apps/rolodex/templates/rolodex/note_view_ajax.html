@@ -1,0 +1,16 @@
+<div style='padding: 25px;'>
+    {% if note %}
+        <h2>
+            <strong>{{ note.interaction_type }}</strong><br/>
+            {{ note.date }} ({{ note.added_by.visible_name }})
+        </h2>
+
+        {{ note.note|linebreaks }}
+        
+        <p>
+            <em>Entered: {{ note.entered }}
+        </p>
+    {% else %}
+        Not Found.
+    {% endif %}
+</div>

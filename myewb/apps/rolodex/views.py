@@ -14,11 +14,17 @@ from account.views import login as pinaxlogin
 from datetime import datetime
 from siteutils.shortcuts import get_object_or_none
 
-from rolodex.models import TrackingProfile, Email, ProfileHistory
-from rolodex.forms import TrackingProfileForm
+from rolodex.models import TrackingProfile, Email, ProfileHistory, Interaction
+from rolodex.forms import TrackingProfileForm, NoteForm
+
+def perm(request):
+    if request.user.is_authenticated() and request.user.has_module_perms("rolodex"):
+        return True
+    else:
+        return False
 
 def home(request):
-    if not request.user.is_authenticated():
+    if not perm(request):
         return HttpResponseRedirect(reverse('rolodex_login'))
         
     return render_to_response("rolodex/home.html",
@@ -29,8 +35,8 @@ def login(request, form_class=EmailLoginForm,
         template_name="rolodex/login.html", success_url=None,
         associate_openid=False, openid_success_url=None, url_required=False):
         
-    if request.user.is_authenticated():
-        return HttpResponseRedirect(reverse('rolodex_home'))
+    if not perm(request):
+        return HttpResponseRedirect(reverse('rolodex_login'))
     
     if not success_url:
         success_url = request.GET.get("url", None)
@@ -48,7 +54,7 @@ def logout(request):
     return HttpResponseRedirect(reverse('rolodex_login'))
 
 def search(request):
-    if not request.user.is_authenticated():
+    if not perm(request):
         return HttpResponseRedirect(reverse('rolodex_login'))
         
     search = request.POST.get('search', None)
@@ -82,7 +88,7 @@ def search(request):
                               context_instance=RequestContext(request))
 
 def profile_edit(request, profile_id=None):
-    if not request.user.is_authenticated():
+    if not perm(request):
         return HttpResponseRedirect(reverse('rolodex_login'))
         
     profile = None
@@ -144,6 +150,8 @@ def profile_edit(request, profile_id=None):
                               context_instance=RequestContext(request))
 
 def profile_view(request, profile_id):
+    if not perm(request):
+        return HttpResponseRedirect(reverse('rolodex_login'))
     
     profile = get_object_or_404(TrackingProfile, id=profile_id)
 
@@ -151,4 +159,42 @@ def profile_view(request, profile_id):
                               {'profile': profile},
                               context_instance=RequestContext(request))
 
+def note_new(request, profile_id):
+    if not perm(request):
+        return HttpResponseRedirect(reverse('rolodex_login'))
+
+    profile = get_object_or_404(TrackingProfile, id=profile_id)
+
+    if request.method == 'POST':
+        form = NoteForm(request.POST)
+        
+        if form.is_valid():
+            note = form.save(commit=False)
+            
+            note.profile = profile
+            note.activity_type = 'interaction'
+            note.date = datetime.now()
+            note.added_by = request.user
+            note.save()
+            
+            request.user.message_set.create(message='New interaction saved')
+            return HttpResponseRedirect(reverse('rolodex_view', kwargs={'profile_id': profile.id}))
+            
+    else:
+        form = NoteForm()
+        
+    return render_to_response("rolodex/note_new.html",
+                              {'form': form,
+                               'profile': profile},
+                              context_instance=RequestContext(request))
+
+def note_view_ajax(request, note_id):
+    if not perm(request):
+        return HttpResponseRedirect(reverse('rolodex_login'))
+
+    note = get_object_or_none(Interaction, id=note_id)
+    
+    return render_to_response("rolodex/note_view_ajax.html",
+                              {'note': note},
+                              context_instance=RequestContext(request))
 
