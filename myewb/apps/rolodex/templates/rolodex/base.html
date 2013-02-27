@@ -122,9 +122,13 @@
 <body>
 
 <div id="navbar">
+    <form method="post" action="{% url rolodex_search %}">
     <h1>
         <a href="{% url rolodex_home %}">EWB ROLODEX</a>
+        <input type="text" name="search" style='margin-left: 50px; position: relative; top: -3px;'/>
+        <input type="submit" value="search" style='position: relative; top: -3px;'/>
     </h1>
+    </form>
 
     <div id="logoutbox">
         {% if user.is_authenticated %}
