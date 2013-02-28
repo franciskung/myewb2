@@ -37,6 +37,9 @@ class TrackingProfile(models.Model):
     #   activity_set
     #   profilehistory_set
     
+    def __unicode__(self):
+        return "%s %s" % (self.first_name, self.last_name)
+    
     def primary_email(self):
         email = self.email_set.filter(primary=True)
         if email:
@@ -51,7 +54,13 @@ class TrackingProfile(models.Model):
         
         idx = (page - 1) * per_page
         return activities[idx:idx+(per_page-1)]
-            
+        
+    def get_flags(self):
+        return self.profileflag_set.filter(active=True)
+        
+    def get_badges(self):
+        return self.profilebadge_set.filter(active=True)
+        
     def to_dict(self):
         d = model_to_dict(self)
         d['emails'] = [e.email for e in self.email_set.all()]
@@ -68,6 +77,9 @@ class Email(models.Model):
     class Meta:
         ordering = ('-primary', '-email')
 
+    def __unicode__(self):
+        return self.email
+    
 class Address(models.Model):
     address = models.TextField()
     profile = models.ForeignKey(TrackingProfile)
@@ -77,6 +89,9 @@ class Address(models.Model):
     class Meta:
         ordering = ('-primary', '-updated')
 
+    def __unicode__(self):
+        return self.address
+    
 class Donation(models.Model):
     profile = models.ForeignKey(TrackingProfile)
     date = models.DateTimeField()
@@ -93,6 +108,12 @@ class Flag(models.Model):
     name = models.CharField(max_length=255)
     colour = models.CharField(max_length=255, choices=FLAG_COLOURS)
     
+    def __unicode__(self):
+        return self.name
+    
+    class Meta:
+        ordering = ('name',)
+    
 class ProfileFlag(models.Model):
     profile = models.ForeignKey(TrackingProfile)
     flag = models.ForeignKey(Flag)
@@ -100,7 +121,7 @@ class ProfileFlag(models.Model):
     active = models.BooleanField(default=True)
     flagged_by = models.ForeignKey(User, related_name='flags')
     flagged_date = models.DateTimeField(auto_now_add=True)
-    unflagged_by = models.ForeignKey(User, related_name='unflags')
+    unflagged_by = models.ForeignKey(User, related_name='unflags', blank=True, null=True)
     unflagged_date = models.DateTimeField(blank=True, null=True)
     
 BADGE_COLOURS = (('red', 'red'),
@@ -113,6 +134,12 @@ class Badge(models.Model):
     name = models.CharField(max_length=255)
     colour = models.CharField(max_length=255, choices=BADGE_COLOURS)
     
+    class Meta:
+        ordering = ('name',)
+        
+    def __unicode__(self):
+        return self.name
+    
 class ProfileBadge(models.Model):
     profile = models.ForeignKey(TrackingProfile)
     badge = models.ForeignKey(Badge)
@@ -120,7 +147,7 @@ class ProfileBadge(models.Model):
     active = models.BooleanField(default=True)
     added_by = models.ForeignKey(User, related_name='badges')
     added_date = models.DateTimeField(auto_now_add=True)
-    removed_by = models.ForeignKey(User, related_name='unbadges')
+    removed_by = models.ForeignKey(User, related_name='unbadges', blank=True, null=True)
     removed_date = models.DateTimeField(blank=True, null=True)
     
 VISIBILITY_OPTIONS = (('anyone', 'Anyone with access to the Rolodex (all staff)'),

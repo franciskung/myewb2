@@ -1,0 +1,14 @@
+{% load uni_form_tags %}
+
+<h2>Add a past role</h2>
+
+<form class="uniForm" method="post" action="{% url rolodex_badge profile.id %}">
+    <fieldset class="inlineLabels">
+        {{ form|as_uni_form }}
+
+		<label for="id_save"></label>
+		<input type="submit" id="id_save" value="Save" />
+	    
+    </fieldset>
+</form>
+

@@ -14,8 +14,8 @@ from account.views import login as pinaxlogin
 from datetime import datetime
 from siteutils.shortcuts import get_object_or_none
 
-from rolodex.models import TrackingProfile, Email, ProfileHistory, Interaction
-from rolodex.forms import TrackingProfileForm, NoteForm
+from rolodex.models import TrackingProfile, Email, ProfileHistory, Interaction, ProfileFlag, ProfileBadge
+from rolodex.forms import TrackingProfileForm, NoteForm, FlagForm, BadgeForm
 
 def perm(request):
     if request.user.is_authenticated() and request.user.has_module_perms("rolodex"):
@@ -225,4 +225,83 @@ def note_unpin(request, note_id):
         
     request.user.message_set.create(message='Un-pinned')
     return HttpResponseRedirect(reverse('rolodex_view', kwargs={'profile_id': note.profile.id}))
+
+def flag(request, profile_id):
+    if not perm(request):
+        return HttpResponseRedirect(reverse('rolodex_login'))
+
+    profile = get_object_or_404(TrackingProfile, id=profile_id)
+    
+    if request.method == 'POST':
+        form = FlagForm(request.POST)
+        
+        if form.is_valid():
+            flag = form.save(commit=False)
+            
+            flag.profile = profile
+            flag.flagged_by = request.user
+            flag.save()
+            
+            return HttpResponseRedirect(reverse('rolodex_view', kwargs={'profile_id': profile.id}))
+            
+    else:
+        form = FlagForm()
+        
+    return render_to_response("rolodex/flag.html",
+                              {'form': form,
+                               'profile': profile},
+                              context_instance=RequestContext(request))
+
+def unflag(request, badge_id):
+    if not perm(request):
+        return HttpResponseRedirect(reverse('rolodex_login'))
+
+    flag = get_object_or_404(ProfileFlag, id=flag_id)
+    
+    flag.unflagged_by = request.user
+    flag.unflagged_date = datetime.now()
+    flag.active = False
+    flag.save()
+            
+    return HttpResponseRedirect(reverse('rolodex_view', kwargs={'profile_id': badge.profile.id}))
+
+
+def badge(request, profile_id):
+    if not perm(request):
+        return HttpResponseRedirect(reverse('rolodex_login'))
+
+    profile = get_object_or_404(TrackingProfile, id=profile_id)
+    
+    if request.method == 'POST':
+        form = BadgeForm(request.POST)
+        
+        if form.is_valid():
+            badge = form.save(commit=False)
+            
+            badge.profile = profile
+            badge.added_by = request.user
+            badge.save()
+            
+            return HttpResponseRedirect(reverse('rolodex_view', kwargs={'profile_id': profile.id}))
+            
+    else:
+        form = BadgeForm()
+        
+    return render_to_response("rolodex/badge.html",
+                              {'form': form,
+                               'profile': profile},
+                              context_instance=RequestContext(request))
+
+def unbadge(request, badge_id):
+    if not perm(request):
+        return HttpResponseRedirect(reverse('rolodex_login'))
+
+    badge = get_object_or_404(ProfileBadge, id=badge_id)
+    
+    badge.removed_by = request.user
+    badge.removed_date = datetime.now()
+    badge.active = False
+    badge.save()
+            
+    return HttpResponseRedirect(reverse('rolodex_view', kwargs={'profile_id': badge.profile.id}))
 

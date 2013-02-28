@@ -3,7 +3,7 @@ from django import forms
 
 from siteutils.shortcuts import get_object_or_none
 
-from rolodex.models import TrackingProfile, Email, Interaction
+from rolodex.models import TrackingProfile, Email, Interaction, ProfileFlag, ProfileBadge
 
 class TrackingProfileForm(forms.ModelForm):
     email = forms.EmailField(required=False)
@@ -28,3 +28,15 @@ class NoteForm(forms.ModelForm):
     class Meta:
         model = Interaction
         fields = ('interaction_type', 'visibility', 'pinned', 'note')
+        
+class FlagForm(forms.ModelForm):
+    class Meta:
+        model = ProfileFlag
+        fields = ('flag', 'note')
+        
+class BadgeForm(forms.ModelForm):
+    class Meta:
+        model = ProfileBadge
+        fields = ('badge', 'note')
+        
+

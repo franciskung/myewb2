@@ -23,10 +23,24 @@
 
     <div style='width: 170px; float: left; border-right: 1px solid #db7403; padding: 0 15px; text-align: right;'>
         <h2>Past</h2>
+        
+        {% for badge in profile.get_badges %}
+            {{ badge.badge }} (<a href="{% url rolodex_unbadge badge.id %}">x</a>)<br/>
+        {% endfor %}
+        
+        <br/>
+        <a href="{% url rolodex_badge profile.id %}" class="colorbox">add a role</a>
     </div>
 
     <div style='width: 170px; float: right; border-left: 1px solid #db7403; padding: 0 15px;'>
         <h2>Flags</h2>
+        
+        {% for flag in profile.get_flags %}
+            (<a href="{% url rolodex_unflag flag.id %}">x</a>) {{ flag.flag }}<br/>
+        {% endfor %}
+        
+        <br/>
+        <a href="{% url rolodex_flag profile.id %}" class="colorbox">add a flag</a>
     </div>
 
     <div style='text-align: center; width: 500px; margin: 0 auto;'>

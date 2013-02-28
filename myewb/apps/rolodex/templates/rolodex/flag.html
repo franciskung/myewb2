@@ -1,0 +1,15 @@
+{% load uni_form_tags %}
+
+
+<h2>Add a flag</h2>
+
+<form class="uniForm" method="post" action="{% url rolodex_flag profile.id %}">
+    <fieldset class="inlineLabels">
+        {{ form|as_uni_form }}
+
+		<label for="id_save"></label>
+		<input type="submit" id="id_save" value="Save" />
+	    
+    </fieldset>
+</form>
+
