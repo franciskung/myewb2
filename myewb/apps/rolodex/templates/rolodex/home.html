@@ -3,6 +3,11 @@
 {% block head_title %}Home{% endblock %}
 
 {% block body %}
+    <div style='float: right; width: 250px; border: 1px solid; padding: 0 10px 10px; margin-top: 1.5em;'>
+        <h2>Recently Viewed:</h2>
+        <br/><br/>
+    </div>
+    
     <p>
         Welcome to EWB's member database!
     </p>
@@ -15,8 +20,19 @@
     <br/>
     
     <h2>Browse a list:</h2>
-    (coming soon)
-    <br/><br/>
+    <table border="0">
+    <tr><td style='vertical-align: top;'>
+        <strong>Flags</strong><br/>
+        {% for flag in flags %}
+            <a href="{% url rolodex_browse_flags flag.id %}">{{ flag }}</a><br/>
+        {% endfor %}
+    </td><td style='padding-left: 25px; vertical-align: top;'>
+        <strong>Roles</strong><br/>
+        {% for badge in badges %}
+            <a href="{% url rolodex_browse_badges badge.id %}">{{ badge }}</a><br/>
+        {% endfor %}
+    </td></tr></table>
+    <br/>
 
     <h2>Or, run a query:</h2>
     (coming soon)

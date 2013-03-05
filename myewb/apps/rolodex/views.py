@@ -14,7 +14,7 @@ from account.views import login as pinaxlogin
 from datetime import datetime
 from siteutils.shortcuts import get_object_or_none
 
-from rolodex.models import TrackingProfile, Email, ProfileHistory, Interaction, ProfileFlag, ProfileBadge
+from rolodex.models import TrackingProfile, Email, ProfileHistory, Interaction, ProfileFlag, ProfileBadge, Flag, Badge
 from rolodex.forms import TrackingProfileForm, NoteForm, FlagForm, BadgeForm
 
 def perm(request):
@@ -27,16 +27,17 @@ def home(request):
     if not perm(request):
         return HttpResponseRedirect(reverse('rolodex_login'))
         
+    badges = Badge.objects.all()
+    flags = Flag.objects.all()
+        
     return render_to_response("rolodex/home.html",
-                              {},
+                              {'flags': flags,
+                               'badges': badges},
                               context_instance=RequestContext(request))
 
 def login(request, form_class=EmailLoginForm, 
         template_name="rolodex/login.html", success_url=None,
         associate_openid=False, openid_success_url=None, url_required=False):
-        
-    if not perm(request):
-        return HttpResponseRedirect(reverse('rolodex_login'))
     
     if not success_url:
         success_url = request.GET.get("url", None)
@@ -305,3 +306,9 @@ def unbadge(request, badge_id):
             
     return HttpResponseRedirect(reverse('rolodex_view', kwargs={'profile_id': badge.profile.id}))
 
+def browse_flags(request, flag_id):
+    return HttpResponseRedirect(reverse('rolodex_home'))
+    
+def browse_badges(request, badge_id):
+    return HttpResponseRedirect(reverse('rolodex_home'))
+    

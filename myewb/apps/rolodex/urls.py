@@ -19,5 +19,7 @@ urlpatterns = patterns('rolodex.views',
     url(r'^unflag/(?P<flag_id>\d+)/$', view='unflag', name="rolodex_unflag"),
     url(r'^badge/(?P<profile_id>\d+)/$', view='badge', name="rolodex_badge"),
     url(r'^unbadge/(?P<badge_id>\d+)/$', view='unbadge', name="rolodex_unbadge"),
+    url(r'^browse/flags/(?P<flag_id>\d+)/$', view='browse_flags', name="rolodex_browse_flags"),
+    url(r'^browse/badges/(?P<badge_id>\d+)/$', view='browse_badges', name="rolodex_browse_badges"),
 
 )
