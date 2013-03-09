@@ -11,6 +11,8 @@ from profiles.models import MemberProfile
 from datetime import date, datetime
 
 from siteutils.shortcuts import get_object_or_none
+from siteutils.models import Address as MyewbAddress
+from emailconfirmation.models import EmailAddress as MyewbEmail
 
 class TrackingProfile(models.Model):
     user = models.ForeignKey(User, blank=True, null=True)
@@ -44,8 +46,21 @@ class TrackingProfile(models.Model):
     
     def primary_email(self):
         email = self.email_set.filter(primary=True)
+        if not email:
+            email = self.email_set.all()
+            
         if email:
             return email[0].email
+        else:
+            return None
+            
+    def primary_address(self):
+        address = self.address_set.filter(primary=True)
+        if not address:
+            address = self.address_set.all()
+
+        if address:
+            return address[0].address
         else:
             return None
             
@@ -90,7 +105,8 @@ class Email(models.Model):
     email = models.EmailField()
     profile = models.ForeignKey(TrackingProfile)
     primary = models.BooleanField(default=False)
-    updated = models.DateTimeField()
+    updated = models.DateTimeField(auto_now=True)
+    myewbemail = models.ForeignKey(MyewbEmail, null=True, blank=True, related_name='rolodexemail')
     
     class Meta:
         ordering = ('-primary', '-email')
@@ -103,6 +119,7 @@ class Address(models.Model):
     profile = models.ForeignKey(TrackingProfile)
     primary = models.BooleanField(default=False)
     updated = models.DateTimeField(auto_now=True)
+    myewbaddress = models.ForeignKey(MyewbAddress, null=True, blank=True, related_name='rolodexaddress')
 
     class Meta:
         ordering = ('-primary', '-updated')

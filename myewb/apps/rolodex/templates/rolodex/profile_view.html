@@ -96,7 +96,7 @@
             </td>
             <td clas="right">
                 {% if profile.address_set.count %}
-                    adf
+                    {{ profile.primary_address|linebreaksbr }}
                     {% ifnotequal profile.address_set.count 1 %}
                         <a href="#">({{ profile.address_set.count }} more)</a>
                     {% endifnotequal %}
