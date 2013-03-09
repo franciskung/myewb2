@@ -175,6 +175,7 @@ INTERACTION_TYPES = (('call', 'Phone call'),
 class Interaction(Activity):
     interaction_type = models.CharField(max_length=255, choices=INTERACTION_TYPES, default='note')
     note = models.TextField(blank=True, null=True)
+    edited = models.DateTimeField(blank=True, null=True)
     
     def note_trunc(self, length=125):
         if len(self.note) < length:

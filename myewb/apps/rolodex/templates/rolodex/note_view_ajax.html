@@ -4,11 +4,20 @@
             <strong>{{ note.interaction_type }}</strong><br/>
             {{ note.date|date:'M j, Y' }} ({{ note.added_by.visible_name }})
         </h2>
+        
+        <p>
+            <a href="{% url rolodex_interaction_edit note.id %}">Edit this note</a>
+        </p>
 
         {{ note.note|linebreaks }}
         
+        {% if note.edited %}
+            <p>
+                <em>Last edited: {{ note.edited|date:'M j, Y - h:i a' }}</em><br/>
+            </p>
+        {% endif %}
         <p>
-            <em>Entered: {{ note.entered|date:'M j, Y - h:i a' }}
+            <em>Entered: {{ note.entered|date:'M j, Y - h:i a' }}</em>
         </p>
     {% else %}
         Not Found.

@@ -172,14 +172,24 @@ def profile_view(request, profile_id):
                                'activities': activities},
                               context_instance=RequestContext(request))
 
-def note_new(request, profile_id):
+def note_edit(request, profile_id=None, note_id=None):
     if not perm(request):
         return HttpResponseRedirect(reverse('rolodex_login'))
 
-    profile = get_object_or_404(TrackingProfile, id=profile_id)
+    if note_id:
+        note = get_object_or_none(Interaction, id=note_id)
+        profile = note.profile
+        editing = True
+    else:
+        note = None
+        profile = get_object_or_404(TrackingProfile, id=profile_id)
+        editing = False
 
     if request.method == 'POST':
-        form = NoteForm(request.POST)
+        if note:
+            form = NoteForm(request.POST, instance=note)
+        else:
+            form = NoteForm(request.POST)
         
         if form.is_valid():
             note = form.save(commit=False)
@@ -188,15 +198,22 @@ def note_new(request, profile_id):
             note.activity_type = 'interaction'
             note.date = datetime.now()
             note.added_by = request.user
+            
+            if editing:
+                note.edited = datetime.now()
+                
             note.save()
             
             request.user.message_set.create(message='New interaction saved')
             return HttpResponseRedirect(reverse('rolodex_view', kwargs={'profile_id': profile.id}))
             
     else:
-        form = NoteForm()
+        if note:
+            form = NoteForm(instance=note)
+        else:
+            form = NoteForm()
         
-    return render_to_response("rolodex/note_new.html",
+    return render_to_response("rolodex/note_edit.html",
                               {'form': form,
                                'profile': profile},
                               context_instance=RequestContext(request))
