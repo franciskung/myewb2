@@ -1,6 +1,7 @@
 {% extends 'rolodex/base.html' %}
 
 {% load avatar_tags %}
+{% load pagination_tags %}
 
 {% block head_title %}Search{% endblock %}
 
@@ -22,6 +23,8 @@
         <strong>Your search for <em>{{ search }}</em>:</strong>
     </p>
     
+    {% autopaginate results %}
+
     {% for profile in results %}
         <div class="profile clearfix" style="height: 35px; clear: left;">
         	<div style="float: left;">{% avatar profile.user 30 %}</div>
@@ -34,8 +37,8 @@
         Sorry, no results
     {% endfor %}
 
+    {% paginate %}
     
-
     <br style='clear: both;'/><br/>
 
 {% endblock %}

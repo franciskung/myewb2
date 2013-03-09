@@ -311,8 +311,21 @@ def unbadge(request, badge_id):
     return HttpResponseRedirect(reverse('rolodex_view', kwargs={'profile_id': badge.profile.id}))
 
 def browse_flags(request, flag_id):
-    return HttpResponseRedirect(reverse('rolodex_home'))
+    flag = get_object_or_404(Flag, id=flag_id)
+    results = ProfileFlag.objects.filter(flag=flag, active=True).order_by('-flagged_date')
     
+    return render_to_response("rolodex/browse_flags.html",
+                              {'flag': flag,
+                               'results': results},
+                              context_instance=RequestContext(request))
+
 def browse_badges(request, badge_id):
-    return HttpResponseRedirect(reverse('rolodex_home'))
+    badge = get_object_or_404(Badge, id=badge_id)
+    results = ProfileBadge.objects.filter(badge=badge, active=True).order_by('-added_date')
     
+    return render_to_response("rolodex/browse_badges.html",
+                              {'badge': badge,
+                               'results': results},
+                              context_instance=RequestContext(request))
+
+
