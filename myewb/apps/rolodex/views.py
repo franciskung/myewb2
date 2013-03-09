@@ -14,7 +14,7 @@ from account.views import login as pinaxlogin
 from datetime import datetime
 from siteutils.shortcuts import get_object_or_none
 
-from rolodex.models import TrackingProfile, Email, ProfileHistory, Interaction, ProfileFlag, ProfileBadge, Flag, Badge, ProfileView
+from rolodex.models import TrackingProfile, Email, ProfileHistory, Interaction, ProfileFlag, ProfileBadge, Flag, Badge, ProfileView, Activity
 from rolodex.forms import TrackingProfileForm, NoteForm, FlagForm, BadgeForm
 
 def perm(request):
@@ -134,6 +134,12 @@ def profile_edit(request, profile_id=None):
                                                         revision=profile_pickle)
                 
 
+            # log into interaction history
+            log = Activity.objects.create(profile=profile,
+                                          activity_type='edit',
+                                          date=datetime.now(),
+                                          added_by=request.user)
+
             # display success message            
             if profile:
                 request.user.message_set.create(message='Record updated')
@@ -247,6 +253,12 @@ def flag(request, profile_id):
             flag.flagged_by = request.user
             flag.save()
             
+            log = Activity.objects.create(profile=profile,
+                                          activity_type='flag',
+                                          date=datetime.now(),
+                                          added_by=request.user,
+                                          content_object=flag)
+            
             return HttpResponseRedirect(reverse('rolodex_view', kwargs={'profile_id': profile.id}))
             
     else:
@@ -257,7 +269,7 @@ def flag(request, profile_id):
                                'profile': profile},
                               context_instance=RequestContext(request))
 
-def unflag(request, badge_id):
+def unflag(request, flag_id):
     if not perm(request):
         return HttpResponseRedirect(reverse('rolodex_login'))
 
@@ -268,7 +280,13 @@ def unflag(request, badge_id):
     flag.active = False
     flag.save()
             
-    return HttpResponseRedirect(reverse('rolodex_view', kwargs={'profile_id': badge.profile.id}))
+    log = Activity.objects.create(profile=flag.profile,
+                                  activity_type='unflag',
+                                  date=datetime.now(),
+                                  added_by=request.user,
+                                  content_object=flag)
+    
+    return HttpResponseRedirect(reverse('rolodex_view', kwargs={'profile_id': flag.profile.id}))
 
 
 def badge(request, profile_id):
@@ -286,6 +304,12 @@ def badge(request, profile_id):
             badge.profile = profile
             badge.added_by = request.user
             badge.save()
+            
+            log = Activity.objects.create(profile=profile,
+                                          activity_type='badge',
+                                          date=datetime.now(),
+                                          added_by=request.user,
+                                          content_object=badge)
             
             return HttpResponseRedirect(reverse('rolodex_view', kwargs={'profile_id': profile.id}))
             
@@ -308,6 +332,12 @@ def unbadge(request, badge_id):
     badge.active = False
     badge.save()
             
+    log = Activity.objects.create(profile=badge.profile,
+                                  activity_type='unbadge',
+                                  date=datetime.now(),
+                                  added_by=request.user,
+                                  content_object=badge)
+    
     return HttpResponseRedirect(reverse('rolodex_view', kwargs={'profile_id': badge.profile.id}))
 
 def browse_flags(request, flag_id):

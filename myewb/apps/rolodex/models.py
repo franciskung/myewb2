@@ -167,7 +167,7 @@ class Activity(models.Model):
     content_object = generic.GenericForeignKey('content_type', 'object_id')
     
     class Meta:
-        ordering = ('-pinned', '-date',)
+        ordering = ('-pinned', '-date','-entered')
 
 INTERACTION_TYPES = (('call', 'Phone call'),
                      ('conversation', 'Conversation'),

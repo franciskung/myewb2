@@ -188,36 +188,64 @@
             <input type="submit" value="Add an interaction" style='margin: -5px 0 10px 10px;'/>
         </form>
         
+        <table border="0">
         {% for activity in activities %}
-            <div style='padding-bottom:20px;'>
-                <div style='height: 20px; width: 30px; float: right;'>
+            <tr>
+                <td style='padding-right: 10px;'>{{ activity.date|date:'M j, Y' }}</td>
+                <td style='padding-bottom: 10px;'>
+                    {% ifequal activity.activity_type 'interaction' %}
+                        <strong>{{ activity.interaction.interaction_type }}</strong><br/>
+                        <a href="{% url rolodex_note_ajax activity.id %}" class="colorbox description">
+                            {{ activity.interaction.note_trunc }}
+                        </a>
+                    {% endifequal %}
+                    
+                    <em>
+                    {% ifequal activity.activity_type 'flag' %}
+                        Flagged: {{ activity.content_object.flag.name }}
+                    {% endifequal %}
+                    
+                    {% ifequal activity.activity_type 'unflag' %}
+                        Unflagged: {{ activity.content_object.flag.name }}
+                    {% endifequal %}
+                    
+                    {% ifequal activity.activity_type 'badge' %}
+                        Role added: {{ activity.content_object.badge.name }}
+                    {% endifequal %}
+                    
+                    {% ifequal activity.activity_type 'unbadge' %}
+                        Role removed: {{ activity.content_object.badge.name }}
+                    {% endifequal %}
+                    
+                    {% ifequal activity.activity_type 'edit' %}
+                        Edited by {{ activity.added_by.visible_name }}
+                    {% endifequal %}
+                    </em>
+                </td>
+                <td style='padding-left: 10px;'>
+                {% ifequal activity.activity_type 'interaction' %}
                     {% if activity.pinned %}
                         (<a href="{% url rolodex_note_unpin activity.id %}" class="unpin">unpin</a>)
                     {% else %}
                         (<a href="{% url rolodex_note_pin activity.id %}" class="pin">pin</a>)
                     {% endif %}
-                </div>
-                
-                {{ activity.date|date:'M j, Y' }}
-                
-                {% ifequal activity.activity_type 'interaction' %}
-                    <strong>{{ activity.interaction.interaction_type }}</strong>
-                    <div style='padding: 5px 0 0 20px;'>
-                        <a href="{% url rolodex_note_ajax activity.id %}" class="colorbox description">
-                            {{ activity.interaction.note_trunc }}
-                        </a>
-                    </div>
-                    </a>
-                
                 {% else %}
-                    {% if activity.content_object %}
-                        <a href="#">{{ activity.activity_type }}</a>
-                    {% else %}
-                        {{ activity.activity_type }}
-                    {% endif %}
+                    &nbsp;
                 {% endifequal %}
-            </div>
-        {% endfor %} 
+                </td>
+            </tr>
+
+            {% comment %}                
+            {% else %}
+                {% if activity.content_object %}
+                    <a href="#">{{ activity.activity_type }}</a>
+                {% else %}
+                    {{ activity.activity_type }}
+                {% endif %}
+            {% endifequal %}
+            {% endcomment %}
+        {% endfor %}
+        </table>
 
 
     </div>
