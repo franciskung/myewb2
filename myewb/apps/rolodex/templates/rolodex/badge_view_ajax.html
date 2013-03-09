@@ -5,6 +5,10 @@
             {{ badge.added_date|date:'M j, Y' }} ({{ badge.added_by.visible_name }})
         </h2>
 
+        <p>        
+            [<a href="{% url rolodex_unbadge badge.id %}">Remove role</a>]
+        </p>
+
         {{ badge.note|linebreaks }}
         
      {% else %}

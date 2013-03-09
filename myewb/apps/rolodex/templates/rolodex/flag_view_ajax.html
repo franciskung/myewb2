@@ -4,6 +4,10 @@
             <strong>{{ flag.flag.name }}</strong><br/>
             {{ flag.flagged_date|date:'M j, Y' }} ({{ flag.flagged_by.visible_name }})
         </h2>
+        
+        <p>
+            [<a href="{% url rolodex_unflag flag.id %}">Remove flag</a>]
+        </p>
 
         {{ flag.note|linebreaks }}
         
