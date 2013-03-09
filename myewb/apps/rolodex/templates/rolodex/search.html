@@ -1,5 +1,7 @@
 {% extends 'rolodex/base.html' %}
 
+{% load avatar_tags %}
+
 {% block head_title %}Search{% endblock %}
 
 {% block body %}
@@ -21,11 +23,13 @@
     </p>
     
     {% for profile in results %}
-        <div style='padding-bottom: 10px;'>
-            <a href="{% url rolodex_view profile.id %}">{{ profile.last_name }}, {{ profile.first_name }}</a>
-            ({{ profile.primary_email }})
-        </div>
-        
+        <div class="profile clearfix" style="height: 35px; clear: left;">
+        	<div style="float: left;">{% avatar profile.user 30 %}</div>
+        	<div style="padding: 5px; margin-top: 14px; margin-left: 40px;">
+                <a href="{% url rolodex_view profile.id %}">{{ profile.first_name }} {{ profile.last_name }}</a> ({{ profile.primary_email }})
+            </div>
+    	</div>
+
     {% empty %}
         Sorry, no results
     {% endfor %}

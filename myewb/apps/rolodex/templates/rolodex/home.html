@@ -1,11 +1,22 @@
 {% extends 'rolodex/base.html' %}
 
+{% load avatar_tags %}
+
+
 {% block head_title %}Home{% endblock %}
 
 {% block body %}
     <div style='float: right; width: 250px; border: 1px solid; padding: 0 10px 10px; margin-top: 1.5em;'>
         <h2>Recently Viewed:</h2>
-        <br/><br/>
+
+        {% for profile in recent %}
+	        <div class="profile clearfix" style="height: 35px; clear: left;">
+            	<div style="float: left;">{% avatar profile.user 30 %}</div>
+            	<div style="padding: 5px; margin-top: 14px; margin-left: 40px;">
+	                <a href="{% url rolodex_view profile.id %}">{{ profile.user.visible_name }}</a>
+	            </div>
+        	</div>
+        {% endfor %}
     </div>
     
     <p>

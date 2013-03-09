@@ -14,7 +14,7 @@ from account.views import login as pinaxlogin
 from datetime import datetime
 from siteutils.shortcuts import get_object_or_none
 
-from rolodex.models import TrackingProfile, Email, ProfileHistory, Interaction, ProfileFlag, ProfileBadge, Flag, Badge
+from rolodex.models import TrackingProfile, Email, ProfileHistory, Interaction, ProfileFlag, ProfileBadge, Flag, Badge, ProfileView
 from rolodex.forms import TrackingProfileForm, NoteForm, FlagForm, BadgeForm
 
 def perm(request):
@@ -29,10 +29,12 @@ def home(request):
         
     badges = Badge.objects.all()
     flags = Flag.objects.all()
+    recent = ProfileView.objects.filter(user=request.user).order_by('-date')[:20]
         
     return render_to_response("rolodex/home.html",
                               {'flags': flags,
-                               'badges': badges},
+                               'badges': badges,
+                               'recent': recent},
                               context_instance=RequestContext(request))
 
 def login(request, form_class=EmailLoginForm, 
@@ -156,6 +158,8 @@ def profile_view(request, profile_id):
     
     profile = get_object_or_404(TrackingProfile, id=profile_id)
     activities = profile.get_activities(user=request.user)
+    
+    ProfileView.objects.create(profile=profile, user=request.user, ip=request.META['REMOTE_ADDR'])
 
     return render_to_response("rolodex/profile_view.html",
                               {'profile': profile,

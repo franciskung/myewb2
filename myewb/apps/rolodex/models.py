@@ -197,3 +197,9 @@ class ProfileHistory(models.Model):
     
     revision = models.TextField(blank=True, null=True)
     
+class ProfileView(models.Model):
+    profile = models.ForeignKey(TrackingProfile)
+    user = models.ForeignKey(User)
+    date = models.DateTimeField(auto_now_add=True)
+    ip = models.IPAddressField()
+
