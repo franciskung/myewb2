@@ -1,0 +1,13 @@
+<div style='padding: 25px;'>
+    {% if flag %}
+        <h2>
+            <strong>{{ flag.flag.name }}</strong><br/>
+            {{ flag.flagged_date|date:'M j, Y' }} ({{ flag.flagged_by.visible_name }})
+        </h2>
+
+        {{ flag.note|linebreaks }}
+        
+     {% else %}
+        Not Found.
+    {% endif %}
+</div>

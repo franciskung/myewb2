@@ -1,0 +1,13 @@
+<div style='padding: 25px;'>
+    {% if badge %}
+        <h2>
+            <strong>{{ badge.badge.name }}</strong><br/>
+            {{ badge.added_date|date:'M j, Y' }} ({{ badge.added_by.visible_name }})
+        </h2>
+
+        {{ badge.note|linebreaks }}
+        
+     {% else %}
+        Not Found.
+    {% endif %}
+</div>

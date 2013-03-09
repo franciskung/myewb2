@@ -288,6 +288,15 @@ def unflag(request, flag_id):
     
     return HttpResponseRedirect(reverse('rolodex_view', kwargs={'profile_id': flag.profile.id}))
 
+def flag_view_ajax(request, flag_id):
+    if not perm(request):
+        return HttpResponseRedirect(reverse('rolodex_login'))
+
+    flag = get_object_or_none(ProfileFlag, id=flag_id)
+    
+    return render_to_response("rolodex/flag_view_ajax.html",
+                              {'flag': flag},
+                              context_instance=RequestContext(request))
 
 def badge(request, profile_id):
     if not perm(request):
@@ -339,6 +348,16 @@ def unbadge(request, badge_id):
                                   content_object=badge)
     
     return HttpResponseRedirect(reverse('rolodex_view', kwargs={'profile_id': badge.profile.id}))
+
+def badge_view_ajax(request, badge_id):
+    if not perm(request):
+        return HttpResponseRedirect(reverse('rolodex_login'))
+
+    badge = get_object_or_none(ProfileBadge, id=badge_id)
+    
+    return render_to_response("rolodex/badge_view_ajax.html",
+                              {'badge': badge},
+                              context_instance=RequestContext(request))
 
 def browse_flags(request, flag_id):
     flag = get_object_or_404(Flag, id=flag_id)

@@ -25,7 +25,9 @@
         <h2>Past</h2>
         
         {% for badge in profile.get_badges %}
-            {{ badge.badge }} (<a href="{% url rolodex_unbadge badge.id %}">x</a>)<br/>
+            <a href="{% url rolodex_badge_ajax badge.id %}" class="colorbox">{{ badge.badge }}</a>
+            (<a href="{% url rolodex_unbadge badge.id %}">x</a>)
+            <br/>
         {% endfor %}
         
         <br/>
@@ -36,7 +38,9 @@
         <h2>Flags</h2>
         
         {% for flag in profile.get_flags %}
-            (<a href="{% url rolodex_unflag flag.id %}">x</a>) {{ flag.flag }}<br/>
+            (<a href="{% url rolodex_unflag flag.id %}">x</a>)
+            <a href="{% url rolodex_flag_ajax flag.id %}" class="colorbox">{{ flag.flag }}</a>
+            <br/>
         {% endfor %}
         
         <br/>
@@ -202,19 +206,23 @@
                     
                     <em>
                     {% ifequal activity.activity_type 'flag' %}
-                        Flagged: {{ activity.content_object.flag.name }}
+                        Flagged:
+                        <a href="{% url rolodex_flag_ajax activity.content_object.id %}" class="colorbox">{{ activity.content_object.flag.name }}</a>
                     {% endifequal %}
                     
                     {% ifequal activity.activity_type 'unflag' %}
-                        Unflagged: {{ activity.content_object.flag.name }}
+                        Unflagged:
+                        <a href="{% url rolodex_flag_ajax activity.content_object.id %}" class="colorbox">{{ activity.content_object.flag.name }}</a>
                     {% endifequal %}
                     
                     {% ifequal activity.activity_type 'badge' %}
-                        Role added: {{ activity.content_object.badge.name }}
+                        Role added:
+                        <a href="{% url rolodex_badge_ajax activity.content_object.id %}" class="colorbox">{{ activity.content_object.badge.name }}</a>
                     {% endifequal %}
                     
                     {% ifequal activity.activity_type 'unbadge' %}
-                        Role removed: {{ activity.content_object.badge.name }}
+                        Role removed:
+                        <a href="{% url rolodex_badge_ajax activity.content_object.id %}" class="colorbox">{{ activity.content_object.badge.name }}</a>
                     {% endifequal %}
                     
                     {% ifequal activity.activity_type 'edit' %}
