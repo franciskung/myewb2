@@ -159,6 +159,38 @@
         </tr>
         </table>
 
+        <h2>Application history</h2>
+        <table border="0" class="aligntable">
+            {% for a in profile.user.get_profile.application_set.all %}
+                <tr>
+                    <td>
+                        {{ a.updated|date:'F j, Y' }}
+                    </td>
+                    <td>
+						<a href="{% url evaluation_detail a.id %}">{{ a.session.name }}</a>
+						{% ifequal a.completion 100 %}
+							(submitted)
+						{% else %}
+						    {% ifequal a.completion 0 %}
+						        (viewed)
+						    {% else %}
+    							(draft)
+    					    {% endifequal %}
+						{% endifequal %}
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td>
+                        &nbsp;
+                    </td>
+                    <td>
+                        <em>No past APS/staff applications</em>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+
         <h2>Mailing history</h2>
         <table border="0" class="aligntable">
         <tr>
