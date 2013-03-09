@@ -10,6 +10,8 @@ from networks.models import Network
 from profiles.models import MemberProfile
 from datetime import date, datetime
 
+from siteutils.shortcuts import get_object_or_none
+
 class TrackingProfile(models.Model):
     user = models.ForeignKey(User, blank=True, null=True)
     profile = models.ForeignKey(MemberProfile, blank=True, null=True)
@@ -67,6 +69,22 @@ class TrackingProfile(models.Model):
         d['addresses'] = [a.address for a in self.address_set.all()]
         
         return d
+
+    # add a new email address, set it as primary
+    def update_email(self, email):
+        if email:
+            email_obj = get_object_or_none(Email, email=email, profile=self)
+            if not email_obj:
+                email_obj = Email.objects.create(email=email,
+                                                 profile=self,
+                                                 updated=datetime.now())
+            if not email_obj.primary:
+                other_emails = Email.objects.filter(profile=self)
+                for e in other_emails:
+                    e.primary = False
+                    e.save()
+                email_obj.primary = True
+                email_obj.save()
 
 class Email(models.Model):
     email = models.EmailField()
@@ -203,4 +221,5 @@ class ProfileView(models.Model):
     user = models.ForeignKey(User)
     date = models.DateTimeField(auto_now_add=True)
     ip = models.IPAddressField()
+
 

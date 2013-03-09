@@ -112,20 +112,7 @@ def profile_edit(request, profile_id=None):
             profile.save()
             
             # create email and set as primary, if needed
-            email = form.cleaned_data['email']
-            if email:
-                email_obj = get_object_or_none(Email, email=email, profile=profile)
-                if not email_obj:
-                    email_obj = Email.objects.create(email=email,
-                                                     profile=profile,
-                                                     updated=datetime.now())
-                if not email_obj.primary:
-                    other_emails = Email.objects.filter(profile=profile)
-                    for e in other_emails:
-                        e.primary = False
-                        e.save()
-                    email_obj.primary = True
-                    email_obj.save()
+            profile.update_email(form.cleaned_data['email'])
                     
             # save revision history
             if profile_pickle:
