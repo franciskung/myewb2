@@ -303,6 +303,15 @@
                 <td style='width: 85px;'>{{ activity.date|date:'M j, Y' }}</td>
                 <td style='padding-bottom: 10px;'>
                     {% ifequal activity.activity_type 'interaction' %}
+                        {% ifequal activity.interaction.interaction_type 'conversation' %}
+                            <img src="{{ STATIC_URL}}images/icons2/onebit_10.png" style="height: 24px; width: 24px; float: left; margin: 5px 5px 0 0;"/>
+                        {% endifequal %}
+                        {% ifequal activity.interaction.interaction_type 'call' %}
+                            <img src="{{ STATIC_URL}}images/icons2/phone.png" style="height: 24px; width: 24px; float: left; margin: 5px 5px 0 0;"/>
+                        {% endifequal %}
+                        {% ifequal activity.interaction.interaction_type 'note' %}
+                            <img src="{{ STATIC_URL}}images/icons2/onebit_20.png" style="height: 24px; width: 24px; float: left; margin: 5px 5px 0 0;"/>
+                        {% endifequal %}
                         <strong>{{ activity.interaction.interaction_type }}</strong><br/>
                         <a href="{% url rolodex_note_ajax activity.id %}" class="colorbox description">
                             {{ activity.interaction.note_trunc }}
@@ -337,9 +346,13 @@
                 <td style='padding-left: 10px;'>
                 {% ifequal activity.activity_type 'interaction' %}
                     {% if activity.pinned %}
-                        (<a href="{% url rolodex_note_unpin activity.id %}" class="unpin">unpin</a>)
+                        <a href="{% url rolodex_note_unpin activity.id %}" class="unpin">
+                            <img src="{{ STATIC_URL }}images/icons2/pin.png" style='height: 16px; width: 16px;'/>
+                        </a>
                     {% else %}
-                        (<a href="{% url rolodex_note_pin activity.id %}" class="pin">pin</a>)
+                        <a href="{% url rolodex_note_pin activity.id %}" class="pin">
+                            <img src="{{ STATIC_URL }}images/icons2/unpin.png" style='height: 20px; width: 20px; margin-top: 5px;'/>
+                        </a>
                     {% endif %}
                 {% else %}
                     &nbsp;
