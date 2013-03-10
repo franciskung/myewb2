@@ -211,6 +211,7 @@ class ProfileBadge(models.Model):
     badge = models.ForeignKey(Badge)
     note = models.TextField(blank=True, null=True)
     active = models.BooleanField(default=True)
+    current = models.BooleanField(default=True)
     added_by = models.ForeignKey(User, related_name='badges')
     added_date = models.DateTimeField(auto_now_add=True)
     removed_by = models.ForeignKey(User, related_name='unbadges', blank=True, null=True)
