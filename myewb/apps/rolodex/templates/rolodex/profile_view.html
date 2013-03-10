@@ -22,7 +22,7 @@
     <h1 style='text-align: center;'>{{ profile.first_name }} {{ profile.last_name }}</h1>
 
     <div style='width: 170px; float: left; border-right: 1px solid #db7403; padding: 0 15px; text-align: right; line-height: 1.5em;'>
-        <h2>Past</h2>
+        <h2>Roles</h2>
         
         {% for badge in profile.get_badges %}
             <a href="{% url rolodex_badge_ajax badge.id %}" class="colorbox description">
@@ -72,7 +72,7 @@
         <table border="0" class="aligntable">
         <tr>
             <td class="left" style='width: 125px;'>
-                Role<br/>Chapter
+                Position<br/>Chapter
             </td>
             <td clas="right">
                 {% if profile.role %}{{ profile.role }},{% endif %}<br/>
@@ -200,7 +200,7 @@
             </td>
             <td clas="right">
                 {{ profile.updated_by.visible_name }}<br/>
-                {{ profile.updated }}<br/>
+                {{ profile.updated|date:"M j, Y g:i:s a" }}<br/>
                 (<a href="#">see full history</a>)
             </td>
         </tr>
@@ -209,23 +209,25 @@
         <h2>Application history</h2>
         <table border="0" class="aligntable">
             {% for a in profile.user.get_profile.application_set.all %}
-                <tr>
-                    <td>
-                        {{ a.updated|date:'F j, Y' }}
-                    </td>
-                    <td>
-						<a href="{% url evaluation_detail a.id %}">{{ a.session.name }}</a>
-						{% ifequal a.completion 100 %}
-							(submitted)
-						{% else %}
-						    {% ifequal a.completion 0 %}
-						        (viewed)
+			    {% ifnotequal a.completion 0 %}
+                    <tr>
+                        <td>
+                            {{ a.updated|date:'M j, Y' }}
+                        </td>
+                        <td>
+						    <a href="{% url evaluation_detail a.id %}">{{ a.session.name }}</a>
+						    {% ifequal a.completion 100 %}
+							    (submitted)
 						    {% else %}
-    							(draft)
-    					    {% endifequal %}
-						{% endifequal %}
-                    </td>
-                </tr>
+						        {% ifequal a.completion 0 %}
+						            (viewed)
+						        {% else %}
+        							(draft)
+        					    {% endifequal %}
+						    {% endifequal %}
+                        </td>
+                    </tr>
+                {% endifnotequal %}
             {% empty %}
                 <tr>
                     <td>

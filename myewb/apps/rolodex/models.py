@@ -22,7 +22,7 @@ class TrackingProfile(models.Model):
     last_name = models.CharField(max_length=255)
     
     chapter = models.ForeignKey(Network, blank=True, null=True)
-    role = models.CharField(max_length=255, blank=True, null=True)
+    role = models.CharField(max_length=255, blank=True, null=True, verbose_name='Position')
     city = models.CharField(max_length=255, blank=True, null=True)
     
     workplace = models.CharField(max_length=255, blank=True, null=True)

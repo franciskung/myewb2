@@ -13,11 +13,11 @@
         
         {% if note.edited %}
             <p>
-                <em>Last edited: {{ note.edited|date:'M j, Y - h:i a' }}</em><br/>
+                <em>Last edited: {{ note.edited|date:'M j, Y - g:i a' }}</em><br/>
             </p>
         {% endif %}
         <p>
-            <em>Entered: {{ note.entered|date:'M j, Y - h:i a' }}</em>
+            <em>Entered: {{ note.entered|date:'M j, Y - g:i a' }}</em>
         </p>
     {% else %}
         Not Found.
