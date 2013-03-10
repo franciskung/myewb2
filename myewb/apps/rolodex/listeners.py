@@ -8,7 +8,7 @@ from profiles.models import MemberProfile
 from emailconfirmation.models import EmailAddress as MyewbEmail
 from siteutils.models import Address as MyewbAddress, PhoneNumber as MyewbPhone
 
-from rolodex.models import TrackingProfile, ProfileBadge, ProfileHistory, Address, Email
+from rolodex.models import TrackingProfile, ProfileBadge, ProfileHistory, Address, Email, Phone
 
 from siteutils.shortcuts import get_object_or_none
 
@@ -53,30 +53,29 @@ def group_join(sender, instance, created, **kwargs):
 
 
 def group_leave(sender, instance, **kwargs):
-    if created:
-        user = instance.user
-        group = instance.group
-        
-        profile = get_object_or_none(TrackingProfile, user=user)
-        
-        if not profile:
-            return
+    user = instance.user
+    group = instance.group
+    
+    profile = get_object_or_none(TrackingProfile, user=user)
+    
+    if not profile:
+        return
 
-        # messy hack.  but what the heck, it'll work...
-        badge = None
-        if group.slug == 'exec':
-            badge = Badge.objects.get(name='Exec')
-        elif group.slug == 'presidents' or group.slug == 'citynetworkpres':
-            badge = Badge.objects.get(name='President')
-            
-        if badge:
-            pb = get_object_or_none(ProfileBadge, profile=profile, badge=badge, active=True)
-            
-            if pb:
-                pb.active = False
-                pb.removed_date = datetime.now()
-                pb.note = "%s%s" % (pb.note, "\n\nAutomatic removal - sync from myEWB")
-                pb.save()
+    # messy hack.  but what the heck, it'll work...
+    badge = None
+    if group.slug == 'exec':
+        badge = Badge.objects.get(name='Exec')
+    elif group.slug == 'presidents' or group.slug == 'citynetworkpres':
+        badge = Badge.objects.get(name='President')
+        
+    if badge:
+        pb = get_object_or_none(ProfileBadge, profile=profile, badge=badge, active=True)
+        
+        if pb:
+            pb.active = False
+            pb.removed_date = datetime.now()
+            pb.note = "%s%s" % (pb.note, "\n\nAutomatic removal - sync from myEWB")
+            pb.save()
 
 
 def user_update(sender, instance, created=None, **kwargs):
@@ -135,11 +134,34 @@ def address_update(sender, instance, **kwargs):
             address = Address.objects.create(address = "%s\n%s %s\n%s\n%s" % (instance.street, instance.city, instance.province, instance.postal_code, instance.country),
                                              profile = profile,
                                              myewbaddress=instance)
+                                             
+        # update rolodex profile city too?
+        if not profile.city and instance.city:
+            profile.city = instance.city
+            profile.save()
         
         history = ProfileHistory.objects.create(profile=profile,
                                                 editor=user,
                                                 revision=profile_pickle)
+
+def address_delete(sender, instance, **kwargs):
+    if hasattr(instance.content_object, 'user2'):
+        memberprofile = instance.content_object
+        user = memberprofile.user2
+        
+        profile = get_object_or_none(TrackingProfile, user=user)
+        if not profile:
+            return
     
+        profile_pickle = pickle.dumps(profile.to_dict())
+
+        address = get_object_or_none(Address, myewbaddress=instance)
+        if address:
+            address.delete()
+        
+            history = ProfileHistory.objects.create(profile=profile,
+                                                    editor=user,
+                                                    revision=profile_pickle)
 
 def email_update(sender, instance, **kwargs):
     if not instance.verified:
@@ -172,12 +194,82 @@ def email_update(sender, instance, **kwargs):
                                             editor=user,
                                             revision=profile_pickle)
 
-# only connect listeners if mailchimp is enabled
+def email_delete(sender, instance, **kwargs):
+    user = instance.user
+    profile = get_object_or_none(TrackingProfile, user=user)
+    if not profile:
+        return
+
+    profile_pickle = pickle.dumps(profile.to_dict())
+
+    email = get_object_or_none(Email, myewbemail=instance)
+    if email:
+        email.delete()
+    
+        history = ProfileHistory.objects.create(profile=profile,
+                                                editor=user,
+                                                revision=profile_pickle)
+
+def phone_update(sender, instance, **kwargs):
+    # quick hack to see if the address (instance.content_object) is connected to a MemberProfile
+    if hasattr(instance.content_object, 'user2'):
+        memberprofile = instance.content_object
+        user = memberprofile.user2
+        
+        profile = get_object_or_none(TrackingProfile, user=user)
+    
+        if not profile:
+            return
+    
+        profile_pickle = pickle.dumps(profile.to_dict())
+
+        # this address is already in the rolodex; just update it
+        phone = get_object_or_none(Phone, myewbphone=instance)
+        if phone:
+            phone.phone = instance.number
+            phone.save()
+
+        # add new address to rolodex
+        else:
+            phoneddress = Phone.objects.create(phone=instance.number,
+                                               profile = profile,
+                                               myewbphone=instance)
+        
+        history = ProfileHistory.objects.create(profile=profile,
+                                                editor=user,
+                                                revision=profile_pickle)
+    
+def phone_delete(sender, instance, **kwargs):
+    if hasattr(instance.content_object, 'user2'):
+        memberprofile = instance.content_object
+        user = memberprofile.user2
+        
+        profile = get_object_or_none(TrackingProfile, user=user)
+        if not profile:
+            return
+    
+        profile_pickle = pickle.dumps(profile.to_dict())
+
+        phone = get_object_or_none(Phone, myewbphone=instance)
+        if phone:
+            phone.delete()
+        
+            history = ProfileHistory.objects.create(profile=profile,
+                                                    editor=user,
+                                                    revision=profile_pickle)
+
 post_save.connect(group_join, sender=GroupMember, dispatch_uid='rolodex-group-join')
 pre_delete.connect(group_leave, sender=GroupMember, dispatch_uid='rolodex-group-leave')
 
 post_save.connect(user_update, sender=User, dispatch_uid='rolodex-user-postupdate')
 post_save.connect(profile_update, sender=MemberProfile, dispatch_uid='rolodex-profile-update')
+
 post_save.connect(address_update, sender=MyewbAddress, dispatch_uid='rolodex-address-update')
+pre_delete.connect(address_delete, sender=MyewbAddress, dispatch_uid='rolodex-address-delete')
+
 post_save.connect(email_update, sender=MyewbEmail, dispatch_uid='rolodex-email-update')
+pre_delete.connect(email_delete, sender=MyewbEmail, dispatch_uid='rolodex-email-delete')
+
+post_save.connect(phone_update, sender=MyewbPhone, dispatch_uid='rolodex-phone-update')
+pre_delete.connect(phone_delete, sender=MyewbPhone, dispatch_uid='rolodex-phone-delete')
 

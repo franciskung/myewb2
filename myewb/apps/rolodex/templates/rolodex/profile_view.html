@@ -75,8 +75,19 @@
                 {% if profile.role %}{{ profile.role }},{% endif %}<br/>
                 {% if profile.chapter %}{{ profile.chapter }}{% endif %}
             </td>
-
         </tr>
+        
+        {% if profile.city %}
+            <tr>
+                <td class="left">
+                    City
+                </td>
+                <td clas="right">
+                    {{ profile.city }}
+                </td>
+            </tr>
+        {% endif %}
+
         <tr>
 
             <td class="left">
@@ -87,25 +98,34 @@
                     <div style='padding-bottom: 5px;'>{{ e.email }}</div>
                 {% endfor %}
             </td>
-
         </tr>
-        <tr>
-            
-            <td class="left">
-                Mailing address
-            </td>
-            <td clas="right">
-                {% if profile.address_set.count %}
+        
+        {% if profile.phone_set.count %}
+            <tr>
+                <td class="left">
+                    Phone Numbers
+                </td>
+                <td clas="right">
+                    {% for e in profile.phone_set.all %}
+                        <div style='padding-bottom: 5px;'>{{ e.phone }}</div>
+                    {% endfor %}
+                </td>
+            </tr>
+        {% endif %}
+
+        {% if profile.address_set.count %}        
+            <tr>
+                <td class="left">
+                    Mailing address
+                </td>
+                <td clas="right">
                     {{ profile.primary_address|linebreaksbr }}
                     {% ifnotequal profile.address_set.count 1 %}
                         <a href="#">({{ profile.address_set.count }} more)</a>
                     {% endifnotequal %}
-                {% else %}
-                    <em>none</em>
-                {% endif %}
-            </td>
-            
-        </tr>
+                </td>
+            </tr>
+        {% endif %}
 
         {% if profile.workfield %}            
             <tr>

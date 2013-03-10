@@ -3,14 +3,15 @@ from django import forms
 
 from siteutils.shortcuts import get_object_or_none
 
-from rolodex.models import TrackingProfile, Email, Interaction, ProfileFlag, ProfileBadge
+from rolodex.models import TrackingProfile, Email, Phone, Interaction, ProfileFlag, ProfileBadge
 
 class TrackingProfileForm(forms.ModelForm):
     email = forms.EmailField(required=False)
+    phone = forms.CharField(max_length=50, required=False)
 
     class Meta:
         model = TrackingProfile
-        fields = ('first_name', 'last_name', 'email', 'chapter', 'role', 'workfield', 'school', 'graduation', 'workplace')
+        fields = ('first_name', 'last_name', 'email', 'phone', 'chapter', 'role', 'city', 'workfield', 'school', 'graduation', 'workplace')
 
     def __init__(self, *args, **kwargs):
         instance = kwargs.get('instance', None)
@@ -20,6 +21,12 @@ class TrackingProfileForm(forms.ModelForm):
             if email:
                 initial = kwargs.get('initial', {})
                 initial['email'] = email[0].email
+                kwargs['initial'] = initial
+            
+            phone = Phone.objects.filter(profile=instance, primary=True)
+            if phone:
+                initial = kwargs.get('initial', {})
+                initial['phone'] = phone[0].phone
                 kwargs['initial'] = initial
             
         return super(TrackingProfileForm, self).__init__(*args, **kwargs)

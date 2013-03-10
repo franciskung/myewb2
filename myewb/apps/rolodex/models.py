@@ -11,7 +11,7 @@ from profiles.models import MemberProfile
 from datetime import date, datetime
 
 from siteutils.shortcuts import get_object_or_none
-from siteutils.models import Address as MyewbAddress
+from siteutils.models import Address as MyewbAddress, PhoneNumber as MyewbPhone
 from emailconfirmation.models import EmailAddress as MyewbEmail
 
 class TrackingProfile(models.Model):
@@ -23,6 +23,7 @@ class TrackingProfile(models.Model):
     
     chapter = models.ForeignKey(Network, blank=True, null=True)
     role = models.CharField(max_length=255, blank=True, null=True)
+    city = models.CharField(max_length=255, blank=True, null=True)
     
     workplace = models.CharField(max_length=255, blank=True, null=True)
     school = models.CharField(max_length=255, blank=True, null=True)
@@ -38,6 +39,7 @@ class TrackingProfile(models.Model):
     # plus these reverse relations:
     #   email_set
     #   address_set
+    #   phone_set
     #   activity_set
     #   profilehistory_set
     
@@ -101,6 +103,22 @@ class TrackingProfile(models.Model):
                 email_obj.primary = True
                 email_obj.save()
 
+    # add a new phone number, set it as primary
+    def update_phone(self, phone):
+        if phone:
+            phone_obj = get_object_or_none(Phone, phone=phone, profile=self)
+            if not phone_obj:
+                phone_obj = Phone.objects.create(phone=phone,
+                                                 profile=self,
+                                                 updated=datetime.now())
+            if not phone_obj.primary:
+                other_phones = Phone.objects.filter(profile=self)
+                for e in other_phones:
+                    e.primary = False
+                    e.save()
+                phone_obj.primary = True
+                phone_obj.save()
+
 class Email(models.Model):
     email = models.EmailField()
     profile = models.ForeignKey(TrackingProfile)
@@ -113,6 +131,19 @@ class Email(models.Model):
 
     def __unicode__(self):
         return self.email
+    
+class Phone(models.Model):
+    phone = models.CharField(max_length=50)
+    profile = models.ForeignKey(TrackingProfile)
+    primary = models.BooleanField(default=False)
+    updated = models.DateTimeField(auto_now=True)
+    myewbphone = models.ForeignKey(MyewbPhone, null=True, blank=True, related_name='rolodexphone')
+    
+    class Meta:
+        ordering = ('-primary', '-updated')
+
+    def __unicode__(self):
+        return self.phone
     
 class Address(models.Model):
     address = models.TextField()

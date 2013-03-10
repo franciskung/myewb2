@@ -111,8 +111,9 @@ def profile_edit(request, profile_id=None):
             profile.updated_by = request.user
             profile.save()
             
-            # create email and set as primary, if needed
+            # create email/phone and set as primary, if needed
             profile.update_email(form.cleaned_data['email'])
+            profile.update_phone(form.cleaned_data['phone'])
                     
             # save revision history
             if profile_pickle:
@@ -153,6 +154,11 @@ def profile_view(request, profile_id):
     activities = profile.get_activities(user=request.user)
     
     ProfileView.objects.create(profile=profile, user=request.user, ip=request.META['REMOTE_ADDR'])
+    
+    if not profile.city:
+        if profile.chapter and hasattr(profile.chapter, 'chapter_info'):
+            profile.city = profile.chapter.chapter_info.city
+            profile.save()
 
     return render_to_response("rolodex/profile_view.html",
                               {'profile': profile,
