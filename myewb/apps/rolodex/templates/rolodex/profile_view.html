@@ -95,7 +95,13 @@
             </td>
             <td clas="right">
                 {% for e in profile.email_set.all %}
-                    <div style='padding-bottom: 5px;'>{{ e.email }}</div>
+                    <div style='padding-bottom: 5px;'>
+                        {% if e.primary %}
+                            <strong>{{ e.email }}</strong>
+                        {% else %}
+                            {{ e.email }}
+                        {% endif %}
+                    </div>
                 {% endfor %}
             </td>
         </tr>
@@ -107,7 +113,13 @@
                 </td>
                 <td clas="right">
                     {% for e in profile.phone_set.all %}
-                        <div style='padding-bottom: 5px;'>{{ e.phone }}</div>
+                        <div style='padding-bottom: 5px;'>
+                            {% if e.primary %}
+                                <strong>{{ e.phone }}</strong>
+                            {% else %}
+                                {{ e.phone }}
+                            {% endif %}
+                        </div>
                     {% endfor %}
                 </td>
             </tr>

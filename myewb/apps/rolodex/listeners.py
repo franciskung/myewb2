@@ -4,7 +4,7 @@ from emailconfirmation.signals import email_confirmed
 
 from account_extra.signals import listsignup, deletion
 from base_groups.models import BaseGroup, GroupMember
-from profiles.models import MemberProfile
+from profiles.models import MemberProfile, StudentRecord, WorkRecord
 from emailconfirmation.models import EmailAddress as MyewbEmail
 from siteutils.models import Address as MyewbAddress, PhoneNumber as MyewbPhone
 
@@ -13,6 +13,7 @@ from rolodex.models import TrackingProfile, ProfileBadge, ProfileHistory, Addres
 from siteutils.shortcuts import get_object_or_none
 
 import settings, pickle
+from datetime import date
 
 def group_join(sender, instance, created, **kwargs):
     user = instance.user
@@ -258,6 +259,41 @@ def phone_delete(sender, instance, **kwargs):
                                                     editor=user,
                                                     revision=profile_pickle)
 
+def student_update(sender, instance, **kwargs):
+    user = instance.user
+    profile = get_object_or_none(TrackingProfile, user=user)
+    if not profile:
+        return
+
+    profile_pickle = pickle.dumps(profile.to_dict())
+
+    if instance.graduation_date > date.today() or not profile.school:
+        profile.school = instance.institution
+        profile.graduation = instance.graduation_date
+        profile.workfield = instance.field
+        profile.save()
+        
+        history = ProfileHistory.objects.create(profile=profile,
+                                                editor=user,
+                                                revision=profile_pickle)
+    
+def work_update(sender, instance, **kwargs):
+    user = instance.user
+    profile = get_object_or_none(TrackingProfile, user=user)
+    if not profile:
+        return
+
+    profile_pickle = pickle.dumps(profile.to_dict())
+
+    if not instance.end_date:
+        profile.workplace = instance.employer
+        profile.workfield = instance.position
+        profile.save()
+        
+        history = ProfileHistory.objects.create(profile=profile,
+                                                editor=user,
+                                                revision=profile_pickle)
+    
 post_save.connect(group_join, sender=GroupMember, dispatch_uid='rolodex-group-join')
 pre_delete.connect(group_leave, sender=GroupMember, dispatch_uid='rolodex-group-leave')
 
@@ -272,4 +308,7 @@ pre_delete.connect(email_delete, sender=MyewbEmail, dispatch_uid='rolodex-email-
 
 post_save.connect(phone_update, sender=MyewbPhone, dispatch_uid='rolodex-phone-update')
 pre_delete.connect(phone_delete, sender=MyewbPhone, dispatch_uid='rolodex-phone-delete')
+
+post_save.connect(student_update, sender=StudentRecord, dispatch_uid='rolodex-student-update')
+post_save.connect(work_update, sender=WorkRecord, dispatch_uid='rolodex-work-update')
 
