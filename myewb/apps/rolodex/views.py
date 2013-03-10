@@ -495,14 +495,15 @@ def profile_edit_custom(request, profile_id):
         for field, value in fields.items():
             newvalue = request.POST.get("custom_field_%d" % field.id, None)
             
-            if value != newvalue:
-                value_obj, created = CustomValue.objects.get_or_create(field=field, profile=profile)
+            if (newvalue and not value) or (value and not newvalue) or (value.value != newvalue):
+                if not value:
+                    value, created = CustomValue.objects.get_or_create(field=field, profile=profile)
                 
                 if newvalue:
-                    value_obj.value = newvalue
-                    value_obj.save()
+                    value.value = newvalue
+                    value.save()
                 else:
-                    value_obj.delete()
+                    value.delete()
                 
                 changed = True
 
