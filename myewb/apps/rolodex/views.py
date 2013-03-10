@@ -14,8 +14,8 @@ from account.views import login as pinaxlogin
 from datetime import datetime
 from siteutils.shortcuts import get_object_or_none
 
-from rolodex.models import TrackingProfile, Email, ProfileHistory, Interaction, ProfileFlag, ProfileBadge, Flag, Badge, ProfileView, Activity
-from rolodex.forms import TrackingProfileForm, NoteForm, FlagForm, BadgeForm
+from rolodex.models import TrackingProfile, Email, ProfileHistory, Interaction, ProfileFlag, ProfileBadge, Flag, Badge, ProfileView, Activity, CustomField, CustomValue
+from rolodex.forms import TrackingProfileForm, NoteForm, FlagForm, BadgeForm, CustomFieldForm
 
 def perm(request):
     if request.user.is_authenticated() and request.user.has_module_perms("rolodex"):
@@ -152,8 +152,10 @@ def profile_view(request, profile_id):
     
     profile = get_object_or_404(TrackingProfile, id=profile_id)
     activities = profile.get_activities(user=request.user)
+    custom = profile.get_custom_fields(user=request.user)
     
     ProfileView.objects.create(profile=profile, user=request.user, ip=request.META['REMOTE_ADDR'])
+    
     
     if not profile.city:
         if profile.chapter and hasattr(profile.chapter, 'chapter_info'):
@@ -162,7 +164,8 @@ def profile_view(request, profile_id):
 
     return render_to_response("rolodex/profile_view.html",
                               {'profile': profile,
-                               'activities': activities},
+                               'activities': activities,
+                               'custom': custom},
                               context_instance=RequestContext(request))
 
 def note_edit(request, profile_id=None, note_id=None):
@@ -394,6 +397,9 @@ def badge_view_ajax(request, badge_id):
                               context_instance=RequestContext(request))
 
 def browse_flags(request, flag_id):
+    if not perm(request):
+        return HttpResponseRedirect(reverse('rolodex_login'))
+
     flag = get_object_or_404(Flag, id=flag_id)
     results = ProfileFlag.objects.filter(flag=flag, active=True).order_by('-flagged_date')
     
@@ -403,6 +409,9 @@ def browse_flags(request, flag_id):
                               context_instance=RequestContext(request))
 
 def browse_badges(request, badge_id):
+    if not perm(request):
+        return HttpResponseRedirect(reverse('rolodex_login'))
+
     badge = get_object_or_404(Badge, id=badge_id)
     years = ProfileBadge.objects.filter(badge=badge).values('year').annotate(num_hits=Count('id')).order_by('year')
 
@@ -420,6 +429,107 @@ def browse_badges(request, badge_id):
                                'results': results,
                                'years': years,
                                'current_year': current_year},
+                              context_instance=RequestContext(request))
+
+def custom_fields(request):
+    if not perm(request):
+        return HttpResponseRedirect(reverse('rolodex_login'))
+
+    form = CustomFieldForm()
+
+    if request.method == 'POST':
+        if request.POST.get('action', None) == 'add':
+            form = CustomFieldForm(request.POST)
+            
+            if form.is_valid():
+                field = form.save(commit=False)
+                field.owner = request.user
+                field.save()
+                
+                request.user.message_set.create(message='Field added.')
+                return HttpResponseRedirect(reverse('rolodex_custom_fields'))
+            
+        elif request.POST.get('action', None) == 'update':
+            field = get_object_or_none(CustomField, id=request.POST['field_id'])
+            
+            if field and (field.visibility == 'everyone' or (field.visibility == 'private' and field.owner == request.user)):
+                form = CustomFieldForm(request.POST, instance=field)
+                
+                if form.is_valid():
+                    field = form.save()
+                    
+                    request.user.message_set.create(message='Field updated.')
+                    return HttpResponseRedirect(reverse('rolodex_custom_fields'))
+            
+        elif request.POST.get('action', None) == 'delete' & request.POST.get('field_id', None):
+            field = get_object_or_none(CustomField, id=request.POST['field_id'])
+            
+            if field and (field.visibility == 'everyone' or (field.visibility == 'private' and field.owner == request.user)):
+                field.delete()
+                request.user.message_set.create(message='Field deleted.')
+                return HttpResponseRedirect(reverse('rolodex_custom_fields'))
+
+    qry = Q(visibility='anyone') | (Q(visibility='private') & Q(owner=request.user))
+    fields = CustomField.objects.filter(qry).order_by('name')
+    
+    badges = Badge.objects.all()
+    flags = Flag.objects.all()
+
+    return render_to_response("rolodex/custom_fields.html",
+                              {'fields': fields,
+                               'badges': badges,
+                               'flags': flags},
+                              context_instance=RequestContext(request))
+
+def profile_edit_custom(request, profile_id):
+    if not perm(request):
+        return HttpResponseRedirect(reverse('rolodex_login'))
+        
+    profile = get_object_or_404(TrackingProfile, id=profile_id)
+    fields = profile.get_custom_fields(user=request.user, include_blank=True)
+    
+    if request.method == 'POST':
+        profile_pickle = pickle.dumps(profile.to_dict())
+        changed = False
+        
+        for field, value in fields.items():
+            newvalue = request.POST.get("custom_field_%d" % field.id, None)
+            
+            if value != newvalue:
+                value_obj, created = CustomValue.objects.get_or_create(field=field, profile=profile)
+                
+                if newvalue:
+                    value_obj.value = newvalue
+                    value_obj.save()
+                else:
+                    value_obj.delete()
+                
+                changed = True
+
+        if changed:        
+            profile.updated_by = request.user
+            profile.save()
+                
+            # save revision history
+            history = ProfileHistory.objects.create(profile=profile,
+                                                    editor=request.user,
+                                                    revision=profile_pickle)
+                
+
+            # log into interaction history
+            log = Activity.objects.create(profile=profile,
+                                          activity_type='edit',
+                                          date=datetime.now(),
+                                          added_by=request.user)
+
+        # display success message            
+        request.user.message_set.create(message='Record updated')
+        return HttpResponseRedirect(reverse('rolodex_view', kwargs={'profile_id': profile.id}))
+
+        
+    return render_to_response("rolodex/profile_edit_custom.html",
+                              {'fields': fields,
+                               'profile': profile},
                               context_instance=RequestContext(request))
 
 

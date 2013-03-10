@@ -86,6 +86,31 @@ class TrackingProfile(models.Model):
         d['addresses'] = [a.address for a in self.address_set.all()]
         
         return d
+        
+    def get_custom_fields(self, user=None, include_blank=False):
+        qry = Q(badge__isnull=True) & Q(flag__isnull=True)
+        
+        badges = self.get_badges().values_list('badge', flat=True)
+        qry2 = Q(badge__in=list(badges))
+
+        flags = self.get_flags().values_list('flag', flat=True)
+        qry3 = Q(flag__in=list(flags))
+        
+        if user:
+            qry4 = Q(visibility='anyone') | (Q(visibility='private') & Q(owner=user))
+        else:
+            qry4 = Q(visibility='anyone')
+        
+        fields = CustomField.objects.filter((qry | qry2 | qry3) & qry4)
+        
+        result = {}
+        for field in fields:
+            value = get_object_or_none(CustomValue, profile=self, field=field)
+            if value or include_blank:
+                result[field] = value
+                
+        return result
+        
 
     # add a new email address, set it as primary
     def update_email(self, email):
@@ -219,7 +244,7 @@ class ProfileBadge(models.Model):
     removed_date = models.DateTimeField(blank=True, null=True)
     
 VISIBILITY_OPTIONS = (('anyone', 'Anyone with access to the Rolodex (all staff)'),
-                      ('team', 'My team only'),
+#                      ('team', 'My team only'),
                       ('private', 'Private - no one else can see this'))
 class Activity(models.Model):
     profile = models.ForeignKey(TrackingProfile)
@@ -272,4 +297,15 @@ class ProfileView(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     ip = models.IPAddressField()
 
+class CustomField(models.Model):
+    badge = models.ForeignKey(Badge, blank=True, null=True)
+    flag = models.ForeignKey(Flag, blank=True, null=True)
+    name = models.CharField(max_length=50)
+    visibility = models.CharField(max_length=255, choices=VISIBILITY_OPTIONS, default='anyone')
+    owner = models.ForeignKey(User)
+    
+class CustomValue(models.Model):
+    field = models.ForeignKey(CustomField)
+    profile = models.ForeignKey(TrackingProfile)
+    value = models.CharField(max_length=255, null=True, blank=True)
 

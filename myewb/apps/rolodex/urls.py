@@ -8,6 +8,7 @@ urlpatterns = patterns('rolodex.views',
     
     url(r'^new/$', view='profile_edit', name="rolodex_new"),
     url(r'^edit/(?P<profile_id>\d+)/$', view='profile_edit', name="rolodex_edit"),
+    url(r'^editcustom/(?P<profile_id>\d+)/$', view='profile_edit_custom', name="rolodex_edit_custom"),
     url(r'^view/(?P<profile_id>\d+)/$', view='profile_view', name="rolodex_view"),
     
     url(r'^note/new/(?P<profile_id>\d+)/$', view='note_edit', name="rolodex_interaction_new"),
@@ -28,4 +29,5 @@ urlpatterns = patterns('rolodex.views',
     url(r'^badge/view/(?P<badge_id>\d+)/ajax/$', view='badge_view_ajax', name="rolodex_badge_ajax"),
     url(r'^badge/browse/(?P<badge_id>\d+)/$', view='browse_badges', name="rolodex_browse_badges"),
 
+    url(r'^custom/$', view='custom_fields', name="rolodex_custom_fields"),
 )

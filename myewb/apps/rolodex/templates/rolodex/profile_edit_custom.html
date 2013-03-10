@@ -1,0 +1,26 @@
+{% extends 'rolodex/profile_view.html' %}
+
+{% load uni_form_tags %}
+
+{% block head_title %}Edit Record{% endblock %}
+
+{% block rolodex_view %}
+    <form class="uniForm" method="post" action="">
+        <fieldset class="inlineLabels">
+
+            {% for field, value in fields.items %}        
+                <div id="div_id_name_type" class="ctrlHolder">
+			        <label for="id_field_{{ field.id }}">{{ field.name }}</label>
+    			    <input type="text" id="id_field_{{ field.id }}" name="custom_field_{{ field.id }}" value="{% if value %}{{ value.value }}{% endif %}" />
+                </div>
+			{% endfor %}
+
+			<label for="id_save"></label>
+			<input type="submit" id="id_save" value="Save" />
+		    
+        </fieldset>
+    </form>
+    
+
+{% endblock %}
+

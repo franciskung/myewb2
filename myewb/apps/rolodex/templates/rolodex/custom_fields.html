@@ -1,0 +1,97 @@
+{% extends 'rolodex/base.html' %}
+
+{% load avatar_tags %}
+{% load pagination_tags %}
+
+{% block head_title %}Set up{% endblock %}
+
+{% block body %}
+    <h2>Set up custom fields:</h2>
+    
+    {% for field in fields %}
+        {{ field.name }}<br/>
+    {% endfor %}
+    
+    <h2>Add a new custom field:</h2>
+    
+    <form method="post" action="" class="uniForm">
+        <fieldset class="inlineLabels">
+        
+            <div id="div_id_name_type" class="ctrlHolder">
+			    <label for="id_name">Field name</label>
+			    <input type="text" id="id_name" name="name" value="" />
+			</div>
+		    
+            <div id="div_id_visibility" class="ctrlHolder ">
+                <label for="id_visibility">Visibility</label>
+                <select id="id_visibility" name="visibility" class="select">
+                    <option value="anyone" selected="selected">Anyone with access to the Rolodex (all staff)</option>
+                    <option value="private">Private - no one else can see this</option>
+                </select>
+            </div>
+		    
+            <div id="div_id_conditions_type" class="ctrlHolder">
+			    <label for="id_conditions">Conditions</label>
+			    <div style='margin-left: 300px;'>
+			        <div id="div_cond_none">
+			            <input type="radio" name="conditions" id="condition_none" checked="checked"> Show for all records
+			        </div>
+			        <br/>
+			        
+			        <div id="div_cond_flag">
+    			        <input type="radio" name="conditions" id="condition_flag"> Show only if this flag is set:<br/>
+			            <select name="flag" id="select_flag" style='margin-left: 20px;' disabled='disabled'>
+			                <option></option>
+			                {% for flag in flags %}
+			                    <option value="{{ flag.id }}">{{ flag.name }}</option>
+			                {% endfor %}
+			            </select>
+			        </div>
+			        <br/><br/>
+			        
+			        <div id="div_cond_badge">
+    			        <input type="radio" name="conditions" id="condition_badge"> Show only if this role is set:<br/>
+			            <select name="badge" id="select_badge" style='margin-left: 20px;' disabled='disabled'>
+			                <option></option>
+			                {% for badge in badges %}
+			                    <option value="{{ badge.id }}">{{ badge.name }}</option>
+			                {% endfor %}
+			            </select>
+			        </div>
+			        
+			        
+			    </div>
+			</div>
+		    
+        <input type='hidden' name='action' value='add'>
+        <input type="submit" value="Add"/>
+    </form>
+    <br/>
+    
+    
+    <br style='clear: both;'/><br/>
+
+{% endblock %}
+
+{% block javascript %}
+    $('#condition_none').click(function() {
+        $('#select_flag').attr('disabled', 'disabled');
+        $('#select_flag').val('');
+        $('#select_badge').attr('disabled', 'disabled');
+        $('#select_badge').val('');
+    });
+    
+    $('#condition_flag').click(function() {
+        $('#select_flag').removeAttr('disabled');
+        $('#select_badge').attr('disabled', 'disabled');
+        $('#select_badge').val('');
+    });
+    
+    $('#condition_badge').click(function() {
+        $('#select_badge').removeAttr('disabled');
+        $('#select_flag').attr('disabled', 'disabled');
+        $('#select_flag').val('');
+    });
+
+{% endblock %}
+

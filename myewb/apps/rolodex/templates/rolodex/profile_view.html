@@ -266,6 +266,24 @@
         </tr>
         </table>
         
+        <h2>Custom Fields <span class='normal'>(<a href="{% url rolodex_custom_fields %}">set up</a>)</span></h2>
+        <form method="get" action="{% url rolodex_edit_custom profile.id %}">
+            <input type="submit" value="Edit fields" style='margin: -5px 0 10px 10px;'/>
+        </form>
+        
+        <table border="0" class="aligntable">
+        {% for field, value in custom.items %}
+            <tr>
+                <td class="left">
+                    {{ field.name }}
+                </td>
+                <td clas="right">
+                    {{ value.value }}
+                </td>
+            </tr>
+        {% endfor %}
+        </table>
+        
     </div>
 
     <div style='width: 425px; float: right; padding: 0px 10px;'>
