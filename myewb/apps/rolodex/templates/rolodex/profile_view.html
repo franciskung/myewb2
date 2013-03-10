@@ -89,19 +89,33 @@
         {% endif %}
 
         <tr>
+            <td class="left">
+                myEWB account created<br/>
+                Last sign-in<br/>
+                Membership expiry
+            </td>
+            <td clas="right">
+                {{ profile.user.date_joined|date:"F j, Y" }}<br/>
+                {{ profile.user.last_login|date:"F j, Y" }}<br/>
+                {% if profile.profile.membership_expiry %}
+                    {{ profile.profile.membership_expiry|date:"F j, Y" }}
+                {% endif %}
+            </td>
+        </tr>
+        
+        <tr>
 
             <td class="left">
                 Email addresses
             </td>
             <td clas="right">
                 {% for e in profile.email_set.all %}
-                    <div style='padding-bottom: 5px;'>
-                        {% if e.primary %}
-                            <strong>{{ e.email }}</strong>
-                        {% else %}
-                            {{ e.email }}
-                        {% endif %}
-                    </div>
+                    {% if e.primary %}
+                        <strong>{{ e.email }}</strong>
+                    {% else %}
+                        {{ e.email }}
+                    {% endif %}
+                    <br/>
                 {% endfor %}
             </td>
         </tr>
@@ -113,13 +127,12 @@
                 </td>
                 <td clas="right">
                     {% for e in profile.phone_set.all %}
-                        <div style='padding-bottom: 5px;'>
-                            {% if e.primary %}
-                                <strong>{{ e.phone }}</strong>
-                            {% else %}
-                                {{ e.phone }}
-                            {% endif %}
-                        </div>
+                        {% if e.primary %}
+                            <strong>{{ e.phone }}</strong>
+                        {% else %}
+                            {{ e.phone }}
+                        {% endif %}
+                        <br/>
                     {% endfor %}
                 </td>
             </tr>
@@ -133,6 +146,7 @@
                 <td clas="right">
                     {{ profile.primary_address|linebreaksbr }}
                     {% ifnotequal profile.address_set.count 1 %}
+                        <br/>
                         <a href="#">({{ profile.address_set.count }} more)</a>
                     {% endifnotequal %}
                 </td>
