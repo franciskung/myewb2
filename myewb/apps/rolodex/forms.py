@@ -44,6 +44,6 @@ class FlagForm(forms.ModelForm):
 class BadgeForm(forms.ModelForm):
     class Meta:
         model = ProfileBadge
-        fields = ('badge', 'note')
+        fields = ('badge', 'year', 'note')
         
 

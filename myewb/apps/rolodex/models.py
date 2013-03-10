@@ -209,6 +209,7 @@ class Badge(models.Model):
 class ProfileBadge(models.Model):
     profile = models.ForeignKey(TrackingProfile)
     badge = models.ForeignKey(Badge)
+    year = models.CharField(max_length=50, blank=True, null=True)
     note = models.TextField(blank=True, null=True)
     active = models.BooleanField(default=True)
     current = models.BooleanField(default=True)

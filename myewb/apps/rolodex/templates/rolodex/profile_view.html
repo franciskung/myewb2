@@ -25,7 +25,10 @@
         <h2>Past</h2>
         
         {% for badge in profile.get_badges %}
-            <a href="{% url rolodex_badge_ajax badge.id %}" class="colorbox description">{{ badge.badge }}</a>
+            <a href="{% url rolodex_badge_ajax badge.id %}" class="colorbox description">
+                {{ badge.badge }}
+                {% if badge.year %}({{ badge.year }}){% endif %}
+            </a>
             <br/>
         {% endfor %}
         

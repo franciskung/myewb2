@@ -1,10 +1,16 @@
 <div style='padding: 25px;'>
     {% if badge %}
         <h2>
-            <strong>{{ badge.badge.name }}</strong><br/>
-            {{ badge.added_date|date:'M j, Y' }} ({{ badge.added_by.visible_name }})
+            <strong>
+                {{ badge.badge.name }}
+                {% if badge.year %}({{ badge.year }}){% endif %}
+            </strong>
         </h2>
 
+        <p><strong>
+            Added {{ badge.added_date|date:'M j, Y' }} by {{ badge.added_by.visible_name }}
+        </strong></p>
+        
         <p>        
             [<a href="{% url rolodex_unbadge badge.id %}">Remove role</a>]
         </p>
