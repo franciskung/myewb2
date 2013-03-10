@@ -8,7 +8,7 @@
 
     <style>
         .aligntable td {
-            padding: 5px 5px 10px 5px;
+            padding: 5px;
             vertical-align: top;
         }
         td.left {
@@ -312,9 +312,17 @@
                         {% ifequal activity.interaction.interaction_type 'note' %}
                             <img src="{{ STATIC_URL}}images/icons2/onebit_20.png" style="height: 24px; width: 24px; float: left; margin: 5px 5px 0 0;"/>
                         {% endifequal %}
-                        <strong>{{ activity.interaction.interaction_type }}</strong><br/>
+                        <strong>{{ activity.interaction.interaction_type|capfirst }}</strong><br/>
                         <a href="{% url rolodex_note_ajax activity.id %}" class="colorbox description">
                             {{ activity.interaction.note_trunc }}
+                        </a>
+                    {% endifequal %}
+
+                    {% ifequal activity.activity_type 'event' %}
+                        <img src="{{ STATIC_URL}}images/icons2/onebit_11.png" style="height: 24px; width: 24px; float: left; margin: 5px 5px 0 0;"/>
+                        <strong>Event</strong><br/>
+                        <a href="#" class="description" onclick="return false;">
+                            {{ activity.eventattendance.event.name }}
                         </a>
                     {% endifequal %}
                     
