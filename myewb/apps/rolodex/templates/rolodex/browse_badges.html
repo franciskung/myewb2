@@ -6,9 +6,22 @@
 {% block head_title %}Browse{% endblock %}
 
 {% block body %}
-    <h2>Browse: {{ badge.name }}</h2>
+    <h2>Browse: {{ badge.name }} {% if current_year %}({{ current_year }}){% endif %}</h2>
     
-    <br/>
+    Filter by year:
+    <form method="get" action="">
+        <select name="year">
+            <option value="">-- show all years --</option>
+            {% for year in years %}
+                <option value="{{ year.year }}" {% ifequal current_year year.year %}selected="selected"{% endifequal %}>
+                    {{ year.year }}
+                </option>
+            {% endfor %}
+        </select>
+        <input type="submit" value="filter"/>
+    </form>
+    
+    <br/><br/>
 
     {% autopaginate results %}
 

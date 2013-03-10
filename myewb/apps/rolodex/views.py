@@ -1,5 +1,5 @@
 from django.core.urlresolvers import reverse
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.shortcuts import get_object_or_404, render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext, Context, loader
@@ -380,11 +380,22 @@ def browse_flags(request, flag_id):
 
 def browse_badges(request, badge_id):
     badge = get_object_or_404(Badge, id=badge_id)
-    results = ProfileBadge.objects.filter(badge=badge, active=True).order_by('-added_date')
+    years = ProfileBadge.objects.filter(badge=badge).values('year').annotate(num_hits=Count('id')).order_by('year')
+
+    results = ProfileBadge.objects.filter(badge=badge, active=True)
+    
+    current_year = None
+    if request.GET.get('year', None):
+        results = results.filter(year=request.GET['year'])
+        current_year = request.GET['year']
+    
+    results = results.order_by('-added_date')
     
     return render_to_response("rolodex/browse_badges.html",
                               {'badge': badge,
-                               'results': results},
+                               'results': results,
+                               'years': years,
+                               'current_year': current_year},
                               context_instance=RequestContext(request))
 
 

@@ -17,6 +17,14 @@
 
         {{ badge.note|linebreaks }}
         
+        <hr/>
+        
+        <p>
+            <a href="{% url rolodex_browse_badges badge.badge.id %}{% if badge.year %}?year={{ badge.year }}{% endif %}">
+                See others with the same role
+            </a>
+        </p>
+        
      {% else %}
         Not Found.
     {% endif %}

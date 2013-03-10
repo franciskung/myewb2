@@ -11,6 +11,14 @@
 
         {{ flag.note|linebreaks }}
         
+        <hr/>
+        
+        <p>
+            <a href="{% url rolodex_browse_flags flag.flag.id %}">
+                See others with the same flag
+            </a>
+        </p>
+        
      {% else %}
         Not Found.
     {% endif %}
