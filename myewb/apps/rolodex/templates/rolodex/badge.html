@@ -2,7 +2,12 @@
 
 <h2>Add a past role</h2>
 
-<form class="uniForm" method="post" action="{% url rolodex_badge profile.id %}">
+{% if badge %}
+    <form class="uniForm" method="post" action="{% url rolodex_badge_edit badge.id %}">
+{% else %}
+    <form class="uniForm" method="post" action="{% url rolodex_badge profile.id %}">
+{% endif %}
+
     <fieldset class="inlineLabels">
         {{ form|as_uni_form }}
 

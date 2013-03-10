@@ -247,14 +247,22 @@ def note_unpin(request, note_id):
     request.user.message_set.create(message='Un-pinned')
     return HttpResponseRedirect(reverse('rolodex_view', kwargs={'profile_id': note.profile.id}))
 
-def flag(request, profile_id):
+def flag(request, profile_id=None, flag_id=None):
     if not perm(request):
         return HttpResponseRedirect(reverse('rolodex_login'))
 
-    profile = get_object_or_404(TrackingProfile, id=profile_id)
+    if profile_id:
+        profile = get_object_or_404(TrackingProfile, id=profile_id)
+        flag = None
+    else:
+        flag = get_object_or_404(ProfileFlag, id=flag_id)
+        profile = flag.profile
     
     if request.method == 'POST':
-        form = FlagForm(request.POST)
+        if flag:
+            form = FlagForm(request.POST, instance=flag)
+        else:
+            form = FlagForm(request.POST)
         
         if form.is_valid():
             flag = form.save(commit=False)
@@ -272,11 +280,15 @@ def flag(request, profile_id):
             return HttpResponseRedirect(reverse('rolodex_view', kwargs={'profile_id': profile.id}))
             
     else:
-        form = FlagForm()
+        if flag:
+            form = FlagForm(instance=flag)
+        else:
+            form = FlagForm()
         
     return render_to_response("rolodex/flag.html",
                               {'form': form,
-                               'profile': profile},
+                               'profile': profile,
+                               'flag': flag},
                               context_instance=RequestContext(request))
 
 def unflag(request, flag_id):
@@ -308,14 +320,22 @@ def flag_view_ajax(request, flag_id):
                               {'flag': flag},
                               context_instance=RequestContext(request))
 
-def badge(request, profile_id):
+def badge(request, profile_id=None, badge_id=None):
     if not perm(request):
         return HttpResponseRedirect(reverse('rolodex_login'))
 
-    profile = get_object_or_404(TrackingProfile, id=profile_id)
+    if profile_id:
+        profile = get_object_or_404(TrackingProfile, id=profile_id)
+        badge = None
+    else:
+        badge = get_object_or_404(ProfileBadge, id=badge_id)
+        profile = badge.profile
     
     if request.method == 'POST':
-        form = BadgeForm(request.POST)
+        if badge:
+            form = BadgeForm(request.POST, instance=badge)
+        else:
+            form = BadgeForm(request.POST)
         
         if form.is_valid():
             badge = form.save(commit=False)
@@ -323,7 +343,7 @@ def badge(request, profile_id):
             badge.profile = profile
             badge.added_by = request.user
             badge.save()
-            
+
             log = Activity.objects.create(profile=profile,
                                           activity_type='badge',
                                           date=datetime.now(),
@@ -333,11 +353,15 @@ def badge(request, profile_id):
             return HttpResponseRedirect(reverse('rolodex_view', kwargs={'profile_id': profile.id}))
             
     else:
-        form = BadgeForm()
+        if badge:
+            form = BadgeForm(instance=badge)
+        else:
+            form = BadgeForm()
         
     return render_to_response("rolodex/badge.html",
                               {'form': form,
-                               'profile': profile},
+                               'profile': profile,
+                               'badge': badge},
                               context_instance=RequestContext(request))
 
 def unbadge(request, badge_id):

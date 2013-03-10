@@ -6,6 +6,7 @@
         </h2>
         
         <p>
+            [<a href="{% url rolodex_flag_edit flag.id %}" onclick="$('#edit_flag_{{ flag.id }}').click(); return false;">Edit this flag</a>]
             [<a href="{% url rolodex_unflag flag.id %}">Remove flag</a>]
         </p>
 

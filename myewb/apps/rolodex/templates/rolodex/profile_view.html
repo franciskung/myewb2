@@ -28,6 +28,7 @@
             <a href="{% url rolodex_badge_ajax badge.id %}" class="colorbox description">
                 {{ badge.badge }}
                 {% if badge.year %}({{ badge.year }}){% endif %}
+                <a href="{% url rolodex_badge_edit badge.id %}" class="colorbox" style="display: none;" id="edit_badge_{{ badge.id }}">edit</a>
             </a>
             <br/>
         {% endfor %}
@@ -41,6 +42,7 @@
         
         {% for flag in profile.get_flags %}
             <a href="{% url rolodex_flag_ajax flag.id %}" class="colorbox description">{{ flag.flag }}</a>
+            <a href="{% url rolodex_flag_edit flag.id %}" class="colorbox" style="display: none;" id="edit_flag_{{ flag.id }}">edit</a>
             <br/>
         {% endfor %}
         

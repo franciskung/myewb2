@@ -3,7 +3,12 @@
 
 <h2>Add a flag</h2>
 
-<form class="uniForm" method="post" action="{% url rolodex_flag profile.id %}">
+{% if flag %}
+    <form class="uniForm" method="post" action="{% url rolodex_flag_edit flag.id %}">
+{% else %}
+    <form class="uniForm" method="post" action="{% url rolodex_flag profile.id %}">
+{% endif %}
+
     <fieldset class="inlineLabels">
         {{ form|as_uni_form }}
 

@@ -17,11 +17,13 @@ urlpatterns = patterns('rolodex.views',
     url(r'^note/(?P<note_id>\d+)/unpin/$', view='note_unpin', name="rolodex_note_unpin"),
 
     url(r'^flag/new/(?P<profile_id>\d+)/$', view='flag', name="rolodex_flag"),
+    url(r'^flag/edit/(?P<flag_id>\d+)/$', view='flag', name="rolodex_flag_edit"),
     url(r'^flag/remove/(?P<flag_id>\d+)/$', view='unflag', name="rolodex_unflag"),
     url(r'^flag/view/(?P<flag_id>\d+)/ajax/$', view='flag_view_ajax', name="rolodex_flag_ajax"),
     url(r'^flag/browse/(?P<flag_id>\d+)/$', view='browse_flags', name="rolodex_browse_flags"),
     
     url(r'^badge/new/(?P<profile_id>\d+)/$', view='badge', name="rolodex_badge"),
+    url(r'^badge/edit/(?P<badge_id>\d+)/$', view='badge', name="rolodex_badge_edit"),
     url(r'^badge/remove/(?P<badge_id>\d+)/$', view='unbadge', name="rolodex_unbadge"),
     url(r'^badge/view/(?P<badge_id>\d+)/ajax/$', view='badge_view_ajax', name="rolodex_badge_ajax"),
     url(r'^badge/browse/(?P<badge_id>\d+)/$', view='browse_badges', name="rolodex_browse_badges"),

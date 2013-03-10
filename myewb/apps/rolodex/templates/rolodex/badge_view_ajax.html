@@ -12,6 +12,7 @@
         </strong></p>
         
         <p>        
+            [<a href="{% url rolodex_badge_edit badge.id %}" onclick="$('#edit_badge_{{ badge.id }}').click(); return false;">Edit this role</a>]
             [<a href="{% url rolodex_unbadge badge.id %}">Remove role</a>]
         </p>
 
