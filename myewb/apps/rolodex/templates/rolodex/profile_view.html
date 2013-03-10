@@ -21,7 +21,7 @@
 
     <h1 style='text-align: center;'>{{ profile.first_name }} {{ profile.last_name }}</h1>
 
-    <div style='width: 170px; float: left; border-right: 1px solid #db7403; padding: 0 15px; text-align: right; line-height: 1.5em;'>
+    <div style='width: 200px; float: left; border-right: 1px solid #db7403; padding: 0 15px; text-align: right; line-height: 1.5em;'>
         <h2>Roles</h2>
         
         {% for badge in profile.get_badges %}
@@ -37,11 +37,15 @@
         <a href="{% url rolodex_badge profile.id %}" class="colorbox">add a role</a>
     </div>
 
-    <div style='width: 170px; float: right; border-left: 1px solid #db7403; padding: 0 15px; line-height: 1.5em;'>
+    <div style='width: 200px; float: right; border-left: 1px solid #db7403; padding: 0 15px; line-height: 1.5em;'>
         <h2>Flags</h2>
         
         {% for flag in profile.get_flags %}
-            <a href="{% url rolodex_flag_ajax flag.id %}" class="colorbox description">{{ flag.flag }}</a>
+            <a href="{% url rolodex_flag_ajax flag.id %}" class="colorbox description">
+                <img src="{{ STATIC_URL }}images/icons-flags/{{ flag.flag.colour}}.png" style="width: 20px; height: 20px; margin-top: 5px; margin-bottom: -5px;"/>
+                &nbsp;
+                {{ flag.flag }}
+            </a>
             <a href="{% url rolodex_flag_edit flag.id %}" class="colorbox" style="display: none;" id="edit_flag_{{ flag.id }}">edit</a>
             <br/>
         {% endfor %}
@@ -60,7 +64,7 @@
         <strong>{{ profile.primary_email }}</strong><br/>
     </div>
     
-    <br/><br/>
+    <br style='clear: both;'/><br/>
     
     {% block rolodex_view %}
 
