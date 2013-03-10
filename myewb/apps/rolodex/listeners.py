@@ -84,29 +84,35 @@ def user_update(sender, instance, created=None, **kwargs):
     
     profile = get_object_or_none(TrackingProfile, user=user)
     
-    if not profile:
-        return
-    
-    modified = False
-    profile_pickle = pickle.dumps(profile.to_dict())
-    
-    if profile.primary_email() != user.email:
+    if profile:
+        modified = False
+        profile_pickle = pickle.dumps(profile.to_dict())
+        
+        if profile.primary_email() != user.email:
+            profile.update_email(user.email)
+            modified = True
+            
+        if profile.first_name != user.first_name:
+            profile.first_name = user.first_name
+            modified = True
+            
+        if profile.last_name != user.last_name:
+            profile.last_name = user.last_name
+            modified = True
+            
+        if modified:
+            profile.save()
+            history = ProfileHistory.objects.create(profile=profile,
+                                                    editor=user,
+                                                    revision=profile_pickle)
+                                                    
+    else:
+        profile = TrackingProfile.objects.create(user=user,
+                                                 profile=user.get_profile(),
+                                                 first_name=user.first_name,
+                                                 last_name=user.last_name,
+                                                 updated_by=user)
         profile.update_email(user.email)
-        modified = True
-        
-    if profile.first_name != user.first_name:
-        profile.first_name = user.first_name
-        modified = True
-        
-    if profile.last_name != user.last_name:
-        profile.last_name = user.last_name
-        modified = True
-        
-    if modified:
-        profile.save()
-        history = ProfileHistory.objects.create(profile=profile,
-                                                editor=user,
-                                                revision=profile_pickle)
     
 def profile_update(sender, instance, **kwargs):
     return user_update(sender, instance.user2, kwargs)
