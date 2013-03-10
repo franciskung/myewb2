@@ -33,14 +33,14 @@
     <h2>Browse a list:</h2>
     <table border="0">
     <tr><td style='vertical-align: top;'>
-        <strong>Flags</strong><br/>
-        {% for flag in flags %}
-            <a href="{% url rolodex_browse_flags flag.id %}">{{ flag }}</a><br/>
-        {% endfor %}
-    </td><td style='padding-left: 25px; vertical-align: top;'>
         <strong>Roles</strong><br/>
         {% for badge in badges %}
             <a href="{% url rolodex_browse_badges badge.id %}">{{ badge }}</a><br/>
+        {% endfor %}
+    </td><td style='padding-left: 25px; vertical-align: top;'>
+        <strong>Flags</strong><br/>
+        {% for flag in flags %}
+            <a href="{% url rolodex_browse_flags flag.id %}">{{ flag }}</a><br/>
         {% endfor %}
     </td></tr></table>
     <br/>

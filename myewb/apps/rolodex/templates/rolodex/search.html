@@ -23,7 +23,7 @@
         <strong>Your search for <em>{{ search }}</em>:</strong>
     </p>
     
-    {% autopaginate results %}
+    {% autopaginate results 20 %}
 
     {% for profile in results %}
         <div class="profile clearfix" style="height: 35px; clear: left;">
@@ -37,6 +37,7 @@
         Sorry, no results
     {% endfor %}
 
+    <br/>
     {% paginate %}
     
     <br style='clear: both;'/><br/>

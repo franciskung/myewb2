@@ -23,7 +23,7 @@
     
     <br/><br/>
 
-    {% autopaginate results %}
+    {% autopaginate results 20 %}
 
     {% for result in results %}
         <div class="profile clearfix" style="height: 35px; clear: left;">
@@ -38,6 +38,7 @@
         Sorry, no results
     {% endfor %}
 
+    <br/>
     {% paginate %}
     
 
