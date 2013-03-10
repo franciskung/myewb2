@@ -17,6 +17,9 @@ from django.db.models.signals import post_save
 from base_groups.models import BaseGroup, GroupMember, GroupLocation, add_creator_to_group
 #from networks import emailforwards
 
+# to trigger add-to-class
+from mailchimp import models as mailchimpmodels
+
 class Network(BaseGroup):
     
     TYPE_CHOICES = (
