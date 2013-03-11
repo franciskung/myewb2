@@ -7,7 +7,7 @@
 
 {% block body %}
     <h2>Search for an individual:</h2>
-    <form method="post" value="{{ search }}" action="{% url rolodex_search %}">
+    <form method="get" value="{{ search }}" action="{% url rolodex_search %}">
         <input type="text" name="search"/>
         <input type="submit" value="Go"/>
     </form>

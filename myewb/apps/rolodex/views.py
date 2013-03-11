@@ -71,7 +71,7 @@ def search(request):
     if not perm(request):
         return HttpResponseRedirect(reverse('rolodex_login'))
         
-    search = request.POST.get('search', None)
+    search = request.GET.get('search', None)
     if not search:
         request.user.message_set.create(message='Please enter a search term')
         return HttpResponseRedirect(reverse('rolodex_home'))

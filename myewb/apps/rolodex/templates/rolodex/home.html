@@ -38,7 +38,7 @@
     </p>
 
     <h2>Search for an individual:</h2>
-    <form method="post" action="{% url rolodex_search %}">
+    <form method="get" action="{% url rolodex_search %}">
         <input type="text" name="search"/>
         <input type="submit" value="Go"/>
     </form>
