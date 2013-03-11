@@ -76,22 +76,18 @@ def search(request):
         request.user.message_set.create(message='Please enter a search term')
         return HttpResponseRedirect(reverse('rolodex_home'))
             
-    # match on first name
+    # match on first name, lastname, or email
     qry = Q(first_name__icontains=search.split()[0])
-    for term in search.split()[1:]:     # support space-deliminated search terms
-        qry = qry & Q(first_name__icontains=term)
+    qry = qry | Q(last_name__icontains=search.split()[0])
+    qry = qry | Q(email__email__icontains=search.split()[0])
 
-    # match on last name
-    qry2 = Q(last_name__icontains=search.split()[0])
-    for term in search.split()[1:]:     # support space-deliminated search terms
-        qry2 = qry2 & Q(last_name__icontains=term)
-    qry = qry | qry2
+    # support space-deliminated search terms
+    for term in search.split()[1:]:     
+        qry2 = Q(first_name__icontains=term)
+        qry2 = qry2 | Q(last_name__icontains=term)
+        qry2 = qry2 | Q(email__email__icontains=term)
         
-    # match on email
-    qry2 = Q(email__email__icontains=search.split()[0])
-    for term in search.split()[1:]:     # support space-deliminated search terms
-        qry2 = qry2 & Q(email__email__icontains=term)
-    qry = qry | qry2
+        qry = qry & qry2
     
     results = TrackingProfile.objects.filter(qry)
     results = results.distinct().order_by("last_name")
