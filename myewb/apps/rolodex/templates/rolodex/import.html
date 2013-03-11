@@ -1,0 +1,136 @@
+{% extends 'rolodex/base.html' %}
+
+{% load avatar_tags %}
+{% load pagination_tags %}
+
+{% block head_title %}Import{% endblock %}
+
+{% block body %}
+    <h2>Import</h2>
+    
+    <p>
+        This page <strong>will not</strong> create new records in the Rolodex;
+        it is meant for adding flags/roles/notes/events to existing records.
+    </p>
+    
+    <form method="post" action="" class="uniForm">
+        <fieldset class="inlineLabels">
+        
+            <div id="div_id_conditions_type" class="ctrlHolder">
+			    <label for="id_conditions">&nbsp;</label>
+			    <div style='margin-left: 300px;'>
+			        {% comment %}
+			        <div id="div_cond_none">
+			            <input type="radio" name="conditions" value="import" id="condition_none" checked="checked"> Just import, nothing else
+			        </div>
+			        {% endcomment %}
+			        
+			        <div id="div_cond_flag" style='clear: left;'>
+			            <br/>
+    			        <input type="radio" name="conditions" value="flag" id="condition_flag"> Import and set a flag<br/>
+    			        <div id="div_hide_flag" class="hides" style="display: none;">
+			                <select name="flag" id="select_flag" style='margin-left: 20px;'>
+			                    {% for flag in flags %}
+			                        <option value="{{ flag.id }}">{{ flag.name }}</option>
+			                    {% endfor %}
+			                </select><br/>
+    			            <textarea name="flag_note" id="textarea_flag" style='margin-left: 20px; height: 35px;'></textarea>
+			            </div>
+			        </div>
+			        
+			        <div id="div_cond_badge" style='clear: left;'>
+			            <br/>
+    			        <input type="radio" name="conditions" value="badge"  id="condition_badge"> Import and add a role<br/>
+    			        <div id="div_hide_badge" class="hides" style="display: none;">
+			                <select name="badge" id="select_badge" style='margin-left: 20px;'>
+			                    {% for badge in badges %}
+			                        <option value="{{ badge.id }}">{{ badge.name }}</option>
+			                    {% endfor %}
+			                </select><br/>
+    			            <textarea name="badge_note" id="textarea_flag" style='margin-left: 20px; height: 35px;'></textarea>
+			            </div>
+			        </div>
+			        
+			        <div id="div_cond_note" style='clear: left;'>
+			            <br/>
+    			        <input type="radio" name="conditions" value="note" id="condition_note"> Import and add a note<br/>
+    			        <div id="div_hide_note" class="hides" style="display: none;">
+    			            <textarea name="note" id="textarea_note" style='margin-left: 20px; height: 35px;'></textarea>
+                        </div>
+			        </div>
+			        
+			        <div id="div_cond_event" style='clear: left;'>
+			            <br/>
+    			        <input type="radio" name="conditions" value="event" id="condition_event"> Import and add to an event<br/>
+    			        <div id="div_hide_event" class="hides" style="display: none;">
+			                <select name="event" id="select_event" style='margin-left: 20px;'>
+		                        <option value="new">-- create a new event --</option>
+			                    {% for event in events %}
+			                        <option value="{{ event.id }}">{{ event.name }}</option>
+			                    {% endfor %}
+			                </select>
+			                <div id="new_event" style='margin-left: 20px; clear: left;'>
+			                    Event Name: &nbsp;&nbsp;&nbsp; <input typt="text" name="new_event"/><br/>
+			                    Date (yyyy-mm-dd): <input typt="text" name="new_event_date"/>
+			                </div>
+                        </div>
+			        </div>
+			        
+			    </div>
+			</div>
+		    
+            <div id="div_id_emails" class="ctrlHolder">
+			    <label for="id_emails">&nbsp;</label>
+			    <div style='margin-left: 300px;'>
+			        <em>Paste the list of emails to import - one per line.</em><br/>
+    			    <textarea name="emails" id="id_emails"></textarea>
+                </div>			    
+			</div>
+		    
+            <div id="div_id_submit" class="ctrlHolder">
+			    <label>&nbsp;</label>
+                <input type='hidden' name='action' value='add'>
+                <input type="submit" value="Add"/>
+			</div>
+    </form>
+    <br/>
+    
+    
+    <br style='clear: both;'/><br/>
+
+{% endblock %}
+
+{% block javascript %}
+    $('#condition_none').click(function() {
+        $('.hides').slideUp();
+    });
+    
+    $('#condition_flag').click(function() {
+        $('.hides').slideUp();
+        $('#div_hide_flag').slideDown();
+    });
+    
+    $('#condition_badge').click(function() {
+        $('.hides').slideUp();
+        $('#div_hide_badge').slideDown();
+    });
+    
+    $('#condition_note').click(function() {
+        $('.hides').slideUp();
+        $('#div_hide_note').slideDown();
+    });
+    
+    $('#condition_event').click(function() {
+        $('.hides').slideUp();
+        $('#div_hide_event').slideDown();
+    });
+    
+    $('#select_event').change(function() {
+        if ($(this).val() == 'new')
+            $('#new_event').slideDown();
+        else
+            $('#new_event').slideUp();
+    });
+    
+{% endblock %}
+

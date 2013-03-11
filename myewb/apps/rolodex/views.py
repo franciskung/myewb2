@@ -11,10 +11,10 @@ import pickle
 from account_extra.forms import EmailLoginForm
 from account.views import login as pinaxlogin
 
-from datetime import datetime
+from datetime import datetime, date
 from siteutils.shortcuts import get_object_or_none
 
-from rolodex.models import TrackingProfile, Email, ProfileHistory, Interaction, ProfileFlag, ProfileBadge, Flag, Badge, ProfileView, Activity, CustomField, CustomValue
+from rolodex.models import TrackingProfile, Email, ProfileHistory, Interaction, ProfileFlag, ProfileBadge, Flag, Badge, ProfileView, Activity, CustomField, CustomValue, Event, EventAttendance
 from rolodex.forms import TrackingProfileForm, NoteForm, FlagForm, BadgeForm, CustomFieldForm
 
 def perm(request):
@@ -531,6 +531,92 @@ def profile_edit_custom(request, profile_id):
     return render_to_response("rolodex/profile_edit_custom.html",
                               {'fields': fields,
                                'profile': profile},
+                              context_instance=RequestContext(request))
+
+def import_list(request):
+    if not perm(request):
+        return HttpResponseRedirect(reverse('rolodex_login'))
+        
+    if request.method == 'POST':
+        action = request.POST.get('conditions', None)
+        
+        extra_obj = None
+        kwargs = {}
+        log_type = None
+        
+        if action == 'flag' and request.POST.get('flag', None):
+            flag = get_object_or_none(Flag, id=request.POST['flag'])
+            extra_obj = ProfileFlag
+            kwargs['flag'] = flag
+            kwargs['note'] = request.POST.get('flag_note', None)
+            kwargs['flagged_by'] = request.user
+            log_type = 'flag'
+            
+        elif action == 'badge' and request.POST.get('badge', None):
+            badge = get_object_or_none(Badge, id=request.POST['badge'])
+            extra_obj = ProfileBadge
+            kwargs['badge'] = badge
+            kwargs['note'] = request.POST.get('badge_note', None)
+            kwargs['added_by'] = request.user
+            log_type = 'badge'
+            
+        elif action == 'note' and request.POST.get('note', None):
+            extra_obj = Interaction
+            kwargs['note'] = request.POST.get('note', None)
+            kwargs['activity_type'] = 'interaction'
+            kwargs['interaction_type'] = 'note'
+            kwargs['date'] = date.today()
+            kwargs['added_by'] = request.user
+            
+        elif action == 'event':
+            eventid = request.POST.get('event', None)
+            if eventid == 'new':
+                event = Event.objects.create(name=request.POST.get('new_event', None),
+                                             date=request.POST.get('new_event_date', date.today()))
+            else:
+                event = Event.objects.get(id=eventid)
+                
+            extra_obj = EventAttendance
+            kwargs['event'] = event
+            kwargs['activity_type'] = 'event'
+            kwargs['date'] = date.today()
+        
+        emails  = request.POST.get('emails', "").split("\n")
+        updated = []
+        skipped = []
+        for email in emails:
+            email = email.strip()
+            
+            email_obj = Email.objects.filter(email=email)
+            if email_obj:
+                kwargs['profile'] = email_obj[0].profile
+                created = extra_obj.objects.create(**kwargs)
+
+                if log_type:
+                    Activity.objects.create(profile=email_obj[0].profile,
+                                            activity_type=log_type,
+                                            date=datetime.now(),
+                                            added_by=request.user,
+                                            content_object=created)
+
+                updated.append(email)
+
+            else:
+                skipped.append(email)
+        
+        return render_to_response("rolodex/import_complete.html",
+                                  {'updated': updated,
+                                   'skipped': skipped},
+                                  context_instance=RequestContext(request))
+
+    badges = Badge.objects.all()
+    flags = Flag.objects.all()
+    events = Event.objects.all()
+
+    return render_to_response("rolodex/import.html",
+                              {'badges': badges,
+                               'flags': flags,
+                               'events': events},
                               context_instance=RequestContext(request))
 
 

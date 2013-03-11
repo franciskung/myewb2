@@ -42,12 +42,20 @@
         {% for flag in flags %}
             <a href="{% url rolodex_browse_flags flag.id %}">{{ flag }}</a><br/>
         {% endfor %}
-    </td></tr></table>
-    <br/>
+    </td></tr>
+    
+    <tr><td colspan="2" style="padding-left: 45px;">
+        <br/>
+        <a href="{% url rolodex_import %}">Bulk-import a list</a>
+    </td></tr>
+    </table>
 
+    <br/><br/>
+
+    {% comment %}
     <h2>Or, run a query:</h2>
     (coming soon)
-    
+    {% endcomment %}
     
 
     <br style='clear: both;'/>
