@@ -17,6 +17,20 @@
 	            </div>
         	</div>
         {% endfor %}
+        
+        <br/><br/>
+        <hr/>
+        
+        <h2>Recently Updated:</h2>
+        {% for profile in updated %}
+	        <div class="profile clearfix" style="height: 20px; clear: left;">
+            	<div style="float: left;">{% avatar profile.user 20 %}</div>
+            	<div style="padding: 5px; padding-top: 0; margin-top: 5px; margin-left: 25px;">
+	                <a href="{% url rolodex_view profile.id %}">{{ profile.first_name }} {{ profile.last_name }}</a>
+	            </div>
+        	</div>
+        {% endfor %}
+        
     </div>
     
     <p>
