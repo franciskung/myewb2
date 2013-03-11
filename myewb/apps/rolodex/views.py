@@ -29,7 +29,7 @@ def home(request):
         
     badges = Badge.objects.all()
     flags = Flag.objects.all()
-    recent = ProfileView.objects.filter(user=request.user).values('profile').annotate(latest_view=Max('date')).order_by('-date')[:20]
+    recent = ProfileView.objects.filter(user=request.user).values('profile').annotate(latest_view=Max('date')).order_by('-latest_view')[:20]
     
     recent_objs = []
     for r in recent:
