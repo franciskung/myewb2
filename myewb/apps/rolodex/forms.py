@@ -32,9 +32,12 @@ class TrackingProfileForm(forms.ModelForm):
         return super(TrackingProfileForm, self).__init__(*args, **kwargs)
     
 class NoteForm(forms.ModelForm):
+    date = forms.DateField(required=False,
+                           help_text='yyyy-mm-dd or leave blank for today')
+
     class Meta:
         model = Interaction
-        fields = ('interaction_type', 'visibility', 'pinned', 'note')
+        fields = ('interaction_type', 'date', 'visibility', 'pinned', 'note')
         
 class FlagForm(forms.ModelForm):
     class Meta:

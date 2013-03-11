@@ -203,7 +203,8 @@ def note_edit(request, profile_id=None, note_id=None):
             
             note.profile = profile
             note.activity_type = 'interaction'
-            note.date = datetime.now()
+            if not note.date:
+                note.date = datetime.now()
             note.added_by = request.user
             
             if editing:
