@@ -1,5 +1,5 @@
 from django.core.urlresolvers import reverse
-from django.db.models import Q, Count
+from django.db.models import Q, Count, Max
 from django.shortcuts import get_object_or_404, render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext, Context, loader
@@ -29,7 +29,7 @@ def home(request):
         
     badges = Badge.objects.all()
     flags = Flag.objects.all()
-    recent = ProfileView.objects.filter(user=request.user).values('profile').annotate(num_views=Count('id')).order_by('-date')[:20]
+    recent = ProfileView.objects.filter(user=request.user).values('profile').annotate(latest_view=Max('date')).order_by('-date')[:20]
     
     recent_objs = []
     for r in recent:
