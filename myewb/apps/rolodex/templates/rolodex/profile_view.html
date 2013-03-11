@@ -246,6 +246,7 @@
             {% endfor %}
         </table>
 
+        {% comment %}
         <h2>Mailing history</h2>
         <table border="0" class="aligntable">
         <tr>
@@ -269,6 +270,7 @@
             </td>
         </tr>
         </table>
+        {% endcomment %}
         
         <h2>Custom Fields <span class='normal'>(<a href="{% url rolodex_custom_fields %}">set up</a>)</span></h2>
         <form method="get" action="{% url rolodex_edit_custom profile.id %}">
