@@ -29,19 +29,23 @@ def home(request):
         
     badges = Badge.objects.all()
     flags = Flag.objects.all()
+
     recent = ProfileView.objects.filter(user=request.user).values('profile').annotate(latest_view=Max('date')).order_by('-latest_view')[:15]
-    
     recent_objs = []
     for r in recent:
         recent_objs.append(TrackingProfile.objects.get(id=r['profile']))
         
-    updated = TrackingProfile.objects.order_by('-updated')[:10]
+    updated = Activity.objects.values('profile').annotate(latest_view=Max('entered')).order_by('-latest_view')[:10]
+    updated_objs = []
+    for u in updated:
+        updated_objs.append(TrackingProfile.objects.get(id=u['profile']))
+        
         
     return render_to_response("rolodex/home.html",
                               {'flags': flags,
                                'badges': badges,
                                'recent': recent_objs,
-                               'updated': updated},
+                               'updated': updated_objs},
                               context_instance=RequestContext(request))
 
 def login(request, form_class=EmailLoginForm, 
