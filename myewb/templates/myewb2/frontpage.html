@@ -182,7 +182,30 @@ $(document).ready(function() {
 
 
 		<div id="chapter_dashboardery">
+		    <h2 class="chapterspecific-title h2bold">Compatible EWBers - Find your match online</h2>
+
+			<p>Here at EWB, we recognize that finding finding a soulmate can be difficult in the
+			busy life of a social change maker. And so we are launching a new service - EWB Match - that
+			makes it easy to find that special someone.</p>
+
+			<p><a href="#">Fill out your profile</a>, see our <a href="#">success stories</a>,
+			and start browsing compatible EWBers today!</p> 
+
+			<p><strong>Online now...</strong></p>		
+		    
+			{% for online in online_users %}
+
+				<a href="{% url profile_fools_view online %}"  class="avatar-whos-online" data-background-src="{% avatar_url online 45 %}" title="{{ online.visible_name }}" style="height: 47px; width: 47px; background-size: 100%;">
+				</a>
+
+			{% endfor %}
+
+			<br style='clear: left;'/>
+
+			<p><a href="{% url profile_fools_view %}">see more EWB matches! &raquo;</a><p>
+			
 		    {% if not request.user.is_authenticated %}
+		        <br/>
 		        <h2 class="chapterspecific-title h2bold">Engineers Without Borders Canada</h2>
 
 		        <p>Welcome to myEWB, the online community for Engineers Without Borders Canada!</p>
@@ -220,31 +243,6 @@ $(document).ready(function() {
 		            </form>
 		        {% endif %}
 			{% endif %}
-
-		    <h2 class="chapterspecific-title h2bold">Compatible EWBers - Find your match online</h2>
-
-			<p>Here at EWB, we recognize that finding finding a soulmate can be difficult in the
-			busy life of a social change maker. And so we are launching a new service - EWB Match - that
-			makes it easy to find that special someone.</p>
-
-			<p><a href="#">Fill out your profile</a>, see our <a href="#">success stories</a>,
-			and start browsing compatible EWBers today!</p> 
-
-			<p><strong>Online now...</strong></p>		
-		    
-			{% for online in online_users %}
-
-				<a href="{% url profile_detail online %}"  class="avatar-whos-online" data-background-src="{% avatar_url online 45 %}" title="{{ online.visible_name }}" style="height: 47px; width: 47px; background-size: 100%;">
-				</a>
-
-			{% endfor %}
-
-				<a href="{% url profile_fools_view user %}"  class="avatar-whos-online" data-background-src="{% avatar_url user 25 %}" title="{{ user.visible_name }}" style='height: 47px; width: 47px; background-size: 100%;'>
-				</a>
-			<br style='clear: left;'/>
-
-			<p><a href="{% url profile_fools_view %}">see more EWB matches! &raquo;</a><p>
-			
 		</div>
 
     </div>
