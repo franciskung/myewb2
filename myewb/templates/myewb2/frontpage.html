@@ -92,6 +92,7 @@ $(document).ready(function() {
 
     <div class="grid_11 border-right">
 
+{% comment %}
         <div id="chapter_dashboard" style='height: 175px;'>
         {% if request.user.is_authenticated %}
                 {% if request.user.get_profile.get_chapter %}
@@ -176,8 +177,88 @@ $(document).ready(function() {
 {#            <iframe width="280" height="200" src="http://www.youtube.com/embed/7U1xLwaIHI4?controls=0&amp;showinfo=0" frameborder="0" allowfullscreen></iframe>#}
         </div>
         </div>
+    </div>
+		{% endcomment %}
+
+
+		<div id="chapter_dashboardery">
+		    {% if not request.user.is_authenticated %}
+		        <h2 class="chapterspecific-title h2bold">Engineers Without Borders Canada</h2>
+
+		        <p>Welcome to myEWB, the online community for Engineers Without Borders Canada!</p>
+
+		        {% if login_form %}
+		            <form class="uniForm" id="mainpagelogin" method="POST" action="{% url acct_login %}">
+		            <fieldset class="inlineLabels">
+		                <div style="float: right; width: 40%; margin-top: 5px;">
+		                <input type="submit" value="{% trans "sign in" %} &raquo;" />
+		                <br/><br/>
+		                <a href="{% url acct_passwd_reset %}">{% trans "Forgot your password?" %}</a><br/>
+		                <a href="{% url acct_signup %}">{% trans "Create an account" %}</a>
+		                </div>
+		                
+		                <div style="margin-right: 30%; margin-top: 20px;">
+		                <p>
+		                <label for="id_login_name">Email:</label>
+		                <input id="id_login_name" type="text" name="login_name" maxlength="75" />
+		                </p>
+
+		                <p>
+		                <label for="id_password">Password:</label>
+		                <input type="password" name="password" id="id_password" />
+		                </p>
+		                
+		                <p><label>&nbsp;</label>
+		                <input type="checkbox" name="remember" id="id_remember" />
+		                <label for="id_remember" style="float: none; display: inline;">
+		                    Remember me
+		                </label>
+		                </p>
+		                </div>
+		                
+		            </fieldset>
+		            </form>
+		        {% endif %}
+			{% endif %}
+
+		    <h2 class="chapterspecific-title h2bold">Compatible EWBers - Find your match online</h2>
+
+			<p>Here at EWB, we recognize that finding finding a soulmate can be difficult in the
+			busy life of a social change maker. And so we are launching a new service - EWB Match - that
+			makes it easy to find that special someone.</p>
+
+			<p><a href="#">Fill out your profile</a>, see our <a href="#">success stories</a>,
+			and start browsing compatible EWBers today!</p> 
+
+			<p><strong>Online now...</strong></p>		
+		    
+			{% for online in online_users %}
+
+				<a href="{% url profile_detail online %}"  class="avatar-whos-online" data-background-src="{% avatar_url online 45 %}" title="{{ online.visible_name }}" style="height: 47px; width: 47px; background-size: 100%;">
+				</a>
+
+			{% endfor %}
+
+				<a href="{% url profile_fools_view user %}"  class="avatar-whos-online" data-background-src="{% avatar_url user 25 %}" title="{{ user.visible_name }}" style='height: 47px; width: 47px; background-size: 100%;'>
+				</a>
+			<br style='clear: left;'/>
+
+			<p><a href="{% url profile_fools_view %}">see more EWB matches! &raquo;</a><p>
+			
+		</div>
 
     </div>
+
+    <div class="grid_5" style="margin-right: -2px;">
+        <h2 class="chapterspecific-title h2bold">EWB Canada</h2>
+
+        <div style='width: 280px; height: 200px; background: #303030;'>
+        <div id="fontpageflash">
+	<iframe width="280" height="200" src="{% if request.is_secure %}https{% else %}http{% endif %}://www.youtube.com/embed/videoseries?list=UU7ItoGjleOzzuMFe-DckXTg&amp;hl=en_US&amp;controls=0&amp;showinfo=0" frameborder="0" allowfullscreen></iframe>
+        </div>
+        </div>
+    </div>
+
 
     {% comment %}
     <div class="grid_16">
@@ -226,7 +307,7 @@ $(document).ready(function() {
     </div>
     {% endcomment %}
   </div>
-</div>
+</div> 
 
 
 <div class="smallfooter-background">

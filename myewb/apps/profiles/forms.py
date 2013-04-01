@@ -17,7 +17,8 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext, Context, loader
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
-from profiles.models import MemberProfile, StudentRecord, WorkRecord
+#from profiles.models import MemberProfile, StudentRecord, WorkRecord, AprilFoolsProfile, AprilFoolsMBTI
+from profiles.models import *
 from creditcard.forms import PaymentForm, PaymentFormPreview, ProductWidget
 from creditcard.models import Product
 from contrib.uni_form.helpers import FormHelper, Submit, Reset
@@ -162,4 +163,40 @@ class SettingsForm(forms.ModelForm):
 class EWBMailForm(forms.Form):
     username = forms.SlugField(help_text='This is usually firstnamelastname - do not include @ewb.ca',
                                required=True)
-    
+
+class AprilFoolsProfileForm(forms.ModelForm):
+    about_text = forms.CharField(label='Tell us more about yourself', required=False,
+                                 widget=forms.Textarea())
+
+    mbti = forms.CharField(label='What is your MBTI type?', required=False,
+                            help_text="<a href='%s' target='_new'>take the test!</a>" % "http://www.humanmetrics.com/cgi-win/jtypes2.asp")
+
+    values = forms.ModelMultipleChoiceField(required=False,
+                               widget=forms.CheckboxSelectMultiple,
+                               queryset=AprilFoolsValue.objects.all(),
+                               label='Which EWB values do you identify with the most?',
+                               help_text="<a href='%s' target='_new'>need a reminder?</a>" % "http://my.ewb.ca/site_media/static/library/files/89/ewb-values-and-beliefs.pdf")
+                               
+
+    ventures = forms.ModelMultipleChoiceField(required=False,
+                               widget=forms.CheckboxSelectMultiple,
+                               queryset=AprilFoolsVenture.objects.all(),
+                                 label='Which EWB ventures are you interested in?',
+                                 help_text="<a href='%s' target='_new'>click here for a list</a>" % "https://docs.google.com/a/ewb.ca/spreadsheet/ccc?key=0AsgHDRfJ-uIadElSM3JPWmF1N08wcEd0Mkdfa0pJMGc#gid=0")
+
+    incubators = forms.ModelMultipleChoiceField(required=False,
+                               widget=forms.CheckboxSelectMultiple,
+                               queryset=AprilFoolsIncubator.objects.all(),
+                                   label='Which incubator functions do you like most?',
+                                   help_text="<a href='%s' target='_new'>not sure what this means?</a>" % "http://my.ewb.ca/site_media/static/library/files/789/ewb-incubation-model.pdf")
+
+    class Meta:
+        model = AprilFoolsProfile
+        exclude=('profile',)
+
+    def clean_mbti(self):
+        mbti = self.cleaned_data['mbti']
+        mbti = mbti.upper()
+        self.cleaned_data['mbti'] = mbti
+        return mbti
+        

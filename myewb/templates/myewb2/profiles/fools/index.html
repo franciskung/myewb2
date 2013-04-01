@@ -1,0 +1,90 @@
+{% extends "profiles/base.html" %}
+
+{% load i18n %}
+{% load avatar_tags %}
+{% load uni_form_tags %}
+{% load profile_tags %}
+{% load group_topics_tags %}
+{% load base_groups_tags %}
+{% load messages_ext_tags %}
+
+{% block head_title %}EWB Match{% endblock %}
+
+{% block body %}
+
+<h2 class="chapterspecific-title h2bold">Compatible EWBers - Find your match online</h2>
+
+<p>Here at EWB, we recognize that finding finding a soulmate can be difficult in the
+busy life of a social change maker.<br/>
+And so we are launching a new service - EWB Match - that
+makes it easy to find that special someone.</p>
+
+<p><a href="{% url profile_fools_edit %}">Fill out your profile</a>, {#see our <a href="#">success stories</a>,#}
+and start browsing compatible EWBers today!</p> 
+
+<br/>
+
+{% if cheers.count %}
+<div style='float: right; width: 25%; padding: 15px;' class="standardbox">
+    {% if mutual %}
+        <h2>Your Matches</h2>
+
+        <strong>
+        <ul>
+        {% for m in mutual %}
+            <li><a href="{% url profile_fools_view m.user2.username %}">{{ m.user2.visible_name }}</a></li>
+        {% endfor %}
+        </ul>
+        </strong>
+
+    {% endif %}
+
+    
+    <h2>Your Mentions</h2>
+
+    <p>
+    <strong>{{ cheers.count }}</strong> people have shown interest in you... but you'll have to return
+    the cheers to find out who they are!
+    </p>
+
+    
+</div>
+{% endif %}
+
+{% if results %}
+
+	<p><strong>Your search results</strong></p>
+
+	{% for u in results %}
+
+		<a href="{% url profile_fools_view u %}"  class="avatar-whos-online" data-background-src="{% avatar_url u 65 %}" title="{{ u.visible_name }}" style="height: 67px; width: 67px; background-size: 100%;">
+		</a>
+
+	{% endfor %}
+
+
+{% else %}
+
+	{% if search %}
+		<p><strong>Your search did not return any results.</strong></p>
+	{% endif %}
+
+    <form method="get" action="">
+	Search: 
+	<input type='text' name="search"/>
+	<input type='submit'/>
+	</form>
+
+    <br/>
+	<p><strong>Recent EWBers...</strong></p>
+
+	{% for profile in latest %}
+
+		<a href="{% url profile_fools_view profile.profile.user2 %}"  class="avatar-whos-online" data-background-src="{% avatar_url profile.profile.user2 65 %}" title="{{ profile.profile.user2.visible_name }}" style="height: 67px; width: 67px; background-size: 100%;">
+		</a>
+
+	{% endfor %}
+
+{% endif %}
+
+{% endblock %}

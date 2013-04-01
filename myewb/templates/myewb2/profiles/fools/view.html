@@ -1,0 +1,305 @@
+{% extends "profiles/base.html" %}
+
+{% load i18n %}
+{% load avatar_tags %}
+{% load uni_form_tags %}
+{% load profile_tags %}
+{% load group_topics_tags %}
+{% load base_groups_tags %}
+{% load messages_ext_tags %}
+
+{% block head_title %}EWB Match{% endblock %}
+
+{% block body %}
+
+<style>
+    .paddedtable th {
+        text-align: left;
+    }
+    .paddedtable td, .paddedtable th {
+        padding: 10px 40px 10px 20px;
+        vertical-align: top;
+        border-right: 1px solid #d0d0d0;
+        border-bottom: 1px solid #d0d0d0;
+        line-height: 1.75em;
+    }
+    .helpicon {
+        height: 15px;
+        width: 15px;
+        margin-left: 15px;
+        float: right;
+    }
+</style>
+
+<h2 class="chapterspecific-title h2bold">Compatible EWBers - Find your match online</h2>
+
+    <h1 class="noicon">{{ other_user.visible_name }}</h1>
+
+    <div id="profile_avatar" style='float: left; width: 180px;'>
+    	<a href="{% avatar_url other_user 500 %}" id="avatar">
+        	{% avatar other_user 160 %}
+        </a>
+    </div>
+    
+    {% if not is_me %}
+        <div style='margin-left: 180px;'>
+            {% if not cheers.count %}
+                <br/><br/>
+            	Got a crush on {{ other_user.visible_name }}?
+	            <form method="GET" action="{% url profile_fools_cheers other_user.username %}">
+                        <input type="submit" value="Send some cheers!"/>
+                </form>
+                {{ other_user.visible_name }} will receive an anonymous note telling them 
+                they've been cheers'ed.<br/><br/>
+            
+                <em>If {{ other_user.visible_name }} also sends cheers to you, <strong>a match
+                will be made</strong><br/>
+                and your mutual interest will be revealed to each other!</em>
+            {% else %}
+            
+                {% if mutualcheers.count %}
+                    <br/>
+                    <strong>MATCH MADE!</strong>
+                    <br/><br/>
+                    That's right - you'd better believe it,<br/>
+                    looks like there's some mutual interest here!<br/>
+                    What are you waiting for??
+                    <br/><br/>
+                
+		            <form method="GET" action="{% url messages_compose_to other_user.username %}">
+                            <input type="submit" value="{% trans "Send a message to " %}{{ other_user.visible_name}}!"/>
+                    </form>
+                {% else %}
+                    <br/><br/><br/>
+                    You've sent some cheers over to {{ other_user.visible_name }}.<br/><br/>
+                
+                    <em>If {{ other_user.visible_name }} also sends cheers to you, <strong>a match
+                    will be made</strong><br/>
+                    and your mutual interest will be revealed to each other!</em>
+                {% endif %}
+        
+            {% endif %}
+        </div>
+
+    {% endif %}
+
+    <br style='clear: left;'/>
+    <br/>
+
+    {% if is_me %}
+        <h2>Your EWB Match profile</h2>
+            {% if profile %}
+                <p><a href="{% url profile_fools_edit %}">Update your profile</a></p>
+                
+                <table border=0 class="paddedtable">
+                    <tr>
+                        <th>About You</th>
+                        <td>{{ profile.about_text|linebreaksbr }}</td>
+                    </tr>
+                    <tr>
+                        <th>
+                            MBTI
+                            &nbsp;
+                            <a href="http://my.ewb.ca/library/view/204/" target="_new">
+                                <img src="{{ STATIC_URL }}images/icons2/help_icon.png" class="helpicon"/>
+                            </a>
+                        </th>
+                        <td>{{ profile.mbti }}</td>
+                    </tr>
+                    <tr>
+                        <th>
+                            EWB Values
+                            &nbsp;
+                            <a href="http://my.ewb.ca/site_media/static/library/files/89/ewb-values-and-beliefs.pdf" target="_new">
+                                <img src="{{ STATIC_URL }}images/icons2/help_icon.png" class="helpicon"/>
+                            </a>
+                        </th>
+                        <td>
+                            {% for v in profile.values.all %}
+                                {{ v }}<br/>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            Venture Interest
+                            &nbsp;
+                            <a href="https://docs.google.com/a/ewb.ca/spreadsheet/ccc?key=0AsgHDRfJ-uIadElSM3JPWmF1N08wcEd0Mkdfa0pJMGc#gid=0" target="_new">
+                                <img src="{{ STATIC_URL }}images/icons2/help_icon.png" class="helpicon"/>
+                            </a>
+                        </th>
+                        <td>
+                            {% for v in profile.ventures.all %}
+                                {{ v }}<br/>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            Incubator Roles
+                            &nbsp;
+                            <a href="http://my.ewb.ca/site_media/static/library/files/789/ewb-incubation-model.pdf" target="_new">
+                                <img src="{{ STATIC_URL }}images/icons2/help_icon.png" class="helpicon"/>
+                            </a>
+                        </th>
+                        <td>
+                            {% for v in profile.incubators.all %}
+                                {{ v }}<br/>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                </table>
+
+            {% else %}
+                <p><a href="{% url profile_fools_edit %}"><strong>Click here to fill in your profile and make<br/>
+                yourself available to thousands of EWBers!</strong></p>
+            {% endif %}
+        
+    {% else %}
+
+        {% if profile.about_text %}
+            <p><strong>About {{ other_user.visible_name }}</strong></p>
+            <p>
+                {{ profile.about_text|linebreaksbr }}
+            </p>
+            <br/>
+        {% endif %}
+    
+        <h2>Your compatibility</h2>
+
+        {% if myprofile %}
+
+            {% if profile %}
+                {% if compatibility %}
+                    <div style='border: 2px solid; width: 500px; height: 25px; position: relative;'>
+                        <div style='width: {{ compatibilitypx }}px; background: #ff7200; height: 25px; position: relative; top: 0px;'></div>
+                    </div>
+                    <div style='width: 500px; text-align: center;'>
+                        <strong>You are {{ compatibility }}% compatible!*</strong>
+                        <br/>
+                        <em>
+                            {% ifequal compatibility 100 %}
+                                Are you the same person? Either way, you'll be reading each others' minds!
+                            {% endifequal %}
+                            {% ifequal compatlevel 'vgood' %}
+                                You've got a lot in common - what are you waiting for???
+                            {% endifequal %}
+                            {% ifequal compatlevel 'good' %}
+                                There's a healthy level of compatibility here; give it a try, what's there to lose?
+                            {% endifequal %}
+                            {% ifequal compatlevel 'average' %}
+                                Medium level of compatibility: wouldn't expect sparks right away, but who knows?
+                            {% endifequal %}
+                            {% ifequal compatlevel 'low' %}
+                                You're more likely to argue than anything else, but hey, don't opposites attract?
+                            {% endifequal %}
+                            {% ifequal compatlevel 'vlow' %}
+                                Sorry, but some things are just not meant to be...
+                            {% endifequal %}
+                        </em>
+                    </div>
+                    <br/><br/>
+                {% endif %}
+            
+                <table border=0 class="paddedtable">
+                    <tr>
+                        <th>&nbsp;</th>
+                        <th>{{ other_user.visible_name }}</th>
+                        <th>You</th>
+                    </tr>
+                    <tr>
+                        <th>
+                            MBTI
+                            &nbsp;
+                            <a href="http://my.ewb.ca/library/view/204/" target="_new">
+                                <img src="{{ STATIC_URL }}images/icons2/help_icon.png" class="helpicon"/>
+                            </a>
+                        </th>
+                        <td>{{ profile.mbti }}</td>
+                        <td>{{ myprofile.mbti }}</td>
+                    </tr>
+                    <tr>
+                        <th>
+                            EWB Values
+                            &nbsp;
+                            <a href="http://my.ewb.ca/site_media/static/library/files/89/ewb-values-and-beliefs.pdf" target="_new">
+                                <img src="{{ STATIC_URL }}images/icons2/help_icon.png" class="helpicon"/>
+                            </a>
+                        </th>
+                        <td>
+                            {% for v in profile.values.all %}
+                                {{ v }}<br/>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% for v in myprofile.values.all %}
+                                {{ v }}<br/>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            Venture Interest
+                            &nbsp;
+                            <a href="https://docs.google.com/a/ewb.ca/spreadsheet/ccc?key=0AsgHDRfJ-uIadElSM3JPWmF1N08wcEd0Mkdfa0pJMGc#gid=0" target="_new">
+                                <img src="{{ STATIC_URL }}images/icons2/help_icon.png" class="helpicon"/>
+                            </a>
+                        </th>
+                        <td>
+                            {% for v in profile.ventures.all %}
+                                {{ v }}<br/>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% for v in myprofile.ventures.all %}
+                                {{ v }}<br/>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            Incubator Roles
+                            &nbsp;
+                            <a href="http://my.ewb.ca/site_media/static/library/files/789/ewb-incubation-model.pdf" target="_new">
+                                <img src="{{ STATIC_URL }}images/icons2/help_icon.png" class="helpicon"/>
+                            </a>
+                        </th>
+                        <td>
+                            {% for v in profile.incubators.all %}
+                                {{ v }}<br/>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% for v in myprofile.incubators.all %}
+                                {{ v }}<br/>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                </table>
+
+                <p style='font-size: 0.75em;'>
+                * compatibility is calculated using the super top secret
+                EWB secret sauce formula,<br/>
+                which is so secret even the
+                creators of this site do not know it.
+                </p>
+
+                
+            {% else %}
+                <p><strong>{{ other_user.visible_name }} hasn't filled out their
+                EWB Match profile, so we can't determine a compatibility score.</strong></p>
+
+                {#<p><a href="#"><strong>Click here to guess at {{ other_user.visible_name }}'s profile!</strong></p>#}
+
+            {% endif %}
+
+        {% else %}
+            <p><a href="{% url profile_fools_edit %}"><strong>Click here to fill in your profile and test<br/>
+            your compatibility with thousands of EWBers, including {{ other_user.visible_name }}!</strong></p>
+
+        {% endif %}
+
+    {% endif %}
+
+
+{% endblock %}

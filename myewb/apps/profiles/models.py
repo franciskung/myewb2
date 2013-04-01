@@ -463,3 +463,80 @@ class ToolbarState(models.Model):
     toolbar = models.CharField(max_length=255,
                                db_index=True)
     state = models.CharField(max_length=1)
+
+class AprilFoolsVenture(models.Model):
+	name = models.CharField(max_length=250)
+
+	def __unicode__(self):
+	    return self.name
+
+class AprilFoolsIncubator(models.Model):
+	name = models.CharField(max_length=250)
+
+	def __unicode__(self):
+	    return self.name
+
+class AprilFoolsMBTI(models.Model):
+	name = models.CharField(max_length=4)
+
+	def __unicode__(self):
+	    return self.name.upper()
+
+class AprilFoolsValue(models.Model):
+	name = models.CharField(max_length=250)
+
+	def __unicode__(self):
+	    return self.name
+
+class AprilFoolsView(models.Model):
+	user = models.ForeignKey(User)
+	fools = models.ForeignKey(MemberProfile)
+	date = models.DateTimeField(auto_now_add=True)
+
+class AprilFoolsCheers(models.Model):
+    sentfrom = models.ForeignKey(MemberProfile, related_name="FoolsCheersFrom")
+    sentto = models.ForeignKey(MemberProfile, related_name="FoolsCheersTo")
+    date = models.DateTimeField(auto_now_add=True)
+
+class AprilFoolsProfile(models.Model):
+	profile = models.OneToOneField(MemberProfile, primary_key=True)
+	updated = models.DateTimeField(auto_now = True)
+
+	about_text = models.TextField(null=True, blank=True)
+
+#	mbti = models.ForeignKey(AprilFoolsMBTI, null=True, blank=True)
+	mbti = models.CharField(max_length=4, null=True, blank=True)
+	values = models.ManyToManyField(AprilFoolsValue, null=True, blank=True)
+	ventures = models.ManyToManyField(AprilFoolsVenture, null=True, blank=True)
+	incubators = models.ManyToManyField(AprilFoolsIncubator, null=True, blank=True)
+
+
+	"""
+
+	VALUES_CHOICES = (('dream', 'Dream Big - Work Hard'),
+					  ('people', 'Invest in People'),
+					  ('commit', 'Courageously Commit'),
+					  ('root', 'Address Root Causes for Impact'),
+					  ('questions', 'Ask Tough Question'),
+					  ('humility', 'Strive for Humility'))
+	values = models.CharField(max_length=50, null=True, blank=True, choices=VALUES_CHOICES)
+
+	VENTURES_CHOICES = (('failure', 'Admitting Failure'),
+						('afrilead', 'AfriLead'),
+						('agex', 'AgEx'),
+						('avc', 'Agricultural Value Chains'),
+						('bds', 'Business Development Services'),
+						('people', 'By The People'),
+						('cftn', 'Canadian Fair Trade Network'),
+						('extractives', 'Extractives Industries'),
+						('gec', 'Global Engineering - Curriculum'),
+						('geo', 'Global Engineering - Outreach'),
+						('gari', 'Governance and Rural Infrstructure'),
+						('mozaic', 'Growth Mozaic'),
+						('kulemela', 'Kulemela Investments'),
+						('rto', 'Rent-To-Own'),
+						('voto', 'Voto Mobile'),
+						('watsan', 'Water and Sanitation'))
+	ventures = models.
+	"""
+	

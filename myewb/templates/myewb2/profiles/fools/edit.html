@@ -1,0 +1,28 @@
+{% extends "profiles/base.html" %}
+
+{% load i18n %}
+{% load avatar_tags %}
+{% load uni_form_tags %}
+{% load profile_tags %}
+{% load group_topics_tags %}
+{% load base_groups_tags %}
+{% load messages_ext_tags %}
+
+{% block head_title %}EWB Match{% endblock %}
+
+{% block body %}
+
+<h2 class="chapterspecific-title h2bold">Compatible EWBers - Find your match online</h2>
+
+<h1>Update Your Profile</h1>
+
+<form class="uniForm" method="POST" action="">
+    <fieldset class="inlineLabels" style="margin-right: 1px;">
+        {{ form|as_uni_form }}
+        <div class="form_block">
+            <input type="submit" value="save"/>
+        </div>
+    </fieldset>
+</form>
+
+{% endblock %}

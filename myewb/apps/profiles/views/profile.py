@@ -29,8 +29,10 @@ from siteutils.helpers import get_email_user
 from siteutils.decorators import owner_required, secure_required
 from siteutils.models import PhoneNumber
 from siteutils.context_processors import timezones
-from profiles.models import MemberProfile, StudentRecord, WorkRecord, ToolbarState
-from profiles.forms import StudentRecordForm, WorkRecordForm, MembershipForm, MembershipFormPreview, PhoneNumberForm, SettingsForm, EWBMailForm 
+#from profiles.models import MemberProfile, StudentRecord, WorkRecord, ToolbarState
+from profiles.models import *
+#from profiles.forms import StudentRecordForm, WorkRecordForm, MembershipForm, MembershipFormPreview, PhoneNumberForm, SettingsForm, EWBMailForm
+from profiles.forms import *
 
 from networks.models import Network
 from networks.helpers import is_exec_over
@@ -922,4 +924,197 @@ def disable_email(request, username, group_slug):
 
     request.user.message_set.create(message="Emails disabled.")
     return HttpResponseRedirect(reverse('profile_settings', kwargs={'username': username}))
+
+@login_required
+def aprilfools_view(request, username=None):
+    if not username:
+        #latest = AprilFoolsProfile.objects.order_by('-updated')[0:50]
+        latest = AprilFoolsProfile.objects.order_by('?')[0:50]
+
+        search_terms = request.GET.get('search', None)
+        if search_terms:
+            # allow space-deliminated search terms
+            qry = Q(profile__name__icontains=search_terms.split()[0])
+            for term in search_terms.split()[1:]:
+                qry = qry & Q(profile__name__icontains=term)
+		        
+            results = User.objects.filter(is_active=True).filter(qry)
+            results = results.filter(memberprofile__grandfathered=False)
+            results = results.distinct().order_by("profile__name")
+        else:
+            results = None
+
+        cheers = AprilFoolsCheers.objects.filter(sentto=request.user.get_profile())
+
+        mutual = []
+        for c in cheers:
+            revcheers = AprilFoolsCheers.objects.filter(sentfrom=request.user.get_profile(),
+                                                        sentto=c.sentfrom)
+            if revcheers.count():
+                mutual.append(c.sentfrom)
+	
+        return render_to_response("profiles/fools/index.html",
+                                    {"latest": latest,
+                                    "search": search_terms,
+                                    "results": results,
+                                    "cheers": cheers,
+                                    "mutual": mutual},
+                                    context_instance=RequestContext(request))
+
+    user = get_object_or_404(User, username=username)
+    profilelist = AprilFoolsProfile.objects.filter(profile=user.get_profile())
+
+    if profilelist:
+        profile = profilelist[0]
+    else:
+        profile = None
+
+    if request.user == user:
+        is_me = True
+    else:
+        is_me = False
+
+    myprofile = AprilFoolsProfile.objects.filter(profile=request.user.get_profile())
+    if myprofile.count():
+        myprofile = myprofile[0]
+    else:
+        myprofile = None
+
+    AprilFoolsView.objects.create(user=request.user, fools=user.get_profile())
+
+    compatibility = None
+    compatibilitypx = None
+    compatlevel = None
+    if profile and myprofile:
+        hits = 0
+        misses = 0
+
+        for v in profile.mbti:
+            hit = False
+            for x in myprofile.mbti:
+                if v == x:
+                    hit = True
+            if hit:
+                hits += 1
+            else:
+                misses += 1
+
+        for v in profile.values.all():
+            hit = False
+            for x in myprofile.values.all():
+                if v == x:
+                    hit = True
+            if hit:
+                hits += 1
+            else:
+                misses += 1
+        if myprofile.values.count() > profile.values.count():
+            misses += myprofile.values.count() - profile.values.count() 
+
+        for v in profile.ventures.all():
+            hit = False
+            for x in myprofile.ventures.all():
+                if v == x:
+                    hit = True
+            if hit:
+                hits += 1
+            else:
+                misses += 1
+        if myprofile.ventures.count() > profile.ventures.count():
+            misses += myprofile.ventures.count() - profile.ventures.count() 
+
+        for v in profile.incubators.all():
+            hit = False
+            for x in myprofile.incubators.all():
+                if v == x:
+                    hit = True
+            if hit:
+                hits += 1
+            else:
+                misses += 1
+        if myprofile.incubators.count() > profile.incubators.count():
+            misses += myprofile.incubators.count() - profile.incubators.count() 
+
+        compatibility = hits * 100  / (hits + misses)
+
+        compatibility *= 1.25;
+        compatibility = round(compatibility)
+        if compatibility > 100:
+            compatibility = 100
+
+        compatibilitypx = compatibility * 5
+
+        if compatibility >= 60:
+            compatlevel = 'good'
+        if compatibility > 80:
+            compatlevel = 'vgood'
+        if compatibility < 60:
+            compatlevel = 'average'
+        if compatibility < 40:
+            compatlevel = 'low'
+        if compatibility < 20:
+            compatlevel = 'vlow'
+        
+
+    cheers = AprilFoolsCheers.objects.filter(sentfrom=request.user.get_profile(),
+                                             sentto=user.get_profile())
+    mutualcheers = AprilFoolsCheers.objects.filter(sentto=request.user.get_profile(),
+                                             sentfrom=user.get_profile())
+
+    return render_to_response("profiles/fools/view.html",
+                                {"profile": profile,
+                                 "other_user": user,
+                                 "is_me": is_me,
+                                 "myprofile": myprofile,
+                                 "compatibility": compatibility,
+                                 "compatibilitypx": compatibilitypx,
+                                 "compatlevel": compatlevel,
+                                 "cheers": cheers,
+                                 "mutualcheers": mutualcheers},
+                                context_instance=RequestContext(request))
+
+@login_required
+def aprilfools_edit(request):
+    profilelist = AprilFoolsProfile.objects.filter(profile=request.user.get_profile())
+
+    if profilelist:
+        profile = profilelist[0]
+    else:
+        profile = None
+
+    if profile:
+        form = AprilFoolsProfileForm(instance=profile)
+    else:
+        form = AprilFoolsProfileForm()
+
+    if request.method == 'POST':
+        if profile:
+            form = AprilFoolsProfileForm(request.POST, instance=profile)
+        else:
+            form = AprilFoolsProfileForm(request.POST)
+
+        if form.is_valid():
+            profile = form.save(commit=False)
+            profile.profile = request.user.get_profile()
+            profile.save()
+            form.save_m2m()
+
+            request.user.message_set.create(message='Profile updated')
+            return HttpResponseRedirect(reverse('profile_fools_view'))
+
+    return render_to_response("profiles/fools/edit.html",
+                                {"profile": profile,
+                                 "form": form},
+                                context_instance=RequestContext(request))
+
+@login_required
+def aprilfools_cheers(request, username):
+    user = get_object_or_404(User, username=username)
+
+    cheers = AprilFoolsCheers.objects.create(sentfrom=request.user.get_profile(),
+                                             sentto=user.get_profile())
+
+    request.user.message_set.create(message="You've cheers'ed %s!" % user.visible_name())
+
+    return HttpResponseRedirect(reverse('profile_fools_view', kwargs={'username': username}))
 
