@@ -927,6 +927,12 @@ def disable_email(request, username, group_slug):
 
 @login_required
 def aprilfools_view(request, username=None):
+    myprofile = AprilFoolsProfile.objects.filter(profile=request.user.get_profile())
+    if myprofile.count():
+        myprofile = myprofile[0]
+    else:
+        myprofile = None
+
     if not username:
         #latest = AprilFoolsProfile.objects.order_by('-updated')[0:50]
         latest = AprilFoolsProfile.objects.order_by('?')[0:50]
@@ -958,7 +964,8 @@ def aprilfools_view(request, username=None):
                                     "search": search_terms,
                                     "results": results,
                                     "cheers": cheers,
-                                    "mutual": mutual},
+                                    "mutual": mutual,
+                                    "myprofile": myprofile},
                                     context_instance=RequestContext(request))
 
     user = get_object_or_404(User, username=username)
@@ -973,12 +980,6 @@ def aprilfools_view(request, username=None):
         is_me = True
     else:
         is_me = False
-
-    myprofile = AprilFoolsProfile.objects.filter(profile=request.user.get_profile())
-    if myprofile.count():
-        myprofile = myprofile[0]
-    else:
-        myprofile = None
 
     AprilFoolsView.objects.create(user=request.user, fools=user.get_profile())
 
