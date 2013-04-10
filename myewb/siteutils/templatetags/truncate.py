@@ -57,7 +57,7 @@ def truncate_tail(value, character_count, ellipsis=True):
   except ValueError: # Invalid literal for int().
     return value # Fail silently.
 
-  if len(value) < length:
+  if len(value) <= length:
     return value
 
   # if we're already on a word boundary, done
