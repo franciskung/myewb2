@@ -71,6 +71,10 @@ def login_facebook(request):
         f = urllib.urlopen(token_url)
         
         terms = urlparse.parse_qs(f.read())
+
+        if not terms.get('access_token', None):
+            return HttpResponse("Error getting a Facebook token.")
+
         access_token = terms['access_token']
         
         graph_url = "https://graph.facebook.com/me?access_token=%s" % access_token[0]
