@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import permission_required, login_required
 from django.core.urlresolvers import reverse
 from django.db.models import Q
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotFound
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template.defaultfilters import slugify
 from django.template import RequestContext
@@ -376,7 +376,11 @@ def resource_google2(request, resource_id):
     return HttpResponse(final_uri)
     
 def resource_googlesave(request, resource_id, save=True):
-    resource = FileResource.objects.get(id=resource_id)
+    try:
+        resource = FileResource.objects.get(id=resource_id)
+    except FileResource.DoesNotExist:
+        return HttpResponseNotFound("Not found")
+    
     if not resource.user_can_edit(request.user):
         return render_to_response('denied.html', context_instance=RequestContext(request))
         
