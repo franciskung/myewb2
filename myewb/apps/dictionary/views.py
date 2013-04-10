@@ -31,6 +31,7 @@ def home(request):
 def search(request):
     search = request.GET.get('term', None)
     
+    terms = None
     if search:
         terms = Term.objects.filter(title__icontains=search).order_by('title')
         
