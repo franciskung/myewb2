@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- 
+
 """myEWB profile models
 Models to store site-specific profile information.
 
@@ -393,6 +395,13 @@ class StudentRecord(models.Model):
         ('GR', _('Graduate')),
         ('OT', _('Other')),
     )
+    STUDENT_LEVELS_FR = (
+        ('HS', _('École secondaire')),
+        ('CL', _('Cégep / Collège')),
+        ('UG', _('Baccalauréat')),
+        ('GR', _('Études supérieures')),
+        ('OT', _('Autre')),
+    )
     level = models.CharField(_('level'), max_length=2, choices=STUDENT_LEVELS, null=True, blank=True)
     start_date = models.DateField(_('start date'), null=True, blank=True)
     graduation_date = models.DateField(_('(Expected) Graduation date'), null=True, blank=True)
@@ -437,6 +446,12 @@ class WorkRecord(models.Model):
         ('medium', _('21 - 100 employees')),
         ('large', _('over 100 employees')),
     )
+    COMPANY_SIZES_FR = (
+        ('tiny', _('1 à 5 employés')),
+        ('small', _('1 à 5 employés')),
+        ('medium', _('21 à 100 employés')),
+        ('large', _('Plus de 100 employés')),
+    )
     company_size = models.CharField(_('company size'), max_length=10, choices=COMPANY_SIZES, null=True, blank=True)
     
     INCOME_LEVELS = (
@@ -444,6 +459,12 @@ class WorkRecord(models.Model):
         ('lower_mid', _('$30,000 to $45,000')),
         ('upper_mid', _('$45,000 to $75,000')),
         ('high', _('over $75,000')),
+    )
+    INCOME_LEVELS_FR = (
+        ('low', _('Moins de 30 000 $')),
+        ('lower_mid', _('30 000 $ à 45 000 $')),
+        ('upper_mid', _('45 000 $ à 75 000 $')),
+        ('high', _('Plus de 75 000 $')),
     )
     income_level = models.CharField(_('income level'), max_length=10, choices=INCOME_LEVELS, null=True, blank=True)
     

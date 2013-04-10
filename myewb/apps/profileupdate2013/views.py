@@ -17,6 +17,7 @@ from profiles.models import MemberProfile
 from siteutils.models import Address, PhoneNumber
 from datetime import datetime
 from profileupdate2013.models import ProfileUpdate, ProfileUpdateForm, ProfileUpdateFormFR
+from base_groups.models import BaseGroup
 
 @login_required
 def intro(request):
@@ -54,6 +55,7 @@ def contact(request):
                                                       profile=request.user.get_profile())
         request.session['profileupdate'] = profile_update
     profile_update.contact = datetime.now()
+    profile_update.language = request.session.get('profilelang', 'en')
     profile_update.save()
 
     if request.method == 'POST':
@@ -139,6 +141,26 @@ def contact(request):
                 profile.phone_numbers.add(phone)
                 profile.phone_numbers_primary = phone
                 profile.save()
+                
+        elif action == 'next':
+            lang = request.POST.get('language', None)
+            
+            if lang == 'en':
+                profile.language = 'E'
+            elif lang == 'fr':
+                profile.language = 'F'
+                
+            if lang:
+                profile.save()
+                
+            if request.POST.get('updates', None) == 'yes':
+                try:
+                    grp = BaseGroup.objects.get(slug='weekly')
+                    grp.add_member(request.user)
+                except BaseGroup.DoesNotExist:
+                    pass
+            
+            return HttpResponseRedirect(reverse('profileupdate_workplace'))
 
     primary_email = request.user.emailaddress_set.filter(primary=True)
     if primary_email.count():

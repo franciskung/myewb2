@@ -242,7 +242,20 @@
 </div>    
 
 <br/><br/>    
-<form action="{% url profileupdate_workplace %}" method="get">
+<form action="" method="post">
+    What is your preferred language?<br/>
+    <div style='padding-left: 25px;'>
+    <input type="radio" name="language" value="en"/> English<br/>
+    <input type="radio" name="language" value="fr"/> French<br/>
+    </div>
+    <br/>
+    
+    Would you like to receive weekly email updates from EWB?<br/>
+    <div style='padding-left: 25px;'>
+    <input type="checkbox" name="updates" value="yes"/> Yes!
+    </div>
+    <br/>
+    
     <input type="submit" value="Page suivante"/>
 </form>
 

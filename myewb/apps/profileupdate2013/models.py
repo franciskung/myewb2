@@ -22,6 +22,8 @@ class ProfileUpdate(models.Model):
     interests = models.DateTimeField(blank=True, null=True, editable=False)
     demographics = models.DateTimeField(blank=True, null=True, editable=False)
     
+    language = models.CharField(max_length=2, blank=True, null=True, editable=False)
+
     INVOLVEMENT = (('own', 'I am helping shape the direction of EWB'),
                    ('active', 'I am actively involved in EWB'),
                    ('contributing', 'I am occassionally involved in EWB'),

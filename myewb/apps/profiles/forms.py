@@ -49,7 +49,7 @@ class StudentRecordFormFR(StudentRecordForm):
     institution = forms.CharField(label="Nom de l'établissement", required=False)
     field = forms.CharField("Domaine ", required=False)
     
-    level = forms.ChoiceField(label='Niveau', choices=StudentRecord.STUDENT_LEVELS, required=False)
+    level = forms.ChoiceField(label='Niveau', choices=StudentRecord.STUDENT_LEVELS_FR, required=False)
     start_date = forms.CharField(label='Date de début', required=False)
     graduation_date = forms.CharField(label='Date prévue d’obtention du diplôme', required=False)
 
@@ -72,8 +72,8 @@ class WorkRecordFormFR(WorkRecordForm):
     end_date = forms.CharField(label='Date de fin',
                                help_text='Laisser vide si c’est votre employeur actuel', required=False)
     
-    company_size = forms.ChoiceField(label='Taille de l’entreprise', choices=WorkRecord.COMPANY_SIZES, required=False)
-    income_level = forms.ChoiceField(label='Niveau de revenu', choices=WorkRecord.INCOME_LEVELS, required=False)
+    company_size = forms.ChoiceField(label='Taille de l’entreprise', choices=WorkRecord.COMPANY_SIZES_FR, required=False)
+    income_level = forms.ChoiceField(label='Niveau de revenu', choices=WorkRecord.INCOME_LEVELS_FR, required=False)
 
     """Add/edit form for the StudentRecord class."""
     class Meta:
