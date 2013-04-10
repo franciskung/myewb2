@@ -80,7 +80,10 @@ def login_facebook(request):
         info = simplejson.loads(json)
         
         if not info.get('verified', None):
-            return HttpResponse("sorry, your facebook account is not confirmed")
+            return HttpResponse("Sorry, your facebook account is not confirmed")
+        
+        if not info.get('email', None):
+            return HttpResponse("Sorry, your facebook account does not have an email address - an email is required to create a myEWB account.")
         
         user = User.extras.create_silent_user(info['email'])
 
