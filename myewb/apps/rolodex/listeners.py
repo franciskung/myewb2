@@ -184,15 +184,24 @@ def email_update(sender, instance, **kwargs):
 
     # this address is already in the rolodex; just update it
     email = get_object_or_none(Email, myewbemail=instance)
+
     if email:
         email.email = instance.email
         email.save()
 
-    # add new address to rolodex
     else:
-        email = Email.objects.create(email=instance.email,
-                                     profile = profile,
-                                     myewbemail=instance)
+        email = get_object_or_none(Email, email=instance.email)
+        
+        # or, is the address there, but not linked to the myEWB object?
+        if email:
+            email.myewbemail=instance
+            email.save()
+        
+        # add new address to rolodex
+        else:
+            email = Email.objects.create(email=instance.email,
+                                         profile = profile,
+                                         myewbemail=instance)
                                      
     if instance.primary:
         profile.update_email(instance.email)
