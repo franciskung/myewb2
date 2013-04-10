@@ -16,6 +16,9 @@ from siteutils.helpers import fix_encoding
 
 class CheersManager(models.Manager):
     def get_container(self, obj):
+        if not obj:
+            return None
+            
         ctype = ContentType.objects.get_for_model(obj)
         
         try:
