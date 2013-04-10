@@ -1,0 +1,70 @@
+{% extends 'profiles/base.html' %}
+
+{% load uni_form_tags %}
+
+{% block body %}
+
+<style>
+    .addressform th {
+        text-align: right;
+        font-weight: normal;
+        padding-left: 25px;
+    }
+    .addressform td {
+        padding-left: 15px;
+    }
+</style>
+
+
+<h2>
+    Le recensement d'ISF
+    &nbsp;
+    <span style='font-size: 0.7em; font-weight: normal;'>(page  4/4)</span>
+</h2>
+
+<p><strong>
+    Et enfin, partagez vos domaines d'intérêt avec nous.
+</strong></p>
+
+{% comment %}
+<form action="" method="post">
+    <table style='width: 80%;'>
+        <tr>
+            {% for interest in interests %}
+                <td style='width: 18%; padding-bottom: 5px;'>
+                
+                    <input type="checkbox" id="interest_{{ interest.id }}">
+                    <label for="interest_{{ interest.id }}">{{ interest.tag }}</label>
+                
+                {% cycle '</td>' '</td>' '</td>' '</td></tr><tr>' %}
+            {% endfor %}
+        </tr>
+    </table>
+</form>
+{% endcomment %}
+
+<form action="" method="post">
+    {% for interest in interests %}
+        <div style='padding-bottom: 5px;'>
+            <input type="checkbox" name="interest_{{ interest.id }}" value="yes" id="interest_{{ interest.id }}">
+            <label for="interest_{{ interest.id }}">{{ interest.tag_fr }}</label>
+        </div>
+    {% endfor %}
+    <br/>
+    
+    Ou ajoutez vos propres domaines d’intérêt (un seul par ligne):<br/>
+    <textarea style='width: 250px; height: 45px;' name='extra'></textarea>
+    <br/><br/>
+    
+    <input type="submit" value="Terminer"/>
+</form>
+
+
+
+{% endblock %}
+
+{% block toolbar_right %}
+	&nbsp;
+{% endblock %}
+
+

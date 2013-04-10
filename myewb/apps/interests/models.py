@@ -27,6 +27,8 @@ class Interest(models.Model):
     """
 
     tag = models.CharField(max_length=50, blank=False)
+    tag_fr = models.CharField(max_length=50, blank=True)
+
     topics = models.ManyToManyField(GroupTopic, blank=True)
     users = models.ManyToManyField(MemberProfile, blank=True)
     groups = models.ManyToManyField(BaseGroup, blank=True)

@@ -2,6 +2,49 @@
 
 {% block body %}
 
+<div style='width: 45%; float: right;'>
+<h2>Le recensement d'ISF</h2>
+
+{% if profile_user.first_name and profile_user.last_name %}
+<strong>{{ profile_user.first_name }} {{ profile_user.last_name }}</strong>
+{% endif %}
+
+<p>
+    Nous sommes heureux de vous revoir sur myEWB et nous vous remercions de
+    votre participation au premier recensement d'ISF!
+</p>
+
+<p>
+    Ingénieurs sans frontières dispose d'un <strong>réseau de plus de 40 000 membres</strong>,
+    donateurs et sympathisants, et nous tentons de trouver de nouvelles façons de
+    <strong>vous garder connectés à ce réseau</strong>.
+</p>
+
+<p>
+    Simultanément, nous constatons que notre information est de plus en plus obsolète...
+    Par conséquent, il est difficile de nous assurer que <strong>votre expérience
+    dans ISF soit adaptée à vos besoins et champs d’intérêt</strong>.
+</p>
+
+<p>
+    Alors, nous mettons en place le <strong>Recensement d'ISF!</strong>
+    Nous voulons nous assurer que les informations que nous détenons sont mises 
+    à jour afin de <strong>rester en contact avec vous</strong>
+    et de <strong>nous renseigner sur ce qui vous intéresse</strong>.
+</p>
+
+<p>
+    Cela devrait vous prendre de 5 à 10 minutes. C’est parti!
+</p>
+
+<form action="{% url profileupdate_contact %}" method="get">
+
+    <input type="hidden" name="lang" value="fr"/>
+    <input type="submit" value="Démarrer"/>
+</form>
+</div>
+
+<div style='width: 45%;'>
 <h2>The EWB Census</h2>
 
 {% if profile_user.first_name and profile_user.last_name %}
@@ -31,16 +74,14 @@
 <p>
     This should only take <strong>5-10 minutes</strong> - let's get started!
 </p>
+<br/>
 
 <form action="{% url profileupdate_contact %}" method="get">
 
     <input type="submit" value="Start"/>
 </form>
+</div>
+
 
 {% endblock %}
-
-{% block toolbar_right %}
-	&nbsp;
-{% endblock %}
-
 

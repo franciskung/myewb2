@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- 
+
 """myEWB profile forms
 
 This file is part of myEWB
@@ -24,6 +26,7 @@ from creditcard.models import Product
 from contrib.uni_form.helpers import FormHelper, Submit, Reset
 from contrib.uni_form.helpers import Layout, Fieldset, Row, HTML
 from siteutils.models import Address, PhoneNumber
+from siteutils.countries import COUNTRIES
 
 class ProfileForm(forms.ModelForm):
 	"""Add/edit form for the MemberProfile class."""
@@ -42,11 +45,40 @@ class StudentRecordForm(forms.ModelForm):
 		model = StudentRecord
 		exclude = ('user', 'network')
         
+class StudentRecordFormFR(StudentRecordForm):
+    institution = forms.CharField(label="Nom de l'établissement", required=False)
+    field = forms.CharField("Domaine ", required=False)
+    
+    level = forms.ChoiceField(label='Niveau', choices=StudentRecord.STUDENT_LEVELS, required=False)
+    start_date = forms.CharField(label='Date de début', required=False)
+    graduation_date = forms.CharField(label='Date prévue d’obtention du diplôme', required=False)
+
+    """Add/edit form for the StudentRecord class."""
+    class Meta:
+        model = StudentRecord
+        exclude = ('user', 'network')
+        
 class WorkRecordForm(forms.ModelForm):
-	"""Add/edit form for the StudentRecord class."""
-	class Meta:
-		model = WorkRecord
-		exclude = ('user', 'network')
+    """Add/edit form for the StudentRecord class."""
+    class Meta:
+        model = WorkRecord
+        exclude = ('user', 'network')
+		
+class WorkRecordFormFR(WorkRecordForm):
+    employer = forms.CharField(label='Employeur', required=False)
+    sector = forms.CharField(label='Secteur', required=False)
+    position = forms.CharField(label='Poste', required=False)
+    start_date = forms.CharField(label='Date de début', required=False)
+    end_date = forms.CharField(label='Date de fin',
+                               help_text='Laisser vide si c’est votre employeur actuel', required=False)
+    
+    company_size = forms.ChoiceField(label='Taille de l’entreprise', choices=WorkRecord.COMPANY_SIZES, required=False)
+    income_level = forms.ChoiceField(label='Niveau de revenu', choices=WorkRecord.INCOME_LEVELS, required=False)
+
+    """Add/edit form for the StudentRecord class."""
+    class Meta:
+        model = WorkRecord
+        exclude = ('user', 'network')
 		
 class SimpleAddressForm(forms.ModelForm):
     class Meta:
@@ -58,10 +90,25 @@ class AddressForm(forms.ModelForm):
         model = Address
         exclude = ('content_type', 'object_id')
 
+class AddressFormFR(AddressForm):
+    label = forms.CharField(label='Étiquette')
+    street = forms.CharField(label='Adresse civique')
+    city = forms.CharField(label='Ville')
+    province = forms.CharField(label='Province / état')
+    postal_code = forms.CharField(label='Code postal')
+    country = forms.ChoiceField(label='Pays', choices=COUNTRIES, initial='CA')
+
 class PhoneNumberForm(forms.ModelForm):
     class Meta:
         model = PhoneNumber
         exclude = ('content_type', 'object_id')
+
+class PhoneNumberFormFR(PhoneNumberForm):
+    number = forms.CharField(label='numéro de téléphone')
+    
+    class Meta:
+        model = PhoneNumber
+        exclude = ('content_type', 'object_id', 'label')
 
 MEMBERSHIP_TYPES = (('studues', _("Student ($20)")),
 				    ('produes', _("Professional ($40)")))

@@ -10,11 +10,13 @@ from pinax.apps.account.forms import AddEmailForm
 from emailconfirmation.models import EmailAddress, EmailConfirmation
 
 from interests.models import Interest
-from profiles.forms import AddressForm, PhoneNumberForm, StudentRecordForm, WorkRecordForm
+from profiles.forms import AddressForm, AddressFormFR, PhoneNumberForm, PhoneNumberFormFR, \
+                           StudentRecordForm, StudentRecordFormFR, WorkRecordForm, WorkRecordFormFR
+#                            StudentRecordForm, WorkRecordForm
 from profiles.models import MemberProfile
 from siteutils.models import Address, PhoneNumber
 from datetime import datetime
-from profileupdate2013.models import ProfileUpdate, ProfileUpdateForm
+from profileupdate2013.models import ProfileUpdate, ProfileUpdateForm, ProfileUpdateFormFR
 
 @login_required
 def intro(request):
@@ -31,10 +33,19 @@ def intro(request):
 def contact(request):
     profile = request.user.get_profile()
 
-    add_email_form = AddEmailForm(user=request.user)
-    address_form = AddressForm()
-    phone_form = PhoneNumberForm()
+    if request.GET.get('lang', 'english') == 'fr':
+        request.session['profilelang'] = 'fr'
+        request.session['django_language'] = 'fr_FR'
+        address_form = AddressFormFR()
+        phone_form = PhoneNumberFormFR()
+    else:
+        request.session['profilelang'] = 'en'
+        request.session['django_language'] = 'en_US'
+        address_form = AddressForm()
+        phone_form = PhoneNumberForm()
     
+    add_email_form = AddEmailForm(user=request.user)
+
     profile_update = request.session.get('profileupdate')
     if profile_update:
         profile_update = ProfileUpdate.objects.get(id=profile_update.id)
@@ -147,7 +158,12 @@ def contact(request):
         profile.save()
         
 
-    return render_to_response("profileupdate2013/contact.html",
+    if request.session.get('profilelang', 'en') == 'fr':
+        template = "profileupdate2013/contact_fr.html"
+    else:
+        template = "profileupdate2013/contact.html"
+
+    return render_to_response(template,
                               {'profile_user': request.user,
                                'primary_email': primary_email,
                                'additional_emails': additional_emails,
@@ -160,8 +176,12 @@ def contact(request):
 def workplace(request):
     profile = request.user.get_profile()
 
-    workplace_form = WorkRecordForm()
-    school_form = StudentRecordForm()
+    if request.session.get('profilelang', 'en') == 'fr':
+        workplace_form = WorkRecordFormFR()
+        school_form = StudentRecordFormFR()
+    else:
+        workplace_form = WorkRecordForm()
+        school_form = StudentRecordForm()
 
     profile_update = request.session.get('profileupdate')
     if profile_update:
@@ -178,20 +198,31 @@ def workplace(request):
         action = request.POST.get('action', None)
         
         if action == 'workplace':
-            workplace_form = WorkRecordForm(request.POST)
+            if request.session.get('profilelang', 'en') == 'fr':
+                workplace_form = WorkRecordFormFR(request.POST)
+            else:
+                workplace_form = WorkRecordForm(request.POST)
             if workplace_form.is_valid():
                 workplace = workplace_form.save(commit=False)
                 workplace.user = request.user
                 workplace.save()
         
         elif action == 'school':
-            school_form = StudentRecordForm(request.POST)
+            if request.session.get('profilelang', 'en') == 'fr':
+                school_form = StudentRecordFormFR(request.POST)
+            else:
+                school_form = StudentRecordForm(request.POST)
             if school_form.is_valid():
                 school = school_form.save(commit=False)
                 school.user = request.user
                 school.save()
 
-    return render_to_response("profileupdate2013/workplace.html",
+    if request.session.get('profilelang', 'en') == 'fr':
+        template = "profileupdate2013/workplace_fr.html"
+    else:
+        template = "profileupdate2013/workplace.html"
+
+    return render_to_response(template,
                               {'profile_user': request.user,
                                'is_me': True,
                                'workplace_form': workplace_form,
@@ -202,7 +233,10 @@ def workplace(request):
 def demographics(request):
     profile = request.user.get_profile()
 
-    update_form = ProfileUpdateForm()
+    if request.session.get('profilelang', 'en') == 'fr':
+        update_form = ProfileUpdateFormFR()
+    else:
+        update_form = ProfileUpdateForm()
     
     profile_update = request.session.get('profileupdate')
     if profile_update:
@@ -215,18 +249,22 @@ def demographics(request):
     profile_update.save()
 
     if request.method == 'POST':
-        update_form = ProfileUpdateForm(request.POST, instance=profile_update)
+        if request.session.get('profilelang', 'en') == 'fr':
+            update_form = ProfileUpdateFormFR(request.POST, instance=profile_update)
+        else:
+            update_form = ProfileUpdateForm(request.POST, instance=profile_update)
         
         if update_form.is_valid():
             profile_update = update_form.save()
         
-            return HttpResponseRedirect(reverse('profileupdate_complete'))
-        request.user.message_set.create(message='form invalid')
-    else:
-        request.user.message_set.create(message='no form')
+            return HttpResponseRedirect(reverse('profileupdate_interests'))
     
-            
-    return render_to_response("profileupdate2013/demographics.html",
+    if request.session.get('profilelang', 'en') == 'fr':
+        template = "profileupdate2013/demographics_fr.html"
+    else:
+        template = "profileupdate2013/demographics.html"
+
+    return render_to_response(template,
                               {'profile_user': request.user,
                                'form': update_form},
                               context_instance=RequestContext(request))
@@ -242,6 +280,7 @@ def interests(request):
         profile_update = ProfileUpdate.objects.get(id=profile_update.id)
     else:
         profile_update = ProfileUpdate.objects.create(user=request.user,
+
                                                       profile=request.user.get_profile())
         request.session['profileupdate'] = profile_update
     profile_update.interests = datetime.now()
@@ -263,9 +302,14 @@ def interests(request):
                     interest, created = Interest.objects.get_or_create(tag=i)
                     interest.users.add(profile)
                     
-        return HttpResponseRedirect(reverse('profileupdate_demograhpics'))
+        return HttpResponseRedirect(reverse('profileupdate_complete'))
 
-    return render_to_response("profileupdate2013/interests.html",
+    if request.session.get('profilelang', 'en') == 'fr':
+        template = "profileupdate2013/interests_fr.html"
+    else:
+        template = "profileupdate2013/interests.html"
+
+    return render_to_response(template,
                               {'profile_user': request.user,
                                'interests': interests},
                               context_instance=RequestContext(request))
