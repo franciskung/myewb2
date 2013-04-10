@@ -273,7 +273,7 @@ def student_update(sender, instance, **kwargs):
 
     profile_pickle = pickle.dumps(profile.to_dict())
 
-    if instance.graduation_date > date.today() or not profile.school:
+    if not instance.graduation_date or instance.graduation_date > date.today() or not profile.school:
         profile.school = instance.institution
         profile.graduation = instance.graduation_date
         profile.workfield = instance.field
