@@ -8,7 +8,7 @@ from profiles.models import MemberProfile, StudentRecord, WorkRecord
 from emailconfirmation.models import EmailAddress as MyewbEmail
 from siteutils.models import Address as MyewbAddress, PhoneNumber as MyewbPhone
 
-from rolodex.models import TrackingProfile, ProfileBadge, ProfileHistory, Address, Email, Phone
+from rolodex.models import TrackingProfile, Badge, ProfileBadge, ProfileHistory, Address, Email, Phone
 
 from siteutils.shortcuts import get_object_or_none
 
