@@ -178,7 +178,7 @@
     <table border="0">
         {% if profile_user.get_profile.phone_numbers_primary %}
             <tr>
-                <td style='vertical-align: top; padding-right: 25px;'><strong>principale</strong></td>
+                <td style='vertical-align: top; padding-right: 25px;'><strong>principal</strong></td>
                 <td style='vertical-align: top; padding-bottom: 10px;'>
                     {{ profile_user.get_profile.phone_numbers_primary.number }}
                     &nbsp;&nbsp;&nbsp;
@@ -203,7 +203,7 @@
 	                    {{ phone.number }}
                         &nbsp;&nbsp;&nbsp;
                         <span style='font-size: 0.85em;'>
-                            (<a href="#" onclick="$('#phone_primary_{{ phone.id }}').submit(); return false;">en faire mon numéro principale</a> - 
+                            (<a href="#" onclick="$('#phone_primary_{{ phone.id }}').submit(); return false;">en faire mon numéro principal</a> - 
                             <a href="#" onclick="$('#phone_remove_{{ phone.id }}').submit(); return false;">enlever</a>)
                         </span>
 
