@@ -409,6 +409,13 @@ HTTPBLCLASS = 6
 HTTPBLREDIRECT = '/bl.html'
 HTTPBLKEY = '' # replace this in local_settings
 
+# for the winedown app - get your own application key...
+TWITTER_CONSUMER_KEY = ''
+TWITTER_CONSUMER_SECRET = ''
+TWITTER_TOKEN_KEY = ''
+TWITTER_TOKEN_SECRET = ''
+
+
 # local_settings.py can be used to override environment-specific settings
 # like database and email that differ between development and production.
 try:

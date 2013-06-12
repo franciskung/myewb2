@@ -182,10 +182,10 @@ class Tweet(models.Model):
         container = Cheers.objects.get_container(self)
         
         c, created = Retweet.objects.get_or_create(twitter_id=twitter_array['id_str'], content=container,
-                                                   defaults={'author_name': twitter_array['from_user_name'],
-                                                             'author_username': twitter_array['from_user'],
-                                                             'author_userid':  twitter_array['from_user_id'],
-                                                             'author_image': twitter_array['profile_image_url']})
+                                                   defaults={'author_name': twitter_array['user']['name'],
+                                                             'author_username': twitter_array['user']['screen_name'],
+                                                             'author_userid':  twitter_array['user']['id'],
+                                                             'author_image': twitter_array['user']['profile_image_url']})
 
         if created:
             #container.refresh_count()
