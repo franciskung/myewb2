@@ -15,6 +15,8 @@ from networks.forms import ChapterInfoForm, EmailForwardForm
 from networks.views import network_detail
 from siteutils.shortcuts import get_object_or_none 
 
+from datetime import datetime
+
 def chapters_index(request):
     if request.method == 'GET':
         chapters = ChapterInfo.objects.all()
@@ -195,6 +197,7 @@ def website_forward(request, group_slug):
             url = 'http://' + url
 			
         chapter.url = url
+        chapter.url_changed = datetime.now()
         chapter.save()
         return HttpResponse("ok")
     else:
