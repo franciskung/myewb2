@@ -191,7 +191,7 @@ def website_forward(request, group_slug):
         elif group_slug == 'usask':
             group_slug = 'usaskatchewan'
             
-        if not (url.startswith('http://') or url.startswith('https://'))
+        if not (url.startswith('http://') or url.startswith('https://')):
             url = 'http://' + url
 			
         chapter.url = url
