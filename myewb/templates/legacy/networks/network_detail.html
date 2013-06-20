@@ -120,7 +120,52 @@
 
         <tr>
             <th>{% trans "Website:" %}</th>
-            <td><a href="http://{{ group.slug }}.ewb.ca/">http://{{ group.slug }}.ewb.ca/</a></td>
+            <td>
+            	<a href="http://{{ group.slug }}.ewb.ca/">http://{{ group.slug }}.ewb.ca/</a>
+			    {% if group and group.is_chapter and is_admin %}
+			    	<br/>
+			    	<div>
+						{% if group.chapter_info.url %}
+							This URL currently forwards to <em>{{ group.chapter_info.url }}</em>
+						{% else %}
+							This site is hosted in EWB's servers.
+						{% endif %}
+						<br/>
+						<a href="#" id="change-url-forwarding">change forwarding/hosting</a>
+						
+			    		<div id="change-url-forwarding-box" style="display: none;">
+			    			<form action="" method="post" id="change-url-forwarding-form">
+			    				forward to: <input type="text" id="change-url-forwarding-value" name="new-url"/><br/>
+			    				(leave blank to host your site on EWB's server)
+			    				<input type="submit" value="reset"/>
+			    				<span id="change-url-forwarding-result"></span>
+			    			</form>
+			    		</div>
+			    	</div>
+
+					<script type="text/javascript">
+					$().ready(function() {
+						$('#change-url-forwarding').click(function() {
+							$('#change-url-forwarding-box').slideDown();
+						});
+						$('#change-url-forwarding-form').submit(function() {
+							var confirmed = confirm("Are you sure you want to change your website's forwarding/hosting?");
+							if (confirmed)
+							{
+								$('#change-url-forwarding-result').html("saving...");
+								$.post('{% url chapter_url_forwarding group.slug %}',
+										{url: $('#change-url-forwarding-value').val()},
+										function(data) {
+											$('#change-url-forwarding-result').html(data);
+										});
+							}
+							return false;
+						});
+					});
+					</script>
+
+			    {% endif %}
+            </td>
         </tr>
    
 

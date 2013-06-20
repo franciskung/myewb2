@@ -173,6 +173,33 @@ def email_account_reset(request, group_slug):
     else:
         return HttpResponse("invalid")
         
+@group_admin_required()
+def website_forward(request, group_slug):
+    if request.method == 'POST':
+        url = request.POST.get("url", None)
+        
+        network = get_object_or_404(Network, slug=group_slug)
+        chapter = get_object_or_404(ChapterInfo, network=network)   # ensure is a chapter
+        
+        # you've gotta stop changing your name.
+        if group_slug == 'grandriver':
+            group_slug = 'waterloopro'
+        elif group_slug == 'mcmaster':
+            group_slug = 'mac'
+        elif group_slug == 'uwaterloo':
+            group_slug = 'waterloo'
+        elif group_slug == 'usask':
+            group_slug = 'usaskatchewan'
+            
+        if not (url.startswith('http://') or url.startswith('https://'))
+            url = 'http://' + url
+			
+        chapter.url = url
+        chapter.save()
+        return HttpResponse("ok")
+    else:
+        return HttpResponse("invalid")
+        
 @group_membership_required()
 def set_primary_chapter(request, group_slug):
     network = get_object_or_404(Network, slug=group_slug)

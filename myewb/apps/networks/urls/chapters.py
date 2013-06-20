@@ -25,4 +25,5 @@ urlpatterns = patterns('networks.views.chapters',
     url(r'^(?P<group_slug>[-\w]+)/emails/(?P<fwd_id>\d+)/delete$', 'email_forwards_delete', name='email_forwards_delete',),
 
     url(r'^(?P<group_slug>[-\w]+)/emailaccount/$', 'email_account_reset', name='chapter_email_password',),
+    url(r'^(?P<group_slug>[-\w]+)/urlforwarding/$', 'website_forward', name='chapter_url_forwarding',),
     )
