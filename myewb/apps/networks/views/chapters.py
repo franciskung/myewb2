@@ -192,8 +192,10 @@ def website_forward(request, group_slug):
             group_slug = 'waterloo'
         elif group_slug == 'usask':
             group_slug = 'usaskatchewan'
-            
-        if not (url.startswith('http://') or url.startswith('https://')):
+
+        if not url.strip():
+            url = None
+        elif not (url.startswith('http://') or url.startswith('https://')):
             url = 'http://' + url
 			
         chapter.url = url

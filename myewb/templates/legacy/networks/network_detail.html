@@ -124,18 +124,18 @@
             	<a href="http://{{ group.slug }}.ewb.ca/">http://{{ group.slug }}.ewb.ca/</a>
 			    {% if group and group.is_chapter and is_admin %}
 			    	<br/>
-			    	<div>
+			    	<div style='padding-left: 20px;'>
 						{% if group.chapter_info.url %}
 							This URL currently forwards to <em>{{ group.chapter_info.url }}</em>
 						{% else %}
-							This site is hosted in EWB's servers.
+							This site is hosted on EWB's servers.
 						{% endif %}
 						<br/>
 						<a href="#" id="change-url-forwarding">change forwarding/hosting</a>
 						
 			    		<div id="change-url-forwarding-box" style="display: none;">
 			    			<form action="" method="post" id="change-url-forwarding-form">
-			    				forward to: <input type="text" id="change-url-forwarding-value" name="new-url"/><br/>
+			    				forward to: <input type="text" id="change-url-forwarding-value" name="new-url" value="{{ group.chapter_info.url }}/><br/>
 			    				(leave blank to host your site on EWB's server)
 			    				<input type="submit" value="reset"/>
 			    				<span id="change-url-forwarding-result"></span>
