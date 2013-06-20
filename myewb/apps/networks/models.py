@@ -81,7 +81,7 @@ class ChapterInfo(models.Model):
     francophone = models.BooleanField(_('francophone chapter?'), default=False)
     student = models.BooleanField(_('student chapter?'), default=True)
     
-    url = models.CharField(_('website redirect'), max_length=255, null=True, black=True)
+    url = models.CharField(_('website redirect'), max_length=255, null=True, blank=True)
     
 def create_network_location(sender, instance=None, **kwargs):
     """Automatically creates a GroupLocation for a new Network."""
