@@ -424,7 +424,7 @@ def browse_badges(request, badge_id):
         return HttpResponseRedirect(reverse('rolodex_login'))
 
     badge = get_object_or_404(Badge, id=badge_id)
-    years = ProfileBadge.objects.filter(badge=badge).values('year').annotate(num_hits=Count('id')).order_by('year')
+    years = ProfileBadge.objects.filter(badge=badge).values('year').annotate(num_hits=Count('id')).order_by('-year')
 
     results = ProfileBadge.objects.filter(badge=badge, active=True)
     
