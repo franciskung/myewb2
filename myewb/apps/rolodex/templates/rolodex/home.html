@@ -51,21 +51,39 @@
         {% for badge in badges %}
             <a href="{% url rolodex_browse_badges badge.id %}">{{ badge }}</a><br/>
         {% endfor %}
-    </td><td style='padding-left: 25px; vertical-align: top;'>
+    </td><td style='padding-left: 45px; vertical-align: top;'>
         <strong>Flags</strong><br/>
         {% for flag in flags %}
             <a href="{% url rolodex_browse_flags flag.id %}">{{ flag }}</a><br/>
         {% endfor %}
     </td></tr>
     
-    <tr><td colspan="2" style="padding-left: 45px;">
+    <tr><td colspan="2" style="padding-left: 65px;">
         <br/>
         <a href="{% url rolodex_import %}">Bulk-update a list</a>
     </td></tr>
     </table>
 
-    <br/><br/>
+    <br/>
 
+    <h2>Browse a chapter:</h2>
+    <form method="get" action="{% url rolodex_browse_chapter %}">
+    	<select name="chapter">
+    		{% for chapter in chapters %}
+    			<option value="{{ chapter.slug }}">{{ chapter.name }}</option>
+    		{% endfor %}
+    	</select>
+        <input type="submit" value="Go"/>
+    </form>
+    <br/>
+    
+    <h2>Event listing:</h2>
+    <form method="post" action="{% url rolodex_browse_event %}">
+        <input type="text" name="event"/>
+        <input type="submit" value="Go"/>
+    </form>
+    <br/>
+    
     {% comment %}
     <h2>Or, run a query:</h2>
     (coming soon)

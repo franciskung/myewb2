@@ -1,0 +1,38 @@
+{% extends 'rolodex/base.html' %}
+
+{% load avatar_tags %}
+{% load pagination_tags %}
+
+{% block head_title %}Browse{% endblock %}
+
+{% block body %}
+    <h2>Browse Event</h2>
+
+    {% if events %}
+        <p>
+            More than one event matched your search:
+        </p>
+    {% endif %}
+
+    {% for event in events %}
+        <a href="{% url rolodex_browse_event event.id %}">
+            {{ event.name }}
+        </a><br/>
+        <em style='font-size: 10px;'>
+            {{ event.date }}
+        </em>
+        <br/><br/>
+
+    {% empty %}
+        <p>
+            Sorry, no results
+        </p>
+    {% endfor %}
+
+    <br/>
+    {% paginate %}
+    
+
+    <br style='clear: both;'/><br/>
+
+{% endblock %}

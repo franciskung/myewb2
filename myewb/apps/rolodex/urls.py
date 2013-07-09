@@ -7,6 +7,11 @@ urlpatterns = patterns('rolodex.views',
     url(r'^search/$', view='search', name="rolodex_search"),
     url(r'^import/$', view='import_list', name="rolodex_import"),
     
+    url(r'^chapter/$', view='browse_chapter', name="rolodex_browse_chapter"),
+    url(r'^chapter/(?P<chapter>[-\w]+)/$', view='browse_chapter', name="rolodex_browse_chapter"),
+    url(r'^event/$', view='browse_event', name="rolodex_browse_event"),
+    url(r'^event/(?P<event_id>\d+)/$', view='browse_event', name="rolodex_browse_event"),
+
     url(r'^new/$', view='profile_edit', name="rolodex_new"),
     url(r'^edit/(?P<profile_id>\d+)/$', view='profile_edit', name="rolodex_edit"),
     url(r'^editcustom/(?P<profile_id>\d+)/$', view='profile_edit_custom', name="rolodex_edit_custom"),

@@ -13,6 +13,7 @@ from account.views import login as pinaxlogin
 
 from datetime import datetime, date
 from siteutils.shortcuts import get_object_or_none
+from networks.models import Network
 
 from rolodex.models import TrackingProfile, Email, ProfileHistory, Interaction, ProfileFlag, ProfileBadge, Flag, Badge, ProfileView, Activity, CustomField, CustomValue, Event, EventAttendance
 from rolodex.forms import TrackingProfileForm, NoteForm, FlagForm, BadgeForm, CustomFieldForm
@@ -40,12 +41,14 @@ def home(request):
     for u in updated:
         updated_objs.append(TrackingProfile.objects.get(id=u['profile']))
         
+    chapters = Network.objects.filter(chapter_info__isnull=False, is_active=True).order_by('name')
         
     return render_to_response("rolodex/home.html",
                               {'flags': flags,
                                'badges': badges,
                                'recent': recent_objs,
-                               'updated': updated_objs},
+                               'updated': updated_objs,
+                               'chapters': chapters},
                               context_instance=RequestContext(request))
 
 def login(request, form_class=EmailLoginForm, 
@@ -627,4 +630,60 @@ def import_list(request):
                                'events': events},
                               context_instance=RequestContext(request))
 
+def browse_chapter(request, chapter=None):
+    if request.GET.get('chapter') and not chapter:
+        chapter = request.GET['chapter']
+        return HttpResponseRedirect(reverse('rolodex_browse_chapter', \
+            kwargs={'chapter': chapter}))
+            
+    chapter = get_object_or_none(Network, slug=chapter)
+    if not chapter:
+        request.user.message_set.create(message='Chapter not found')
+        return HttpResponseRedirect(reverse('rolodex_home'))
+
+    results = TrackingProfile.objects.filter(chapter=chapter)
+    
+    filters = request.GET.get('filters', '')
+    if filters:
+        if filters == 'role':
+            results = results.filter(profilebadge__current=True, profilebadge__active=True)
+        if filters == 'pastrole':
+            results = results.filter(profilebadge__current=False, profilebadge__active=True)
+        if filters == 'flag':
+            results = results.filter(profileflag__active=True)
+    
+    results = results.order_by('-last_name')
+
+    return render_to_response("rolodex/browse_chapter.html",
+                              {'chapter': chapter,
+                               'results': results,
+                               'filters': filters},
+                              context_instance=RequestContext(request))
+
+def browse_event(request, event_id=None):
+    if not event_id and not request.POST.get('event', None):
+        request.user.message_set.create(message='Enter an event into the search')
+        return HttpResponseRedirect(reverse('rolodex_home'))
+
+    if not event_id:
+        events = Event.objects.filter(name__icontains=request.POST['event']).order_by('-date')
+        
+        if events.count() == 1:
+            return HttpResponseRedirect(reverse('rolodex_browse_event', \
+                                                kwargs={'event_id': events[0].id}))
+            
+        return render_to_response("rolodex/browse_event_search.html",
+                                  {'events': events},
+                                  context_instance=RequestContext(request))
+
+                                  
+    event = get_object_or_none(Event, id=event_id)
+
+    results = EventAttendance.objects.filter(event=event)
+    results = results.order_by('-profile__last_name')
+    
+    return render_to_response("rolodex/browse_event.html",
+                              {'event': event,
+                               'results': results},
+                              context_instance=RequestContext(request))
 

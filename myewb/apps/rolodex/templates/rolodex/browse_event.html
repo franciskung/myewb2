@@ -1,0 +1,49 @@
+{% extends 'rolodex/base.html' %}
+
+{% load avatar_tags %}
+{% load pagination_tags %}
+
+{% block head_title %}Browse{% endblock %}
+
+{% block body %}
+    <h2>Event: {{ event.name }}</h2>
+    
+    <p>
+        {{ event.date }}
+    </p>
+    
+    <p>
+        {{ event.description }}
+    </p>
+
+    <br/>
+
+    {% autopaginate results 20 %}
+
+    {% for result in results %}
+        <div class="profile clearfix" style="height: 35px; clear: left;">
+        	<div style="float: left;">{% avatar result.profile.user 30 %}</div>
+        	<div style="padding: 5px; padding-top: 0px; margin-left: 40px;">
+                <a href="{% url rolodex_view result.profile.id %}">
+                    {{ result.profile.first_name }} {{ result.profile.last_name }}
+                </a>
+                <br/>
+                
+                <em style='font-size: 10px;'>
+                    {{ result.profile.chapter.name }}
+                </em>
+
+            </div>
+    	</div>
+
+    {% empty %}
+        Sorry, no results
+    {% endfor %}
+
+    <br/>
+    {% paginate %}
+    
+
+    <br style='clear: both;'/><br/>
+
+{% endblock %}

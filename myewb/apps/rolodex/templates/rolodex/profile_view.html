@@ -323,7 +323,7 @@
                     {% ifequal activity.activity_type 'event' %}
                         <img src="{{ STATIC_URL}}images/icons2/onebit_11.png" style="height: 24px; width: 24px; float: left; margin: 2px 5px 0 0;"/>
                         <strong>Event</strong><br/>
-                        <a href="#" class="description" onclick="return false;">
+                        <a href="{% url rolodex_browse_event activity.eventattendance.event.id %}" class="description">
                             {{ activity.eventattendance.event.name }}
                         </a>
                     {% endifequal %}
