@@ -200,6 +200,7 @@
             </tr>
         {% endif %}
         
+        {% if profile.updated_by.visible_name %}
         <tr>
             <td class="left">
                 Last updated
@@ -207,9 +208,11 @@
             <td clas="right">
                 {{ profile.updated_by.visible_name }}<br/>
                 {{ profile.updated|date:"M j, Y g:i:s a" }}<br/>
-                (<a href="#">see full history</a>)
+                {#(<a href="#">see full history</a>)#}
             </td>
         </tr>
+        {% endif %}
+        
         </table>
 
         <h2>Application history</h2>

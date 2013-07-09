@@ -553,11 +553,16 @@ def import_list(request):
         
         extra_obj = None
         kwargs = {}
+        dupe_args = {}
         log_type = None
         
         if action == 'flag' and request.POST.get('flag', None):
             flag = get_object_or_none(Flag, id=request.POST['flag'])
             extra_obj = ProfileFlag
+            
+            dupe_args['flag'] = flag
+            dupe_args['active'] = True
+            
             kwargs['flag'] = flag
             kwargs['note'] = request.POST.get('flag_note', None)
             kwargs['flagged_by'] = request.user
@@ -566,18 +571,41 @@ def import_list(request):
         elif action == 'badge' and request.POST.get('badge', None):
             badge = get_object_or_none(Badge, id=request.POST['badge'])
             extra_obj = ProfileBadge
+            
+            dupe_args['badge'] = badge
+            dupe_args['active'] = True
+            dupe_args['current'] = True
+            
             kwargs['badge'] = badge
+            kwargs['year'] = date.today().year
+            kwargs['note'] = request.POST.get('badge_note', None)
+            kwargs['added_by'] = request.user
+            log_type = 'badge'
+            
+        elif action == 'badge2' and request.POST.get('badge2', None):
+            badge = get_object_or_none(Badge, id=request.POST['badge2'])
+            extra_obj = ProfileBadge
+            
+            dupe_args['badge'] = badge
+            dupe_args['active'] = True
+            dupe_args['current'] = False
+            
+            kwargs['badge'] = badge
+            kwargs['current'] = False
             kwargs['note'] = request.POST.get('badge_note', None)
             kwargs['added_by'] = request.user
             log_type = 'badge'
             
         elif action == 'note' and request.POST.get('note', None):
             extra_obj = Interaction
+            
             kwargs['note'] = request.POST.get('note', None)
             kwargs['activity_type'] = 'interaction'
             kwargs['interaction_type'] = 'note'
             kwargs['date'] = date.today()
             kwargs['added_by'] = request.user
+            
+            dupe_args = kwargs
             
         elif action == 'event':
             eventid = request.POST.get('event', None)
@@ -588,12 +616,16 @@ def import_list(request):
                 event = Event.objects.get(id=eventid)
                 
             extra_obj = EventAttendance
+            
+            dupe_args['event'] = event
+            
             kwargs['event'] = event
             kwargs['activity_type'] = 'event'
             kwargs['date'] = date.today()
         
         emails  = request.POST.get('emails', "").split("\n")
         updated = []
+        dupe = []
         skipped = []
         for email in emails:
             email = email.strip()
@@ -601,22 +633,28 @@ def import_list(request):
             email_obj = Email.objects.filter(email=email)
             if email_obj:
                 kwargs['profile'] = email_obj[0].profile
-                created = extra_obj.objects.create(**kwargs)
+                
+                if extra_obj.objects.filter(**dupe_args).count():
+                    dupe.append(email)
+                
+                else:
+                    created = extra_obj.objects.create(**kwargs)
 
-                if log_type:
-                    Activity.objects.create(profile=email_obj[0].profile,
-                                            activity_type=log_type,
-                                            date=datetime.now(),
-                                            added_by=request.user,
-                                            content_object=created)
+                    if log_type:
+                        Activity.objects.create(profile=email_obj[0].profile,
+                                                activity_type=log_type,
+                                                date=datetime.now(),
+                                                added_by=request.user,
+                                                content_object=created)
 
-                updated.append(email)
+                    updated.append(email)
 
             else:
                 skipped.append(email)
         
         return render_to_response("rolodex/import_complete.html",
                                   {'updated': updated,
+                                   'dupe': dupe,
                                    'skipped': skipped},
                                   context_instance=RequestContext(request))
 
@@ -646,11 +684,11 @@ def browse_chapter(request, chapter=None):
     filters = request.GET.get('filters', '')
     if filters:
         if filters == 'role':
-            results = results.filter(profilebadge__current=True, profilebadge__active=True)
+            results = results.filter(profilebadge__current=True, profilebadge__active=True).distinct()
         if filters == 'past':
-            results = results.filter(profilebadge__current=False, profilebadge__active=True)
+            results = results.filter(profilebadge__current=False, profilebadge__active=True).distinct()
         if filters == 'flag':
-            results = results.filter(profileflag__active=True)
+            results = results.filter(profileflag__active=True).distinct()
     
     results = results.order_by('-last_name')
 

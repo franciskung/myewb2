@@ -37,10 +37,10 @@
                 <br/>
                 
                 <em style='font-size: 10px;'>
-                    {% for b in profile.badges.all %}
-                        {{ b.name }},
+                    {% for b in profile.get_badges %}
+                        {{ b.badge.name }}{% if b.year %} {{ b.year }}{% endif %},
                     {% endfor %}
-                    {% for f in profile.flags.all %}
+                    {% for f in profile.get_flags %}
                         {{ f.name }}, 
                     {% endfor %}
                 </em>

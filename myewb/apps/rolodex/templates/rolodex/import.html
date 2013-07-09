@@ -40,7 +40,7 @@
 			        
 			        <div id="div_cond_badge" style='clear: left;'>
 			            <br/>
-    			        <input type="radio" name="conditions" value="badge"  id="condition_badge"> Add a role<br/>
+    			        <input type="radio" name="conditions" value="badge"  id="condition_badge"> Add a current role<br/>
     			        <div id="div_hide_badge" class="hides" style="display: none;">
 			                <select name="badge" id="select_badge" style='margin-left: 20px;'>
 			                    {% for badge in badges %}
@@ -48,6 +48,19 @@
 			                    {% endfor %}
 			                </select><br/>
     			            <textarea name="badge_note" id="textarea_flag" style='margin-left: 20px; height: 35px;'></textarea>
+			            </div>
+			        </div>
+			        
+			        <div id="div_cond_badge2" style='clear: left;'>
+			            <br/>
+    			        <input type="radio" name="conditions" value="badge2"  id="condition_badge2"> Add a past role<br/>
+    			        <div id="div_hide_badge2" class="hides" style="display: none;">
+			                <select name="badge2" id="select_badge2" style='margin-left: 20px;'>
+			                    {% for badge in badges %}
+			                        <option value="{{ badge.id }}">{{ badge.name }}</option>
+			                    {% endfor %}
+			                </select><br/>
+    			            <textarea name="badge2_note" id="textarea_badge2" style='margin-left: 20px; height: 35px;'></textarea>
 			            </div>
 			        </div>
 			        
@@ -113,6 +126,11 @@
     $('#condition_badge').click(function() {
         $('.hides').slideUp();
         $('#div_hide_badge').slideDown();
+    });
+    
+    $('#condition_badge2').click(function() {
+        $('.hides').slideUp();
+        $('#div_hide_badge2').slideDown();
     });
     
     $('#condition_note').click(function() {

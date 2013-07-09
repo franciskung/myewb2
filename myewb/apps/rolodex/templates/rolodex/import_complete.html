@@ -21,6 +21,18 @@
     <hr/>
     
     <p>
+        <strong>Skipped</strong> (duplicate entry detected)
+        {{ dupe.count }} emails
+        
+        <br/><br/>
+        {% for email in dupe %}
+            {{ email }} <br/>
+        {% endfor %}
+    </p>
+    
+    <hr/>
+    
+    <p>
         <strong>Updated successfully</strong>
         {{ updated.count }} emails
         
