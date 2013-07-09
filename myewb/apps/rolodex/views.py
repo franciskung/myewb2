@@ -690,7 +690,7 @@ def browse_chapter(request, chapter=None):
         if filters == 'flag':
             results = results.filter(profileflag__active=True).distinct()
     
-    results = results.order_by('-last_name')
+    results = results.order_by('last_name')
 
     return render_to_response("rolodex/browse_chapter.html",
                               {'chapter': chapter,
@@ -718,7 +718,7 @@ def browse_event(request, event_id=None):
     event = get_object_or_none(Event, id=event_id)
 
     results = EventAttendance.objects.filter(event=event)
-    results = results.order_by('-profile__last_name')
+    results = results.order_by('profile__last_name')
     
     return render_to_response("rolodex/browse_event.html",
                               {'event': event,
