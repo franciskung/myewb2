@@ -647,7 +647,7 @@ def browse_chapter(request, chapter=None):
     if filters:
         if filters == 'role':
             results = results.filter(profilebadge__current=True, profilebadge__active=True)
-        if filters == 'pastrole':
+        if filters == 'past':
             results = results.filter(profilebadge__current=False, profilebadge__active=True)
         if filters == 'flag':
             results = results.filter(profileflag__active=True)

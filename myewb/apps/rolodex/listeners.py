@@ -32,9 +32,9 @@ def group_join(sender, instance, created, **kwargs):
         badge = Badge.objects.get(name='President')
         
     if badge:
-        pb = get_object_or_none(ProfileBadge, profile=profile, badge=badge, active=True)
+        pb = ProfileBadge.objects.filter(profile=profile, badge=badge, active=True, current=True)
         
-        if not pb:
+        if not pb.count():
             ProfileBadge.objects.create(profile=profile,
                                         badge=badge,
                                         added_by=user,
@@ -70,12 +70,11 @@ def group_leave(sender, instance, **kwargs):
         badge = Badge.objects.get(name='President')
         
     if badge:
-        pb = get_object_or_none(ProfileBadge, profile=profile, badge=badge, active=True)
+        pbs = ProfileBadge.objects.filter(profile=profile, badge=badge, active=True, current=True)
         
-        if pb:
-            pb.active = False
-            pb.removed_date = datetime.now()
-            pb.note = "%s%s" % (pb.note, "\n\nAutomatic removal - sync from myEWB")
+        for pb in pbs:
+            pb.current = False
+            pb.note = "%s%s%s" % (pb.note, "\n\nAutomatic removal - sync from myEWB - ", date.today().isoformat())
             pb.save()
 
 
