@@ -29,7 +29,9 @@
 
     {% for profile in results %}
         <div class="profile clearfix" style="height: 35px; clear: left;">
-        	<div style="float: left;">{% avatar profile.user 30 %}</div>
+        	<div style="float: left;">
+                <a href="{% url rolodex_view profile.id %}">{% avatar profile.user 30 %}</a>
+        	</div>
         	<div style="padding: 5px; padding-top: 0px; margin-left: 40px;">
                 <a href="{% url rolodex_view profile.id %}">
                     {{ profile.first_name }} {{ profile.last_name }}

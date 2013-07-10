@@ -17,6 +17,24 @@
         <strong>Couldn't find the person?</strong><br/><br/>
         
         <a href="{% url rolodex_new %}">Add them</a>
+        
+        {% if events %}
+            <hr/>
+            
+            <strong>Matching events</strong>
+            <br/><br/>
+            
+            {% for event in events %}
+                <a href="{% url rolodex_browse_event event.id %}">
+                    {{ event.name }}
+                </a><br/>
+                <em style='font-size: 10px;'>
+                    {{ event.date }}
+                </em>
+                <br/><br/>
+            {% endfor %}
+            
+        {% endif %}
     </div>
     
     <p>
@@ -27,7 +45,9 @@
 
     {% for profile in results %}
         <div class="profile clearfix" style="height: 35px; clear: left;">
-        	<div style="float: left;">{% avatar profile.user 30 %}</div>
+        	<div style="float: left;">
+                <a href="{% url rolodex_view profile.id %}">{% avatar profile.user 30 %}</a>
+        	</div>
         	<div style="padding: 5px; padding-top: 0; margin-top: 8px; margin-left: 40px;">
                 <a href="{% url rolodex_view profile.id %}">
                     {% if profile.first_name or profile.last_name %}

@@ -95,6 +95,9 @@ def search(request):
     results = TrackingProfile.objects.filter(qry)
     results = results.distinct().order_by("last_name")
 
+    # in case they searched events
+    events = Event.objects.filter(name__icontains=search).order_by('-date')
+    
     return render_to_response("rolodex/search.html",
                               {'results': results,
                                'search': search},
@@ -706,7 +709,14 @@ def browse_event(request, event_id=None):
         return HttpResponseRedirect(reverse('rolodex_home'))
 
     if not event_id:
-        events = Event.objects.filter(name__icontains=request.POST['event']).order_by('-date')
+        #events = Event.objects.filter(name__icontains=request.POST['event']).order_by('-date')
+
+        # support space-deliminated search terms
+        qry = Q(name__icontains=request.POST['event'].split()[0])
+        for term in request.POST['event'].split()[1:]:
+            qry = qry & Q(name__icontains=term)
+
+        events = Event.objects.filter(qry).order_by('-date')        
         
         if events.count() == 1:
             return HttpResponseRedirect(reverse('rolodex_browse_event', \
