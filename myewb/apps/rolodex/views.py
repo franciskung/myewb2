@@ -634,6 +634,7 @@ def import_list(request):
             email_obj = Email.objects.filter(email=email)
             if email_obj:
                 kwargs['profile'] = email_obj[0].profile
+                dupe_args['profile'] = email_obj[0].profile
                 
                 if extra_obj.objects.filter(**dupe_args).count():
                     dupe.append(email)
