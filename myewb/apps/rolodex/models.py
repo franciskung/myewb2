@@ -198,6 +198,7 @@ FLAG_COLOURS = (('red', 'red'),
 class Flag(models.Model):
     name = models.CharField(max_length=255)
     colour = models.CharField(max_length=255, choices=FLAG_COLOURS)
+    description = models.TextField(blank=True, null=True)
     
     def __unicode__(self):
         return self.name
@@ -224,6 +225,7 @@ BADGE_COLOURS = (('red', 'red'),
 class Badge(models.Model):
     name = models.CharField(max_length=255)
     colour = models.CharField(max_length=255, choices=BADGE_COLOURS)
+    description = models.TextField(blank=True, null=True)
     
     class Meta:
         ordering = ('name',)

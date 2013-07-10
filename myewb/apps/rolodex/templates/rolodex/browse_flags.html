@@ -8,6 +8,10 @@
 {% block body %}
     <h2>Browse: {{ flag.name }}</h2>
     
+    <p style='font-style: italic;'>
+        {{ flag.description }}
+    </p>
+
     <br/>
 
     {% autopaginate results 20 %}

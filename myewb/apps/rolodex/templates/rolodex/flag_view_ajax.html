@@ -5,6 +5,10 @@
             {{ flag.flagged_date|date:'M j, Y' }} ({{ flag.flagged_by.visible_name }})
         </h2>
         
+        <p style='font-style: italic; font-size: 0.85em;'>
+            {{ flag.flag.description }}
+        </p>
+        
         <p>
             [<a href="{% url rolodex_flag_edit flag.id %}" onclick="$('#edit_flag_{{ flag.id }}').click(); return false;">Edit this flag</a>]
             [<a href="{% url rolodex_unflag flag.id %}">Remove flag</a>]

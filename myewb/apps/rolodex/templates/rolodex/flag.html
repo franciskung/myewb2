@@ -10,6 +10,12 @@
 {% endif %}
 
     <fieldset class="inlineLabels">
+        <div class="ctlHolder" id="flag_description">
+            <label>&nbsp;</label>
+            <div id="flag_description_text" style='margin-left: 35%; padding-top: 25px; font-style: italic; font-size: 0.85em; margin-right: 25px;'>
+            </div>
+        </div>
+        
         {{ form|as_uni_form }}
 
 		<label for="id_save"></label>
@@ -18,3 +24,17 @@
     </fieldset>
 </form>
 
+<script type='text/javascript'>
+    $().ready(function() {
+        $('#id_flag').after($('#flag_description'));
+        
+        $('#id_flag').change(function() {
+            $('#flag_description_text').html(flags[$(this).val()]);
+        });
+    });
+    
+    var flags = new Array();
+    {% for f in flags %}
+        flags[{{ f.id }}] = '{{ f.description|escapejs }}';
+    {% endfor %}
+</script>

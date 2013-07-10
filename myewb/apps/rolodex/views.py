@@ -302,7 +302,8 @@ def flag(request, profile_id=None, flag_id=None):
     return render_to_response("rolodex/flag.html",
                               {'form': form,
                                'profile': profile,
-                               'flag': flag},
+                               'flag': flag,
+                               'flags': Flag.objects.all()},
                               context_instance=RequestContext(request))
 
 def unflag(request, flag_id):
