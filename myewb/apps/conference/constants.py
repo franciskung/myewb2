@@ -45,7 +45,7 @@ PASTEVENTS = (('0', '0'),
               )
 
 CONF_OPTIONS = {'public': {'name': 'Public registration',
-                           'cost': 500},
+                           'cost': 550},
                 'partner': {'name': 'Partner organization',
                            'cost': 475},
                 'ngo': {'name': 'Partner organization- NGO',
