@@ -10,7 +10,7 @@
 {% load group_tags %}
 {% load topics_tags %}
 
-{% block head_title %}National Conference 2013{% endblock %}
+{% block head_title %}National Conference 2014{% endblock %}
 
 {% block body %}
 <style>
@@ -27,7 +27,7 @@
 	</style> 
 	<br/><br/>
 
-<h2>National Conference 2013</h2>
+<h2>National Conference 2014</h2>
 
 		<br />
 		<p style="font-weight: bold;">
@@ -42,19 +42,19 @@
 		<li>
 			<a href="http://conference2012.ewb.ca/reg/conference/schedule/">View or build your personal conference schedule</a>
 		</li>
-{% endcomment %}
 		<li>
 			<a href="{% url conference_schedule %}">View or build your personal conference schedule</a>
 		</li>
+{% endcomment %}
 		
 		<li>
 			<a href="{% url conference_receipt %}" style="font-weight: bold;">print a receipt</a>
 		</li>
 
 		<li>
-{#			<a href="{% url conference_cancel %}">cancel your registration</a> #}
-<span style="text-decoration: line-through;">cancel your registration</span><br/>
-<em>Registration changes and cancellations can not be made after December 1.</em>
+			<a href="{% url conference_cancel %}">cancel your registration</a> 
+{#<span style="text-decoration: line-through;">cancel your registration</span><br/>#}
+{#<em>Registration changes and cancellations can not be made after December 1.</em>#}
 		</li>
 		
 		{% comment %}
@@ -85,7 +85,7 @@
 		
 		<br />
 		<br />
-		<p>Keep checking the conference website at <a href="http://conference2013.ewb.ca/">http://conference2013.ewb.ca</a> for up-to-date information regarding the conference!</p>
+		<p>Keep checking the conference website at <a href="http://conference2014.ewb.ca/">http://conference2014.ewb.ca</a> for up-to-date information regarding the conference!</p>
 
 
 {% endblock %}

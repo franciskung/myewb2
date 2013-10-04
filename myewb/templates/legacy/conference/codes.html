@@ -4,12 +4,12 @@
 {% load uni_form %}
 {% load conference_tags %}
 
-{% block head_title %}National Conference 2013{% endblock %}
+{% block head_title %}National Conference 2014{% endblock %}
 
 {% block body %}
 <br/><br/>
 
-<h1>National Conference 2013</h1>
+<h1>National Conference 2014</h1>
 
 {% if codes %}
 	<br/><p>
@@ -86,53 +86,23 @@ Enter the type ("type of code") and number ("starting at") below; the secret cod
     }
 </style>
 <table style="width: 100%;" class="confcodes">
-	<tr>
-		<th>Code Type</th>
-		{% for name, desc in room_choices %}
-			<th>{{ desc }}</th>
-		{% endfor %}
-	</tr>
-	
+    <tr>
+        <th>Code type</th>
+        <th>Cost</th>
+        <th>Description</th>
+    </tr>
 	{% for codetype, codename in conf_codes %}
 		<tr>
 			<td><strong>{{ codetype }}</strong></td>
-			{% for roomname, roomdesc in room_choices %}
-				<td>{% lookup_cost codename roomname %}</td>
-			{% endfor %}
+			{% for x, y in conf_options.iteritems %}
+			    {% ifequal x codename %}
+        			<td>{{ y.cost }}</td>
+			        <td>{{ y.name }}</td>
+			    {% endifequal %}
+			 {% endfor %}
 		</tr>
 	{% endfor %}
 </table>
-
-<h2>Leadership Development Day spots</h2>
-
-<form method="POST" action="{% url conference_ldd_spots %}">
-    <table id="ldd_spots">
-        <tr>
-            <th>Chapter</th>
-            <th>Spots used</th>
-            <th>Spots allowed</th>
-        </tr>
-
-        {% for chapter in chapters %}
-            <tr style='background: {% cycle '#e0e0e0;' '#ffffff;' %}'>
-                <td>{{ chapter.chapter_name }}</td>
-                <td>{{ chapter.ldd }}</td>
-                <td>
-                    {% for l in ldd %}
-                        {% ifequal l.chapter chapter.network %}
-                            <input type="text" style="width: 25px;" name="ldd_{{ chapter.network.id }}" value="{{ l.spots }}"/>
-                        {% endifequal %}
-                    {% endfor %}
-                </td>
-            </tr>
-        {% endfor %}
-
-        <tr>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td><input type="submit" name="save"/></td>
-    </table>
-</form>
 
 <script type="text/javascript">
 	$().ready(function() {

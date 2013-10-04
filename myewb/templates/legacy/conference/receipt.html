@@ -1,5 +1,5 @@
 <h3 align="center">Engineers Without Borders Canada</h3>
-<h3 align="center">National Conference 2013 Receipt</h3>
+<h3 align="center">National Conference 2014 Receipt</h3>
 <h3 align="center">Not a Tax Receipt</h3>
 <h3 align="center">{{reg.user.first_name}} {{reg.user.last_name}}</h3>
 <h3 align="center">Receipt ID: {{reg.receiptNum}}</h3>
@@ -14,9 +14,16 @@
 </tr>
 
 <tr>
-<td align="center" style="border: 1px solid black;">{{reg.type}}</td>
-<td align="center" style="border: 1px solid black;">${{reg.amountPaid}}</td>
+<td align="center" style="border: 1px solid black;">{{typename}} registration</td>
+<td align="center" style="border: 1px solid black;">${{typecost}}</td>
 </tr>
+
+{% ifnotequal reg.hotel "none" %}
+<tr>
+<td align="center" style="border: 1px solid black;">{{ hotelname }}</td>
+<td align="center" style="border: 1px solid black;">${{ hotelcost }}</td>
+</tr>
+{% endifnotequal %}
 
 {% if reg.africafund %}
 <tr>
@@ -25,21 +32,24 @@
 </tr>
 {% endif %}
 
-{% if reg.tshirt %}
-{% ifnotequal reg.tshirt 'n' %}
+{% if reg.bracelet %}
 <tr>
-<td align="center" style="border: 1px solid black;">Conference t-shirt</td>
-<td align="center" style="border: 1px solid black;">$20.00</td>
+<td align="center" style="border: 1px solid black;">Conference bracelet</td>
+<td align="center" style="border: 1px solid black;">$12.00</td>
 </tr>
-{% endifnotequal %}
 {% endif %}
 
-{% if reg.extra_gala %}
+{% if reg.handbook %}
 <tr>
-<td align="center" style="border: 1px solid black;">Additional Gala ticket</td>
-<td align="center" style="border: 1px solid black;">$75.00</td>
+<td align="center" style="border: 1px solid black;">Printed handbook</td>
+<td align="center" style="border: 1px solid black;">$3.00</td>
 </tr>
 {% endif %}
+
+<tr>
+<td align="center" style="border: 1px solid black;">Credit card processing fee</td>
+<td align="center" style="border: 1px solid black;">${{ reg.ccard_surcharge }}</td>
+</tr>
 
 </table>
 

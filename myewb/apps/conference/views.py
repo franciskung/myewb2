@@ -29,7 +29,7 @@ from base_groups.models import BaseGroup, GroupMemberRecord
 from communities.models import NationalRepList
 from conference.decorators import conference_login_required
 from conference.forms import * #ConferenceRegistrationForm, CodeGenerationForm, ConferenceSignupForm #ConferenceRegistrationFormPreview, 
-from conference.models import ConferenceRegistration, ConferenceCode, LeadershipDaySpots
+from conference.models import ConferenceRegistration, ConferenceCode
 from conference.constants import *
 from conference.utils import needsToRenew
 from networks.models import ChapterInfo
@@ -92,6 +92,7 @@ def view_registration(request):
         # cancellation or a receipt
         registration = ConferenceRegistration.objects.get(user=user, submitted=True, cancelled=False)
         
+        """
         if registration.tshirt and registration.tshirt != 'n':
             tshirtform = None
         else:
@@ -101,12 +102,13 @@ def view_registration(request):
             skiform = None
         else:
             skiform = True
+        """
 
         #return HttpResponseRedirect(reverse('confcomm_app'))
         return render_to_response('conference/postregistration.html',
                                   {'registration': registration,
-                                   'tshirtform': tshirtform,
-                                   'skiform': skiform,
+                                   #'tshirtform': tshirtform,
+                                   #'skiform': skiform,
                                    'user': request.user,
                                   },
                                   context_instance=RequestContext(request)
@@ -136,6 +138,10 @@ def view_registration(request):
                 form = ConferenceRegistrationForm4(request.POST, instance=registration)
             elif stage == '6':
                 form = ConferenceRegistrationForm5(request.POST, instance=registration)
+            elif stage == '7':
+                form = ConferenceRegistrationForm6(request.POST, instance=registration)
+            elif stage == '8':
+                form = ConferenceRegistrationForm7(request.POST, instance=registration)
                 
             form.user = user
             if form.is_valid():
@@ -156,7 +162,11 @@ def view_registration(request):
                 elif stage == '5':
                     stage = '6'
                 elif stage == '6':
-                    return ConferenceRegistrationFormPreview(ConferenceRegistrationForm5)(request, username=request.user.username, registration_id=registration.id)
+                    stage = '7'
+                elif stage == '7':
+                    stage = '8'
+                elif stage == '8':
+                    return ConferenceRegistrationFormPreview(ConferenceRegistrationForm7)(request, username=request.user.username, registration_id=registration.id)
                 
                 form = None
 
@@ -173,6 +183,10 @@ def view_registration(request):
             form = ConferenceRegistrationForm4(instance=registration)
         elif stage == '6' and not form:
             form = ConferenceRegistrationForm5(instance=registration)
+        elif stage == '7' and not form:
+            form = ConferenceRegistrationForm6(instance=registration)
+        elif stage == '8' and not form:
+            form = ConferenceRegistrationForm7(instance=registration)
         form.user = request.user
                 
     needsRenewal = needsToRenew(request.user.get_profile())
@@ -186,6 +200,10 @@ def view_registration(request):
         last_stage = '4'
     elif stage == '6':
         last_stage = '5'
+    elif stage == '7':
+        last_stage = '6'
+    elif stage == '8':
+        last_stage = '7'
 
     return render_to_response('conference/registration.html',
                               {'registration': registration,
@@ -335,7 +353,12 @@ def receipt(request):
         return HttpResponseRedirect(reverse('confreg'))
 
     return render_to_response('conference/receipt.html',
-                              {'reg': registration},
+                              {'reg': registration,
+                               'typename': CONF_OPTIONS[registration.type]['name'],
+                               'typecost': CONF_OPTIONS[registration.type]['cost'],
+                               'hotelname': HOTEL_OPTIONS[registration.hotel]['name'],
+                               'hotelcost': HOTEL_OPTIONS[registration.hotel]['cost'],
+                               },
                               context_instance=RequestContext(request)
                              )
         
@@ -587,20 +610,23 @@ def generate_codes(request):
             form = CodeGenerationForm()
 
         chapters = ChapterInfo.objects.all().order_by('chapter_name')
+        
+        """
         for c in chapters:
             l, created = LeadershipDaySpots.objects.get_or_create(chapter=c.network)
             used = ConferenceRegistration.objects.filter(submitted=True, cancelled=False, ldd_chapter=c.network)
             c.ldd = used.count()
 
         ldd = LeadershipDaySpots.objects.all()
+        """
         
         return render_to_response('conference/codes.html',
                                   {'codes': codes,
                                    'form': form,
                                    'conf_codes': CONF_CODES,
                                    'conf_options': CONF_OPTIONS,
-                                   'room_choices': ROOM_CHOICES,
-                                   'ldd': ldd,
+#                                   'room_choices': ROOM_CHOICES,
+#                                   'ldd': ldd,
                                    'chapters': chapters
                                   },
                                   context_instance=RequestContext(request)

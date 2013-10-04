@@ -10,10 +10,10 @@
 {% load group_tags %}
 {% load topics_tags %}
 
-{% block head_title %}National Conference 2013{% endblock %}
+{% block head_title %}National Conference 2014{% endblock %}
 
 {% block bodyold %}
-    <h2>National Conference 2013: Registration</h2>
+    <h2>National Conference 2014: Registration</h2>
     
     <p>Registration for the conference is now closed.</p>
     
@@ -132,8 +132,8 @@ z-index: 100;
 		<form id="conf-registration" method="POST" action="" class="uniForm" enctype="multipart/form-data">
 			<fieldset class="inlineLabels">
 				
-				<div class="heading">National Conference 2013<br/>Registration Details</div>
-				<div style='text-align: center;'>Page {{ stage|default:1 }} of 6</div>
+				<div class="heading">National Conference 2014<br/>Registration Details</div>
+				<div style='text-align: center;'>Page {{ stage|default:1 }} of 8</div>
 
                 {% ifequal stage '1' %}
 					<div style='text-align: center; font-weight: bold;'>
@@ -150,11 +150,11 @@ z-index: 100;
 					</div>
                 {% endif %}
 										
-				{% ifequal stage '5' %}
+				{% ifequal stage '7' %}
 					<br/><br/>
 					{% include "conference/africandelegates.html" %}
 				{% endifequal %}
-				{% ifequal stage '6' %}
+				{% ifequal stage '8' %}
 					<br/><br/>
 					<div style='text-align: center; font-weight: bold; font-style: italic;'>
 						You will have an opportunity to preview your registration on the next page.
@@ -186,155 +186,103 @@ z-index: 100;
 			</fieldset>
 		</form>
 
-{#		{% if not user.is_bulk %}#}
-		<table border='1' class='descform' id='confoptiontable' style='display: none;'>
+		<div style="display: none;">
+		<div id="confoptiondiv" style='padding: 15px;'>
+        <strong>Registration</strong><br/>
+		<table border='1' class='descform' id='confoptiontable'>
 		  <tr>
 		    <th>&nbsp;</th>
-		    <th>Quad occupancy<br/>4/room (shared beds)</th>
-		    <th>Double occupancy<br/>2/room (own beds)</th>
-		    <th>Single occupancy<br/>own room</th>
-		    <th>No hotel</th>
+		    <th>Early bird (before Nov 13)</th>
+		    <th>Standard (after Nov 13)</th>
 		  </tr>
 		  <tr>
-		    <th>Subsidized: NB/NS/NL</th>
-		    <td>$200 (student)</td>    
-		    <td>$400 (student)</td>    
-		    <td>$700 (student)</td>
-		    <td>$50 (student)</td>    
+		    <th>Public</th>
+		    <td>$550</td>
+		    <td>$648</td>
 		  </tr>
 		  <tr>
-		    <th>Subsidized: ON/QB</th>
-		    <td>$300 (student)<br/>$400 (general)</td>    
-		    <td>$500 (student)<br/>$600 (general)</td>    
-		    <td>$800 (student)<br/>$900 (general)</td>    
-		    <td>$150 (student)<br/>$250 (general)</td>    
+		    <th>Partner Organization</th>
+		    <td>$475</td>
+		    <td>$559</td>
 		  </tr>
 		  <tr>
-		    <th>Subsidized: BC/SK/MB</th>
-		    <td>$375 (student)<br/>$475 (general)</td>    
-		    <td>$575 (student)<br/>$675 (general)</td>    
-		    <td>$875 (student)<br/>$975 (general)</td>    
-		    <td>$225 (student)<br/>$325 (general)</td>    
+		    <th>Partner Organization - NGO</th>
+		    <td>$400</td>
+		    <td>$471</td>
 		  </tr>
-                  <tr>
-                    <th>Subsidized: AB</th>
-                    <td>$450 (student)<br/>$550 (general)</td>
-                    <td>$650 (student)<br/>$750 (general)</td>
-                    <td>$950 (student)<br/>$1050 (general)</td>
-                    <td>$300 (student)<br/>$400 (general)</td>
-                  </tr>
-		  {% comment %}
 		  <tr>
-		  	<th>
-		  		EWB Alumni
-		  	</th>
-		  	<td colspan='3' style='text-align: center;'>
-		  		<em>n/a</em>
-		  	</td>
-		  	<td>$350</td>
+		    <th>Government</th>
+		    <td>$450</td>
+		    <td>$530</td>
 		  </tr>
-		  {% endcomment %}
 		  <tr>
-		    <th>Standard<br/>(no registration code)</th>
-		    <td colspan='3' style='text-align: center;'>
-		    	<em>n/a</em>
+		    <th>EWB Alumni</th>
+		    <td>$425</td>
+		    <td>$500</td>
+		  </tr>
+		  <tr>
+		    <th>EWB member</th>
+		    <td colspan='2' style='text-align: center;'>
+		    	<em>registration code required</em>
 		    </td>    
-		    <td>$425</td>    
 		  </tr>
 		</table>
-
-		{% comment %}
-		{% else %}
-		
-		<table border='1' class='descform' id='confoptiontable' style='display: none;'>
+        <br/><br/>
+        <strong>Hotels and transportation</strong>
+		<table border='1' class='descform'>
 		  <tr>
-		    <th>&nbsp;</th>
-		    <th>Friday only</th>
-		    <th>Saturday only</th>
-		    <th>Friday and Saturday</th>
+		    <th>Hotel - quad occupancy</th>
+		    <td>$115</td>
+		    <td>Share a queen bed with one person in a room of four for the conference (Thursday night, Friday night, Saturday night, and Sunday night).</td>
 		  </tr>
 		  <tr>
-		    <th>General registration</th>
-		    <td>$120</td>    
-		    <td>$120</td>
-		    <td>$220</td>    
+		    <th>Hotel - double occupancy</th>
+		    <td>$230</td>
+		    <td>Have your own queen bed and share a room with one other person for the conference (Thursday night, Friday night, Saturday night, and Sunday night).</td>
 		  </tr>
 		  <tr>
-		    <th>Students</th>
-		    <td>$60</td>    
-		    <td>$60</td>    
-		    <td>$110</td>    
+		    <th>Hotel - single occupancy</th>
+		    <td>$460</td>
+		    <td>Have your own queen bed in your own room for the conference (Thursday night, Friday night, Saturday night, and Sunday night).</td>
 		  </tr>
-		</table>
-		
-		{% endif %}
-		{% endcomment %}
-
-		<div style="display: none;" id="confcontentdescription">
-<p><strong>Youth venture</strong><br/>
-This venture seeks change in the youth leadership development system in Canada; focusing for right now primarily on the K-12 education system. Looking to foster curious, critical, and collaborative leaders for social change, this venture is currently exploring, creating, and delivering resources and training to Canadian educators. 
-</p>
-
-<p><strong>Global engineering</strong><br/>
-This venture is focused on helping the engineering profession realize its true potential as global problem solvers, and to bring those skills to bear on the issue of poverty. This venture partners not just with engineering firms, but also with professional associations, universities, private companies and individual engineers.
-</p>
-
-<p><strong>Advocacy</strong><br/>
-This venture's job is to strengthen Canada’s approach to global development by advocating for smart decisions, policies and practices—ensuring our country has the greatest possible impact on an international level. This includes MP engagement, building political will in Canadian citizens, and engaging with public policy makers.
-</p>
-
-<p><strong>Member learning</strong><br/>
-This is for anyone involved in helping to move forward the knowledge and learning of EWB members, whether formally or informally. This includes member learning presentations, development drinks, and can encompass the roles of returned Junior Fellows, Professional Fellows, and African Programs Staff.
-</p>
-
-<p><strong>Network/People</strong><br/>
-This enabling team is focused on supporting EWB members across the organization. This can include the chapter support network (chapter presidents, VP internal, coaches/mentors, etc), as well as broader efforts to engage members in leadership development and skill-building.
-</p>
-
-<p><strong>Invested partnerships</strong><br/>
-This is an enabling team for anyone involved with fundraising, finances, corporate engagement, or other areas that help EWB fund our amazing programs.
-</p>
-
-<p><strong>Communications</strong><br/>
-If a considerable amount of your work in EWB is geared toward communicating the organization and its work, this is the enabling team for you. Communications broadly includes online engagement, social media, and advertising EWB on your campus or in your workplace.
-</p>
-
-<p><strong>Fair trade/Ethical Consumption</strong><br/>
-The fair trade venture is spreading the word about ethical consumption choices, and making the connection between everyday decisions and poverty eradication. By engaging the public, the goal is to ensure they make decisions that lead to an equitable relationship between Canada and countries in Africa.
-</p>
-
-<p><strong>African ventures engagement</strong><br/>
-Broadly, this is for people that engage with the African ventures, and connecting them to the rest of the organization. It is geared toward people in roles related to Connecting Canadians to Africa, or those heading up a "ChAPSter buddy" relationship (between a Canadian chapter and African Programs Staff). <em>(Note: This is not a default section for returned overseas volunteers/staff; please select the category that represents your most recent involvement.)</em>
-</p>
-		    
+		  <tr>
+		    <th>Transportation</th>
+		    <td>$37</td>
+		    <td>Includes transportation from TCC to Union and back at specified times each day.</td>
+		  </tr>
+		</table>        
+		</div>
 		</div>
 
 		<script type="text/javascript">
 			$().ready(function() {
-				$('#confoptiontablelink').colorbox({transition: 'elastic',
+			    $('input[name="whoareyou"]').change(function() {
+			        if ($('input[name="whoareyou"]:checked').val() == 'member') {
+			            $('#div_id_chapter').slideDown();
+			            $('#div_id_role').slideDown();
+		            } else {
+		                $('#div_id_chapter').slideUp();
+		                $('#div_id_role').slideUp();
+		            }
+			    });
+		        if ($('input[name="whareyou"]:checked').val() == 'member') {
+		            $('#div_id_chapter').slideDown();
+		            $('#div_id_role').slideDown();
+		        } else {
+		            $('#div_id_chapter').slideUp();
+		            $('#div_id_role').slideUp();
+		        }
+		        
+		        if ($('#id_nametag').val() == '')
+		            $('#id_nametag').val("{{ registration.user.visible_name }} ");
+			            
+				$('.confoptiontablelink').colorbox({transition: 'elastic',
 													opacity: '0.5',
 													inline: true,
-													href: '#confoptiontable',
-													onLoad: function() {
-															$('#confoptiontable').show();
-														},
-													onCleanup: function() {
-															$('#confoptiontable').hide();
-														},
+													width: '50%',
+													href: '#confoptiondiv',
 				});
 
-				$('#confcontentlink').colorbox({transition: 'elastic',
-													opacity: '0.5',
-													width: '75%',
-													inline: true,
-													href: '#confcontentdescription',
-													onLoad: function() {
-															$('#confcontentdescription').show();
-														},
-													onCleanup: function() {
-															$('#confcontentdescription').hide();
-														},
-				});
 $('.colorbox').colorbox({opacity: '0.5', height: '75%'});
 
 

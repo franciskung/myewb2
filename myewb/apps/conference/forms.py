@@ -23,7 +23,7 @@ from emailconfirmation.models import EmailAddress
 
 from communities.models import Community
 from conference.constants import *
-from conference.models import ConferenceRegistration, ConferenceCode, AlumniConferenceCode, QuasiVIPCode, FriendsConferenceCode, InvalidCode, ConferenceSession, ConferenceQuestionnaire, ROLES_CHOICES
+from conference.models import ConferenceRegistration, ConferenceCode, InvalidCode, ConferenceSession, ROLES_CHOICES
 from conference.utils import needsToRenew
 from creditcard.models import CC_TYPES, Product
 from creditcard.forms import CreditCardNumberField, CreditCardExpiryField, PaymentFormPreview
@@ -43,16 +43,6 @@ class ConferenceRegistrationForm(forms.ModelForm):
         if self.fields.get('address', None):
             self.fields['address'].user = value
             
-        #
-        #if value.is_bulk:
-        #    del(self.fields['prevConfs'])
-        #    del(self.fields['prevRetreats'])
-        #    #del(self.fields['code'])
-        #    self.fields['type'].choices=EXTERNAL_CHOICES
-        #else:
-        #    del(self.fields['grouping'])
-        #    del(self.fields['grouping2'])
-            
     user = property(_get_user, _set_user)
 
 class ConferenceRegistrationProfileForm(ConferenceRegistrationForm):
@@ -60,9 +50,6 @@ class ConferenceRegistrationProfileForm(ConferenceRegistrationForm):
     last_name = forms.CharField(label='Last name')
 
     gender = forms.ChoiceField(label='Gender',
-#                               choices=(('', ''),
-#                                         ('M', 'Male'),
-#                                         ('F', 'Female')),
                                 choices=MemberProfile.GENDER_CHOICES,
                                 widget=forms.RadioSelect,
                                )
@@ -70,48 +57,85 @@ class ConferenceRegistrationProfileForm(ConferenceRegistrationForm):
 #    student = forms.BooleanField(label='Are you a student?', required=False)
 
     language = forms.ChoiceField(label='Language preference',
-#                                 choices=(('', ''),
-#                                          ('E', 'English'),
-#                                          ('F', 'Francais')),
                                  choices=MemberProfile.LANG_CHOICES,
                                  widget=forms.RadioSelect,
                                  )
-
-#    date = forms.DateTimeField(widget=forms.HiddenInput)
 
     class Meta:
         model = MemberProfile
         fields = ['first_name', 'last_name', 'gender', 'language']
 
 
+# bleh.  i don't like putting so much UI text here, instead of in a template!!
 class ConferenceRegistrationForm1(ConferenceRegistrationForm):
-    # bleh.  i don't like putting so much UI text here, instead of in a template!!
+    whoareyou = forms.ChoiceField(label='Who are you?',
+                                  choices=WHOAREYOU_CHOICES,
+                                  widget=forms.RadioSelect)
 
+    chapter = forms.ChoiceField(label='Your chapter',
+                                choices=CHAPTER_CHOICES)
+    role= forms.MultipleChoiceField(required=False,
+                                     widget=forms.CheckboxSelectMultiple,
+                                     choices=ROLES_CHOICES)
+    prevConfs = forms.ChoiceField(label='EWB national conferences attended',
+								  choices=PASTEVENTS)
+    prevRetreats = forms.ChoiceField(label='EWB regional retreats attended',
+									 choices=PASTEVENTS)
+    cellphone = forms.CharField(label='Your cell phone number',
+                                required=False,
+                                help_text="(optional) If you wish to receive logistical updates and reminders by text message during the conference")
+    class Meta:
+        model = ConferenceRegistration
+        fields = ['whoareyou', 'chapter', 'role', 'prevConfs', 'prevRetreats', 'cellphone']
+
+class ConferenceRegistrationForm2(ConferenceRegistrationForm):
+    nametag = forms.CharField(label='Your name, as it will appear on your nametag')
+    nametag_org = forms.CharField(label='Organization, as it will appear on your nametag',
+                                  required=False)
+    medical = forms.CharField(label='Medications and medical conditions',
+                              required=False,
+                              widget=forms.Textarea,
+                              help_text='If you had a medical emergency, what would you want us to tell paramedics?')
+    emergName = forms.CharField(label='Emergency contact: name')
+    emergPhone = forms.CharField(label='Emergency contact: phone number')
+    emergReln = forms.CharField(label='Emergency contact: relationship')
+
+    childcare = forms.BooleanField(label='Are you interested in group childcare if it can be arranged?',
+                                    required=False)
+    childcare_contact = forms.CharField(label='If yes, your contact info (email or phone)',
+                                        required=False)
+    accessibility = forms.CharField(label='Do you have any accessibility needs?',
+                                    widget=forms.Textarea,
+                                    required=False)
+    headset = forms.BooleanField(label='Would you take part in simultaneous translation if available?',
+                                required=False)
+
+    class Meta:
+        model = ConferenceRegistration
+        fields = ['nametag', 'nametag_org', 'medical', 'emergName', 'emergPhone', 'emergReln', 
+                  'childcare', 'childcare_contact',
+                  'accessibility', 'headset']
+
+class ConferenceRegistrationForm3(ConferenceRegistrationForm):
+    type = forms.ChoiceField(label='Registration type',
+                             choices=REGISTRATION_CHOICES,
+                             widget=forms.RadioSelect,
+                             help_text="""<a href='#' class='confoptiontablelink'>click here for a rate guide and explanation</a>"""
+                             )
 
     code = forms.CharField(label='Registration code',
                            help_text='if you have a registration code, enter it here for a discounted rate.',
                            required=False)
-    type = forms.ChoiceField(label='Registration type',
-                             #choices=FINAL_CHOICES,
-                             choices=ROOM_CHOICES,
-                             widget=forms.RadioSelect,
-                             initial='nohotel',
-                             help_text="""Hotel options are only available with use of a registration code.<br/><a href='#' id='confoptiontablelink'>click here for a rate guide and explanation</a>"""
-                             #help_text="""Note that tickets to the Gala on Saturday evening featuring K'naan are sold separately, through the Gala event site"""
-                             )
-    
-    roommate = forms.CharField(label='Roommate request<br/>(with a hotel option, if any)', required=False,
-                               help_text='Requests are not guaranteed; however if all roommates list each other it will increase your chances.<br/>Rooms are all-male or all-female (no co-ed rooms).')
 
-    extra_gala = forms.BooleanField(label='Add an extra gala ticket ($75)',
-                                    required=False,
-                                    help_text='Would you like to bring a guest to the closing gala, who is not registered for conference')
-
+    hotel = forms.ChoiceField(label='Hotel and transportation',
+                              choices=HOTEL_CHOICES,
+                              widget=forms.RadioSelect,
+                              help_text="""<a href='#' class='confoptiontablelink'>click here for a rate guide and explanation</a>"""
+                              )
+                              
     class Meta:
         model = ConferenceRegistration
-#        fields = ['headset', 'foodPrefs', 'specialNeeds', 'emergName', 'emergPhone',
-#                  'cellphone', 'code', 'type', 'roommate', 'tshirt']
-        fields = ['code', 'type', 'roommate', 'extra_gala']
+        fields = ['type', 'code', 'hotel']
 
     def clean_code(self):
         codestring = self.cleaned_data['code'].strip().lower()
@@ -120,14 +144,7 @@ class ConferenceRegistrationForm1(ConferenceRegistrationForm):
             return None
         
         try:
-            if codestring == 'ewbalumni':
-                code, created = AlumniConferenceCode.objects.get_or_create(type='i', number=1)
-            #elif (codestring == 'ewbconfspecial'):
-            #    code = QuasiVIPCode()
-            #elif (codestring == 'ewbfriendsconf'):
-            #    code = FriendsConferenceCode()
-            else:
-                code = ConferenceCode.objects.get(code=codestring)
+            code = ConferenceCode.objects.get(code=codestring)
                 
             if code.isAvailable():
                 self.cleaned_data['code'] = code
@@ -138,13 +155,18 @@ class ConferenceRegistrationForm1(ConferenceRegistrationForm):
             raise forms.ValidationError("Invalid registration code")
         
     def clean(self):
-#        if not self.user.first_name \
-#            or not self.user.last_name \
-#            or not self.user.get_profile().gender \
-#            or not self.user.email:
-#            
-#            raise forms.ValidationError("Please fill out your full myEWB profile, including full name, email, and gender")
+        if self.cleaned_data.get('type', None) == 'ewb':
+            if not self.cleaned_data.get('code', None) and not self._errors.get('code', None):
+                self._errors['code'] = ["You must enter a valid registration code"]
+                raise forms.ValidationError("Unable to complete registration (see errors below)")
         
+        if self.cleaned_data.get('code', None):
+            if self.cleaned_data.get('type', None) != 'ewb':
+                self._errors['code'] = ["You can only use a registration code with the 'EWB Member' option"]
+                raise forms.ValidationError("Unable to complete registration (see errors below)")
+
+
+        """
         if self.cleaned_data.get('code', None):
             codename = self.cleaned_data['code'].getShortname()
         else:
@@ -156,117 +178,60 @@ class ConferenceRegistrationForm1(ConferenceRegistrationForm):
         if not CONF_OPTIONS.get(sku, None):
             self._errors['code'] = ["The registration code you've entered is not valid for the registration type you selected."]
             raise forms.ValidationError("Unable to complete registration (see errors below)")
-         
+        """
         return self.cleaned_data
         
-class ConferenceRegistrationForm2(ConferenceRegistrationForm):
+class ConferenceRegistrationForm4(ConferenceRegistrationForm):
+    hotelgender = forms.ChoiceField(label='Gender preference: I would like to be roomed with',
+                                    choices=HOTELGENDER_CHOICES,
+                                    widget=forms.RadioSelect)
+    hotelsleep = forms.ChoiceField(label='Sleeping preference: I would like to be roomed with',
+                                    choices=HOTELSLEEP_CHOICES,
+                                    widget=forms.RadioSelect)
+    hotelrequests = forms.MultipleChoiceField(label='I would like to be roomed with',
+                                            required=False,
+                                            widget=forms.CheckboxSelectMultiple,
+                                            choices=HOTELREQUESTS_CHOICES)
+    hotelroommates = forms.CharField(label='Roommate requests or other clarifications',
+                                    widget=forms.Textarea,
+                                    help_text='We will do our best to honor roommate requests when they are mutual',
+                                    required=False)
+
+    class Meta:
+        model = ConferenceRegistration
+        fields = ['hotelgender', 'hotelsleep', 'hotelrequests', 'hotelroommates']
+
+class ConferenceRegistrationForm5(ConferenceRegistrationForm):
     foodPrefs = forms.ChoiceField(label='Food preferences',
 								  choices=FOOD_CHOICES,
-								  widget=forms.RadioSelect,
-								  initial='vegetarian',
-								  help_text='Please use the text area below to provide details or any other requirements, if needed')
+								  widget=forms.RadioSelect)
 
+    dietary = forms.MultipleChoiceField(label='Dietary restrictions',
+                                            required=False,
+                                            widget=forms.CheckboxSelectMultiple,
+                                            choices=DIETARY_CHOICES)
+                                            
     specialNeeds = forms.CharField(label='Special needs',
 								   required=False,
 								   widget=forms.Textarea,
-								   help_text='Please let us know about any special dietary, accessibility or other needs you may have, or any medical conditions (including allergies).')
+								   help_text="Let us know if there are specific requirements of your diet if your restrictions are not included above. Note: We will do our best to accommodate everyone and will get in touch if we have questions. During the conference if you feel your needs are not being met just let us know and we'll try to adjust.")
     
-    headset = forms.BooleanField(label='Headset requested?',
-								 required=False,
-								 help_text='Auriez-vous besoin d’un casque d’écoute pour la traduction?<br/>Would you be interested in a simultaneous-translation headset? There will be keynotes in both English and French.')
-	
-#    tshirt = forms.ChoiceField(label='Purchase a National Conference 2013 t-shirt?',
-#                               choices=TSHIRT_CHOICES,
-#                               widget=forms.RadioSelect,
-#                               help_text="""<a href="/site_media/static/images/conference_shirt_2013.png" class="colorbox"><img src='/site_media/static/images/conference_shirt_2013.png' id="confshirt"/></a><br/><em>design subject to small changes</em>""")
-    
-    handbook = forms.BooleanField(label='Printed conference handbook',
+    bracelet = forms.BooleanField(label='Would you like to order a conference bracelet?',
                                required=False,
-                               help_text='Would you like a printed copy of the conference handbook?<br/>An electronic copy will also be available, but there is no wi-fi at the conference centre')
+                               help_text="""Cost is $12; provided by <a href="http://www.paperbeadworks.com" target="_new">Paper Bead Works</a> in conference colours""")
     
-    cellphone = forms.CharField(label='Your cell phone number',
-                                required=False,
-                                help_text="(optional) If you wish to receive logistical updates and reminders by text message during the conference")
-
-    emergName = forms.CharField(label='Emergency contact name')
-    emergPhone = forms.CharField(label='Emergency contact phone number')
-
-    photo_release = forms.BooleanField(label='Photo release',
-                                       required=False,
-                                       initial=True,
-                                       help_text='I agree to be photographed and/or recorded by Engineers Without Borders Canada as part of my participation in 2013 EWB National Conference, and that they and their successors shall own all rights of every kind in said photography and/or recording.')
+    handbook = forms.BooleanField(label='Would you like a printed copy of the conference delegate handbook?',
+                               required=False,
+                               help_text='A $3 recycling fee applies')
+    membership = forms.BooleanField(label='EWB Membership Renewal',
+                                           required=False,
+                                           help_text='If you are not a paid member of EWB, or if your membership expires before the conference, a membership renewal will be added to your registration.  This membership allows you to vote at the Annual General Meeting.  <strong>If you opt out, you will not be able to vote at the AGM.</strong>')
     
-    #resume = forms.FileField(label='Resume',
-    #                         required=False,
-    #                         help_text="(optional) Attach a resume if you would like it shared with our sponsors")
-    
-    #grouping = forms.ChoiceField(label='Which group do you belong to?',
-    #                             choices=EXTERNAL_GROUPS,
-    #                             required=False)
-    #grouping2 = forms.CharField(label='&nbsp;',
-    #                            required=False,
-    #                            help_text='(if other)')
-
     class Meta:
         model = ConferenceRegistration
-#        fields = ['foodPrefs', 'specialNeeds', 'headset', 'tshirt', 'handbook',
-        fields = ['foodPrefs', 'specialNeeds', 'headset', 'handbook',
-                  'cellphone', 'emergName', 'emergPhone', 'photo_release'
-                  ]
-    
-class ConferenceRegistrationForm3(ConferenceRegistrationForm):
-    prevConfs = forms.ChoiceField(label='EWB national conferences attended',
-								  choices=PASTEVENTS)
-    prevRetreats = forms.ChoiceField(label='EWB regional retreats attended',
-									 choices=PASTEVENTS)
-    new_to_calgary = forms.BooleanField(label='Is this your first time in Calgary?',
-                                       required=False)
+        fields = ['foodPrefs', 'dietary', 'specialNeeds', 'bracelet', 'handbook', 'membership']
 
-    homeroom = forms.ChoiceField(label='Conference content',
-   							     choices=HOMEROOM_CHOICES,
-							     widget=forms.RadioSelect,
-                                 help_text="""Which of the above does your involvement with EWB most closely align with?<br/><a href='#' id='confcontentlink'>click here for a description of each option</a>""")
-
-    industry = forms.CharField(label='Industry/field',
-                               required=False,
-                               help_text='Which industry/field do you work in or study?')
-
-
-#    survey1 = forms.CharField(label='What are you hoping to learn through conference?',
-#                              required=False,
-#                              widget=forms.Textarea)
-#    survey2 = forms.CharField(label='What are some of the connections you are hoping to make through conference?',
-#                              help_text='ie, connections to national office, african programs staff, sponsors, chapter members...',
-#                              required=False,
-#                              widget=forms.Textarea)
-#    survey3 = forms.CharField(label='Reflect on the main opportunities and challenges ahead in your involvement with EWB.  How can your #experience at conference help you capitalize on the opportunities and overcome the challenges?',
-#                              required=False,
-#                              widget=forms.Textarea)
-#    survey4 = forms.CharField(label='How would you define your perfect conference experience?',
-#                              required=False,
-#                              widget=forms.Textarea)
-#    survey5 = forms.CharField(label='In the months leading to conference, how will you stay up to speed with the latest conference news?',
-#                              help_text='ie, twitter, myewb, conference website, newsletter...',
-#                              required=False,
-#                              widget=forms.Textarea)
-#    survey6 = forms.CharField(label='On Sunday the 15th, would you be interested in a trip to a) the War Museum, b) skiing? (neither are #included in the cost of conference)',
-#                              required=False,
-#                              widget=forms.Textarea)
-#    survey7 = forms.CharField(label='What type of socials would you be interested in?',
-#                              required=False,
-#                              widget=forms.Textarea)
-#    survey8 = forms.CharField(label='Is there a particular restaurant or style of food that you would be interested in knowing the location #of?',
-#                              required=False,
-#                              widget=forms.Textarea)
-
-    class Meta:
-        model = ConferenceRegistration
-#        fields = ['prevConfs', 'prevRetreats', 'new_to_ottawa',
-#                  'survey1', 'survey2', 'survey3', 'survey4', 'survey5',
-#                  'survey6', 'survey7', 'survey8']
-        fields = ['prevConfs', 'prevRetreats', 'new_to_calgary', 'homeroom', 'industry']
-    
-class ConferenceRegistrationForm4(ConferenceRegistrationForm):
+class ConferenceRegistrationForm6(ConferenceRegistrationForm):
     africaFund = forms.ChoiceField(label='Support an African delegate?',
                                    choices=AFRICA_FUND,
                                    initial='75',
@@ -298,7 +263,7 @@ class ConferenceRegistrationForm4(ConferenceRegistrationForm):
                 
         return self.cleaned_data
 
-class ConferenceRegistrationForm5(ConferenceRegistrationForm):
+class ConferenceRegistrationForm7(ConferenceRegistrationForm):
     cc_type = forms.ChoiceField(label='Credit card type',
 								  choices=CC_TYPES)
     cc_number = CreditCardNumberField(label='Credit card number')
@@ -346,18 +311,17 @@ class ConferenceRegistrationForm5(ConferenceRegistrationForm):
         total_cost = 0
         
         if reg.code:
-            codename = reg.code.getShortname()
+            regtype = reg.code.getShortname()
         else:
-            codename = "open"
+            regtype = reg.type
         
-        sku = "confreg-2013-" + reg.type + "-" + codename
-        
-        if not CONF_OPTIONS.get(sku, None):
+        if not CONF_OPTIONS.get(regtype, None):
             errormsg = "The registration code you've entered is not valid for the registration type you selected."
             raise forms.ValidationError("Unable to complete registration (see errors below)")
          
-        cost = CONF_OPTIONS[sku]['cost']
-        name = CONF_OPTIONS[sku]['name']
+        cost = CONF_OPTIONS[regtype]['cost']
+        name = CONF_OPTIONS[regtype]['name']
+        sku = "confreg2014-" + regtype
         product, created = Product.objects.get_or_create(sku=sku)
         if created:
             product.name = name
@@ -367,7 +331,8 @@ class ConferenceRegistrationForm5(ConferenceRegistrationForm):
         cleaned_data['products'].append(product.sku)
         total_cost = total_cost + Decimal(product.amount)
 
-        if needsToRenew(self.user.get_profile(), type=reg.type):
+        print "membership", reg.membership
+        if needsToRenew(self.user.get_profile(), type=reg.type) and reg.membership:
             # FIXME: some duplicated code from profiles.forms (where saving membership fees)
             if self.user.get_profile().student():
                 type = "studues"
@@ -397,7 +362,7 @@ class ConferenceRegistrationForm5(ConferenceRegistrationForm):
 
         if reg.africaFund:
             cost = reg.africaFund
-            sku = "13-africafund-%d" % cost
+            sku = "kumvana2014-%d" % cost
             name = "Support an African delegate ($%d)" % cost
             product, created = Product.objects.get_or_create(sku=sku)
             if created:
@@ -408,32 +373,58 @@ class ConferenceRegistrationForm5(ConferenceRegistrationForm):
             cleaned_data['products'].append(product.sku)
             total_cost = total_cost + Decimal(product.amount)
 
-        """
-        if reg.tshirt and (reg.tshirt == 's' or reg.tshirt == 'm' or reg.tshirt == 'l' or reg.tshirt == 'x'):
-            sku = "13-conf-tshirt"
-            name = "Conference t-shirt"
+        if reg.hotel != 'none':
+            sku = "confreg2014-%s" % reg.hotel
+            name = HOTEL_OPTIONS[reg.hotel]['name']
+            cost = HOTEL_OPTIONS[reg.hotel]['cost']
             product, created = Product.objects.get_or_create(sku=sku)
             if created:
                 product.name = name
-                product.amount = 20
+                product.amount = cost
                 product.save()
             
             cleaned_data['products'].append(product.sku)
-            total_cost = total_cost + Decimal(20)
-        """
+            total_cost = total_cost + Decimal(cost)
 
-        if reg.extra_gala:
-            sku = "13-conf-galaguest"
-            name = "Extra Gala ticket"
+        if reg.bracelet:
+            sku = "confreg2014-bracelet"
+            name = "Conference bracelet"
             product, created = Product.objects.get_or_create(sku=sku)
             if created:
                 product.name = name
-                product.amount = 75
+                product.amount = 12
                 product.save()
             
             cleaned_data['products'].append(product.sku)
-            total_cost = total_cost + Decimal(75)
+            total_cost = total_cost + Decimal(12)
 
+        if reg.handbook:
+            sku = "confreg2014-handbook"
+            name = "Printed handbook"
+            product, created = Product.objects.get_or_create(sku=sku)
+            if created:
+                product.name = name
+                product.amount = 3
+                product.save()
+            
+            cleaned_data['products'].append(product.sku)
+            total_cost = total_cost + Decimal(3)
+
+        ccard_surcharge = round(total_cost * Decimal(0.025), 2);
+        sku = "ccard-%s" % ccard_surcharge
+        name = "Credit card processing fee"
+        product, created = Product.objects.get_or_create(sku=sku)
+        if created:
+            product.name = name
+            product.amount = ccard_surcharge
+            product.save()
+        
+        cleaned_data['products'].append(product.sku)
+        total_cost = total_cost + Decimal(ccard_surcharge)
+        reg.ccard_surcharge = ccard_surcharge
+        reg.save()
+        
+        
         cleaned_data['total_cost'] = total_cost
         
         cleaned_data['registration_id'] = reg.id
@@ -486,16 +477,13 @@ class ConferenceRegistrationFormPreview(PaymentFormPreview):
         
         if response[0] == True:
             if reg.code:
-                codename = reg.code.getShortname()
+                regtype = reg.code.getShortname()
             else:
-                codename = "open"
+                regtype = reg.type
             
-            #registration = form.save(commit=False)
-            #registration.user = user
             reg.submitted = True
-            reg.type = "confreg-2013-" + reg.type + "-" + codename
-            reg.amountPaid = CONF_OPTIONS[reg.type]['cost']
-            reg.roomSize = reg.type
+            reg.type = regtype
+            reg.amountPaid = CONF_OPTIONS[regtype]['cost']
             reg.receiptNum = response[2]
             reg.txid = response[1]
             
@@ -505,24 +493,24 @@ class ConferenceRegistrationFormPreview(PaymentFormPreview):
             reg.save()
             
             # and update their membership if they paid it
-            if needsToRenew(request.user.get_profile()):
+            if needsToRenew(request.user.get_profile()) and reg.membership:
                 request.user.get_profile().pay_membership()
                 
             # lastly, add them to the group
-            grp, created = Community.objects.get_or_create(slug='conference2013',
+            grp, created = Community.objects.get_or_create(slug='conference2014',
                                                            defaults={'invite_only': True,
-                                                                     'name': 'National Conference 2013 - EWB delegates',
+                                                                     'name': 'National Conference 2014 - EWB delegates',
                                                                      'creator': request.user,
-                                                                     'description': 'National Conference 2013 delegates (EWB members)',
-                                                                     'mailchimp_name': 'National Conference 2013 members',
+                                                                     'description': 'National Conference 2014 delegates (EWB members)',
+                                                                     'mailchimp_name': 'National Conference 2014 members',
                                                                      'mailchimp_category': 'Conference'})
 
-            grp2, created = Community.objects.get_or_create(slug='conference2013-external',
+            grp2, created = Community.objects.get_or_create(slug='conference2014-external',
                                                             defaults={'invite_only': True,
-                                                                      'name': 'National Conference 2013 - external delegates',
+                                                                      'name': 'National Conference 2014 - external delegates',
                                                                       'creator': request.user,
-                                                                      'description': 'National Conference 2013 delegates (external)',
-                                                                      'mailchimp_name': 'National Conference 2013 external',
+                                                                      'description': 'National Conference 2014 delegates (external)',
+                                                                      'mailchimp_name': 'National Conference 2014 external',
                                                                       'mailchimp_category': 'Conference'})
 
             if request.user.is_bulk:
@@ -538,15 +526,15 @@ class ConferenceRegistrationFormPreview(PaymentFormPreview):
             registration = None
             form.trnError = response[1]
 #            form.clean
-        needsRenewal = needsToRenew(request.user.get_profile())
+        needsRenewal = needsToRenew(request.user.get_profile()) and reg.membership
 
         print "failing.  going to stage 6.  message is %s" % response[1]
 
         return render_to_response('conference/registration.html',
                                   {'registration': reg,
                                    'form': form,
-                                   'stage': '6',
-                                   'last_stage': '5',
+                                   'stage': '8',
+                                   'last_stage': '7',
                                    'user': request.user,
                                    'needsRenewal': needsRenewal
                                   },
@@ -558,147 +546,7 @@ class CodeGenerationForm(forms.Form):
     start = forms.IntegerField(label='Starting at')
     number = forms.IntegerField(label='How many codes')
     
-class ConferenceTShirtForm(forms.Form):
-    theuser = None
 
-    _user = None
-    def _get_user(self):
-        return self._user
-    
-    def _set_user(self, value):
-        self._user = value
-        if self.fields.get('address', None):
-            self.fields['address'].user = value
-            
-        #
-        #if value.is_bulk:
-        #    del(self.fields['prevConfs'])
-        #    del(self.fields['prevRetreats'])
-        #    #del(self.fields['code'])
-        #    self.fields['type'].choices=EXTERNAL_CHOICES
-        #else:
-        #    del(self.fields['grouping'])
-        #    del(self.fields['grouping2'])
-            
-    user = property(_get_user, _set_user)
-
-    tshirt = forms.ChoiceField(label='Purchase an EWB t-shirt?',
-                               choices=TSHIRT_CHOICES)
-    
-    cc_type = forms.ChoiceField(label='Credit card type',
-                                  choices=CC_TYPES)
-    cc_number = CreditCardNumberField(label='Credit card number')
-    cc_expiry = CreditCardExpiryField(label='Credit card expiry',
-                                      help_text='MM/YY')
-    billing_name = forms.CharField(label='Name on credit card', max_length=255)
-    address = CompactAddressField(label='Billing Address')
-    id = forms.IntegerField(widget=forms.HiddenInput, required=False)
-    
-    trnError = None
-    
-    def clean_tshirt(self):
-        if self.cleaned_data['tshirt']:
-            if self.cleaned_data['tshirt'] == 'n':
-                raise forms.ValidationError("Please select a t-shirt size")
-        return self.cleaned_data['tshirt']
-    
-        
-    def clean(self):
-        # If the card is declined at the bank, trnError will get set...
-        if self.trnError:
-            raise forms.ValidationError("Error: " + self.trnError)
-        
-        if self.errors:
-            return None
-
-        # bypass, since the FormPreview clean isn't on a bound form
-        # (but that's ok since we validate the bound version first)
-        if self.cleaned_data.get('id', None):
-            reg = ConferenceRegistration.objects.get(id=self.cleaned_data['id'])
-        else:
-            # this shouldn't happen.
-            raise forms.ValidationError("Internal error.  Please email support@my.ewb.ca") 
-        
-        # and do some auto-processing as needed
-        cleaned_data = self.cleaned_data
-        cleaned_data['products'] = []
-        total_cost = 0
-        
-        sku = "13-conf-tshirt"
-        name = "Conference t-shirt"
-        cost = 20
-        product, created = Product.objects.get_or_create(sku=sku)
-        if created:
-            product.name = name
-            product.amount = cost
-            product.save()
-            
-        cleaned_data['products'].append(product.sku)
-        total_cost = total_cost + Decimal(product.amount)
-        cleaned_data['total_cost'] = total_cost
-        
-        cleaned_data['registration_id'] = reg.id
-        self.cleaned_data = cleaned_data
-
-        return self.cleaned_data
-    
-    
-class ConferenceTShirtFormPreview(PaymentFormPreview):
-    preview_template = 'conference/tshirtpreview.html'
-    form_template = 'conference/purchase.html'
-    username = None
-    
-    def parse_params(self, *args, **kwargs):
-        super(ConferenceTShirtFormPreview, self).parse_params(*args, **kwargs)
-        self.registration_id = kwargs['registration_id']
-    
-    def done(self, request, cleaned_data):
-        # add profile info, as it's needed for CC processing
-        #form = self.form(request.POST)
-        #reg = self.form.instance
-        
-        reg = ConferenceRegistration.objects.get(id=cleaned_data['registration_id'])
-        form = self.form(request.POST)
-        
-        if reg.user != request.user:
-            # simulate a credit card declined, to trigger form validation failure
-            response = (False, "Internal error, please email support@my.ewb.ca")
-            
-        else:
-            cleaned_data['email'] = request.user.email
-            if request.user.get_profile().default_phone() and request.user.get_profile().default_phone().number:
-                cleaned_data['phone'] = request.user.get_profile().default_phone().number
-            else:
-                cleaned_data['phone'] = '416-481-3696'
-            
-            # this call sends it to the bank!!
-            response = super(ConferenceTShirtFormPreview, self).done(request, cleaned_data)
-            
-            if not response[0]:
-                response = (False, "Credit card: %s" % response[1])
-        
-        if response[0] == True:
-            reg.tshirt = cleaned_data['tshirt']      # somethin like this...
-            reg.save()
-            
-            # don't do the standard render_to_response; instead, do a redirect
-            # so that someone can't double-submit by hitting refresh
-            request.user.message_set.create(message='T-Shirt order received!')
-            return HttpResponseRedirect(reverse('confreg'))
-        
-        else:
-            registration = None
-            form.trnError = response[1]
-            form.clean
-
-        return render_to_response('conference/purchase.html',
-                                  {'registration': registration,
-                                   'form': form,
-                                   'user': request.user,
-                                  },
-                                  context_instance=RequestContext(request)
-                                 )
-    
 class ConferenceADForm(forms.Form):
     theuser = None
 
@@ -1134,56 +982,4 @@ class ConferenceSmsForm(forms.Form):
                               widget=forms.Textarea,
                               help_text='Maximum 160 characters.')
 
-class ConferenceQuestionnaireForm(forms.ModelForm):
-#    roles = forms.MultipleChoiceField(required=False,
-#                                      widget=forms.CheckboxSelectMultiple,
-#                                      choices=ROLES_CHOICES)
-    
-    handbook = forms.BooleanField(label='I would like to receive a hardcopy of the delegate handbook',
-                                  help_text='A PDF version will be provided, and you \
-    will be able to download an app (look for Spotlight in your app store) as well. \
-    Note that there will be no Internet on the conference level.',
-                                          required=False)
-    french = forms.BooleanField(label='I would be interested in practicing my French during conference',
-                                help_text='We will connect you with other delegate and \
-    create a fun, non-intimidating environment for you to interact with other \
-    like-minded individuals',
-                                          required=False)
-
-    class Meta:
-            model = ConferenceQuestionnaire
-            exclude = ('registration',)
-
-class ConferenceQuestionnaireFormFrench(forms.ModelForm):
-    """
-    first_conference = forms.BooleanField(label='Est-ce votre premier congrès?',
-                                          required=False)
-    
-    chaptertype = forms.ChoiceField(choices=CHAPTERTYPE_CHOICES_FR,
-                                    label='De quel type de section faites-vous partie?')
-    
-    roles = forms.MultipleChoiceField(required=False,
-                                      widget=forms.CheckboxSelectMultiple,
-                                      choices=ROLES_CHOICES_FR,
-                                      label='Quel est votre rôle actuellement dans ISF :')
-    
-    leadership_years = forms.ChoiceField(choices=((1, '<= 1'),
-                                                  (2, '2 - 3'), 
-                                                  (3, '> 3 ')), 
-                                         label='Nombre d’années d’expérience dans une position de leadership dans ISF')
-    
-    leadership_day = forms.BooleanField(label='Êtes-vous inscrit à la Journée du leadership ayant lieu le 11 janvier 2012?',
-                                        required=False)
-    
-    innovation_challenge = forms.BooleanField(label='Êtes-vous inscrit à la "Innovation Challenge"?',
-                                              required=False)
-    
-    prep = forms.ChoiceField(choices=((0, '< 5 heures'),
-                                      (5, '> 5 heures')),
-                             label='Combien d’heures vous engagez-vous à investir dans votre préparation (lecture/écoute/réflexion) pour le congrès?')
-    """
-
-    class Meta:
-            model = ConferenceQuestionnaire
-            exclude = ('registration',)
 

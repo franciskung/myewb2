@@ -11,7 +11,7 @@ from django.contrib import admin
 from conference.models import *
 
 class RegistrationAdmin(admin.ModelAdmin):
-    list_display = ('user', 'amountPaid', 'roomSize', 'type',
+    list_display = ('user', 'amountPaid', 'type', 'hotel',
                     'date', 'headset', 'foodPrefs', 'cancelled', 
                     'specialNeeds', 'emergName', 'emergPhone', 'code',
                     'prevConfs', 'prevRetreats')

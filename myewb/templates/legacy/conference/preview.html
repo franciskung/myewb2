@@ -4,13 +4,13 @@
 {% load i18n %}
 {% load creditcard_tags %}
 
-{% block head_title %}National Conference 2013{% endblock %}
+{% block head_title %}National Conference 2014{% endblock %}
 
 {% block body %}
 
 <br/><br/>
 
-<h1>National Conference 2013: Registration Preview</h1>
+<h1>National Conference 2014: Registration Preview</h1>
 	
 <h2>Personal Details</h2>
 
@@ -42,34 +42,15 @@
 	</tr>
 
 	<tr>
+		<td class='leftcell'>Name (for nametag)</td>
+		<td>{{ form.instance.nametag}}<br/>
+		{{ form.instance.nametag_org }}</td>
+	</tr>
+
+	<tr>
 		<td class='leftcell'>Email</td>
 		<td>{{ user.email }}</td>
 	</tr>
-
-	{% comment %}
-	<tr>
-		<td class='leftcell'>Phone number</td>
-		<td>{{ user.get_profile.default_phone }}</td>
-	</tr>
-	{% endcomment %}
-
-	<tr>
-		<td class='leftcell'>Gender</td>
-		<td>{{ user.get_profile.gender }}</td>
-	</tr>
-	
-	{% if not user.is_bulk %}
-	<tr>
-		<td class='leftcell'>Student status</td>
-		<td>
-			{% if user.get_profile.student %}
-				Yes
-			{% else %}
-				No
-			{% endif %}
-		</td>
-	</tr>
-	{% endif %}
 
 	<tr>
 		<td class='leftcell'>Preferred language</td>
@@ -94,7 +75,8 @@
 	</tr>
 	<tr>
 		<td class='leftcell'>Food preferences</td>
-		<td>{{ form.instance.foodPrefs }}</td>
+		<td>{{ form.instance.foodPrefs }}<br/>
+		{{ form.instance.dietary }}</td>
 	</tr>
 	<tr>
 		<td class='leftcell'>Special needs</td>
@@ -106,23 +88,11 @@
 	</tr>
 	
 	<tr>
-		<td class='leftcell'>Cell phone</td>
-		<td>{{ form.instance.cellphone }}</td>
+		<td class='leftcell'>Registration type</td>
+		<td>{{ form.instance.type }}</td>
 	</tr>
-	
-	{% if user.is_bulk %}
-	<tr>
-		<td class='leftcell'>Industry</td>
-		<td>
-			{{ form.grouping.data }}
-			{% if form.grouping2.data %}
-				({{ form.grouping2.data }})
-			{% endif %}
-		</td>
-	</tr>
-	{% endif %}
-	
-	{% if not user.is_bulk %}
+
+	{% if form.instance.code %}
 	<tr>
 		<td class='leftcell'>Registration code</td>
 		<td>
@@ -134,9 +104,10 @@
 		</td>
 	</tr>
 	{% endif %}
+	
 	<tr>
-		<td class='leftcell'>Registration type</td>
-		<td>{{ form.instance.type }}</td>
+		<td class='leftcell'>Hotel / transportation</td>
+		<td>{{ form.instance.hotel }}</td>
 	</tr>
 
 	{% if not user.is_bulk %}
@@ -199,7 +170,7 @@
 {% endfor %}
 <input type="hidden" name="{{ stage_field }}" value="2" />
 <input type="hidden" name="{{ hash_field }}" value="{{ hash_value }}" />
-<input type="hidden" name="reg_stage" value="6" />
+<input type="hidden" name="reg_stage" value="8" />
 <p>
 	<input type="button" value="Go back" onClick="history.go(-1);" />
 	&nbsp;&nbsp;

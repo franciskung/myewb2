@@ -15,54 +15,51 @@ class ConferenceRegistration(models.Model):
     """Conference registration data"""
     
     user = models.ForeignKey(User, related_name="conference_registrations")
-    chapter = models.ForeignKey(Network, related_name="conference_delegates", null=True)
     
-    amountPaid = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
-    roomSize = models.CharField(max_length=25, null=True, blank=True)
     date = models.DateTimeField(default=datetime.now)
-    headset = models.BooleanField(default=False)
-    foodPrefs = models.CharField(max_length=10, choices=FOOD_CHOICES, default='vegetarian')
     submitted = models.BooleanField(default=False)
     cancelled = models.BooleanField(default=False)
-    specialNeeds = models.TextField(null=True, blank=True)
+    ccard_surcharge = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
+    amountPaid = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
+    txid = models.CharField(max_length=255, null=True, blank=True)
+    receiptNum = models.CharField(max_length=255, null=True, blank=True)
+    
+    whoareyou = models.CharField(max_length=25, null=True, blank=True)
+
+    nametag = models.CharField(max_length=255, null=True, blank=True)
     emergName = models.CharField(max_length=255, null=True, blank=True)
     emergPhone = models.CharField(max_length=50, null=True, blank=True)
+    emergReln = models.CharField(max_length=50, null=True, blank=True)
+    medical = models.TextField(null=True, blank=True)
+    chapter = models.CharField(max_length=50, null=True, blank=True)
+    role = models.CharField(max_length=255, null=True, blank=True)
+    nametag_org = models.CharField(max_length=50, null=True, blank=True)
+    childcare = models.BooleanField(default=False)
+    childcare_contact = models.CharField(max_length=75, null=True, blank=True)
+    accessibility = models.TextField(null=True, blank=True)
+    headset = models.BooleanField(default=False)
     prevConfs = models.SmallIntegerField(default=0)
     prevRetreats = models.SmallIntegerField(default=0)
     cellphone = models.CharField(max_length=50, blank=True, null=True)
     cellphone_optout = models.DateTimeField(blank=True, null=True)
     cellphone_from = models.ForeignKey('ConferencePhoneFrom', null=True, blank=True)
-    #grouping = models.CharField(max_length=50, blank=True, null=True)
-    roommate = models.CharField(max_length=255, blank=True, null=True)
-    new_to_calgary = models.BooleanField(default=False, blank=True)
     
-    txid = models.CharField(max_length=255, null=True, blank=True)
-    receiptNum = models.CharField(max_length=255, null=True, blank=True)
-    code = models.ForeignKey('ConferenceCode', related_name="registration", blank=True, null=True)
     type = models.CharField(max_length=50, null=True, blank=True)
-    africaFund = models.SmallIntegerField(blank=True, null=True)
-    tshirt = models.CharField(max_length=1, blank=True, null=True)
-    handbook = models.BooleanField(default=False, blank=True)
-    photo_release = models.BooleanField(default=True, blank=True)
-
-    extra_gala = models.BooleanField(default=False, blank=True)
-    homeroom = models.CharField(max_length=10, blank=True)
-    industry = models.CharField(max_length=255, blank=True)
-
-    ldd_delegate = models.BooleanField(default=False)
-    ldd_chapter = models.ForeignKey(Network, blank=True, null=True)
-    ldd_type = models.CharField(max_length=50, blank=True)
-    ldd_hotel = models.BooleanField(default=False)
+    code = models.ForeignKey('ConferenceCode', related_name="registration", blank=True, null=True)
+    hotel = models.CharField(max_length=25, null=True, blank=True)
+    hotelgender = models.CharField(max_length=15, null=True, blank=True)
+    hotelsleep = models.CharField(max_length=15, null=True, blank=True)
+    hotelroommates = models.TextField(null=True, blank=True)
+    hotelrequests = models.CharField(max_length=50, null=True, blank=True)
     
-        
-#    survey1 = models.TextField(null=True, blank=True)
-#    survey2 = models.TextField(null=True, blank=True)
-#    survey3 = models.TextField(null=True, blank=True)
-#    survey4 = models.TextField(null=True, blank=True)
-#    survey5 = models.TextField(null=True, blank=True)
-#    survey6 = models.TextField(null=True, blank=True)
-#    survey7 = models.TextField(null=True, blank=True)
-#    survey8 = models.TextField(null=True, blank=True)
+    foodPrefs = models.CharField(max_length=10, blank=True, null=True)
+    dietary = models.CharField(max_length=255, blank=True, null=True)
+    specialNeeds = models.TextField(null=True, blank=True)
+    bracelet = models.BooleanField(default=False)
+    handbook = models.BooleanField(default=False)
+    membership = models.BooleanField(default=True)
+    
+    africaFund = models.SmallIntegerField(blank=True, null=True)
 
     def cancel(self):
         self.cancelled = True
@@ -70,20 +67,20 @@ class ConferenceRegistration(models.Model):
         self.save()
 
         # remove from delegates group
-        grp, created = Community.objects.get_or_create(slug='conference2013',
+        grp, created = Community.objects.get_or_create(slug='conference2014',
                                                        defaults={'invite_only': True,
-                                                                 'name': 'National Conference 2013 - EWB delegates',
+                                                                 'name': 'National Conference 2014 - EWB delegates',
                                                                  'creator': self.user,
-                                                                 'description': 'National Conference 2013 delegates (EWB members)',
-                                                                 'mailchimp_name': 'National Conference 2013 members',
+                                                                 'description': 'National Conference 2014 delegates (EWB members)',
+                                                                 'mailchimp_name': 'National Conference 2014 members',
                                                                  'mailchimp_category': 'Conference'})
 
-        grp2, created = Community.objects.get_or_create(slug='conference2013-external',
+        grp2, created = Community.objects.get_or_create(slug='conference2014-external',
                                                         defaults={'invite_only': True,
-                                                                  'name': 'National Conference 2013 - external delegates',
+                                                                  'name': 'National Conference 2014 - external delegates',
                                                                   'creator': self.user,
-                                                                  'description': 'National Conference 2013 delegates (external)',
-                                                                  'mailchimp_name': 'National Conference 2013 external',
+                                                                  'description': 'National Conference 2014 delegates (external)',
+                                                                  'mailchimp_name': 'National Conference 2014 external',
                                                                   'mailchimp_category': 'Conference'})
 
         grp.remove_member(self.user)
@@ -174,31 +171,6 @@ class ConferenceCode(models.Model):
         m = hashlib.md5()
         m.update("%s%s%s" % (type, number, CONF_HASH))
         return codehash == m.hexdigest()[:4]
-
-class AlumniConferenceCode(ConferenceCode):
-    def getShortname(self):
-        return 'alumni'
-    
-    def isAvailable(self):
-        return True
-    
-class QuasiVIPCode(ConferenceCode):
-    def getShortname(self):
-        return 'discounted'
-    
-    def isAvailable(self):
-        return True
-        
-class FriendsConferenceCode(ConferenceCode):
-    def getShortname(self):
-        return 'friends'
-        
-    def isAvailable(self):
-        return True
-
-class LeadershipDaySpots(models.Model):
-    chapter = models.ForeignKey(Network)
-    spots = models.IntegerField(default=0)
 
 SESSION_TYPES = (('keynote', "Keynote"),
                  ('speaker', "Speaker"),
@@ -320,58 +292,9 @@ class ConferenceSession(models.Model):
     #    else:
     #        return False
     
-class ConferenceQuestionnaire(models.Model):
-    registration = models.OneToOneField(ConferenceRegistration)
-    
-    """
-    first_conference = models.BooleanField(default=True,
-                                           verbose_name='Is this your first EWB National Conference?')
-    
-    chaptertype = models.CharField(max_length=10, choices=CHAPTERTYPE_CHOICES,
-                                   verbose_name='What type of chapter are you from?')
-    
-    roles = models.CharField(max_length=255, choices=ROLES_CHOICES, blank=True,
-                             verbose_name='What role(s) do you currently hold in EWB, if any?')
-    
-    leadership_years = models.IntegerField(blank=True, choices=(('1', '1 or less'),
-                                                                ('2', '2 - 3'), 
-                                                                ('3', '3 or more')), 
-                                           verbose_name='How many years have you held a leadership position in EWB?',
-                                           default=1)
-    
-    leadership_day = models.BooleanField(default=False,
-                                         verbose_name='Are you attending leadership day?')
-    
-    innovation_challenge = models.BooleanField(default=False,
-                                               verbose_name='Are you participating in the Innovation Challenge?')
-    
-    prep = models.IntegerField(choices=(('0', 'Under 5 hours'),
-                                        ('5', 'Over 5 hours')),
-                                        verbose_name='How many hours of prep are you able to commit to before conference?')
-    """
-    
-    handbook = models.BooleanField(default=True,
-                                   verbose_name="I would like to receive a hardcopy of the delegate handbook")
-                                   
-    french = models.BooleanField(default=False,
-                                 verbose_name="I would be interested in practicing my French during conference")
-
-    nametag_name = models.CharField(max_length=255, verbose_name="Name (for your nametag)")
-    nametag_chapter = models.CharField(max_length=255, verbose_name="Chapter (for your nametag)", blank=True, null=True)
-    nametag_role = models.CharField(max_length=255, verbose_name="Role (for your nametag)", blank=True, null=True)
-    nametag_interest = models.CharField(max_length=255, verbose_name="Interested in... (for your nametag)", blank=True, null=True)
-    nametag_employer = models.CharField(max_length=255, verbose_name="Employer (if you are a professional; for your nametag)", blank=True, null=True)
-                                 
-    q3 = models.TextField(blank=True, null=True)
-    q4 = models.TextField(blank=True, null=True)
-    q5 = models.TextField(blank=True, null=True)
-    q6 = models.TextField(blank=True, null=True)
-    q7 = models.TextField(blank=True, null=True)
-    
-                                        
 class ConferenceSessionCriteria(models.Model):
     first_conference = models.CharField(max_length=3, choices=(('yes', 'yes'), ('no', 'no')), blank=True)
-    chaptertype = models.CharField(max_length=10, choices=CHAPTERTYPE_CHOICES, blank=True, null=True)
+    #chaptertype = models.CharField(max_length=10, choices=CHAPTERTYPE_CHOICES, blank=True, null=True)
     roles = models.CharField(max_length=50, choices=ROLES_CHOICES, blank=True, null=True)
     leadership_years = models.IntegerField(blank=True, choices=(('1', '1 or less'),
                                                                 ('2', '2 - 3'), 
