@@ -2,9 +2,29 @@
 
 {% load i18n %}
 
-{% block head_title %}National Conference 2013{% endblock %}
+{% block head_title %}National Conference 2014{% endblock %}
 
 {% block body %}
+<style>
+    #ldd th, #ldd td {
+        padding: 10px 30px;
+        text-align: left;
+        vertical-align: top;
+    }
+</style>
+
+<br/><br/>
+
+<h1>National Conference 2014</h1>
+	
+<h2>Registration List for {{ group.name }}</h2>
+	
+{% for reg in registrations %}
+    <p><a href="{% url profile_detail reg.user.username %}">{{ reg.user.visible_name }}</a></p>
+{% endfor %}
+{% endblock %}
+
+{% block bodyold %}
 <style>
     #ldd th, #ldd td {
         padding: 10px 30px;

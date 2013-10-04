@@ -475,6 +475,7 @@ def list(request, chapter=None):
     registrations = ConferenceRegistration.objects.filter(user__memberprofile__chapter=group,
                                                           submitted=True, cancelled=False)
 
+    """
     is_president = False
     prez_group = NationalRepList.objects.get(slug='presidents')
     pro_prez_group = NationalRepList.objects.get(slug='citynetworkpres')
@@ -487,13 +488,15 @@ def list(request, chapter=None):
 
     ldd, created = LeadershipDaySpots.objects.get_or_create(chapter=group)
     ldd_open = ldd.spots - ConferenceRegistration.objects.filter(submitted=True, cancelled=False, ldd_chapter=group).count()
+    """
 
     return render_to_response('conference/list.html',
                               {'registrations': registrations,
                                'group': group,
-                               'is_president': is_president,
-                               'ldd_total': ldd.spots,
-                               'ldd_open': ldd_open},
+                               #'is_president': is_president,
+                               #'ldd_total': ldd.spots,
+                               #'ldd_open': ldd_open},
+                               },
                                context_instance=RequestContext(request)
                                )
     
