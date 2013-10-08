@@ -55,7 +55,7 @@ CONF_OPTIONS = {'public': {'name': 'Public registration',
                 'alumni': {'name': 'EWB Alumni',
                            'cost': 425},
                 'ewb': {'name': 'EWB member (with registration code)',
-                           'cost': 589}}
+                           'cost': 550}}
 
 REGISTRATION_CHOICES = []
 for c1, c2 in CONF_OPTIONS.iteritems():
@@ -150,7 +150,7 @@ HOTELSLEEP_CHOICES = (('nopref', 'No preference'),
                         ('vlate', 'People who sleep very late (after 1am)'))
                 
 HOTELREQUESTS_CHOICES = (('nodrinking', "People who won't drink alcohol during conference (note: implies you will not drink either)"),
-                        ('nosmoking', "People who won't smoke during conference (note: implies you will not smoke either. All hotel and conference rooms are non-smoking."))
+                        ('nosmoking', "People who won't smoke during conference (note: implies you will not smoke either. All hotel and conference rooms are non-smoking.)"))
                         
 FOOD_CHOICES = (('none', _("no special preferences")),
                 ('vegetarian', _("vegetarian")),

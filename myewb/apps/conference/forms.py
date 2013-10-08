@@ -100,14 +100,14 @@ class ConferenceRegistrationForm2(ConferenceRegistrationForm):
     emergPhone = forms.CharField(label='Emergency contact: phone number')
     emergReln = forms.CharField(label='Emergency contact: relationship')
 
-    childcare = forms.BooleanField(label='Are you interested in group childcare if it can be arranged?',
+    childcare = forms.BooleanField(label='I would be interested in group childcare (if it can be arranged)',
                                     required=False)
     childcare_contact = forms.CharField(label='If yes, your contact info (email or phone)',
                                         required=False)
     accessibility = forms.CharField(label='Do you have any accessibility needs?',
                                     widget=forms.Textarea,
                                     required=False)
-    headset = forms.BooleanField(label='Would you take part in simultaneous translation if available?',
+    headset = forms.BooleanField(label='I would take part in simultaneous translation (if available)',
                                 required=False)
 
     class Meta:
@@ -216,11 +216,11 @@ class ConferenceRegistrationForm5(ConferenceRegistrationForm):
 								   widget=forms.Textarea,
 								   help_text="Let us know if there are specific requirements of your diet if your restrictions are not included above. Note: We will do our best to accommodate everyone and will get in touch if we have questions. During the conference if you feel your needs are not being met just let us know and we'll try to adjust.")
     
-    bracelet = forms.BooleanField(label='Would you like to order a conference bracelet?',
+    bracelet = forms.BooleanField(label='I would like to order a conference bracelet',
                                required=False,
                                help_text="""Cost is $12; provided by <a href="http://www.paperbeadworks.com" target="_new">Paper Bead Works</a> in conference colours""")
     
-    handbook = forms.BooleanField(label='Would you like a printed copy of the conference delegate handbook?',
+    handbook = forms.BooleanField(label='I would like a printed copy of the conference delegate handbook',
                                required=False,
                                help_text='A $3 recycling fee applies')
     membership = forms.BooleanField(label='EWB Membership Renewal',
@@ -264,6 +264,14 @@ class ConferenceRegistrationForm6(ConferenceRegistrationForm):
         return self.cleaned_data
 
 class ConferenceRegistrationForm7(ConferenceRegistrationForm):
+    leadership_day = forms.BooleanField(label='I would like to apply for Leadership Day',
+                                        required=False)
+                                        
+    class Meta:
+        model = ConferenceRegistration
+        fields = ['leadership_day']
+
+class ConferenceRegistrationForm8(ConferenceRegistrationForm):
     cc_type = forms.ChoiceField(label='Credit card type',
 								  choices=CC_TYPES)
     cc_number = CreditCardNumberField(label='Credit card number')

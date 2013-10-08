@@ -61,6 +61,8 @@ class ConferenceRegistration(models.Model):
     
     africaFund = models.SmallIntegerField(blank=True, null=True)
 
+    leadership_day = models.BooleanField(default=False)
+
     def cancel(self):
         self.cancelled = True
         self.chapter = None

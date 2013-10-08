@@ -133,7 +133,7 @@ z-index: 100;
 			<fieldset class="inlineLabels">
 				
 				<div class="heading">National Conference 2014<br/>Registration Details</div>
-				<div style='text-align: center;'>Page {{ stage|default:1 }} of 8</div>
+				<div style='text-align: center;'>Page {{ stage|default:1 }} of 9</div>
 
                 {% ifequal stage '1' %}
 					<div style='text-align: center; font-weight: bold;'>
@@ -154,7 +154,7 @@ z-index: 100;
 					<br/><br/>
 					{% include "conference/africandelegates.html" %}
 				{% endifequal %}
-				{% ifequal stage '8' %}
+				{% ifequal stage '9' %}
 					<br/><br/>
 					<div style='text-align: center; font-weight: bold; font-style: italic;'>
 						You will have an opportunity to preview your registration on the next page.
@@ -172,6 +172,11 @@ z-index: 100;
                      </div>
                 {% endif %}
 {% endcomment %}
+
+				{% ifequal stage '8' %}
+					<br/><br/>
+					{% include "conference/leadershipday.html" %}
+				{% endifequal %}
                                 
 	            <div class="form_block ctrlHolder">
 	            	{% if stage %}
@@ -192,23 +197,23 @@ z-index: 100;
 		<table border='1' class='descform' id='confoptiontable'>
 		  <tr>
 		    <th>&nbsp;</th>
-		    <th>Early bird (before Nov 13)</th>
-		    <th>Standard (after Nov 13)</th>
+		    <th>Early bird (before Nov 20)</th>
+		    <th>Standard (after Nov 20)</th>
 		  </tr>
 		  <tr>
 		    <th>Public</th>
 		    <td>$550</td>
-		    <td>$648</td>
+		    <td>$650</td>
 		  </tr>
 		  <tr>
 		    <th>Partner Organization</th>
 		    <td>$475</td>
-		    <td>$559</td>
+		    <td>$560</td>
 		  </tr>
 		  <tr>
 		    <th>Partner Organization - NGO</th>
 		    <td>$400</td>
-		    <td>$471</td>
+		    <td>$470</td>
 		  </tr>
 		  <tr>
 		    <th>Government</th>
@@ -272,7 +277,8 @@ z-index: 100;
 		            $('#div_id_chapter').slideUp();
 		            $('#div_id_role').slideUp();
 		        }
-		        
+
+
 		        if ($('#id_nametag').val() == '')
 		            $('#id_nametag').val("{{ registration.user.visible_name }} ");
 			            

@@ -142,6 +142,8 @@ def view_registration(request):
                 form = ConferenceRegistrationForm6(request.POST, instance=registration)
             elif stage == '8':
                 form = ConferenceRegistrationForm7(request.POST, instance=registration)
+            elif stage == '9':
+                form = ConferenceRegistrationForm8(request.POST, instance=registration)
                 
             form.user = user
             if form.is_valid():
@@ -166,6 +168,8 @@ def view_registration(request):
                 elif stage == '7':
                     stage = '8'
                 elif stage == '8':
+                    stage = '9'
+                elif stage == '9':
                     return ConferenceRegistrationFormPreview(ConferenceRegistrationForm7)(request, username=request.user.username, registration_id=registration.id)
                 
                 form = None
@@ -187,6 +191,8 @@ def view_registration(request):
             form = ConferenceRegistrationForm6(instance=registration)
         elif stage == '8' and not form:
             form = ConferenceRegistrationForm7(instance=registration)
+        elif stage == '9' and not form:
+            form = ConferenceRegistrationForm8(instance=registration)
         form.user = request.user
                 
     needsRenewal = needsToRenew(request.user.get_profile())
@@ -204,6 +210,8 @@ def view_registration(request):
         last_stage = '6'
     elif stage == '8':
         last_stage = '7'
+    elif stage == '9':
+        last_stage = '8'
 
     return render_to_response('conference/registration.html',
                               {'registration': registration,
