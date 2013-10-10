@@ -428,7 +428,7 @@ class ConferenceRegistrationForm8(ConferenceRegistrationForm):
             product.save()
         
         cleaned_data['products'].append(product.sku)
-        total_cost = total_cost + Decimal(ccard_surcharge)
+        total_cost = total_cost + Decimal(str(ccard_surcharge))
         reg.ccard_surcharge = ccard_surcharge
         reg.save()
         
