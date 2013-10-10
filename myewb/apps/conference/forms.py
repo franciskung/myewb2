@@ -418,7 +418,7 @@ class ConferenceRegistrationForm8(ConferenceRegistrationForm):
             cleaned_data['products'].append(product.sku)
             total_cost = total_cost + Decimal(3)
 
-        ccard_surcharge = round(total_cost * Decimal(0.025), 2);
+        ccard_surcharge = round(total_cost * Decimal('0.025'), 2);
         sku = "ccard-%s" % ccard_surcharge
         name = "Credit card processing fee"
         product, created = Product.objects.get_or_create(sku=sku)
