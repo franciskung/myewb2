@@ -170,7 +170,7 @@ def view_registration(request):
                 elif stage == '8':
                     stage = '9'
                 elif stage == '9':
-                    return ConferenceRegistrationFormPreview(ConferenceRegistrationForm7)(request, username=request.user.username, registration_id=registration.id)
+                    return ConferenceRegistrationFormPreview(ConferenceRegistrationForm8)(request, username=request.user.username, registration_id=registration.id)
                 
                 form = None
 
