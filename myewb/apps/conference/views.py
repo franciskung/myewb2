@@ -515,34 +515,24 @@ def download(request, who=None):
     reg = ConferenceRegistration.objects.filter(submitted=True, cancelled=False)
     
     if who == 'chapter':
-        reg = reg.filter(user__is_bulk=False, code__isnull=False)
-    elif who == 'open':
-        reg = reg.filter(user__is_bulk=False, type__contains='open')
+        reg = reg.filter(type='ewb')
     elif reg == 'alumni':
-        reg = reg.filter(user__is_bulk=False, type__contains='alumni')
-    elif reg == 'external':
-        reg = reg.filter(user__is_bulk=True)
+        reg = reg.filter(type='alumni')
         
     response = HttpResponse(mimetype='text/csv')
     response['Content-Disposition'] = 'attachment; filename=confreg_%s_%d-%d-%d.csv' % (who, date.today().month, date.today().day, date.today().year)
     
     writer = csv.writer(response)
     writer.writerow(['First name', 'Last name', 'Email',
-                     'Gender', 'Language', 'Chapter', 'amount paid',
-                     'room size', 'registered on', 'headset',
-                     'food prefs', 'special needs',
-                     'emergency name', 'emergency phone', 'prev conferences',
-                     'prev retreats', 'cell phone', 't-shirt', 'extra gala ticket?',
-                     'reg code', 'reg type', 'african delegate',
-                     'roommate request', 'new to calgary',
-                     'handbook requested', 'photo release', 'conference content',
-                     'industry', 'LDD attendance', 'LDD category', 'LDD hotel',
-#                     'Survey - learn', 'Survey - connections', 'Survey - opportunities and challenges',
-#                     'Survey - perfect experience', 'Survey - stay up to speed',
-#                     'Survey - Sunday trip', 'Survey - socials', 'Survey - restaurants',
-                     'past/current jf', 'past/current president', 'past/current exec'
-                     ])
-                     
+                     'Gender', 'Language',
+                     'Who Are You', 'Nametag name', 'Nametag org',
+                     'emergency name', 'emergency phone', 'emergency reln',
+                     'Medical concerns', 'Chapter', 'Role', 'Childcare', 'Childcare contact',
+                     'Accessibility needs', 'Headset', 'Prev conf', 'Prev retreat',
+                     'Registration type', 'Registration code', 'Hotel option',
+                     'Hotel - gender', 'Hotel - sleeping', 'Roommates', 'Hotel requests',
+                     'Food prefs', 'Dietary', 'Special needs', 'Bracelet', 'Handbook',
+                     'Kumvana', 'Leadership day applicaion'])
                      
     for r in reg:
         fname = r.user.first_name
@@ -550,38 +540,20 @@ def download(request, who=None):
         email = r.user.email
         gender = r.user.get_profile().gender
         language = r.user.get_profile().language
-        if r.user.get_profile().get_chapter():
-            chapter = r.user.get_profile().get_chapter().name
-        else:
-            chapter = ''
         if r.code:
             code = r.code.code
         else:
             code = ''
-            
-        jf = ''
-        records = GroupMemberRecord.objects.filter(user=r.user, group__in=[210, 469, 716, 892, 955, 1092, 1202, 1317])
-        if records:
-            jf = 'yes'
-        president = ''
-        records = GroupMemberRecord.objects.filter(user=r.user, group__in=[12,427])
-        if records:
-            president = 'yes'
-        executive = ''
-        records = GroupMemberRecord.objects.filter(user=r.user, group__in=[5, 254])
-        if records:
-            executive = 'yes'
-            
-        row = [fname, lname, email, gender, language, chapter,
-               r.amountPaid, r.roomSize, r.date, r.headset,
-               r.foodPrefs, r.specialNeeds, r.emergName, r.emergPhone,
-               r.prevConfs, r.prevRetreats, r.cellphone, r.tshirt, r.extra_gala,
-               code, r.type, r.africaFund, r.roommate, r.new_to_calgary,
-               r.handbook, r.photo_release, r.homeroom, r.industry,
-               r.ldd_delegate, r.ldd_type, r.ldd_hotel,
-#               r.survey1, r.survey2, r.survey3, r.survey4,
-#               r.survey5, r.survey6, r.survey7, r.survey8,
-               jf, president, executive]
+
+        row = [fname, lname, email, gender, language, 
+               r.whoareyou, r.nametag, r.nametag_org,
+               r.emergName, r.emergPhone, r.emergReln,
+               r.medical, r.chapter, r.role, r.childcare, r.childcare_contact,
+               r.accessibility, r.headset, r.prevConfs, r.prevRetreats,
+               r.type, code, r.hotel,
+               r.hotelgender, r.hotelsleep, r.hotelroommates, r.hotelrequests,
+               r.foodPrefs, r.dietary, r.specialNeeds, r.bracelet, r.handbook,
+               r.africaFund, r.leadership_day]
             
         writer.writerow([fix_encoding(s) for s in row])
 
