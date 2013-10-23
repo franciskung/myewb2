@@ -234,7 +234,7 @@ class ConferenceRegistrationForm5(ConferenceRegistrationForm):
 class ConferenceRegistrationForm6(ConferenceRegistrationForm):
     africaFund = forms.ChoiceField(label='Support an African delegate?',
                                    choices=AFRICA_FUND,
-                                   initial='75',
+                                   initial='45',
 								   required=False)
 
     africaFundOther = forms.DecimalField(label='If other',

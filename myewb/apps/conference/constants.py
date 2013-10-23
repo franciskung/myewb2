@@ -54,7 +54,7 @@ CONF_OPTIONS = {'public': {'name': 'Public registration',
                            'cost': 450},
                 'alumni': {'name': 'EWB Alumni',
                            'cost': 425},
-                'ewb': {'name': 'EWB member (with registration code)',
+                'ewb': {'name': 'Registration code',
                            'cost': 550}}
 
 REGISTRATION_CHOICES = []
