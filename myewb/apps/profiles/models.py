@@ -99,6 +99,8 @@ class MemberProfile(Profile):
     GENDER_CHOICES = (
         ('M', _('Male')),
         ('F', _('Female')),
+        ('Q', _('Genderqueer, bigender, Hiraj, pangender, third gender, trigender, two spirited, trans, or any other')),
+        ('D', _('Prefer not to say')),
     )
     gender = models.CharField(_('gender'), max_length=1, choices=GENDER_CHOICES, null=True, blank=True)
 

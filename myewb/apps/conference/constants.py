@@ -54,7 +54,7 @@ CONF_OPTIONS = {'public': {'name': 'Public registration',
                            'cost': 450},
                 'alumni': {'name': 'EWB Alumni',
                            'cost': 425},
-                'ewb': {'name': 'Registration code',
+                'ewb': {'name': 'I have a registration code',
                            'cost': 550}}
 
 REGISTRATION_CHOICES = []
@@ -79,6 +79,7 @@ CONF_CODES = (('a', "test"),
               ('n', "facilitator"),
               ('o', "contributor"),
               ('p', "extguest"),
+              ('q', "staff2"),
              )
               
 CONF_CODE_COSTS = {'test': {'name': "Test code",
@@ -113,6 +114,8 @@ CONF_CODE_COSTS = {'test': {'name': "Test code",
                             'cost': 300},
                    'extguest': {'name': "External guests",
                             'cost': 300},
+                   'staff2': {'name': "EWB staff and guests",
+                            'cost': 0},
                     }
 
 for c1, c2 in CONF_CODE_COSTS.iteritems():
