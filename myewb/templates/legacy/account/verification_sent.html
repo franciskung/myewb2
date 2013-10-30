@@ -1,0 +1,24 @@
+{% extends "account/base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "Verify your e-mail address" %}{% endblock %}
+
+{% block body %}
+    <h1>{% trans "Verify your e-mail address" %}</h1>
+
+    <p>{% blocktrans %}We have sent an e-mail to <b>{{ email }}</b> for verification. Please follow the link provided to finish creating your account.</p>
+    
+    <p>
+    If you do not receive it within a few minutes, contact us at <a href="mailto:{{ CONTACT_EMAIL }}">{{ CONTACT_EMAIL }}</a>.{% endblocktrans %}</p>
+
+
+    <p>
+        <em>Note to Hotmail users, our automated emails are having some trouble with their 
+        spam filters -<br/>
+        please check your spam folder if you do not receive the email.</em>
+    </p>
+    
+
+{% endblock %}
+
