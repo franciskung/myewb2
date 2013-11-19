@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>myEWB, powered by TIG</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="http://sites.ewb.ca/includes/bootstrap/css/bootstrap.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/uni-form/uni-form.css" />    
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/uni-form/default.uni-form.css" />            
+
+    <style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+      .sidebar-nav {
+        padding: 9px 0;
+      }
+
+      @media (max-width: 980px) {
+        /* Enable use of floated navbar text */
+        .navbar-text.pull-right {
+          float: none;
+          padding-left: 5px;
+          padding-right: 5px;
+        }
+      }
+
+      a, a:visited, a:active {
+        color: #4e7a8e;
+      }
+      a:hover {
+        /*color: #cfe9f5;*/
+        color: #000000;
+        text-decoration: none;
+      }
+
+      .navicon {
+        position: relative;
+        top: -2px;
+        padding-right: 10px;
+      }
+      .nav li {
+        font-size: 1.2em;
+      }
+
+      h1, h2, h3 {
+        color: #4e7a8e;
+		margin: 10px 0;
+		padding: 0;
+		line-height: 24px;
+      }
+      h1 {
+        font-size: 18px;
+      }
+      h2 {
+        font-size: 16px;
+      }
+      h3 {
+        font-size: 14px;
+      }
+
+      .footer h1, .footer h2, .footer h3, .footer, .footer a {
+        color: #cfe9f5;
+      }
+      .footer {
+        font-size: 0.75em;
+      }
+      
+      h1:not(.notarvo), h2:not(.notarvo), h3:not(.notarvo), .arvo {
+        font-family: 'Arvo', serif;
+      }
+      
+      .nav-pills > .active > a, .nav-pills > .active > a:hover, .nav-pills > .active > a:focus {
+        background: #cfe9f5;
+        color: #4e7a8e;
+        font-weight: bold;
+      }
+
+      a.hiddenlink, a.hiddenlink:hover {
+        color: #333333;
+        text-decoration: none;
+      }
+      
+    </style>
+
+    <link href="http://sites.ewb.ca/includes/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+	<link href='http://fonts.googleapis.com/css?family=Arvo' rel='stylesheet' type='text/css'>
+
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script src="http://sites.ewb.ca/includes/bootstrap/js/bootstrap.js"></script>
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="/partners/ewb/bootstrap/js/html5shiv.js"></script>
+    <![endif]-->
+
+    <!-- Fav and touch icons -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/includes/bootstrap/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
+      <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
+                    <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
+                                   <link rel="shortcut icon" href="../assets/ico/favicon.png">
+  </head>
+  <html>
+
+
+<body style='padding: 0;'>
+
+<div class="container-fluid" style='padding: 0;'>
+	<div class="row-fluid">
+		<div class="span12" style='background: #e1781c; padding: 10px 0px 5px 0px;'>
+			<a href="/">
+				<img src="http://sites.ewb.ca/images/partners/ewb/logos/myewb15.png"" style='height: 50px; margin-left: 70px;'/>
+			</a>
+			
+			<span style='float: right; margin-right: 80px; padding: 7px 0; position: relative;'>
+				<img src="http://sites.ewb.ca/images/partners/ewb/search.png" style='position: absolute; right: 10px; top: 12px;'/>
+				<input type="text" id="search" style='width: 320px; color: #d0d0d0; padding-right: 30px;' value='search'/>
+			</span>
+		</div>
+	</div>
+
+	<div class="row-fluid" style='background: #f7f7f7;'>
+		<div class="span3" style='padding: 25px 0 0 5%;'>
+
+			{% if user.is_authenticated %}
+				<a title="{{ user.visible_name }}" href="http://sites.ewb.ca/profile/view/{{ user.username }}" style='height: 136px; width: 136px; display: block; padding: 8px 2px 2px 2px; border: 1px solid #ccc; box-shadow: 2px 2px 2px #777777; float: left; margin-right: 15px; margin-bottom: 6px; background: #ffffff;'>​
+					<img src="http://avatar.tigweb.org/{{ user.username }}/128" style="height: 128px; width: 128px;"/>
+				</a>​
+				<br/>
+			
+				<h1 class="notarvo">
+					<a href="http://sites.ewb.ca/profile/view/{{ user.username }}">
+						{{ user.visible_name }}
+					</a>
+				</h1>
+
+				<br style='clear: left;'/>
+				<a href="http://sites.ewb.ca/profile/view/{{ user.username }}">Edit my profile</a> | 
+				<a href="http://sites.ewb.ca/profile/login?logout=logout&pushpath=my.ewb.ca">Sign out</a>
+
+				<br/><br/>
+			{% endif %}
+			
+			<ul class="nav nav-pills nav-stacked">
+				<li id="navhome"><a href="http://sites.ewb.ca"><img class="navicon" src="http://sites.ewb.ca/images/partners/ewb/home.png"/> Home</a></li>
+				<li id="navdiscussion"><a href="http://sites.ewb.ca/posts/"><img class="navicon" src="http://sites.ewb.ca/images/partners/ewb/discussions.png"/> Discussions</a></li>
+				<li id="navgroups"><a href="http://sites.ewb.ca/groups/"><img class="navicon" src="http://sites.ewb.ca/images/partners/ewb/groups.png"/> Groups</a></li>
+				<li id="navlibrary"><a href="http://my2.ewb.ca/library/"><img class="navicon" src="http://sites.ewb.ca/images/partners/ewb/library.png"/> Library</a></li>
+				<li id="navapply"><a href="http://my2.ewb.ca/apply/"><img class="navicon" src="http://sites.ewb.ca/images/partners/ewb/apply.png"/> Get involved</a></li>
+			</ul>
+
+			{% if not user.is_authenticated %}
+				<hr/>
+				<form action="/profile/login" method="POST" name="LoginSignupForm" id="LoginSignupForm">
+
+				<h1>Sign in to myEWB</h1>
+				Email:<br/>
+				<input name="Username" type="text" size="25" class="input" value="" />
+				<br/>
+
+				Password:<br/>
+				<input name="Password" type="password" size="25" class="input" />
+				<br/>
+
+				Stay logged in?
+				<input name="flStayLogged" id="flStayLogged" type="checkbox" value="1" />
+				<br/>
+				
+				<input type="submit"/>
+				<br/><br/>
+				<a href="/profile/login#password">Lost your password?</a><br/>
+				<a href="/profile/login#create">Create an account</a>
+
+				</form>
+				<hr/>
+			{% endif %}
+
+			<br/><br/>
+
+		</div>
+
+		<div class="span9">
+			<div style='background: #ffffff; margin-top: 15px; padding: 15px; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; box-shadow: 0px 0px 4px 4px #e0e0e0; margin-right: 25px;'>
+			    <div class="row-fluid">
+			        <div class="span9" id="mainspan" style='padding-right: 50px;'>
+				        {% block body %}
+				        {% endblock %}
+				    </div>
+
+            		<div class="span3" id="rightspan" style='margin-left: -10px;'>{% block toolbar_left %}{% endblock %}{% block toolbar_right %}{% endblock %}</div>
+    			</div>
+    		</div>
+    	</div>
+		
+
+	</div>
+
+	<div class="row-fluid" style='background: #3b6b82;'>
+		<div class="span12" style='padding: 1px; background: #3b6b82'>
+			&nbsp;
+		</div>
+	</div>
+	<div class="row-fluid footer" style='background: #3b6b82;'>
+		<div class="span8" style='padding: 0 5%; line-heigh: 1.5em;'>
+			<h1>Quick Links</h1>
+
+			<div class="row-fluid">
+				<div class="span4">
+					<a href="http://www.ewb.ca">EWB Canada</a><br/>
+					<a href="http://blogs.ewb.ca/board/">Board of Directors</a><br/>
+					<a href="http://my.ewb.ca/library/collection/96/quarterly-financial-statements/">Financial statements</a>
+				</div>
+				
+				<div class="span4">
+					<a href="http://my.ewb.ca/library">Chapter resources</a><br/>
+					<a href="http://blogs.ewb.ca/world/">World of EWB blogs</a><br/>
+					<a href="http://www.ewb.ca/donate">Donations</a>
+				</div>
+				
+				<div class="span4">
+					<a href="http://my.ewb.ca/about">About myEWB</a><br/>
+					<a href="http://my.ewb.ca/terms">Terms of Use</a><br/>
+					<a href="http://my.ewb.ca/privacy">Privacy Policy</a>
+				</div>
+				
+			</div>
+
+			<br/><br/>
+			Engineers Without Borders Canada is a registered charity : 89980-1815-RR0001
+			<br/><br/>
+		</div>
+
+		
+		<div class="span4" style='padding: 15px;'>
+			<a href="http://www.ewb.ca" target="_new">
+				<img src="http://sites.ewb.ca/images/partners/ewb/ewb.png"/>
+			</a>
+			<br/><br/>
+			
+			Powered by<br/>
+			<a href="http://www.tigweb.org" target="_new">
+				<img src="http://sites.ewb.ca/images/partners/ewb/tig.png"/>
+			</a>
+
+			<br/><br/>
+		</div>
+		<br/><br/>
+	</div>
+
+</div>
+
+{% block extra_body %}
+{% endblock %}
+
+<script type='text/javascript'>
+	$().ready(function() {
+		$('#search').focus(function() {
+			if ($(this).val() == 'search')
+				$(this).val('');
+		});
+		$('#search').blur(function() {
+			if ($(this).val() == '')
+				$(this).val('search');
+		});
+		
+		var rightbar = $('#rightspan').html();
+		if (!rightbar) {
+		    $('#rightspan').hide();
+		    $('#mainspan').addClass('span12').removeClass('span9');
+		}
+
+{% comment %}
+	  {/literal}
+	  {if $currentnav == 'home'}
+	  	$('#navhome').addClass('active');
+	  {/if}
+	  {if $currentnav == 'discussion'}
+	  	$('#navdiscussion').addClass('active');
+	  {/if}
+	  {if $currentnav == 'groups'}
+	  	$('#navgroups').addClass('active');
+	  {/if}
+	  {if $currentnav == 'library'}
+	  	$('#navlibrary').addClass('active');
+	  {/if}
+	  {if $currentnav == 'apply'}
+	  	$('#navapply').addClass('active');
+	  {/if}
+
+{% endcomment %}
+		
+	});
+
+
+  // BEGIN GOOGLE ANALYTICS CODE (EWB account)
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-907833-2']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+  // END GOOGLE ANALYTICS
+</script>
+
+
+
+
+</body>
+<html>
