@@ -81,6 +81,17 @@
 		{
 			font-size: 12px;
 		}
+		
+		.checkbox input.checkboxinput {
+		    float: none;
+		    margin-left: 0;
+		    margin-top: 10px;
+		}
+		
+		#cboxClose {
+		    border: 0;
+		}
+		
 #confshirt {
 float: right;
 margin-top: -110px;
@@ -91,8 +102,12 @@ z-index: 100;
 #hint_id_tshirt {
 z-index: 100;
 }
-
+    
 	</style> 
+
+    <link type="text/css" href="/site_media/static/css/colorboxnew.css?v=5" rel="stylesheet" />
+    <script type="text/javascript" src="/site_media/static/js/colorbox.js?v=6"></script>
+    
 
 	{% if not registration or not registration.submitted %}
 	
@@ -281,7 +296,7 @@ z-index: 100;
 
 		        if ($('#id_nametag').val() == '')
 		            $('#id_nametag').val("{{ registration.user.visible_name }} ");
-			            
+
 				$('.confoptiontablelink').colorbox({transition: 'elastic',
 													opacity: '0.5',
 													inline: true,
@@ -289,8 +304,15 @@ z-index: 100;
 													href: '#confoptiondiv',
 				});
 
-$('.colorbox').colorbox({opacity: '0.5', height: '75%'});
+                $('.colorbox').colorbox({opacity: '0.5', height: '75%'});
 
+/*
+                $('.confoptiontablelink').attr('href', '#confoptiondiv');
+                $('.confoptiontablelink').click(function() {
+                    $(this).modal();
+                    return false;
+                });
+*/
 
 				$('#conf-registration').submit(function() {
 					if ($('select[name=address]').val() == 'new')
