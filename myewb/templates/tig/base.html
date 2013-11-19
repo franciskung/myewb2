@@ -87,6 +87,20 @@
         text-decoration: none;
       }
       
+      ul.subnav {
+        margin: 5px 0 15px 0;
+        display: block;
+        border-bottom: 1px solid #4e7a8e;;
+        text-align: center;
+      }
+      ul.subnav li {
+        list-style: none;
+        margin: 0;
+        padding: 0 15px;
+        display: inline;
+        border-right: 1px solid #4e7a8e;
+      }
+      
     </style>
 
     <link href="{% if request.is_secure %}https{% else %}http{% endif %}://www.tigweb.org/includes/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
@@ -187,6 +201,8 @@
 			<div style='background: #ffffff; margin-top: 15px; padding: 15px; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; box-shadow: 0px 0px 4px 4px #e0e0e0; margin-right: 25px;'>
 			    <div class="row-fluid">
 			        <div class="span9" id="mainspan" style='padding-right: 50px;'>
+                    	{% block subnav %}{% endblock %}
+                    	
 				        {% block body %}
 				        {% endblock %}
 				    </div>
