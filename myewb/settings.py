@@ -116,6 +116,7 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'urls'
 
 TEMPLATE_DIRS = (
+    os.path.join(PROJECT_ROOT, "templates/myewb2"),
     os.path.join(PROJECT_ROOT, "templates/legacy"),
     os.path.join(PROJECT_ROOT, "templates"),
     os.path.join(PINAX_ROOT, "templates", PINAX_THEME),
@@ -289,7 +290,7 @@ LOGIN_URL = "/account/login/"
 LOGIN_REDIRECT_URLNAME = "home"
 
 THEMESWITCH_BASE_DIR = os.path.join(PROJECT_ROOT, "templates")
-THEMESWITCH_DEFAULT_THEME = 'myewb2'
+THEMESWITCH_DEFAULT_THEME = 'tig'
 
 # probably want to make this memcached in local_settings for production use =) 
 CACHE_BACKEND = 'dummy://'

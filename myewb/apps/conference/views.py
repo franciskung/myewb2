@@ -160,10 +160,10 @@ def view_registration(request):
                 elif stage == '3':
                     stage = '4'
                 elif stage == '4':
-                    if registration.code and registration.code.type == 'q':
-                        stage = '6'
-                    else:
+                    if registration.hotel == 'hotelquad' or registration.hotel == 'hoteldouble' or (registration.code and registration.code.type == 'q'):
                         stage = '5'
+                    else:
+                        stage = '6'
                 elif stage == '5':
                     stage = '6'
                 elif stage == '6':
@@ -208,10 +208,10 @@ def view_registration(request):
     elif stage == '5':
         last_stage = '4'
     elif stage == '6':
-        if registration.code and registration.code.type == 'q':
-            last_stage = '4'
-        else:
+        if registration.hotel == 'hotelquad' or registration.hotel == 'hoteldouble' or (registration.code and registration.code.type == 'q'):
             last_stage = '5'
+        else:
+            last_stage = '4'
     elif stage == '7':
         last_stage = '6'
     elif stage == '8':
