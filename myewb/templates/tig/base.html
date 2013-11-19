@@ -8,7 +8,7 @@
     <meta name="author" content="">
 
     <!-- Le styles -->
-    <link href="http://sites.ewb.ca/includes/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="{% if request.is_secure %}https{% else %}http{% endif %}://sites.ewb.ca/includes/bootstrap/css/bootstrap.css" rel="stylesheet">
 
     <link rel="stylesheet" href="{{ STATIC_URL }}css/uni-form/uni-form.css" />    
     <link rel="stylesheet" href="{{ STATIC_URL }}css/uni-form/default.uni-form.css" />            
@@ -89,11 +89,11 @@
       
     </style>
 
-    <link href="http://sites.ewb.ca/includes/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
-	<link href='http://fonts.googleapis.com/css?family=Arvo' rel='stylesheet' type='text/css'>
+    <link href="{% if request.is_secure %}https{% else %}http{% endif %}://sites.ewb.ca/includes/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+	<link href='{% if request.is_secure %}https{% else %}http{% endif %}://fonts.googleapis.com/css?family=Arvo' rel='stylesheet' type='text/css'>
 
-    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
-    <script src="http://sites.ewb.ca/includes/bootstrap/js/bootstrap.js"></script>
+    <script src="{% if request.is_secure %}https{% else %}http{% endif %}://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script src="{% if request.is_secure %}https{% else %}http{% endif %}://sites.ewb.ca/includes/bootstrap/js/bootstrap.js"></script>
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -116,11 +116,11 @@
 	<div class="row-fluid">
 		<div class="span12" style='background: #e1781c; padding: 10px 0px 5px 0px;'>
 			<a href="/">
-				<img src="http://sites.ewb.ca/images/partners/ewb/logos/myewb15.png"" style='height: 50px; margin-left: 70px;'/>
+				<img src="{% if request.is_secure %}https{% else %}http{% endif %}://sites.ewb.ca/images/partners/ewb/logos/myewb15.png"" style='height: 50px; margin-left: 70px;'/>
 			</a>
 			
 			<span style='float: right; margin-right: 80px; padding: 7px 0; position: relative;'>
-				<img src="http://sites.ewb.ca/images/partners/ewb/search.png" style='position: absolute; right: 10px; top: 12px;'/>
+				<img src="{% if request.is_secure %}https{% else %}http{% endif %}://sites.ewb.ca/images/partners/ewb/search.png" style='position: absolute; right: 10px; top: 12px;'/>
 				<input type="text" id="search" style='width: 320px; color: #d0d0d0; padding-right: 30px;' value='search'/>
 			</span>
 		</div>
@@ -131,7 +131,7 @@
 
 			{% if user.is_authenticated %}
 				<a title="{{ user.visible_name }}" href="http://sites.ewb.ca/profile/view/{{ user.username }}" style='height: 136px; width: 136px; display: block; padding: 8px 2px 2px 2px; border: 1px solid #ccc; box-shadow: 2px 2px 2px #777777; float: left; margin-right: 15px; margin-bottom: 6px; background: #ffffff;'>​
-					<img src="http://avatar.tigweb.org/{{ user.username }}/128" style="height: 128px; width: 128px;"/>
+					<img src="{% if request.is_secure %}https{% else %}http{% endif %}://avatar.tigweb.org/{{ user.username }}/128" style="height: 128px; width: 128px;"/>
 				</a>​
 				<br/>
 			
@@ -143,40 +143,37 @@
 
 				<br style='clear: left;'/>
 				<a href="http://sites.ewb.ca/profile/view/{{ user.username }}">Edit my profile</a> | 
-				<a href="http://sites.ewb.ca/profile/login?logout=logout&pushpath=my.ewb.ca">Sign out</a>
+				<a href="{% url acct_logout %}">Sign out</a>
 
 				<br/><br/>
 			{% endif %}
 			
 			<ul class="nav nav-pills nav-stacked">
-				<li id="navhome"><a href="http://sites.ewb.ca"><img class="navicon" src="http://sites.ewb.ca/images/partners/ewb/home.png"/> Home</a></li>
-				<li id="navdiscussion"><a href="http://sites.ewb.ca/posts/"><img class="navicon" src="http://sites.ewb.ca/images/partners/ewb/discussions.png"/> Discussions</a></li>
-				<li id="navgroups"><a href="http://sites.ewb.ca/groups/"><img class="navicon" src="http://sites.ewb.ca/images/partners/ewb/groups.png"/> Groups</a></li>
-				<li id="navlibrary"><a href="http://my2.ewb.ca/library/"><img class="navicon" src="http://sites.ewb.ca/images/partners/ewb/library.png"/> Library</a></li>
-				<li id="navapply"><a href="http://my2.ewb.ca/apply/"><img class="navicon" src="http://sites.ewb.ca/images/partners/ewb/apply.png"/> Get involved</a></li>
+				<li id="navhome"><a href="http://sites.ewb.ca"><img class="navicon" src="{% if request.is_secure %}https{% else %}http{% endif %}://sites.ewb.ca/images/partners/ewb/home.png"/> Home</a></li>
+				<li id="navdiscussion"><a href="http://sites.ewb.ca/posts/"><img class="navicon" src="{% if request.is_secure %}https{% else %}http{% endif %}://sites.ewb.ca/images/partners/ewb/discussions.png"/> Discussions</a></li>
+				<li id="navgroups"><a href="http://sites.ewb.ca/groups/"><img class="navicon" src="{% if request.is_secure %}https{% else %}http{% endif %}://sites.ewb.ca/images/partners/ewb/groups.png"/> Groups</a></li>
+				<li id="navlibrary" class="{% block tig_nav_library %}{% endblock %}"><a href="http://my2.ewb.ca/library/"><img class="navicon" src="{% if request.is_secure %}https{% else %}http{% endif %}://sites.ewb.ca/images/partners/ewb/library.png"/> Library</a></li>
+				<li id="navconference" class="{% block tig_nav_conference %}{% endblock %}"><a href="http://my2.ewb.ca/conference/"><img class="navicon" src="{% if request.is_secure %}https{% else %}http{% endif %}://sites.ewb.ca/images/partners/ewb/apply.png"/> National Conference</a></li>
+				<li id="navapply" class="{% block tig_nav_apply %}{% endblock %}"><a href="http://my2.ewb.ca/apply/applications/"><img class="navicon" src="{% if request.is_secure %}https{% else %}http{% endif %}://sites.ewb.ca/images/partners/ewb/apply.png"/> Get involved</a></li>
 			</ul>
 
 			{% if not user.is_authenticated %}
 				<hr/>
-				<form action="/profile/login" method="POST" name="LoginSignupForm" id="LoginSignupForm">
+				<form action="{% url acct_login %}" method="POST" name="LoginSignupForm" id="LoginSignupForm">
 
 				<h1>Sign in to myEWB</h1>
 				Email:<br/>
-				<input name="Username" type="text" size="25" class="input" value="" />
+				<input name="login_name" type="text" size="25" class="input" value="" />
 				<br/>
 
 				Password:<br/>
-				<input name="Password" type="password" size="25" class="input" />
+				<input name="password" type="password" size="25" class="input" />
 				<br/>
 
-				Stay logged in?
-				<input name="flStayLogged" id="flStayLogged" type="checkbox" value="1" />
-				<br/>
-				
-				<input type="submit"/>
+				<input type="submit" value="sign in"/>
 				<br/><br/>
 				<a href="/profile/login#password">Lost your password?</a><br/>
-				<a href="/profile/login#create">Create an account</a>
+				<a href="{% url acct_signup %}">Create an account</a>
 
 				</form>
 				<hr/>
@@ -240,13 +237,13 @@
 		
 		<div class="span4" style='padding: 15px;'>
 			<a href="http://www.ewb.ca" target="_new">
-				<img src="http://sites.ewb.ca/images/partners/ewb/ewb.png"/>
+				<img src="{% if request.is_secure %}https{% else %}http{% endif %}://sites.ewb.ca/images/partners/ewb/ewb.png"/>
 			</a>
 			<br/><br/>
 			
 			Powered by<br/>
 			<a href="http://www.tigweb.org" target="_new">
-				<img src="http://sites.ewb.ca/images/partners/ewb/tig.png"/>
+				<img src="{% if request.is_secure %}https{% else %}http{% endif %}://sites.ewb.ca/images/partners/ewb/tig.png"/>
 			</a>
 
 			<br/><br/>
@@ -275,27 +272,6 @@
 		    $('#rightspan').hide();
 		    $('#mainspan').addClass('span12').removeClass('span9');
 		}
-
-{% comment %}
-	  {/literal}
-	  {if $currentnav == 'home'}
-	  	$('#navhome').addClass('active');
-	  {/if}
-	  {if $currentnav == 'discussion'}
-	  	$('#navdiscussion').addClass('active');
-	  {/if}
-	  {if $currentnav == 'groups'}
-	  	$('#navgroups').addClass('active');
-	  {/if}
-	  {if $currentnav == 'library'}
-	  	$('#navlibrary').addClass('active');
-	  {/if}
-	  {if $currentnav == 'apply'}
-	  	$('#navapply').addClass('active');
-	  {/if}
-
-{% endcomment %}
-		
 	});
 
 
