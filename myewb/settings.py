@@ -95,6 +95,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'httpbl.middleware.HttpBLMiddleware',
 #    'django_openid.consumer.SessionConsumer',
+    'account_extra.middleware.TIGSessionMiddleware',
     'account.middleware.LocaleMiddleware',
     'django.middleware.doc.XViewMiddleware',
     'pagination.middleware.PaginationMiddleware',
@@ -416,6 +417,7 @@ TWITTER_CONSUMER_SECRET = ''
 TWITTER_TOKEN_KEY = ''
 TWITTER_TOKEN_SECRET = ''
 
+EWB_TIG_API_KEY = ""
 
 # local_settings.py can be used to override environment-specific settings
 # like database and email that differ between development and production.
