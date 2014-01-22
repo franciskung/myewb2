@@ -51,57 +51,74 @@ def login(request, form_class=EmailLoginForm,
     if not next:
         next = '/'
 
-    import urllib, urllib2, json
-    url = "https://www.tigweb.org/partners/ewb/api/login.php"
-    values = {'email': request.POST.get('login_name', None),
-              'password': request.POST.get('password', None),
-              'key': settings.EWB_TIG_API_KEY}
-    data = urllib.urlencode(values)
-    req = urllib2.Request(url, data)
+    if request.method == "POST":
+        import urllib, urllib2, json
+        url = "https://www.tigweb.org/partners/ewb/api/login.php"
+        values = {'email': request.POST.get('login_name', None),
+                  'password': request.POST.get('password', None),
+                  'key': settings.EWB_TIG_API_KEY}
+        data = urllib.urlencode(values)
+        req = urllib2.Request(url, data)
 
-    try:
-        req2 = urllib2.urlopen(req)
-        response = req2.read()
+        try:
+            req2 = urllib2.urlopen(req)
+            response = req2.read()
 
-        auth = json.loads(response)
-    except:
-        auth = {}
-        auth['success'] = False
-	
-    if auth['success']:
-        userinfo = auth['userinfo']
-
-        try:        
-            user = User.objects.get(tigid=userinfo['id'])
+            auth = json.loads(response)
         except:
-            user = None
-        
-        if not user and userinfo.get('ewbid', None):
-            user = User.objects.get(id=userinfo['ewbid'])
-            user.tigid = userinfo['id']
-            user.save()
+            auth = {}
+            auth['success'] = False
+	
+        if auth['success']:
+            userinfo = auth['userinfo']
 
-        if not user:
-            user = User.extras.create_silent_user(userinfo['email'])
-            user.tigid = userinfo['id']
+            try:        
+                user = User.objects.get(tigid=userinfo['id'])
+            except:
+                user = None
+            
+            if not user and userinfo.get('ewbid', None):
+                user = User.objects.get(id=userinfo['ewbid'])
+                user.tigid = userinfo['id']
+                user.save()
 
-            profile = user.get_profile()
-            if not profile.first_name:
-                profile.first_name=userinfo['fname']
-            if not profile.last_name:
-                profile.last_name=userinfo['lname']
+            if not user:
+                user = User.extras.create_silent_user(userinfo['email'])
+                user.tigid = userinfo['id']
 
-            user.save()
-            profile.save()
-        
-        user.backend = "django.contrib.auth.backends.ModelBackend"
-        auth_login(request, user)
+                profile = user.get_profile()
+                if not profile.first_name:
+                    profile.first_name=userinfo['fname']
+                if not profile.last_name:
+                    profile.last_name=userinfo['lname']
 
-        return HttpResponseRedirect("http://my2.ewb.ca%s" % next)
+                user.save()
+                profile.save()
+            
+            user.backend = "django.contrib.auth.backends.ModelBackend"
+            auth_login(request, user)
+
+            return HttpResponseRedirect("http://my2.ewb.ca%s" % next)
+
+        else:
+            next = "http://my2.ewb.ca%s" % next
+            return HttpResponseRedirect("http://my.ewb.ca/profile/login?errormsg=wronglogin&pushpath=%s" % next)
+            
+    else:
+        form = form_class()
+
+    ctx = {
+        "form": form,
+        "url_required": url_required,
+    }
+    ctx.update(extra_context)
+    return render_to_response(template_name, ctx,
+        context_instance = RequestContext(request)
+    )
 
 #    return render_to_response(template_name, ctx, context_instance = RequestContext(request))
-    next = "http://my2.ewb.ca%s" % next
-    return HttpResponseRedirect("http://my.ewb.ca/profile/login?errormsg=wronglogin&pushpath=%s" % next)
+#    next = "http://my2.ewb.ca%s" % next
+#    return HttpResponseRedirect("http://my.ewb.ca/profile/login?errormsg=wronglogin&pushpath=%s" % next)
 
 
 def login_old(request, form_class=EmailLoginForm, 
