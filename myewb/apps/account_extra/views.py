@@ -36,6 +36,58 @@ from siteutils import online_middleware
 def login(request, form_class=EmailLoginForm, 
         template_name="account/login.html", success_url=None,
         associate_openid=False, openid_success_url=None, url_required=False):
+
+    if not success_url:
+        success_url = request.GET.get("url", None)
+
+    next = request.GET.get("next", None)
+
+    import urllib, urllib2, json
+    url = "https://www.tigweb.org/partners/ewb/api/login.php"
+    values = {'email': request.POST.get('login_name', None),
+              'password': request.POST.get('password', None),
+              'key': settings.EWB_TIG_API_KEY}
+    data = urllib.urlencode(values)
+    req = urllib2.Request(url, data)
+    req2 = urllib2.urlopen(req)
+    response = req2.read()
+
+    auth = json.loads(response)
+	
+    if auth['success']:
+        userinfo = auth['userinfo']
+        
+        user = User.objects.get(tigid=userinfo['id'])
+        
+        if not user and userinfo.get('ewbid', None):
+            user = User.objects.get(id=userinfo['ewbid'])
+            user.tigid = userinfo['id']
+            user.save()
+
+        if not user:
+            user = User.extras.create_silent_user(userinfo['email'])
+            user.tigid = userinfo['id']
+
+            profile = user.get_profile()
+            if not profile.first_name:
+                profile.first_name=userinfo['fname']
+            if not profile.last_name:
+                profile.last_name=userinfo['lname']
+
+            user.save()
+            profile.save()
+        
+        user.backend = "django.contrib.auth.backends.ModelBackend"
+        auth_login(request, user)
+
+        return HttpResponseRedirect(success_url)
+
+    return render_to_response(template_name, ctx, context_instance = RequestContext(request))
+
+
+def login_old(request, form_class=EmailLoginForm, 
+        template_name="account/login.html", success_url=None,
+        associate_openid=False, openid_success_url=None, url_required=False):
     
     if not success_url:
         success_url = request.GET.get("url", None)
