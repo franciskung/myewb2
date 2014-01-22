@@ -42,6 +42,15 @@ def login(request, form_class=EmailLoginForm,
 
     next = request.GET.get("next", None)
 
+    if not next:
+        next = request.POST.get('next', None)
+
+    if not next and success_url:
+        next = success_url
+
+    if not next:
+        next = '/'
+
     import urllib, urllib2, json
     url = "https://www.tigweb.org/partners/ewb/api/login.php"
     values = {'email': request.POST.get('login_name', None),
@@ -49,15 +58,23 @@ def login(request, form_class=EmailLoginForm,
               'key': settings.EWB_TIG_API_KEY}
     data = urllib.urlencode(values)
     req = urllib2.Request(url, data)
-    req2 = urllib2.urlopen(req)
-    response = req2.read()
 
-    auth = json.loads(response)
+    try:
+        req2 = urllib2.urlopen(req)
+        response = req2.read()
+
+        auth = json.loads(response)
+    except:
+        auth = {}
+        auth['success'] = False
 	
     if auth['success']:
         userinfo = auth['userinfo']
-        
-        user = User.objects.get(tigid=userinfo['id'])
+
+        try:        
+            user = User.objects.get(tigid=userinfo['id'])
+        except:
+            user = None
         
         if not user and userinfo.get('ewbid', None):
             user = User.objects.get(id=userinfo['ewbid'])
@@ -80,9 +97,11 @@ def login(request, form_class=EmailLoginForm,
         user.backend = "django.contrib.auth.backends.ModelBackend"
         auth_login(request, user)
 
-        return HttpResponseRedirect(success_url)
+        return HttpResponseRedirect("http://my2.ewb.ca%s" % next)
 
-    return render_to_response(template_name, ctx, context_instance = RequestContext(request))
+#    return render_to_response(template_name, ctx, context_instance = RequestContext(request))
+    next = "http://my2.ewb.ca%s" % next
+    return HttpResponseRedirect("http://my.ewb.ca/profile/login?errormsg=wronglogin&pushpath=%s" % next)
 
 
 def login_old(request, form_class=EmailLoginForm, 
@@ -219,7 +238,8 @@ def logout(request):
     # TODO: leave a message saying "you've been logged out".
     # currently not possible (can't set messages for guest user) but will be
     # possible in django 1.2 
-    return pinaxlogout(request, next_page=reverse('home'))
+#    return pinaxlogout(request, next_page=reverse('home'))
+    return pinaxlogout(request, next_page='http://www.tigweb.org/members/login.html?logout=logout&pushpath=my.ewb.ca')
 
 @login_required
 def email(request, form_class=AddEmailForm, template_name="account/email.html",
