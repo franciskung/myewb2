@@ -277,3 +277,5 @@ User.check_password = check_password
 User.set_password = set_password
 User.create_google_account = create_google_account
 
+User.add_to_class('tigid', models.IntegerField(null=True, blank=True))
+

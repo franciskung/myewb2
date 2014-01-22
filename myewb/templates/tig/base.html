@@ -155,28 +155,28 @@
 		<div class="span3" style='padding: 25px 0 0 5%;'>
 
 			{% if user.is_authenticated %}
-				<a title="{{ user.visible_name }}" href="http://sites.ewb.ca/profile/view/{{ user.username }}" style='height: 136px; width: 136px; display: block; padding: 8px 2px 2px 2px; border: 1px solid #ccc; box-shadow: 2px 2px 2px #777777; float: left; margin-right: 15px; margin-bottom: 6px; background: #ffffff;'>​
+				<a title="{{ user.visible_name }}" href="http://my.ewb.ca/profile/view/{{ user.username }}" style='height: 136px; width: 136px; display: block; padding: 8px 2px 2px 2px; border: 1px solid #ccc; box-shadow: 2px 2px 2px #777777; float: left; margin-right: 15px; margin-bottom: 6px; background: #ffffff;'>​
 					<img src="{% if request.is_secure %}https{% else %}http{% endif %}://avatar.tigweb.org/{{ user.username }}/128" style="height: 128px; width: 128px;"/>
 				</a>​
 				<br/>
 			
 				<h1 class="notarvo">
-					<a href="http://sites.ewb.ca/profile/view/{{ user.username }}">
+					<a href="http://my.ewb.ca/profile/view/{{ user.username }}">
 						{{ user.visible_name }}
 					</a>
 				</h1>
 
 				<br style='clear: left;'/>
-				<a href="http://sites.ewb.ca/profile/view/{{ user.username }}">Edit my profile</a> | 
+				<a href="http://my.ewb.ca/profile/view/{{ user.username }}">Edit my profile</a> | 
 				<a href="{% url acct_logout %}">Sign out</a>
 
 				<br/><br/>
 			{% endif %}
 			
 			<ul class="nav nav-pills nav-stacked">
-				<li id="navhome"><a href="http://sites.ewb.ca"><img class="navicon" src="{% if request.is_secure %}https{% else %}http{% endif %}://www.tigweb.org/images/partners/ewb/home.png"/> Home</a></li>
-				<li id="navdiscussion"><a href="http://sites.ewb.ca/posts/"><img class="navicon" src="{% if request.is_secure %}https{% else %}http{% endif %}://www.tigweb.org/images/partners/ewb/discussions.png"/> Discussions</a></li>
-				<li id="navgroups"><a href="http://sites.ewb.ca/groups/"><img class="navicon" src="{% if request.is_secure %}https{% else %}http{% endif %}://www.tigweb.org/images/partners/ewb/groups.png"/> Groups</a></li>
+				<li id="navhome"><a href="http://my.ewb.ca"><img class="navicon" src="{% if request.is_secure %}https{% else %}http{% endif %}://www.tigweb.org/images/partners/ewb/home.png"/> Home</a></li>
+				<li id="navdiscussion"><a href="http://my.ewb.ca/posts/"><img class="navicon" src="{% if request.is_secure %}https{% else %}http{% endif %}://www.tigweb.org/images/partners/ewb/discussions.png"/> Discussions</a></li>
+				<li id="navgroups"><a href="http://my.ewb.ca/groups/"><img class="navicon" src="{% if request.is_secure %}https{% else %}http{% endif %}://www.tigweb.org/images/partners/ewb/groups.png"/> Groups</a></li>
 				<li id="navlibrary" class="{% block tig_nav_library %}{% endblock %}"><a href="http://my2.ewb.ca/library/"><img class="navicon" src="{% if request.is_secure %}https{% else %}http{% endif %}://www.tigweb.org/images/partners/ewb/library.png"/> Library</a></li>
 				<li id="navconference" class="{% block tig_nav_conference %}{% endblock %}"><a href="http://my2.ewb.ca/conference/"><img class="navicon" src="{% if request.is_secure %}https{% else %}http{% endif %}://www.tigweb.org/images/partners/ewb/apply.png"/> National Conference</a></li>
 				<li id="navapply" class="{% block tig_nav_apply %}{% endblock %}"><a href="http://my2.ewb.ca/apply/applications/"><img class="navicon" src="{% if request.is_secure %}https{% else %}http{% endif %}://www.tigweb.org/images/partners/ewb/apply.png"/> Jobs at EWB</a></li>
