@@ -1,10 +1,14 @@
 from django.conf import settings
+from django.contrib.auth.models import User
+from django.contrib.auth import login as auth_login
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseNotFound, HttpResponsePermanentRedirect
-import urllib, urllib2, json
+
+import urllib, urllib2, json, phpserialize
 
 class TIGSessionMiddleware(object):
     def process_request(self, request):
+#        return None
 
         if request.user.is_authenticated():
             return None
@@ -15,15 +19,14 @@ class TIGSessionMiddleware(object):
         if not request.COOKIES.get('TIGUserInfo', None):
             return None
 
-        userinfo = request.COOKIES['TIGUserInfo']
-        print userinfo
-        
-        return None
+        #sessioninfo = phpserialize.loads(request.COOKIES['TIGUserInfo'])
+        sessioninfo = phpserialize.loads(urllib.unquote(request.COOKIES['TIGUserInfo']))
+
 
         url = "https://www.tigweb.org/partners/ewb/api/login.php"
 
-        values = {'email': request.POST.get('login_name', None),
-                  'password': request.POST.get('password', None),
+        values = {'email': sessioninfo['Email'],
+                  'password': sessioninfo['SessionID'],
                   'key': settings.EWB_TIG_API_KEY}
 
         data = urllib.urlencode(values)
@@ -40,6 +43,11 @@ class TIGSessionMiddleware(object):
 	
         if auth['success']:
             userinfo = auth['userinfo']
+
+            if sessioninfo['UserID'] != request.COOKIES['TIGUser']:
+                return None
+            if sessioninfo['UserID'] != userinfo['id']:
+                return None
 
             try:        
                 user = User.objects.get(tigid=userinfo['id'])
