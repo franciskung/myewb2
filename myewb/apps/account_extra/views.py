@@ -97,6 +97,10 @@ def login(request, form_class=EmailLoginForm,
             
             user.backend = "django.contrib.auth.backends.ModelBackend"
             auth_login(request, user)
+            
+            if userinfo.get('superuser', False):
+                user.is_staff = True
+                user.is_superuser = True
 
             return HttpResponseRedirect("http://my2.ewb.ca%s" % next)
 
