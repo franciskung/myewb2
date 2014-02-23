@@ -26,6 +26,27 @@ class group_admin_required(object):
                 # again in the view function
                 return f(request, *args, **kwargs)
             else:
+                
+                # secondary login, try TIG's auth API
+                import urllib, urllib2, json
+                url = "https://www.tigweb.org/partners/ewb/api/perms.php"
+                values = {'id': user.tigid,
+                          'group': group_slug,
+                          'key': settings.EWB_TIG_API_KEY}
+                data = urllib.urlencode(values)
+                req = urllib2.Request(url, data)
+
+                try:
+                    req2 = urllib2.urlopen(req)
+                    response = req2.read()
+
+                    auth = json.loads(response)
+                except:
+                    auth = {}
+	
+                if auth.get(group_slug, False):
+                    return f(request, *args, **kwargs)
+
                 # deny access
                 return render_to_response('denied.html', context_instance=RequestContext(request))
         return newf

@@ -58,6 +58,26 @@ class chapter_exec_required(object):
             if execlist and execlist.user_is_member(user):
                 return f(request, *args, **kwargs)
                 
+            # secondary login, try TIG's auth API
+            import urllib, urllib2, json
+            url = "https://www.tigweb.org/partners/ewb/api/perms.php"
+            values = {'id': user.tigid,
+                      'group': 'chapterexec',
+                      'key': settings.EWB_TIG_API_KEY}
+            data = urllib.urlencode(values)
+            req = urllib2.Request(url, data)
+
+            try:
+                req2 = urllib2.urlopen(req)
+                response = req2.read()
+
+                auth = json.loads(response)
+            except:
+                auth = {}
+
+            if auth.get('chapterexec', False):
+                return f(request, *args, **kwargs)
+                
             return render_to_response('denied.html', context_instance=RequestContext(request))
         return newf
    
