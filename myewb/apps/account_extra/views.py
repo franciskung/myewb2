@@ -115,7 +115,7 @@ def login(request, form_class=EmailLoginForm,
         "form": form,
         "url_required": url_required,
     }
-    ctx.update(extra_context)
+
     return render_to_response(template_name, ctx,
         context_instance = RequestContext(request)
     )
