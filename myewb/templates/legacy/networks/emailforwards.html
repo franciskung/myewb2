@@ -16,6 +16,18 @@
 
 {% block head_title %}{% blocktrans %}Email forwards for {% endblocktrans %} {{group.name}}{% endblock %}
 
+{% block subnav %}
+    <ul class="subnav">
+        {% if is_exec %}
+       		<li><a href="{% link_to_current_champ request.user %}">CHAMP</a></li>
+       		<li><a href="{% link_to_current_finance request.user %}">Finance</a></li>
+        {% endif %}
+    </ul>
+{% endblock %}
+
+{% block toolbar_left %}
+{% endblock %}
+
 {% block body %}
     <h1>{% trans "Email forwards" %}: {{ group.name }}</h1>
     

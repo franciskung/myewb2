@@ -1,6 +1,16 @@
 {% extends "networks/base.html" %}
 {% load i18n %}
 {% block head_title %}Finance Tool{% endblock %}
+
+{% block subnav %}
+    <ul class="subnav">
+        {% if is_exec %}
+       		<li><a href="{% link_to_current_champ request.user %}">CHAMP</a></li>
+       		<li><a href="{% link_to_current_finance request.user %}">Finance</a></li>
+        {% endif %}
+    </ul>
+{% endblock %}
+
 		
 {% block body %}
 	{% if group %}
