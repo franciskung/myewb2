@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.http import HttpResponseForbidden
 from django.shortcuts import render_to_response, get_object_or_404
