@@ -65,7 +65,7 @@
 				    {% if fwd.user %}
 				        {{ fwd.user.email }}
 				    {% else %}
-				        {fwd.forward_to}}
+				        {{ fwd.forward_to}}
 				    {% endif %}
 				</td>
 				<td>{{fwd.address}}</td>
