@@ -94,9 +94,11 @@ post_save.connect(create_network_location, sender=Network)
 
 class EmailForward(models.Model):
     network = models.ForeignKey(Network, related_name="email_forwards", verbose_name=_('network'))
-    user = models.ForeignKey(User, related_name="email_forwards", verbose_name=_('user'))
+    user = models.ForeignKey(User, related_name="email_forwards", verbose_name=_('user'), blank=True, null=True)
     address = models.EmailField(unique=True)
+    forward_to = models.EmailField()
 
+    """
     def save(self, force_insert=False, force_update=False):
         super(EmailForward, self).save(force_insert, force_update)
 
@@ -111,6 +113,7 @@ class EmailForward(models.Model):
         #emailforwards.removeAddress(self.user, self.address)
         self.user.get_profile().ldap_sync = True
         self.user.get_profile().save()
+    """
 
 def add_users_to_default_networks(sender, instance=None, created=False, **kwargs):
     if created:

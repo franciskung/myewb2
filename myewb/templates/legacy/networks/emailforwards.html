@@ -60,7 +60,14 @@
 		{% for fwd in forwards %}
 			<tr>
 				<td>{{fwd.user.visible_name}}</td>
-				<td>{{fwd.user.email}}</td>
+				{#<td>{{fwd.user.email}}</td>#}
+				<td>
+				    {% if fwd.user %}
+				        {{ fwd.user.email }}
+				    {% else %}
+				        {fwd.forward_to}}
+				    {% endif %}
+				</td>
 				<td>{{fwd.address}}</td>
 				<td>
 					<form action="{% url email_forwards_delete group.slug fwd.id %}" method="post">

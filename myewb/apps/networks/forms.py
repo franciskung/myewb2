@@ -93,8 +93,9 @@ class PartialEmailWidget(forms.TextInput):
         return mark_safe(html)
         
 class EmailForwardForm(forms.ModelForm):
-    user = UserField()
+    #user = UserField()
     address = PartialEmailField(widget=PartialEmailWidget)
+    forward_to = forms.EmailField()
     
     def __init__(self, *args, **kwargs):
         network = kwargs.pop('network', None)
@@ -107,15 +108,18 @@ class EmailForwardForm(forms.ModelForm):
         
         return address
 
+    """
     def clean_user(self):
         data = self.cleaned_data
         user = data['user']
         if not user.email:
             raise forms.ValidationError("Cannot create forward - user does not have an email set.")
         return user
+    """
     
     class Meta:
         model = EmailForward
-        fields = ('user', 'address')
+        fields = ('forward_to', 'address')
+        #fields = ('user', 'address')
         # TODO: the user field should be a search, not a dropdown
         
