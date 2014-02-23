@@ -117,7 +117,8 @@ def email_forwards_index(request, group_slug):
             obj = form.save(commit=False)
             obj.network = network
             obj.save()
-            request.user.message_set.create(message="Created %s => %s" % (form.cleaned_data['address'], form.cleaned_data['user'].email))  #should template-ize and translate?
+            #request.user.message_set.create(message="Created %s => %s" % (form.cleaned_data['address'], form.cleaned_data['user'].email))  #should template-ize and translate?
+            request.user.message_set.create(message="Created %s => %s" % (form.cleaned_data['address'], form.cleaned_data['forward_to']))  #should template-ize and translate?
             form = EmailForwardForm()
         else:
             pass
