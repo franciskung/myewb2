@@ -77,10 +77,15 @@ def login(request, form_class=EmailLoginForm,
             except:
                 user = None
             
-            if not user and userinfo.get('ewbid', None):
-                user = User.objects.get(id=userinfo['ewbid'])
-                user.tigid = userinfo['id']
-                user.save()
+            if not user and userinfo.get('ewbid', 0) > 0:
+                try:
+                    user = User.objects.get(id=userinfo['ewbid'])
+                except:
+                    user = None
+                    
+                if user:
+                    user.tigid = userinfo['id']
+                    user.save()
 
             if not user:
                 user = User.extras.create_silent_user(userinfo['email'])
