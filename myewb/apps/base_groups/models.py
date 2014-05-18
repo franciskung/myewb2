@@ -180,6 +180,26 @@ class BaseGroup(Group):
             if self.members.filter(user=user, is_admin=True).count() > 0:
                 return True
         
+            # secondary login, try TIG's auth API
+            import urllib, urllib2, json
+            url = "https://www.tigweb.org/partners/ewb/api/perms.php"
+            values = {'id': user.tigid,
+                      'group': self.slug,
+                      'key': settings.EWB_TIG_API_KEY}
+            data = urllib.urlencode(values)
+            req = urllib2.Request(url, data)
+
+            try:
+                req2 = urllib2.urlopen(req)
+                response = req2.read()
+
+                auth = json.loads(response)
+            except:
+                auth = {}
+
+            if auth.get(self.slug, False):
+                return True
+
         return False
  
     # returns whether this user can email the discussion group
